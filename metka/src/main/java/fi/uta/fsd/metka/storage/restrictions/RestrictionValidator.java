@@ -52,7 +52,7 @@ public class RestrictionValidator {
     @Autowired
     private RevisionRepository revisions;
 
-    public boolean validate(RevisionData revision, List<Target> targets, Configuration configuration) {
+    public ValidateResult validate(RevisionData revision, List<Target> targets, Configuration configuration) {
         initParents(revision, targets);
         DataFieldValidator validator = new DataFieldValidator(searcher, revisions, configurations);
         return validator.validate(targets, revision, configuration);

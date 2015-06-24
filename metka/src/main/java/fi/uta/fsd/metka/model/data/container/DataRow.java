@@ -37,6 +37,7 @@ import fi.uta.fsd.metka.model.access.calls.DataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.DataFieldCallBase;
 import fi.uta.fsd.metka.model.access.enums.ConfigCheck;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
+import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
@@ -75,6 +76,11 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
     @Override
     public DataFieldContainer getParent() {
         return parent;
+    }
+
+    @Override
+    public RevisionData getContainingRevision() {
+        return parent != null ? parent.getContainingRevision() : null;
     }
 
     @Override
@@ -123,6 +129,16 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
         for(DataField field : fields.values()) {
             field.normalize();
         }
+    }
+
+    @Override
+    @JsonIgnore public boolean hasFields() {
+        return !fields.isEmpty();
+    }
+
+    @Override
+    @JsonIgnore public DataField getField(String key) {
+        return fields.get(key);
     }
 
     /**

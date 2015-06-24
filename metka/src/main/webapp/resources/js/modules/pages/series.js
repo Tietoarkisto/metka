@@ -29,6 +29,8 @@
 define(function (require) {
     'use strict';
 
+    var resultParser = require('./../resultParser');
+
     if (location.pathname.split('/').indexOf('search') !== -1) {
         var commonSearchBooleans = require('./../commonSearchBooleans');
         return function (options, onLoad) {
@@ -135,7 +137,8 @@ define(function (require) {
                     require('./../searchButton')('searchAjax', [
                         {
                             key: 'key.configuration.type',
-                            value: "SERIES"
+                            value: "SERIES",
+                            addParens: false
                         },
                         'key.id',
                         {
@@ -197,7 +200,7 @@ define(function (require) {
                                             type: 'SERIES'
                                         }),
                                         success: function (response) {
-                                            if (response.result === 'REVISION_CREATED') {
+                                            if (resultParser(response.result).getResult() === 'REVISION_CREATED') {
                                                 require('./../assignUrl')('view', {
                                                     id: response.data.key.id,
                                                     no: response.data.key.no

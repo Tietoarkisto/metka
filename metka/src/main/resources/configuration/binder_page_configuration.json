@@ -3,10 +3,46 @@
     "version": 1,
     "type": "BINDER_PAGE"
   },
+  "selectionLists": {
+    "study_list": {
+      "key": "study_list",
+      "type": "REFERENCE",
+      "reference": "study_id_ref"
+    }
+  },
+  "references": {
+    "study_id_ref": {
+      "key": "study_id_ref",
+      "type": "REVISIONABLE",
+      "target": "STUDY",
+      "titlePath": "studyid"
+    },
+    "study_title_ref": {
+      "key": "study_title_ref",
+      "type": "DEPENDENCY",
+      "target": "studyid",
+      "valuePath": "title"
+    }
+  },
   "fields": {
     "binderid": {
       "key": "binderid",
       "type": "INTEGER",
+      "translatable": false
+    },
+    "studyid": {
+      "key": "studyid",
+      "type": "SELECTION",
+      "selectionList": "study_list",
+      "immutable": true,
+      "translatable": false
+    },
+    "studytitle": {
+      "key": "studytitle",
+      "type": "REFERENCE",
+      "reference": "study_title_ref",
+      "editable": false,
+      "writable": false,
       "translatable": false
     },
     "description": {
@@ -14,13 +50,26 @@
       "type": "STRING",
       "translatable": false,
       "exact": false
-    },
-    "studyid": {
-      "key": "studyid",
-      "type": "STRING",
-      "immutable": true,
-      "translatable": false
     }
   },
-  "restrictions": []
+  "restrictions": [{
+    "type": "APPROVE",
+    "targets": [{
+      "type": "FIELD",
+      "content": "binderid",
+      "checks": [{
+        "condition": {
+          "type": "NOT_EMPTY"
+        }
+      }]
+    }, {
+      "type": "FIELD",
+      "content": "studyid",
+      "checks": [{
+        "condition": {
+          "type": "NOT_EMPTY"
+        }
+      }]
+    }]
+  }]
 }

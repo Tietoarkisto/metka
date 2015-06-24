@@ -1,0 +1,39 @@
+{
+    "key": "filelanguage",
+    "data": [
+        {
+            "value": "1",
+            "title": "de"
+        },{
+            "value": "2",
+            "title": "en"
+        },{
+            "value": "3",
+            "title": "es"
+        },{
+            "value": "4",
+            "title": "st"
+        },{
+            "value": "5",
+            "title": "fi"
+        },{
+            "value": "6",
+            "title": "fr"
+        },{
+            "value": "7",
+            "title": "it"
+        },{
+            "value": "8",
+            "title": "lit"
+        },{
+            "value": "9",
+            "title": "ru"
+        },{
+            "value": "10",
+            "title": "sv"
+        },{
+            "value": "11",
+            "title": "xx"
+        }
+    ]
+}

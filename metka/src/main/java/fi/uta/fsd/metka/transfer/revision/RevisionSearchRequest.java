@@ -34,20 +34,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RevisionSearchRequest {
-    private ConfigurationType type;
+    //private ConfigurationType type;
     private boolean searchApproved;
     private boolean searchDraft;
     private boolean searchRemoved;
 
     private final Map<String, String> values = new HashMap<>();
 
-    public ConfigurationType getType() {
+    /*public ConfigurationType getType() {
         return type;
     }
 
     public void setType(ConfigurationType type) {
         this.type = type;
-    }
+    }*/
 
     public boolean isSearchApproved() {
         return searchApproved;

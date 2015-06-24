@@ -29,66 +29,66 @@
 package fi.uta.fsd.metka.storage.collecting;
 
 
-import fi.uta.fsd.metka.enums.FieldType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.ReferenceTitleType;
-import fi.uta.fsd.metka.enums.SelectionListType;
+import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Searches given JsonNode for various interpretations of given path.
  */
 class DataFieldPathParser {
-    private final Map<String, DataField> initialFields;
+    private final DataFieldContainer context;
     private final String[] path;
     private final Configuration configuration;
     private final Language language;
+    private final ReferenceService references;
 
     /**
      * Construct a data field path parser.
      * This object can collect mainly data field maps from given initial data field map.
-     * @param initialFields    Map containing a set of data fields from where the parsing starts
+     * @param context          DataFieldContainer context from where to start parsing
      * @param path             Path used to parse things
      * @param configuration    Configuration that should contain the fields in the data field map
      * @param language         Language for which options are searched
      */
-    DataFieldPathParser(Map<String, DataField> initialFields, String[] path, Configuration configuration, Language language) {
-        this.initialFields = initialFields;
+    DataFieldPathParser(DataFieldContainer context, String[] path, Configuration configuration, Language language, ReferenceService references) {
+        this.context = context;
         this.path = path;
         this.configuration = configuration;
         this.language = language;
+        this.references = references;
     }
 
     /**
-     * Finds all terminal DataField maps containing the terminating path field.
+     * Finds all terminal DataFieldContainers containing the terminating path field.
      * Partial answers are not accepted so if the current path step terminates but there's still more path left then
      * that specific object is not included in the set.
      * @return
      */
-    List<Map<String, DataField>> findTermini() {
-        List<Map<String, DataField>> termini = new ArrayList<>();
+    List<DataFieldContainer> findTermini() {
+        List<DataFieldContainer> termini = new ArrayList<>();
 
-        findTerminiPathStep(0, initialFields, path.clone(), termini);
+        findTerminiPathStep(0, context, path.clone(), termini);
 
         return termini;
     }
 
-    private void findTerminiPathStep(int level, Map<String, DataField> fieldMap, String[] path, List<Map<String, DataField>> termini) {
+    private void findTerminiPathStep(int level, DataFieldContainer context, String[] path, List<DataFieldContainer> termini) {
         if(level >= path.length) {
             // No more path, terminate
             return;
         }
 
-        if(fieldMap == null) {
+        if(context == null) {
             // Current node was null, can't continue
             return;
         }
@@ -98,7 +98,17 @@ class DataFieldPathParser {
             return;
         }
 
-        DataField dataField = fieldMap.get(field.getKey());
+        if(!field.getWritable() && field.getType() == FieldType.REFERENCE) {
+            // TODO: Does the path actually have to terminate here since we might be crossing a reference barrier?
+            // Checks that path should terminate at this value. If so then add the current field map to termini
+            if(level == path.length-1) {
+                // Value is the terminating value of path,
+                termini.add(context);
+                return;
+            }
+        }
+
+        DataField dataField = context.getField(field.getKey());
         if(dataField == null) {
             // There's no field in the current map, terminate
             return;
@@ -107,7 +117,7 @@ class DataFieldPathParser {
         // Checks that path should terminate at this value. If so then add the current field map to termini
         if(level == path.length-1) {
             // Value is the terminating value of path,
-            termini.add(fieldMap);
+            termini.add(context);
             return;
         }
 
@@ -123,146 +133,32 @@ class DataFieldPathParser {
             if(field.getTranslatable()) {
                 // Container is translatable, continue on with correct language rows
                 for(DataRow row : container.getRowsFor(language)) {
-                    findTerminiPathStep(level+1, row.getFields(), path, termini);
+                    findTerminiPathStep(level+1, row, path, termini);
                 }
             } else {
                 // Container is not translatable continue on with default language rows
                 for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-                    findTerminiPathStep(level+1, row.getFields(), path, termini);
+                    findTerminiPathStep(level+1, row, path, termini);
                 }
             }
         }
     }
 
     /**
-     * Finds first terminal object to path.
-     * Partial answers are not accepted so if the current path step terminates but there's still more path left then
-     * that specific object is not included in the set.
-     * @return
-     */
-    /*JsonNode findFirstTerminus() {
-        List<JsonNode> termini = new ArrayList<>();
-
-        findFirstTerminusPathStep(getInitialLevel(), initialNode, path.clone(), termini);
-
-        return (termini.size() > 0) ? termini.get(0) : null;
-    }
-
-    private boolean findFirstTerminusPathStep(int level, JsonNode node, String[] path, List<JsonNode> termini) {
-        if(termini.size() > 0) {
-            // First terminus has been found, return false since parsing doesn't have to continue.
-            return false;
-        }
-
-        if(level >= path.length) {
-            // No more path, terminate
-            return false;
-        }
-
-        if(node == null) {
-            // Current node was null, can't continue
-            return false;
-        }
-
-        switch(node.getNodeType()) {
-            case ARRAY: // Iterate over array and recursively call this method.
-                ArrayNode array = (ArrayNode)node;
-                // Assume array contains objects. Doesn't return the result since returned result should always be false.
-                for(JsonNode nextNode : array) {
-                    findFirstTerminusPathStep(level+1, nextNode, path, termini);
-                }
-                break;
-            case OBJECT: // Recursively call this method for the next path step. Only add this node if true is returned from the next recursion.
-                String step = path[level];
-                if(findFirstTerminusPathStep(level, node.get(step), path, termini)) {
-                    termini.add(node);
-                }
-                break;
-            case STRING:
-            case BOOLEAN:
-            case NUMBER: // Checks that path should terminate at this value and return true if OK. This should cause previous iteration to add its node.
-                if(level == path.length-1) {
-                    // Value is the terminating value of path, add
-                    return true;
-                }
-                break;
-            default:
-                // Don't know how to parse, can't continue
-                break;
-        }
-        // Default is to return false and assume that recursion has ended and no addition takes place.
-        return false;
-    }*/
-
-    /**
-     * Finds first terminating object matching path given to this parser.
-     * If initialNode is an Object node then initialNode is returned if it contains at least one terminating path.
-     * @return
-     */
-    /*JsonNode findFirstTerminatingMatch() {
-        return findFirstTerminatingMatchPathStep(getInitialLevel(), initialNode, path.clone());
-    }
-
-    private JsonNode findFirstTerminatingMatchPathStep(int level, JsonNode node, String[] path) {
-        if(level >= path.length) {
-            // No more path, terminate
-            return null;
-        }
-
-        if(node == null) {
-            // Current node was null, can't continue
-            return null;
-        }
-
-        switch(node.getNodeType()) {
-            case ARRAY: // Iterate over array and recursively call this method.
-                ArrayNode array = (ArrayNode)node;
-                // Assume array contains objects. If non null result is found then return that result which terminates the iteration.
-                for(JsonNode nextNode : array) {
-                    JsonNode result = findFirstTerminatingMatchPathStep(level+1, nextNode, path);
-                    if(result != null) {
-                        return result;
-                    }
-                }
-                break;
-            case OBJECT: // Recursively call this method for the next path step. Only return this node if non null value is returned from the next recursion.
-                String step = path[level];
-                JsonNode result = findFirstTerminatingMatchPathStep(level, node.get(step), path);
-                if(result != null) {
-                    return node;
-                }
-                break;
-            case STRING:
-            case BOOLEAN:
-            case NUMBER: // Checks that path should terminate at this value and return true if OK. This should cause previous iteration to return its node.
-                if(level == path.length-1) {
-                    // Value is the terminating value of path, add
-                    return node;
-                }
-                break;
-            default:
-                // Don't know how to parse, can't continue
-                break;
-        }
-        // Default is to return null and assume that recursion has ended.
-        return null;
-    }*/
-
-    /**
      * Returns the first DataField object that terminates a path
      * @return
      */
     DataField findFirstTerminatingValue() {
-        return findFirstTerminatingValuePathStep(0, initialFields, path.clone());
+        return findFirstTerminatingValuePathStep(0, context, path.clone());
     }
 
-    private DataField findFirstTerminatingValuePathStep(int level, Map<String, DataField> fieldMap, String[] path) {
+    private DataField findFirstTerminatingValuePathStep(int level, DataFieldContainer context, String[] path) {
         if(level >= path.length) {
             // No more path, terminate
             return null;
         }
 
-        if(fieldMap == null) {
+        if(context == null) {
             // Current node was null, can't continue
             return null;
         }
@@ -272,7 +168,7 @@ class DataFieldPathParser {
             return null;
         }
 
-        DataField dataField = fieldMap.get(field.getKey());
+        DataField dataField = context.getField(field.getKey());
         if(dataField == null) {
             // There's no field in the current map, terminate
             return null;
@@ -296,7 +192,7 @@ class DataFieldPathParser {
             if(field.getTranslatable()) {
                 // Container is translatable, continue on with correct language rows
                 for(DataRow row : container.getRowsFor(language)) {
-                    DataField result = findFirstTerminatingValuePathStep(level+1, row.getFields(), path);
+                    DataField result = findFirstTerminatingValuePathStep(level+1, row, path);
                     if(result != null) {
                         return result;
                     }
@@ -304,7 +200,7 @@ class DataFieldPathParser {
             } else {
                 // Container is not translatable continue on with default language rows
                 for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-                    DataField result = findFirstTerminatingValuePathStep(level+1, row.getFields(), path);
+                    DataField result = findFirstTerminatingValuePathStep(level+1, row, path);
                     if(result != null) {
                         return result;
                     }
@@ -323,17 +219,17 @@ class DataFieldPathParser {
      * @param terminatingValue
      * @return
      */
-    Map<String, DataField> findRootObjectWithTerminatingValue(String terminatingValue) {
-        return findRootObjectWithTerminatingValueStep(0, initialFields, path.clone(), terminatingValue);
+    DataFieldContainer findRootObjectWithTerminatingValue(String terminatingValue) {
+        return findRootObjectWithTerminatingValueStep(0, context, path.clone(), terminatingValue);
     }
 
-    private Map<String, DataField> findRootObjectWithTerminatingValueStep(int level, Map<String, DataField> fieldMap, String[] path, String terminatingValue) {
+    private DataFieldContainer findRootObjectWithTerminatingValueStep(int level, DataFieldContainer context, String[] path, String terminatingValue) {
         if(level >= path.length) {
             // No more path, terminate
             return null;
         }
 
-        if(fieldMap == null) {
+        if(context == null) {
             // Current node was null, can't continue
             return null;
         }
@@ -343,7 +239,7 @@ class DataFieldPathParser {
             return null;
         }
 
-        DataField dataField = fieldMap.get(field.getKey());
+        DataField dataField = context.getField(field.getKey());
         if(dataField == null) {
             // There's no field in the current map, terminate
             return null;
@@ -359,7 +255,7 @@ class DataFieldPathParser {
             // Value is the terminating value of path,
             Language optionLang = field.getTranslatable() ? language : Language.DEFAULT;
             if(valueField.valueForEquals(optionLang, terminatingValue)) {
-                return fieldMap;
+                return context;
             }
 
             return null;
@@ -377,7 +273,7 @@ class DataFieldPathParser {
             if(field.getTranslatable()) {
                 // Container is translatable, continue on with correct language rows
                 for(DataRow row : container.getRowsFor(language)) {
-                    Map<String, DataField> result = findRootObjectWithTerminatingValueStep(level + 1, row.getFields(), path, terminatingValue);
+                    DataFieldContainer result = findRootObjectWithTerminatingValueStep(level + 1, row, path, terminatingValue);
                     if(result != null) {
                         return result;
                     }
@@ -385,7 +281,7 @@ class DataFieldPathParser {
             } else {
                 // Container is not translatable continue on with default language rows
                 for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-                    Map<String, DataField> result = findRootObjectWithTerminatingValueStep(level + 1, row.getFields(), path, terminatingValue);
+                    DataFieldContainer result = findRootObjectWithTerminatingValueStep(level + 1, row, path, terminatingValue);
                     if(result != null) {
                         return result;
                     }
@@ -409,6 +305,17 @@ class DataFieldPathParser {
             // Needs a non empty data field map as field map
             return null;
         }
+
+        if(reference.getType() == ReferenceType.JSON) {
+            // Sanity check, reference not valid for this parser
+            return null;
+        }
+
+        if(reference.getType() == ReferenceType.DEPENDENCY) {
+            // Sanity check, return the DataFieldContainer version instead
+            return getOption((DataFieldContainer)revision, reference);
+        }
+
         // This path should be relative to the given field map
         String[] path = reference.getTitlePathParts();
 
@@ -416,7 +323,7 @@ class DataFieldPathParser {
         if(!StringUtils.hasText(valueStr)) {
             return null;
         }
-        String titleStr = getTitleString(revision.getFields(), path);
+        String titleStr = getTitleString(revision, path);
         if(titleStr == null) {
             titleStr = valueStr;
         }
@@ -427,13 +334,13 @@ class DataFieldPathParser {
 
     /**
      * Returns ReferenceOption from given data field map
-     * @param fieldMap Map containing value field. Title fields are relative to this map
+     * @param context DataFieldContainer containing value field, title field is relative to this container
      * @param reference Reference that is used to extract value and title from given JsonNode
      * @return Single ReferenceOption containing value and title as per specification
      */
-    ReferenceOption getOption(Map<String, DataField> fieldMap, Reference reference) {
+    ReferenceOption getOption(DataFieldContainer context, Reference reference) {
 
-        if(fieldMap == null || fieldMap.isEmpty()) {
+        if(context == null || !context.hasFields()) {
             // Needs a non empty data field map as field map
             return null;
         }
@@ -444,7 +351,18 @@ class DataFieldPathParser {
         // This path should be relative to the given field map
         path = reference.getTitlePathParts();
 
-        DataField dataField = fieldMap.get(valueKey);
+        Field field = configuration.getField(valueKey);
+        if(field == null) {
+            return null;
+        }
+
+        Language optionLang = field.getTranslatable() ? language : Language.DEFAULT;
+
+        if(!field.getWritable() && field.getType() == FieldType.REFERENCE) {
+            return references.getCurrentFieldOption(optionLang, context.getContainingRevision(), configuration, reference.getValuePath());
+        }
+
+        DataField dataField = context.getField(valueKey);
         if(dataField == null) {
             // No value to get
             return null;
@@ -454,10 +372,6 @@ class DataFieldPathParser {
             // TODO: It should be possible to basically make a read only copy of a container with references, but not yet.
             return null;
         }
-
-        Field field = configuration.getField(dataField.getKey());
-
-        Language optionLang = field.getTranslatable() ? language : Language.DEFAULT;
 
         ValueDataField valueField = (ValueDataField)dataField;
         if(!valueField.hasValueFor(optionLang)) {
@@ -469,7 +383,7 @@ class DataFieldPathParser {
         if(!StringUtils.hasText(valueStr)) {
             return null;
         }
-        String titleStr = getTitleString(fieldMap, path);
+        String titleStr = getTitleString(context, path);
         if(titleStr == null && field.getType() == FieldType.SELECTION) {
             titleStr = getSelectionTitle(field, valueStr);
         }
@@ -481,12 +395,12 @@ class DataFieldPathParser {
         return option;
     }
 
-    private String getTitleString(Map<String, DataField> fieldMap, String[] path) {
+    private String getTitleString(DataFieldContainer context, String[] path) {
         String titleStr = null;
 
         if(path != null) {
             // Let's try to find first terminating data field matching the title path
-            DataFieldPathParser titleParser = new DataFieldPathParser(fieldMap, path, configuration, language);
+            DataFieldPathParser titleParser = new DataFieldPathParser(context, path, configuration, language, references);
             DataField titleField = titleParser.findFirstTerminatingValue();
             if(titleField != null && titleField instanceof ValueDataField) {
                 ValueDataField titleValueField = (ValueDataField)titleField;
@@ -515,8 +429,12 @@ class DataFieldPathParser {
             if(option != null) {
                 titleStr = option.getTitleFor(optionLang);
             }
-        } else {
-            // TODO: Possibly follow reference
+        } else if(list.getType() == SelectionListType.REFERENCE) {
+            // TODO: Follow reference using reference service, then return the title
+            ReferenceOption option = references.getCurrentFieldOption(language, context.getContainingRevision(), configuration, field.getKey());
+            if(option != null) {
+                titleStr = option.getTitle().getValue();
+            }
         }
 
         return titleStr;

@@ -158,28 +158,10 @@ public class RevisionController {
 
     @RequestMapping(value="search/{type}", method = RequestMethod.GET)
     public String search(@PathVariable ConfigurationType type, Model model) {
-        // Take away types that shouldn't navigate through here
-        switch(type) {
-            case STUDY_VARIABLE:
-            case STUDY_ATTACHMENT:
-                // TODO: Return error
-                return null;
-        }
 
         ModelUtil.initRevisionModel(model, type);
 
         return AuthenticationUtil.getModelName("page", model);
-    }
-
-    @RequestMapping(value = "studyIdSearch/{studyId}", method = RequestMethod.GET)
-    public @ResponseBody RevisionSearchResponse studyIdSearch(@PathVariable String studyId) {
-        RevisionSearchRequest searchRequest = new RevisionSearchRequest();
-        searchRequest.setSearchApproved(true);
-        searchRequest.setSearchDraft(true);
-        searchRequest.setSearchRemoved(true);
-        searchRequest.setType(ConfigurationType.STUDY);
-        searchRequest.getValues().put(Fields.STUDYID, studyId);
-        return revisions.search(searchRequest);
     }
 
     @RequestMapping(value = "view/{type}/{id}", method = RequestMethod.GET)

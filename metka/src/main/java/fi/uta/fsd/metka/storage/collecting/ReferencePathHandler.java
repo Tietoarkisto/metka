@@ -35,7 +35,8 @@ import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.ReferenceType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.DataField;
+import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.ReferenceRepository;
@@ -53,9 +54,8 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import java.util.Map;
 
-// TODO: It should be possible to jump from revision to misc json but not the other way. So if one field references a revisionable and a field inside that references a JSON and a third field depends on that then the dependency should rebase itself to json instead of terminating
+// TODO: It should be possible to jump from revision to misc json but not the other way. So if one field referenceRepository a revisionable and a field inside that referenceRepository a JSON and a third field depends on that then the dependency should rebase itself to json instead of terminating
 @Repository
 public class ReferencePathHandler {
     @PersistenceContext(name = "entityManager")
@@ -65,7 +65,10 @@ public class ReferencePathHandler {
     private RevisionRepository revisions;
 
     @Autowired
-    private ReferenceRepository references;
+    private ReferenceService references;
+
+    @Autowired
+    private ReferenceRepository referenceRepository;
 
     @Autowired
     private ConfigurationRepository configurations;
@@ -84,7 +87,14 @@ public class ReferencePathHandler {
         return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, options);
     }
 
-    // This is basically the first step which might lead to other steps or might cause options collecting depending on parameters
+    /**
+     * First step of path parsing process.
+     * Can lead to other steps or return found options without further processing.
+     * @param step
+     * @param options
+     * @param language
+     * @param returnFirst
+     */
     private void referencePathStep(ReferencePath step, List<ReferenceOption> options, Language language, boolean returnFirst) {
         if(!StringUtils.hasText(step.getValue()) && step.getNext() != null) {
             Logger.error(getClass(), "Malformed path. Since current step does not have a selected value there should be no following steps.");
@@ -110,7 +120,7 @@ public class ReferencePathHandler {
         }
     }
 
-    private void referencePathStep(Map<String, DataField> fieldMap, ReferencePath step, Configuration configuration, List<ReferenceOption> options, Language language, boolean returnFirst) {
+    private void referencePathStep(DataFieldContainer context, ReferencePath step, Configuration configuration, List<ReferenceOption> options, Language language, boolean returnFirst) {
         // We should not arrive here if this is not a dependency step
         if(step.getReference().getType() != ReferenceType.DEPENDENCY) {
             Logger.error(getClass(), "Tried to parse DEPENDENCY step with a reference that is not a DEPENDENCY");
@@ -125,22 +135,22 @@ public class ReferencePathHandler {
             return;
         }
 
-        DataFieldPathParser parser = new DataFieldPathParser(fieldMap, step.getReference().getValuePathParts(), configuration, language);
+        DataFieldPathParser parser = new DataFieldPathParser(context, step.getReference().getValuePathParts(), configuration, language, references);
         if(StringUtils.hasText(step.getValue())) {
             // Step has value, either continue on or add a single option
-            fieldMap = parser.findRootObjectWithTerminatingValue(step.getValue());
+            context = parser.findRootObjectWithTerminatingValue(step.getValue());
             if(step.getNext() != null) {
-                referencePathStep(fieldMap, step.getNext(), configuration, options, language, returnFirst);
+                referencePathStep(context, step.getNext(), configuration, options, language, returnFirst);
             } else {
-                ReferenceOption option = parser.getOption(fieldMap, step.getReference());
+                ReferenceOption option = parser.getOption(context, step.getReference());
                 if(option != null) {
                     options.add(option);
                 }
             }
         } else {
             // Add all terminating values as options
-            List<Map<String, DataField>> fieldMaps = parser.findTermini();
-            for(Map<String, DataField> terminus : fieldMaps) {
+            List<DataFieldContainer> contexts = parser.findTermini();
+            for(DataFieldContainer terminus : contexts) {
                 ReferenceOption option = parser.getOption(terminus, step.getReference());
                 if(option != null) {
                     options.add(option);
@@ -163,7 +173,7 @@ public class ReferencePathHandler {
             return;
         }
         if(StringUtils.hasText(step.getValue()) && step.getNext() != null && step.getNext().getReference().getType() != ReferenceType.DEPENDENCY) {
-            Logger.error(getClass(), "Malformed path. Cuurrent step has a value and there's a next step but next step is not DEPENDENCY");
+            Logger.error(getClass(), "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
             return;
         }
 
@@ -196,6 +206,7 @@ public class ReferencePathHandler {
 
     }
 
+
     private void handleRevisionableStep(ReferencePath step, List<ReferenceOption> options, Language language, boolean returnFirst) {
         if(StringUtils.hasText(step.getValue())) {
             Long start = System.currentTimeMillis();
@@ -208,6 +219,9 @@ public class ReferencePathHandler {
             Logger.debug(getClass(), "Got info and revision in "+(System.currentTimeMillis()-start)+"ms");
 
             if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
+                if(step.getConfiguration() != null && !step.getConfiguration().getKey().equals(pair.getRight().getConfiguration())) {
+                    step.setConfiguration(null);
+                }
                 start = System.currentTimeMillis();
                 handleRevisionStep(pair.getRight(), step, options, language, returnFirst);
                 Logger.debug(getClass(), "Handling step took "+(System.currentTimeMillis()-start)+"ms");
@@ -288,7 +302,7 @@ public class ReferencePathHandler {
             return;
         }
         Configuration configuration;
-        if(step.getConfiguration() != null) {
+        if(step.getConfiguration() != null && data.getConfiguration().equals(step.getConfiguration().getKey())) {
             configuration = step.getConfiguration();
         } else {
             Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
@@ -301,20 +315,19 @@ public class ReferencePathHandler {
 
         if(step.getNext() == null) {
             // Terminating step, gather option from revision data
-            DataFieldPathParser parser = new DataFieldPathParser(data.getFields(),
-                    step.getReference().getValuePathParts(), configuration, language);
+            DataFieldPathParser parser = new DataFieldPathParser(data, step.getReference().getValuePathParts(), configuration, language, references);
             //Map<String, DataField> fieldMap = parser.findRootObjectWithTerminatingValue(step.getValue());
             ReferenceOption option = parser.getOption(data, step.getReference());
             if(option != null) {
                 options.add(option);
             }
         } else {
-            referencePathStep(data.getFields(), step.getNext(), configuration, options, language, returnFirst);
+            referencePathStep(data, step.getNext(), configuration, options, language, returnFirst);
         }
     }
 
     private void handleJsonStep(ReferencePath step, List<ReferenceOption> options, Language language, boolean returnFirst) {
-        Pair<ReturnResult, JsonNode> nodePair = references.getMiscJson(step.getReference().getTarget());
+        Pair<ReturnResult, JsonNode> nodePair = referenceRepository.getMiscJson(step.getReference().getTarget());
         if(nodePair.getLeft() != ReturnResult.MISC_JSON_FOUND) {
             // No misc json, can't continue
             Logger.error(getClass(), "No Misc JSON file found with key "+ step.getReference().getTarget());

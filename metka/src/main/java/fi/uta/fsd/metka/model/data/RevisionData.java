@@ -211,6 +211,22 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
 
     // DataFieldContainer
 
+
+    @Override
+    @JsonIgnore public RevisionData getContainingRevision() {
+        return this;
+    }
+
+    @Override
+    @JsonIgnore public boolean hasFields() {
+        return !fields.isEmpty();
+    }
+
+    @Override
+    @JsonIgnore public DataField getField(String key) {
+        return fields.get(key);
+    }
+
     /**
      * Executes DataField operations on this RevisionData based on the DataFieldCall given.
      * If SET operation is requested and no ChangeMap is provided in call then this RevisionData's change map is provided by default

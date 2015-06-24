@@ -183,8 +183,8 @@ define(function (require) {
                             lang: lang
                         });
                         options.$events.on(changeTriggerKey, function() {
-                            require('./reference').optionByPath(key, options, lang, function (value) {
-                                $input.val(value);
+                            require('./reference').optionByPath(key, options, lang, function (option) {
+                                $input.val(require('./selectInputOptionText')(option));
                             })(options.data.fields, reference);
                         });
                     } else if(type === 'CONCAT') {

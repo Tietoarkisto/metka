@@ -29,6 +29,8 @@
 define(function (require) {
     'use strict';
 
+    var resultParser = require('./../../resultParser');
+
     return function (options) {
         delete options.field.displayType;
 
@@ -49,7 +51,7 @@ define(function (require) {
                     }, {
                         method: 'GET',
                         success: function (response) {
-                            if (response.result === 'VIEW_SUCCESSFUL') {
+                            if (resultParser(response.result).getResult() === 'VIEW_SUCCESSFUL') {
                                 $.extend(options.data, response.data);
                                 $.extend(require('./../../root')(options).content, response.gui.content);
                                 options.type = options.isReadOnly(options) ? 'VIEW' : 'MODIFY';

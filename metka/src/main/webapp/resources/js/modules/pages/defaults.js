@@ -29,6 +29,8 @@
 define(function (require) {
     'use strict';
 
+    var resultParser = require('./../resultParser');
+
     /**
      * Creates page configuration based on requested JSON configurations and data from server.
      *
@@ -106,7 +108,7 @@ define(function (require) {
                                                         direction: o.action
                                                     }),
                                                     success: function (response) {
-                                                        if(response.result === "REVISION_FOUND") {
+                                                        if(resultParser(response.result).getResult() === "REVISION_FOUND") {
                                                             $.extend(options.data, response.data);
                                                             options.$events.trigger('refresh.metka');
                                                             history.replaceState(undefined, '', require('./../url')('view'));
@@ -125,14 +127,10 @@ define(function (require) {
                                         require('./../server')("download", {
                                             data: JSON.stringify(options.data),
                                             success: function (response) {
-                                                if(response.result === "REVISION_FOUND") {
+                                                if(resultParser(response.result).getResult() === "REVISION_FOUND") {
                                                     saveAs(new Blob([response.content], {type: "text/json;charset=utf-8"}), "id_"+response.id+"_revision_"+response.no+".json");
                                                 } else {
-                                                    require('./../modal')($.extend(true, require('./../optionsBase')(), {
-                                                        title: MetkaJS.L10N.get('alert.error.title'),
-                                                        body: response.result,
-                                                        buttons: ["DISMISS"]
-                                                    }));
+                                                    require('./../resultViewer')(response.result);
                                                 }
                                             }
                                         });

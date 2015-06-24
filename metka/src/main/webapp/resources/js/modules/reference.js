@@ -118,7 +118,7 @@ define(function (require) {
         },
         optionByPath: function request(key, options, lang, callback) {
             return this.optionsByPath(key, options, lang, function (options) {
-                callback(require('./selectInputOptionText')(options[0]));
+                callback(options[0]);
             });
         }
     };

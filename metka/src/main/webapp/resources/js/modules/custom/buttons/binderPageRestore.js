@@ -26,17 +26,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.storage.repository;
+define(function (require) {
+    'use strict';
 
-import fi.uta.fsd.metka.model.general.DateTimeUserPair;
-import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
-import fi.uta.fsd.metka.storage.response.OperationResponse;
-import org.springframework.transaction.annotation.Transactional;
+    return function(options) {
+        options.type = "RESTORE";
 
-@Transactional
-public interface RevisionRemoveRepository {
-    public OperationResponse remove(TransferData transferData, DateTimeUserPair info);
-    public OperationResponse removeDraft(TransferData transferData, DateTimeUserPair info);
-    public OperationResponse removeLogical(TransferData transferData, DateTimeUserPair info);
-}
+        options.request = {
+            success: function(response) {
+                $.extend(options.data, response.data);
+                options.$events.trigger('modal.refresh');
+                options.$events.trigger('refresh.metka');
+            }
+        };
+    };
+});

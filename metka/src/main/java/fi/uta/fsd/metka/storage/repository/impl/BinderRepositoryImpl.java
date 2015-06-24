@@ -36,7 +36,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.search.StudySearch;
-import fi.uta.fsd.metka.storage.entity.BinderPageEntity;
+import fi.uta.fsd.metka.storage.entity.BinderPageEntityOld;
 import fi.uta.fsd.metka.storage.repository.BinderRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -76,12 +76,12 @@ public class BinderRepositoryImpl implements BinderRepository {
         RevisionData study = pair.getRight();
 
         ReturnResult result = null;
-        BinderPageEntity page = null;
+        BinderPageEntityOld page = null;
         if(request.getPageId() != null) {
-            page = em.find(BinderPageEntity.class, request.getPageId());
+            page = em.find(BinderPageEntityOld.class, request.getPageId());
         }
         if(page == null) {
-            page = new BinderPageEntity();
+            page = new BinderPageEntityOld();
             try {
                 page.setBinderId(ConversionUtil.stringToLong(request.getBinderId()));
             } catch(NumberFormatException e) {
@@ -102,17 +102,17 @@ public class BinderRepositoryImpl implements BinderRepository {
 
     @Override
     public ReturnResult removePage(Long pageId) {
-        em.remove(em.find(BinderPageEntity.class, pageId));
+        em.remove(em.find(BinderPageEntityOld.class, pageId));
         return ReturnResult.PAGE_REMOVED;
     }
 
     @Override
     public Pair<ReturnResult, List<BinderPageListEntry>> listStudyBinderPages(Long study) {
-        List<BinderPageEntity> entities = em.createQuery("SELECT p FROM BinderPageEntity p WHERE p.study=:study ORDER BY p.pageId ASC", BinderPageEntity.class)
+        List<BinderPageEntityOld> entities = em.createQuery("SELECT p FROM BinderPageEntityOld p WHERE p.study=:study ORDER BY p.pageId ASC", BinderPageEntityOld.class)
                 .setParameter("study", study)
                 .getResultList();
         List<BinderPageListEntry> pages = new ArrayList<>();
-        for(BinderPageEntity entity : entities) {
+        for(BinderPageEntityOld entity : entities) {
             BinderPageListEntry page = new BinderPageListEntry();
             page.setPageId(entity.getPageId());
             page.setBinderId(entity.getBinderId());
@@ -124,31 +124,31 @@ public class BinderRepositoryImpl implements BinderRepository {
 
     @Override
     public void removeStudyBinderPages(Long study) {
-        List<BinderPageEntity> entities = em.createQuery("SELECT p FROM BinderPageEntity p WHERE p.study=:study ORDER BY p.pageId ASC", BinderPageEntity.class)
+        List<BinderPageEntityOld> entities = em.createQuery("SELECT p FROM BinderPageEntityOld p WHERE p.study=:study ORDER BY p.pageId ASC", BinderPageEntityOld.class)
                 .setParameter("study", study)
                 .getResultList();
-        for(BinderPageEntity entity : entities) {
+        for(BinderPageEntityOld entity : entities) {
             em.remove(entity);
         }
     }
 
     @Override
     public Pair<ReturnResult, List<BinderPageListEntry>> listBinderPages() {
-        List<BinderPageEntity> entities = em.createQuery("SELECT p FROM BinderPageEntity p ORDER BY p.binderId ASC", BinderPageEntity.class).getResultList();
+        List<BinderPageEntityOld> entities = em.createQuery("SELECT p FROM BinderPageEntityOld p ORDER BY p.binderId ASC", BinderPageEntityOld.class).getResultList();
         return formPageList(entities);
     }
 
     @Override
     public Pair<ReturnResult, List<BinderPageListEntry>> binderContent(Long binderId) {
-        List<BinderPageEntity> entities = em.createQuery("SELECT p FROM BinderPageEntity p WHERE p.binderId=:binderId ORDER BY p.study ASC", BinderPageEntity.class)
+        List<BinderPageEntityOld> entities = em.createQuery("SELECT p FROM BinderPageEntityOld p WHERE p.binderId=:binderId ORDER BY p.study ASC", BinderPageEntityOld.class)
                 .setParameter("binderId", binderId)
                 .getResultList();
         return formPageList(entities);
     }
 
-    private Pair<ReturnResult, List<BinderPageListEntry>> formPageList(List<BinderPageEntity> entities) {
+    private Pair<ReturnResult, List<BinderPageListEntry>> formPageList(List<BinderPageEntityOld> entities) {
         List<BinderPageListEntry> pages = new ArrayList<>();
-        for(BinderPageEntity entity : entities) {
+        for(BinderPageEntityOld entity : entities) {
             Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(entity.getStudy(), false, ConfigurationType.STUDY);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 continue;
@@ -158,7 +158,7 @@ public class BinderRepositoryImpl implements BinderRepository {
         return new ImmutablePair<>(pages.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL, pages);
     }
 
-    private BinderPageListEntry formPageListEntry(RevisionData study, BinderPageEntity page) {
+    private BinderPageListEntry formPageListEntry(RevisionData study, BinderPageEntityOld page) {
         BinderPageListEntry entry = new BinderPageListEntry();
         entry.setPageId(page.getPageId());
         entry.setBinderId(page.getBinderId());

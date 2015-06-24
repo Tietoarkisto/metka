@@ -49,8 +49,10 @@ import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
+import fi.uta.fsd.metka.storage.restrictions.ValidateResult;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +97,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     private BinderRepository binders;
 
     @Override
-    public RemoveResult remove(TransferData transferData, DateTimeUserPair info) {
+    public OperationResponse remove(TransferData transferData, DateTimeUserPair info) {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
@@ -104,41 +106,41 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         } else if(transferData.getState().getUiState() == UIRevisionState.APPROVED) {
             return removeLogical(transferData, info);
         } else {
-            return RemoveResult.ALREADY_REMOVED;
+            return OperationResponse.build(RemoveResult.ALREADY_REMOVED);
         }
     }
 
     @Override
-    public RemoveResult removeDraft(TransferData transferData, DateTimeUserPair info) {
+    public OperationResponse removeDraft(TransferData transferData, DateTimeUserPair info) {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(transferData.getKey()));
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            return RemoveResult.NOT_FOUND;
+            return OperationResponse.build(RemoveResult.NOT_FOUND);
         }
 
         RemoveResult result = allowRemoval(transferData);
         if(result != RemoveResult.ALLOW_REMOVAL) {
-            return result;
+            return OperationResponse.build(result);
         }
 
         RevisionData data = pair.getRight();
 
         if(data.getState() != RevisionState.DRAFT) {
-            return RemoveResult.NOT_DRAFT;
+            return OperationResponse.build(RemoveResult.NOT_DRAFT);
         }
 
         if(!AuthenticationUtil.isHandler(data)) {
             Logger.error(getClass(), "User " + AuthenticationUtil.getUserName() + " tried to remove draft belonging to " + data.getHandler());
-            return RemoveResult.WRONG_USER;
+            return OperationResponse.build(RemoveResult.WRONG_USER);
         }
 
         RevisionableInfo revInfo = revisions.getRevisionableInfo(data.getKey().getId()).getRight();
 
-        result = validateAndCascade(data, info, true, revInfo);
-        if(result != RemoveResult.ALLOW_REMOVAL) {
-            return result;
+        OperationResponse response = validateAndCascade(data, info, true, revInfo);
+        if(!response.getResult().equals(RemoveResult.ALLOW_REMOVAL.name())) {
+            return response;
         }
 
         RevisionEntity revision = em.find(RevisionEntity.class, RevisionKey.fromModelKey(data.getKey()));
@@ -160,22 +162,22 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             result = RemoveResult.SUCCESS_DRAFT;
         }
         addRemoveIndexCommand(transferData, result);
-        return result;
+        return OperationResponse.build(result);
     }
 
     @Override
-    public RemoveResult removeLogical(TransferData transferData, DateTimeUserPair info) {
+    public OperationResponse removeLogical(TransferData transferData, DateTimeUserPair info) {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(transferData.getKey()));
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            return RemoveResult.NOT_FOUND;
+            return OperationResponse.build(RemoveResult.NOT_FOUND);
         }
 
         RemoveResult result = allowRemoval(transferData);
         if(result != RemoveResult.ALLOW_REMOVAL) {
-            return result;
+            return OperationResponse.build(result);
         }
 
         pair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(), false, transferData.getConfiguration().getType());
@@ -183,17 +185,17 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         // NOTICE: These could be moved to restrictions quite easily
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             // This should never happen since we found the revision data provided for this method
-            return RemoveResult.NOT_FOUND;
+            return OperationResponse.build(RemoveResult.NOT_FOUND);
         }
         if(pair.getRight().getState() == RevisionState.DRAFT) {
-            return RemoveResult.OPEN_DRAFT;
+            return OperationResponse.build(RemoveResult.OPEN_DRAFT);
         }
 
         RevisionData data = pair.getRight();
 
-        result = validateAndCascade(data, info, false, null);
-        if(result != RemoveResult.ALLOW_REMOVAL) {
-            return result;
+        OperationResponse response = validateAndCascade(data, info, false, null);
+        if(!response.getResult().equals(RemoveResult.ALLOW_REMOVAL.name())) {
+            return response;
         }
 
         RevisionableEntity entity = em.find(RevisionableEntity.class, data.getKey().getId());
@@ -213,7 +215,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         result = RemoveResult.SUCCESS_LOGICAL;
         addRemoveIndexCommand(transferData, result);
-        return result;
+        return OperationResponse.build(result);
     }
 
     private void finalizeFinalRevisionRemoval(RevisionData data, DateTimeUserPair info) {
@@ -333,11 +335,11 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         }
     }
 
-    private RemoveResult validateAndCascade(RevisionData data, DateTimeUserPair info, Boolean draft, RevisionableInfo revInfo) {
+    private OperationResponse validateAndCascade(RevisionData data, DateTimeUserPair info, Boolean draft, RevisionableInfo revInfo) {
         Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(data.getConfiguration());
         if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             Logger.error(getClass(), "Could not find configuration for data "+data.toString());
-            return RemoveResult.CONFIGURATION_NOT_FOUND;
+            return OperationResponse.build(RemoveResult.CONFIGURATION_NOT_FOUND);
         }
 
         // Do validation
@@ -349,14 +351,10 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                     || operation.getType() == OperationType.ALL)) {
                 continue;
             }
-            if(!validator.validate(data, operation.getTargets(), confPair.getRight())) {
-                rr = ReturnResult.RESTRICTION_VALIDATION_FAILURE;
-                break;
+            ValidateResult vr = validator.validate(data, operation.getTargets(), confPair.getRight());
+            if(!vr.getResult()) {
+                return OperationResponse.build(vr);
             }
-        }
-        // If validation fails then halt the whole process
-        if(rr != ReturnResult.OPERATION_SUCCESSFUL) {
-            return RemoveResult.RESTRICTION_VALIDATION_FAILURE;
         }
 
         // Do cascade
@@ -385,10 +383,10 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         // If cascade fails then don't approve this revision
         if(rr != ReturnResult.OPERATION_SUCCESSFUL) {
-            return RemoveResult.CASCADE_FAILURE;
+            return OperationResponse.build(RemoveResult.CASCADE_FAILURE);
         }
 
-        return RemoveResult.ALLOW_REMOVAL;
+        return OperationResponse.build(RemoveResult.ALLOW_REMOVAL);
     }
 
     private RemoveResult allowRemoval(TransferData transferData) {

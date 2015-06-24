@@ -26,17 +26,54 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.storage.repository;
+package fi.uta.fsd.metka.storage.response;
 
-import fi.uta.fsd.metka.model.general.DateTimeUserPair;
-import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
-import fi.uta.fsd.metka.storage.response.OperationResponse;
-import org.springframework.transaction.annotation.Transactional;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.restrictions.ValidateResult;
 
-@Transactional
-public interface RevisionRemoveRepository {
-    public OperationResponse remove(TransferData transferData, DateTimeUserPair info);
-    public OperationResponse removeDraft(TransferData transferData, DateTimeUserPair info);
-    public OperationResponse removeLogical(TransferData transferData, DateTimeUserPair info);
+public class OperationResponse {
+    public static OperationResponse build(ValidateResult vr) {
+        return build(ReturnResult.RESTRICTION_VALIDATION_FAILURE, vr.getTargetType()+(vr.getTargetContent() != null ? " "+vr.getTargetContent() : ""));
+    }
+
+    public static OperationResponse build(ReturnResult result) {
+        return build(result, null);
+    }
+
+    public static OperationResponse build(ReturnResult result, String message) {
+        return build(result.name(), message);
+    }
+
+    public static OperationResponse build(RemoveResult result) {
+        return build(result, null);
+    }
+
+    public static OperationResponse build(RemoveResult result, String message) {
+        return build(result.name(), message);
+    }
+
+    public static OperationResponse build(String result) {
+        return build(result, null);
+    }
+
+    public static OperationResponse build(String result, String message) {
+        return new OperationResponse(result, message);
+    }
+
+    private final String result;
+    private final String message;
+
+    private OperationResponse(String result, String message) {
+        this.result = result;
+        this.message = message;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

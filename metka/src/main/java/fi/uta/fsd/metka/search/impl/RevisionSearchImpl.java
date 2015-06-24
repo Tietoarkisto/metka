@@ -29,6 +29,7 @@
 package fi.uta.fsd.metka.search.impl;
 
 import fi.uta.fsd.Logger;
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
@@ -291,12 +292,12 @@ public class RevisionSearchImpl implements RevisionSearch {
     }
 
     private Pair<ReturnResult, List<RevisionSearchResult>> performBasicSearch(RevisionSearchRequest request) {
-        Pair<ReturnResult, Configuration> configPair = configurations.findLatestConfiguration(request.getType());
+        /*Pair<ReturnResult, Configuration> configPair = configurations.findLatestConfiguration(request.getType());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             return new ImmutablePair<>(configPair.getLeft(), null);
-        }
+        }*/
         try {
-            ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build(request, configPair.getRight());
+            ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build(request, configurations);
             ResultList<RevisionResult> results = searcher.executeSearch(command);
             return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, collectResults(results, request));
         } catch(QueryNodeException qne) {
@@ -353,17 +354,19 @@ public class RevisionSearchImpl implements RevisionSearch {
             if(request == null) {
                 continue;
             }
-            // Add type specific search result values
-            switch(request.getType()) {
-                case SERIES:
-                    addSeriesSearchResults(searchResult, data);
-                    break;
-                case STUDY:
-                    addStudySearchResults(searchResult, data);
-                    break;
-                case PUBLICATION:
-                    addPublicationSearchResults(searchResult, data);
-                    break;
+            if(request.getValues().containsKey("key.configuration.type") && ConfigurationType.isValue(request.getValues().get("key.configuration.type"))) {
+                // Add type specific search result values
+                switch(ConfigurationType.fromValue(request.getValues().get("key.configuration.type"))) {
+                    case SERIES:
+                        addSeriesSearchResults(searchResult, data);
+                        break;
+                    case STUDY:
+                        addStudySearchResults(searchResult, data);
+                        break;
+                    case PUBLICATION:
+                        addPublicationSearchResults(searchResult, data);
+                        break;
+                }
             }
             results.add(searchResult);
         }

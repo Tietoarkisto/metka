@@ -29,6 +29,8 @@
 define(function (require) {
     'use strict';
 
+    var resultParser = require('./../resultParser');
+
     if (location.pathname.split('/').indexOf('search') !== -1) {
         var commonSearchBooleans = require('./../commonSearchBooleans');
 
@@ -99,7 +101,7 @@ define(function (require) {
                         }
                     ];
 
-                    if (response.result === 'CONFIGURATION_FOUND') {
+                    if (resultParser(response.result).getResult() === 'CONFIGURATION_FOUND') {
                         $.extend(true, options, {
                             header: MetkaJS.L10N.get('type.STUDY.search'),
                             fieldTitles: {
@@ -163,7 +165,7 @@ define(function (require) {
                                                                 }
                                                             }),
                                                             success: function (response) {
-                                                                if (response.result === 'REVISION_CREATED') {
+                                                                if (resultParser(response.result).getResult() === 'REVISION_CREATED') {
                                                                     require('./../assignUrl')('view', {
                                                                         id: response.data.key.id,
                                                                         no: response.data.key.no
@@ -531,7 +533,8 @@ define(function (require) {
                                             "button": require('./../searchButton')('searchAjax', [
                                                     {
                                                         key: 'key.configuration.type',
-                                                        value: "STUDY"
+                                                        value: "STUDY",
+                                                        addParens: false
                                                     },
                                                     'studyid',
                                                     {

@@ -30,6 +30,7 @@ define(function (require) {
     'use strict';
 
     var getPropertyNS = require('./utils/getPropertyNS');
+    var resultParser = require('./resultParser');
 
     // Returns true or false depending on if referenced revisionable is in draft state and handled by current user
     // If the reference is not valid of the information can't be fetched then false is returned
@@ -70,7 +71,7 @@ define(function (require) {
         }, {
             method: 'GET',
             success: function (response) {
-                callback(response.result === 'VIEW_SUCCESSFUL' && response.data.state.uiState === 'DRAFT' && MetkaJS.User.userName === response.data.state.handler);
+                callback(resultParser(response.result).getResult() === 'VIEW_SUCCESSFUL' && response.data.state.uiState === 'DRAFT' && MetkaJS.User.userName === response.data.state.handler);
             },
             error: function () {
                 callback(false);

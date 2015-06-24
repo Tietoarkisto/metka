@@ -66,6 +66,12 @@ public class FieldDescriptionDeserializer extends ObjectDeserializer<FieldDescri
             }
         }
 
+        // Set disableRemoval
+        JsonNode disableRemoval = node.get("disableRemoval");
+        if(disableRemoval != null && disableRemoval.getNodeType() == JsonNodeType.BOOLEAN) {
+            fd.setDisableRemoval(disableRemoval.booleanValue());
+        }
+
         // Set showSaveInfo
         JsonNode showSave = node.get("showSaveInfo");
         if(showSave != null && showSave.getNodeType() == JsonNodeType.BOOLEAN) {

@@ -63,6 +63,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.xml.crypto.Data;
 
 @Repository
 public class RevisionCreationRepositoryImpl implements RevisionCreationRepository {
@@ -92,6 +93,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLES:
             case STUDY_VARIABLE:
+            case BINDER_PAGE:
                 configPair = configurations.findLatestConfiguration(request.getType());
                 break;
             default:
@@ -219,6 +221,9 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
     private RevisionableEntity createRevisionable(RevisionCreateRequest request) {
         RevisionableEntity revisionable;
         switch(request.getType()) {
+            case BINDER_PAGE:
+                revisionable = new BinderPageEntity();
+                break;
             case SERIES:
                 revisionable = new SeriesEntity();
                 break;
@@ -266,6 +271,10 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                                                                 Configuration configuration, RevisionCreateRequest request) {
         Pair<ReturnResult, RevisionData> data;
         switch(request.getType()) {
+            case BINDER_PAGE:
+                data = new ImmutablePair<>(ReturnResult.REVISION_CREATED,
+                        DataFactory.createDraftRevision(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration.getKey()));
+                break;
             case SERIES: {
                 SeriesFactory factory = new SeriesFactory();
                 data = factory.newData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration);

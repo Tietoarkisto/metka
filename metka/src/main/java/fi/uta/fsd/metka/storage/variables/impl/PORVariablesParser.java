@@ -50,6 +50,7 @@ import fi.uta.fsd.metka.storage.repository.RevisionRemoveRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.ChangeUtil;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
@@ -196,7 +197,7 @@ class PORVariablesParser implements VariablesParser {
             // All remaining rows in variableEntities should be removed since no variable was found for them in the current POR-file
 
             // If removal of the revision returns SUCCESS_DRAFT this means that there's more revisions to remove and second call with new latest revision should clear out any remaining revisions.
-            if(remove.remove(TransferData.buildFromRevisionData(variableRevision, RevisionableInfo.FALSE), info) == RemoveResult.SUCCESS_DRAFT) {
+            if(RemoveResult.valueOf(remove.remove(TransferData.buildFromRevisionData(variableRevision, RevisionableInfo.FALSE), info).getResult()) == RemoveResult.SUCCESS_DRAFT) {
                 Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(variableRevision.getKey().getId(), false, ConfigurationType.STUDY_VARIABLE);
                 remove.remove(TransferData.buildFromRevisionData(dataPair.getRight(), RevisionableInfo.FALSE), info);
             }
@@ -268,7 +269,6 @@ class PORVariablesParser implements VariablesParser {
             PORUtil.PORVariableHolder variable = pair.getRight();
             String varName = parser.getVarName(variable);
             String varId = studyId + "_" + parser.getVarName(variable);
-            Pair<ReturnResult, RevisionData> dataPair;
 
             if(variableData == null) {
                 RevisionCreateRequest request = new RevisionCreateRequest();
@@ -278,7 +278,7 @@ class PORVariablesParser implements VariablesParser {
                 request.getParameters().put(Fields.VARNAME, varName);
                 request.getParameters().put(Fields.VARID, varId);
                 request.getParameters().put(Fields.LANGUAGE, varLang.toValue());
-                dataPair = create.create(request);
+                Pair<ReturnResult, RevisionData> dataPair = create.create(request);
                 if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
                     Logger.error(getClass(), "Couldn't create new variable revisionable for study "+studyField.getRight().getActualValueFor(Language.DEFAULT)+" and variables "+variablesData.toString());
                     return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES);
@@ -287,8 +287,8 @@ class PORVariablesParser implements VariablesParser {
             }
 
             if(variableData.getState() != RevisionState.DRAFT) {
-                dataPair = edit.edit(TransferData.buildFromRevisionData(variableData, RevisionableInfo.FALSE), info);
-                if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
+                Pair<OperationResponse, RevisionData> dataPair = edit.edit(TransferData.buildFromRevisionData(variableData, RevisionableInfo.FALSE), info);
+                if(!dataPair.getLeft().getResult().equals(ReturnResult.REVISION_CREATED.name())) {
                     Logger.error(getClass(), "Couldn't create new DRAFT revision for "+variableData.getKey().toString());
                     return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLE_DRAFT);
                 }

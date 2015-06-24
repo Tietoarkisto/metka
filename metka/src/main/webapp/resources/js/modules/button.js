@@ -69,8 +69,39 @@ define(function (require) {
 
         var $button = $('<button type="button" class="btn">');
 
-        if (options.type && buttons[options.type]) {
-            buttons[options.type].call($button, options);
+        if(options.type && buttons[options.type]) {
+            if(options.type === 'CUSTOM') {
+                if(options.customHandler) {
+                    // If there is a custom handler then prevent dismiss. Each custom handler should decide for itself if it needs to close a dialog or not.
+                    $.extend(true, options, {
+                        preventDismiss: true
+                    });
+                    require(['./custom/buttons/'+options.customHandler], function(customHandler) {
+                        switch (typeof customHandler) {
+                            case 'object':
+                                $.extend(true, options, customHandler);
+                                break;
+                            case 'function':
+                                customHandler.call($button, options);
+                                break;
+                        }
+                        if(buttons[options.type]) {
+                            buttons[options.type].call($button, options);
+                        }
+                    }.bind(this));
+                    /*var customHandler = require('./custom/buttons')[options.customHandler];
+                     switch (typeof customHandler) {
+                     case 'object':
+                     $.extend(true, options, customHandler);
+                     break;
+                     case 'function':
+                     customHandler.call(this, options);
+                     break;
+                     }*/
+                }
+            } else if(buttons[options.type]) {
+                buttons[options.type].call($button, options);
+            }
         }
 
         $button.addClass('btn-' + (options.style || 'primary'));

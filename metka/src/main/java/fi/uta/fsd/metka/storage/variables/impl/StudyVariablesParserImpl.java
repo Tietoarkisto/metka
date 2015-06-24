@@ -44,6 +44,7 @@ import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
@@ -127,6 +128,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         String fileName = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
 
         // Get or create study variables
+        RevisionData variablesData;
         Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.set(Fields.STUDYVARIABLES));
         if(conPair.getLeft() == StatusCode.FIELD_INSERT) {
             result = ParseResult.REVISION_CHANGES;
@@ -136,7 +138,6 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             result = ParseResult.REVISION_CHANGES;
         }
         fieldPair = rowPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARIABLES));
-        Pair<ReturnResult, RevisionData> dataPair;
 
         if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             RevisionCreateRequest request = new RevisionCreateRequest();
@@ -147,7 +148,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             request.getParameters().put(Fields.LANGUAGE, varLang.toValue());
             String ext = FilenameUtils.getExtension(fileName.toUpperCase());
             request.getParameters().put(Fields.VARFILETYPE, ext.equals("POR") ? "SPSS Portable" : ext);
-            dataPair = create.create(request);
+            Pair<ReturnResult, RevisionData> dataPair = create.create(request);
 
             if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
                 Logger.error(getClass(), "Couldn't create new variables revisionable for study "+study.toString()+" and file "+attachment.toString());
@@ -157,19 +158,20 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             rowPair.getRight().dataField(
                     ValueDataFieldCall.set(Fields.VARIABLES, new Value(dataPair.getRight().getKey().getId().toString()), Language.DEFAULT).setInfo(info).setChangeMap(study.getChanges()));
             result = ParseResult.REVISION_CHANGES;
+            variablesData = dataPair.getRight();
         } else {
-            dataPair = revisions.getLatestRevisionForIdAndType(Long.parseLong(fieldPair.getRight().getActualValueFor(Language.DEFAULT)), false, ConfigurationType.STUDY_VARIABLES);
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(Long.parseLong(fieldPair.getRight().getActualValueFor(Language.DEFAULT)), false, ConfigurationType.STUDY_VARIABLES);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 Logger.error(getClass(), "Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValueFor(Language.DEFAULT)
                         +" even though it's referenced from study "+study.toString());
                 return ParseResult.DID_NOT_FIND_VARIABLES;
             }
+            variablesData = dataPair.getRight();
         }
 
-        RevisionData variablesData = dataPair.getRight();
         if(variablesData.getState() != RevisionState.DRAFT) {
-            dataPair = edit.edit(TransferData.buildFromRevisionData(variablesData, RevisionableInfo.FALSE), info);
-            if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
+            Pair<OperationResponse, RevisionData> dataPair = edit.edit(TransferData.buildFromRevisionData(variablesData, RevisionableInfo.FALSE), info);
+            if(!dataPair.getLeft().equals(ReturnResult.REVISION_CREATED.name())) {
                 Logger.error(getClass(), "Couldn't create new DRAFT revision for "+variablesData.getKey().toString());
                 return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES_DRAFT);
             }

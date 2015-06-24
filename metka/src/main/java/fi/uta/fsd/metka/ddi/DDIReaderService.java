@@ -42,6 +42,7 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.Pair;
@@ -100,13 +101,13 @@ public class DDIReaderService {
         }
 
         if(revision.getState() != RevisionState.DRAFT) {
-            Pair<ReturnResult, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(revision, RevisionableInfo.FALSE), null);
-            if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
+            Pair<OperationResponse, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(revision, RevisionableInfo.FALSE), null);
+            if(pair.getLeft().getResult().equals(ReturnResult.REVISION_FOUND.name())) {
                 if(!AuthenticationUtil.isHandler(pair.getRight())) {
                     return ReturnResult.USER_NOT_HANDLER;
                 }
-            } else if(pair.getLeft() != ReturnResult.REVISION_CREATED) {
-                return pair.getLeft();
+            } else if(!pair.getLeft().getResult().equals(ReturnResult.REVISION_CREATED.name())) {
+                return ReturnResult.valueOf(pair.getLeft().getResult());
             }
             revision = pair.getRight();
         } else if(!AuthenticationUtil.isHandler(revision)) {

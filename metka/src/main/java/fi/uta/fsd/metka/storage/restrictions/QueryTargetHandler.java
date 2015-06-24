@@ -43,13 +43,13 @@ import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 
 class QueryTargetHandler {
 
-    static boolean handle(Target target, DataFieldContainer context, DataFieldValidator validator, Configuration configuration, SearcherComponent searcher) {
+    static ValidateResult handle(Target target, DataFieldContainer context, DataFieldValidator validator, Configuration configuration, SearcherComponent searcher) {
         ResultList<? extends SearchResult> result = performQuery(target.getContent(), searcher, context, configuration);
         for(Check check : target.getChecks()) {
             // Check is enabled
-            if(validator.validate(check.getRestrictors(), context, configuration)) {
+            if(validator.validate(check.getRestrictors(), context, configuration).getResult()) {
                 if(!checkCondition(result, check.getCondition())) {
-                    return false;
+                    return new ValidateResult(false, target.getType().name(), target.getContent());
                 }
             }
         }

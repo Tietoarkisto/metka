@@ -26,17 +26,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.storage.repository;
+package fi.uta.fsd.metka.storage.entity.impl;
 
-import fi.uta.fsd.metka.model.general.DateTimeUserPair;
-import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
-import fi.uta.fsd.metka.storage.response.OperationResponse;
-import org.springframework.transaction.annotation.Transactional;
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 
-@Transactional
-public interface RevisionRemoveRepository {
-    public OperationResponse remove(TransferData transferData, DateTimeUserPair info);
-    public OperationResponse removeDraft(TransferData transferData, DateTimeUserPair info);
-    public OperationResponse removeLogical(TransferData transferData, DateTimeUserPair info);
-}
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
+/**
+ * Entity class for Binder Page type revisionable objects.
+ */
+@Entity
+@DiscriminatorValue(ConfigurationType.Values.BINDER_PAGE)
+public class BinderPageEntity extends RevisionableEntity {}

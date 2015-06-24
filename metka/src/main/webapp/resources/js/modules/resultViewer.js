@@ -32,6 +32,8 @@ define(function (require) {
     var getPropertyNS = require('./utils/getPropertyNS');
 
     return function(result, operation, callback) {
+        var resultParser = require('./resultParser')(result);
+
         var dismiss = {
             type: 'DISMISS'
         };
@@ -50,7 +52,7 @@ define(function (require) {
                             valuePath: "key",
                             titlePath: "title"
                         },
-                        value: result,
+                        value: resultParser.getResult(),
                         next: (operation ? {
                             reference: {
                                 key: null,
@@ -74,7 +76,7 @@ define(function (require) {
                             valuePath: "key",
                             titlePath: "text"
                         },
-                        value: result,
+                        value: resultParser.getResult(),
                         next: (operation ? {
                             reference: {
                                 key: null,
@@ -112,7 +114,7 @@ define(function (require) {
                                         valuePath: "key",
                                         titlePath: "title"
                                     },
-                                    value: result
+                                    value: resultParser.getResult()
                                 }
                             }, {
                                 key: "resulttext",
@@ -126,16 +128,20 @@ define(function (require) {
                                         valuePath: "key",
                                         titlePath: "text"
                                     },
-                                    value: result
+                                    value: resultParser.getResult()
                                 }
                             }]
                         }),
                         success: function (data) {
                             var body = getPropertyNS(data, 'responses.1.options.0.title.value');
                             if(!body) {
-                                body = result+(operation ? "."+operation : "");
+                                body = resultParser.getResult()+(operation ? "."+operation : "");
                             } else {
-                                body = result+(operation ? "."+operation : "")+"</br>"+body;
+                                body = resultParser.getResult()+(operation ? "."+operation : "")+"</br>"+body;
+                            }
+                            var message = resultParser.getMessage();
+                            if(message) {
+                                body += "</br>"+message;
                             }
                             require('./modal')($.extend(true, require('./optionsBase')(), {
                                 title: MetkaJS.L10N.get('alert.'+(getPropertyNS(data, 'responses.0.options.0.title.value') || "NOTICE").toLowerCase()+'.title'),
@@ -145,9 +151,18 @@ define(function (require) {
                         }
                     });
                 } else {
+                    if(!body) {
+                        body = resultParser.getResult()+(operation ? "."+operation : "");
+                    }
+
+                    var message = resultParser.getMessage();
+                    if(message) {
+                        body += "</br>"+message;
+                    }
+
                     require('./modal')($.extend(true, require('./optionsBase')(), {
                         title: MetkaJS.L10N.get('alert.'+(getPropertyNS(data, 'responses.0.options.0.title.value') || "NOTICE").toLowerCase()+'.title'),
-                        body: (body || result+(operation ? "."+operation : "")),
+                        body: body,
                         buttons: [dismiss]
                     }));
                 }

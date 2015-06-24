@@ -29,6 +29,8 @@
 define(function (require) {
     'use strict';
 
+    var resultParser = require('./resultParser');
+
     return function (url) {
         return function (options, onSuccess, successConditions, operation) {
             return function () {
@@ -66,7 +68,7 @@ define(function (require) {
                     success: function (response) {
 
                         var isExpectedResult = successConditions ? successConditions.some(function (condition) {
-                            return condition === response.result;
+                            return condition === resultParser(response.result).getResult();
                         }) : true;
 
                         require('./resultViewer')(response.result, operation, function() {

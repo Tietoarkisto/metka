@@ -46,6 +46,7 @@ public class FieldDescription {
     private Boolean multiline;
     private Boolean multichoice; // Can be ignored for now, only defined here for completeness
     private final List<String> columnFields = new ArrayList<>();
+    private Boolean disableRemoval = false;
     private Boolean showSaveInfo;
     private Boolean showReferenceValue;
     private Boolean displayHeader = true;
@@ -89,6 +90,14 @@ public class FieldDescription {
 
     public List<String> getColumnFields() {
         return columnFields;
+    }
+
+    public Boolean getDisableRemoval() {
+        return disableRemoval != null ? disableRemoval : false;
+    }
+
+    public void setDisableRemoval(Boolean disableRemoval) {
+        this.disableRemoval = disableRemoval != null ? disableRemoval : false;
     }
 
     public Boolean getShowSaveInfo() {

@@ -29,6 +29,8 @@
 define(function (require) {
     'use strict';
 
+    var resultParser = require('./../../resultParser');
+
     var filesContainerCreated = false;
     return function (options) {
         if (filesContainerCreated) {
@@ -43,7 +45,7 @@ define(function (require) {
                     require('./../../server')('viewAjax', {
                         method: 'GET',
                         success: function (response) {
-                            if (response.result === 'VIEW_SUCCESSFUL') {
+                            if (resultParser(response.result).getResult() === 'VIEW_SUCCESSFUL') {
                                 // on browser, overwrite these fields only, since there might be other unsaved fields on page
                                 ['files', 'studyvariables'].forEach(function (field) {
                                     options.data.fields[field] = options.data.fields[field] || {};
@@ -63,7 +65,7 @@ define(function (require) {
                         success: function (response) {
 
                             // TODO: check status
-                            if (response.result === 'VIEW_SUCCESSFUL') {
+                            if (resultParser(response.result).getResult() === 'VIEW_SUCCESSFUL') {
                             }
                             var modalOptions = $.extend({}, response.gui, {
                                 //title: 'Muokkaa tiedostoa',
@@ -132,7 +134,7 @@ define(function (require) {
                                 }
                             }),
                             success: function (response) {
-                                if (response.result === 'REVISION_CREATED') {
+                                if (resultParser(response.result).getResult() === 'REVISION_CREATED') {
                                     view(response.data.key, addRow);
                                     partialRefresh();
                                 }

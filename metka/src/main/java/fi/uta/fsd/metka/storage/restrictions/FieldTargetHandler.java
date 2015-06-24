@@ -52,16 +52,16 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 class FieldTargetHandler {
-    static boolean handle(Target target, DataFieldContainer context, DataFieldValidator validator,
+    static ValidateResult handle(Target target, DataFieldContainer context, DataFieldValidator validator,
                           Configuration configuration, SearcherComponent searcher, RevisionRepository revisions, ConfigurationRepository configurations) {
         Field field = configuration.getField(target.getContent());
         if(field == null) {
             // Configuration error, no field with provided name
-            return false;
+            return new ValidateResult(false, "CONFIG", null);
         }
         if(field.getSubfield() && target.getParent() == null) {
             // Something is wrong. Field is marked as a subfield but target doesn't have a parent
-            return false;
+            return new ValidateResult(false, "CONFIG", null);
         }
 
         DataField d;
@@ -78,9 +78,9 @@ class FieldTargetHandler {
         }
         for(Check check : target.getChecks()) {
             // Check is enabled
-            if(validator.validate(check.getRestrictors(), context, configuration)) {
+            if(validator.validate(check.getRestrictors(), context, configuration).getResult()) {
                 if(!checkConditionForField(field, d, check.getCondition(), context, configuration, searcher)) {
-                    return false;
+                    return new ValidateResult(false, target.getType().name(), target.getContent());
                 }
             }
         }

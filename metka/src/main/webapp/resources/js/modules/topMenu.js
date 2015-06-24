@@ -29,6 +29,8 @@
 define(function (require) {
     'use strict';
 
+    var resultParser = require('./resultParser');
+
     var metka = require('./../metka');
 
     var items = [
@@ -80,7 +82,8 @@ define(function (require) {
     if (MetkaJS.User.role.permissions.canViewBinderPages) {
         items.push({
             ct: 'BINDER',
-            href: 'binder',
+            href: 'revision/search/BINDER_PAGE',
+            //href: 'binder',
             text: 'binder'
         });
     }
@@ -145,16 +148,16 @@ define(function (require) {
 
         require('./server')('searchAjax', {
             data: JSON.stringify({
-                type: 'STUDY',
                 searchApproved: true,
                 searchDraft: true,
                 searchRemoved: true,
                 values: {
-                    studyid: $id
+                    studyid: $id,
+                    'key.configuration.type': "STUDY"
                 }
             }),
             success: function(response) {
-                if(response.result !== 'OPERATION_SUCCESSFUL' || !response.rows.length || response.rows.length == 0) {
+                if(resultParser(response.result).getResult() !== 'OPERATION_SUCCESSFUL' || !response.rows.length || response.rows.length == 0) {
                     error();
                 } else {
                     require('./assignUrl')('view', {

@@ -91,7 +91,8 @@
 		},
 		"filelanguage_list": {
 			"key": "filelanguage_list",
-			"type": "VALUE",
+			"type": "REFERENCE",
+			"reference": "filelanguage_ref",
 			"options": [
 				{
 					"value": "1",
@@ -208,6 +209,13 @@
 			"type": "DEPENDENCY",
 			"target": "custom_filehistory",
 			"valuePath": "filecomment"
+		},
+		"filelanguage_ref": {
+			"key": "filelanguage_ref",
+			"type": "JSON",
+			"target": "filelanguage",
+			"valuePath": "value",
+			"titlePath": "title"
 		}
 	},
 	"fields": {

@@ -26,17 +26,46 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.storage.repository;
+package fi.uta.fsd.metka.storage.restrictions;
 
-import fi.uta.fsd.metka.model.general.DateTimeUserPair;
-import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
-import fi.uta.fsd.metka.storage.response.OperationResponse;
-import org.springframework.transaction.annotation.Transactional;
+public class ValidateResult {
+    private boolean result;
+    private String targetType;
+    private String targetContent;
 
-@Transactional
-public interface RevisionRemoveRepository {
-    public OperationResponse remove(TransferData transferData, DateTimeUserPair info);
-    public OperationResponse removeDraft(TransferData transferData, DateTimeUserPair info);
-    public OperationResponse removeLogical(TransferData transferData, DateTimeUserPair info);
+    public ValidateResult() {}
+
+    public ValidateResult(boolean result) {
+        this.result = result;
+    }
+
+    public ValidateResult(boolean result, String targetType, String targetContent) {
+        this.result = result;
+        this.targetType = targetType;
+        this.targetContent = targetContent;
+    }
+
+    public boolean getResult() {
+        return result;
+    }
+
+    public void setResult(boolean result) {
+        this.result = result;
+    }
+
+    public String getTargetType() {
+        return targetType;
+    }
+
+    public void setTargetType(String targetType) {
+        this.targetType = targetType;
+    }
+
+    public String getTargetContent() {
+        return targetContent;
+    }
+
+    public void setTargetContent(String targetContent) {
+        this.targetContent = targetContent;
+    }
 }

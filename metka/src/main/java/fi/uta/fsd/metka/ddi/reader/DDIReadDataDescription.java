@@ -50,6 +50,7 @@ import fi.uta.fsd.metka.search.StudyVariableSearch;
 import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.Pair;
@@ -112,13 +113,13 @@ class DDIReadDataDescription extends DDIReadSectionBase {
 
     private ReturnResult readVariableGroups(DataDscrType dataDscr, RevisionData variables) {
         if(variables.getState() != RevisionState.DRAFT) {
-            Pair<ReturnResult, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(variables, RevisionableInfo.FALSE), info);
-            if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
+            Pair<OperationResponse, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(variables, RevisionableInfo.FALSE), info);
+            if(pair.getLeft().getResult().equals(ReturnResult.REVISION_FOUND.name())) {
                 if(!AuthenticationUtil.isHandler(pair.getRight())) {
                     return ReturnResult.USER_NOT_HANDLER;
                 }
-            } else if(pair.getLeft() != ReturnResult.REVISION_CREATED) {
-                return pair.getLeft();
+            } else if(!pair.getLeft().getResult().equals(ReturnResult.REVISION_CREATED.name())) {
+                return ReturnResult.valueOf(pair.getLeft().getResult());
             }
             variables = pair.getRight();
         } else if(!AuthenticationUtil.isHandler(variables)) {
@@ -284,13 +285,13 @@ class DDIReadDataDescription extends DDIReadSectionBase {
         RevisionData variable = variablePair.getRight();
 
         if(variable.getState() != RevisionState.DRAFT) {
-            Pair<ReturnResult, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(variable, RevisionableInfo.FALSE), info);
-            if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
+            Pair<OperationResponse, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(variable, RevisionableInfo.FALSE), info);
+            if(pair.getLeft().getResult().equals(ReturnResult.REVISION_FOUND)) {
                 if(!AuthenticationUtil.isHandler(pair.getRight())) {
                     return ReturnResult.USER_NOT_HANDLER;
                 }
-            } else if(pair.getLeft() != ReturnResult.REVISION_CREATED) {
-                return pair.getLeft();
+            } else if(!pair.getLeft().getResult().equals(ReturnResult.REVISION_CREATED.name())) {
+                return ReturnResult.valueOf(pair.getLeft().getResult());
             }
             variable = pair.getRight();
         } else if(!AuthenticationUtil.isHandler(variable)) {

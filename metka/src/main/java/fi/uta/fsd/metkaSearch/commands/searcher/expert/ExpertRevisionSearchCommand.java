@@ -66,7 +66,7 @@ import static fi.uta.fsd.metka.enums.FieldType.REAL;
 public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<RevisionResult> {
     private final static String LANG_TOKE = "lang";
 
-    public static ExpertRevisionSearchCommand build(RevisionSearchRequest request, Configuration configuration)
+    /*public static ExpertRevisionSearchCommand build(RevisionSearchRequest request, Configuration configuration)
             throws UnsupportedOperationException, QueryNodeException {
         List<String> qrys = new ArrayList<>();
 
@@ -85,6 +85,27 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
 
         DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION);
         return new ExpertRevisionSearchCommand(path, qryStr, configuration);
+    }*/
+
+    public static ExpertRevisionSearchCommand build(RevisionSearchRequest request, ConfigurationRepository configurations)
+            throws UnsupportedOperationException, QueryNodeException {
+        List<String> qrys = new ArrayList<>();
+
+        qrys.add(((!request.isSearchApproved())?"+":"")+"state.approved:"+request.isSearchApproved());
+        qrys.add(((!request.isSearchDraft())?"+":"")+"state.draft:"+request.isSearchDraft());
+        qrys.add(((!request.isSearchRemoved())?"+":"")+"state.removed:"+request.isSearchRemoved());
+
+        for(String key : request.getValues().keySet()) {
+            if(!StringUtils.hasText(request.getByKey(key))) {
+                continue;
+            }
+            qrys.add("+"+key+":"+request.getByKey(key));
+        }
+
+        String qryStr = StringUtils.collectionToDelimitedString(qrys, " ");
+
+        //DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION);
+        return ExpertRevisionSearchCommand.build(qryStr, configurations);
     }
 
     public static ExpertRevisionSearchCommand build(String qry, ConfigurationRepository configurations)

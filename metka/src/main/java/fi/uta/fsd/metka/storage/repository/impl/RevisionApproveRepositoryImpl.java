@@ -50,8 +50,10 @@ import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
+import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
+import fi.uta.fsd.metka.storage.restrictions.ValidateResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -86,7 +88,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     private Cascader cascader;
 
     @Override
-    public Pair<ReturnResult, TransferData> approve(TransferData transferData, DateTimeUserPair info) {
+    public Pair<OperationResponse, TransferData> approve(TransferData transferData, DateTimeUserPair info) {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
@@ -95,13 +97,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 false, transferData.getConfiguration().getType());
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "No revision to approve for " + transferData.getKey().toString());
-            return new ImmutablePair<>(dataPair.getLeft(), transferData);
+            return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), transferData);
         }
 
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(transferData.getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             Logger.error(getClass(), "Can't find configuration "+transferData.getConfiguration().toString()+" and so halting approval process.");
-            return new ImmutablePair<>(configPair.getLeft(), transferData);
+            return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), transferData);
         }
 
         RevisionData data = dataPair.getRight();
@@ -115,24 +117,23 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             }
 
             Logger.info(getClass(), "Can't approve revision "+data.getKey().toString()+" since it is not in DRAFT state");
-            return new ImmutablePair<>(ReturnResult.REVISION_NOT_A_DRAFT, transferData);
+            return new ImmutablePair<>(OperationResponse.build(ReturnResult.REVISION_NOT_A_DRAFT), transferData);
         }
 
         // Do validation
-        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
         for(Operation operation : configPair.getRight().getRestrictions()) {
             if(!(operation.getType() == OperationType.APPROVE || operation.getType() == OperationType.ALL)) {
                 continue;
             }
-            if(!validator.validate(data, operation.getTargets(), configPair.getRight())) {
-                result = ReturnResult.RESTRICTION_VALIDATION_FAILURE;
-                break;
+            ValidateResult vr = validator.validate(data, operation.getTargets(), configPair.getRight());
+            if(!vr.getResult()) {
+                return new ImmutablePair<>(
+                        OperationResponse.build(vr),
+                        transferData);
             }
         }
-        // If validation fails then halt the whole process
-        if(result != ReturnResult.OPERATION_SUCCESSFUL) {
-            return new ImmutablePair<>(result, transferData);
-        }
+
+        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
 
         // Do cascade
         for(Operation operation : configPair.getRight().getCascade()) {
@@ -145,7 +146,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         }
         // If cascade fails then don't approve this revision
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {
-            return new ImmutablePair<>(result, transferData);
+            return new ImmutablePair<>(OperationResponse.build(result), transferData);
         }
 
         // Do approve
@@ -163,7 +164,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             // No changes in this revision, remove it instead
             if(changesIn.isEmpty()) {
                 remove.removeDraft(transferData, info);
-                return new ImmutablePair<>(ReturnResult.NO_CHANGES, transferData);
+                return new ImmutablePair<>(OperationResponse.build(ReturnResult.NO_CHANGES), transferData);
             }
 
             for(Language language : changesIn) {
@@ -173,7 +174,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             // Do final operations before saving data to database
             result = finalizeApproval(data, info);
             if(result != ReturnResult.OPERATION_SUCCESSFUL) {
-                return new ImmutablePair<>(result, transferData);
+                return new ImmutablePair<>(OperationResponse.build(result), transferData);
             }
 
             data.setState(RevisionState.APPROVED);
@@ -181,7 +182,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             Pair<SerializationResults, String> string = json.serialize(data);
             if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
                 Logger.error(getClass(), "Couldn't serialize data "+data.toString()+", halting approval process");
-                return new ImmutablePair<>(ReturnResult.OPERATION_FAIL, transferData);
+                return new ImmutablePair<>(OperationResponse.build(ReturnResult.OPERATION_FAIL), transferData);
             }
 
             ReturnResult updateResult = revisions.updateRevisionData(data);
@@ -196,13 +197,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             revisionable.setCurApprovedNo(data.getKey().getNo());*/
 
             if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
-                return new ImmutablePair<>(updateResult, transferData);
+                return new ImmutablePair<>(OperationResponse.build(updateResult), transferData);
             }
 
             revisions.indexRevision(data.getKey());
-            return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE));
+            return new ImmutablePair<>(OperationResponse.build(ReturnResult.OPERATION_SUCCESSFUL), TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE));
         } else {
-            return new ImmutablePair<>(result, transferData);
+            return new ImmutablePair<>(OperationResponse.build(result), transferData);
         }
     }
 

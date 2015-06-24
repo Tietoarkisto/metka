@@ -40,10 +40,10 @@ class NamedTargetHandler {
      * @param target    NAMED type Target
      * @return Boolean if the Target validates to true
      */
-    static boolean handle(Target target, Configuration configuration, DataFieldContainer context, DataFieldValidator validator) {
+    static ValidateResult handle(Target target, Configuration configuration, DataFieldContainer context, DataFieldValidator validator) {
         Target named = configuration.getNamedTargets().get(target.getContent());
         if(named == null) {
-            return false;
+            return new ValidateResult(false, "CONFIG", null);
         }
         named = named.copy();
         named.initParents(target.getParent());

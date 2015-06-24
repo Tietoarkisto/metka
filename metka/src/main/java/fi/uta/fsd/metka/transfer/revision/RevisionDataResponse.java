@@ -32,18 +32,19 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.OperationResponse;
 
 public class RevisionDataResponse {
-    private String result;
+    private OperationResponse result;
     private TransferData data;
     private Configuration configuration;
     private GUIConfiguration gui;
 
-    public String getResult() {
+    public OperationResponse getResult() {
         return result;
     }
 
-    public void setResult(String result) {
+    public void setResult(OperationResponse result) {
         this.result = result;
     }
 

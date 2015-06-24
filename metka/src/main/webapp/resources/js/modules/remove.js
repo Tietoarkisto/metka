@@ -29,6 +29,8 @@
 define(function (require) {
     'use strict';
 
+    var resultParser = require('./resultParser');
+
     return function (options) {
         return function () {
             var operationType = options.data.state.uiState === 'DRAFT' ? 'draft' : 'logical';
@@ -63,7 +65,7 @@ define(function (require) {
                                             }
                                         }, options.success);
 
-                                        success = success[response.result] || function (response) {
+                                        success = success[resultParser(response.result).getResult()] || function (response) {
                                             require('./resultViewer')(response.result, "remove");
                                         };
 

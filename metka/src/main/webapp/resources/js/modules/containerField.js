@@ -29,6 +29,8 @@
 define(function (require) {
     'use strict';
 
+    var resultParser = require('./resultParser');
+
     /**
      * Creates table (container field or reference container) field.
      *
@@ -89,8 +91,25 @@ define(function (require) {
                         .toggleClass('hiddenByTranslationState', $thead.children('tr').children().eq(i).hasClass('hiddenByTranslationState'));
 
                     if (options.fieldOptions.type === 'REFERENCECONTAINER') {
-                        require('./reference').optionByPath(column, options, options.defaultLang, function(value) {
-                            $td.text(!!value && value.length ? value : EMPTY);
+                        require('./reference').optionByPath(column, options, options.defaultLang, function(option) {
+                            var columnOptions = $.extend(
+                                true
+                                , {}
+                                , getPropertyNS(options, 'dataConf.fields', column)
+                                , options.subfieldConfiguration && options.subfieldConfiguration[column] ? options.subfieldConfiguration[column].field : {});
+
+                            if(columnOptions && columnOptions.displayType === 'LINK') {
+                                require('./inherit')(function(options) {
+                                    require('./linkField')($td, options, "DEFAULT");
+                                })(options)({
+                                    fieldOptions: getPropertyNS(options, 'dataConf.fields', column),
+                                    field: columnOptions,
+                                    data: $.extend({}, options.data, {fields: transferRow.fields})
+                                });
+                            } else {
+                                var value = require('./selectInputOptionText')(option);
+                                $td.text(!!value && value.length ? value : EMPTY);
+                            }
                         })(null, null, transferRow.value);
 
                         return $td;
@@ -107,14 +126,15 @@ define(function (require) {
                             , getPropertyNS(options, 'dataConf.fields', column)
                             , options.subfieldConfiguration && options.subfieldConfiguration[column] ? options.subfieldConfiguration[column].field : {});
 
-                        function setText(text) {
+                        function setText(option) {
+                            var text = require('./selectInputOptionText')(option);
                             $td.text(typeof text === 'undefined' ? EMPTY : text);
                         }
 
                         function setOptionText(listOptions) {
-                            setText(require('./selectInputOptionText')(listOptions.find(function (option) {
+                            setText(listOptions.find(function (option) {
                                 return option.value === value;
-                            })));
+                            }));
                         }
                         var dataConf = getPropertyNS(options, 'dataConf.fields', column);
                         var type = columnOptions && columnOptions.displayType ? columnOptions.displayType : columnOptions.type;
@@ -227,7 +247,7 @@ define(function (require) {
             }
 
             if(options.fieldOptions.type === 'REFERENCECONTAINER') {
-                if(options.field.showReferenceSaveInfo || (options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0)) {
+                if(options.field.showReferenceSaveInfo || (options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0) || options.field.showReferenceState) {
                     var infoTDs = {
                         saved: {},
                         approved: {}
@@ -254,7 +274,7 @@ define(function (require) {
                     require('./server')('/references/referenceStatus/{value}', transferRow, {
                         method: 'GET',
                         success: function (response) {
-                            if(response.result !== 'REVISION_FOUND') {
+                            if(resultParser(response.result).getResult() !== 'REVISION_FOUND') {
                                 require('./resultViewer')(response.result);
                                 return false;
                             }
@@ -304,6 +324,17 @@ define(function (require) {
             }
 
             return $tr;
+        }
+
+        function redraw() {
+            $tbody.empty();
+            var rows = require('./data')(options).getByLang(lang);
+            if (rows) {
+                rows.forEach(function(transferRow) {
+                    appendRow($tbody, transferRow, columns)
+                });
+            }
+            return $tbody;
         }
 
         function appendRow($container, transferRow, columnList) {
@@ -474,7 +505,7 @@ define(function (require) {
                                     addMoveButton('down', 'next', 'after');
                                 }
 
-                                if (require('./hasEveryPermission')(options.fieldOptions.removePermissions) && (!require('./isFieldDisabled')(options, lang) || options.field.onRemove)) {
+                                if (!options.field.disableRemoval && require('./hasEveryPermission')(options.fieldOptions.removePermissions) && (!require('./isFieldDisabled')(options, lang) || options.field.onRemove)) {
                                     addRowCommand($tbody, 'remove', '<i class="glyphicon glyphicon-remove"></i> ' + MetkaJS.L10N.get('general.buttons.remove'), function () {
                                         var $tr = $(this).closest('tr');
                                         if (options.field.onRemove) {
@@ -492,17 +523,7 @@ define(function (require) {
                             }));
                     this.append($thead);
                     $thead.toggleClass("containerHidden", !(!options.field.hasOwnProperty('displayHeader') || options.field.displayHeader));
-                })
-                .append(function () {
-                    $tbody.empty();
-                    var rows = require('./data')(options).getByLang(lang);
-                    if (rows) {
-                        rows.forEach(function(transferRow) {
-                            appendRow($tbody, transferRow, columns)
-                        });
-                    }
-                    return $tbody;
-                }))
+                }).append($tbody))
             .append(function () {
                 if(!options.buttons) {
                     options.buttons = [];
@@ -550,5 +571,10 @@ define(function (require) {
                             .append(buttons));
                 }
             }));
+        var redrawKey = 'redraw-{key}'.supplant({
+            key: options.field.key
+        });
+        options.$events.on(redrawKey, redraw);
+        options.$events.trigger(redrawKey);
     };
 });

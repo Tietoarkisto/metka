@@ -38,6 +38,7 @@ import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 
 class FieldTargetCascader {
@@ -192,10 +193,11 @@ class FieldTargetCascader {
                 // Cascading save doesn't really make any sense at the moment since the user can only edit one form at a time
                 return true;
             } case APPROVE: {
-                ReturnResult result = repositories.getApprove().approve(transferData, instruction.getInfo()).getLeft();
-                return result == ReturnResult.OPERATION_SUCCESSFUL || result == ReturnResult.REVISION_NOT_A_DRAFT || result == ReturnResult.NO_CHANGES;
+                OperationResponse result = repositories.getApprove().approve(transferData, instruction.getInfo()).getLeft();
+                ReturnResult rr = ReturnResult.valueOf(result.getResult());
+                return rr == ReturnResult.OPERATION_SUCCESSFUL || rr == ReturnResult.REVISION_NOT_A_DRAFT || rr == ReturnResult.NO_CHANGES;
             } case REMOVE: {
-                RemoveResult result;
+                OperationResponse result;
                 if(instruction.getDraft() == null) {
                     result = repositories.getRemove().remove(transferData, instruction.getInfo());
                 } else if(instruction.getDraft()) {
@@ -203,12 +205,12 @@ class FieldTargetCascader {
                 } else {
                     result = repositories.getRemove().removeLogical(transferData, instruction.getInfo());
                 }
-
-                return result == RemoveResult.SUCCESS_LOGICAL
-                        || result == RemoveResult.ALREADY_REMOVED
-                        || result == RemoveResult.SUCCESS_REVISIONABLE
-                        || result == RemoveResult.SUCCESS_DRAFT
-                        || result == RemoveResult.NOT_DRAFT;
+                RemoveResult rr = RemoveResult.valueOf(result.getResult());
+                return rr == RemoveResult.SUCCESS_LOGICAL
+                        || rr == RemoveResult.ALREADY_REMOVED
+                        || rr == RemoveResult.SUCCESS_REVISIONABLE
+                        || rr == RemoveResult.SUCCESS_DRAFT
+                        || rr == RemoveResult.NOT_DRAFT;
             } case REMOVE_REVISIONABLE: {
                 // Cascade results don't matter for REMOVE_REVISIONABLE so we can just return true no matter the result
                 RevisionableInfo revInfo = repositories.getRevisions().getRevisionableInfo(transferData.getKey().getId()).getRight();
@@ -217,8 +219,9 @@ class FieldTargetCascader {
                 }
                 return true;
             } case EDIT: {
-                ReturnResult result = repositories.getEdit().edit(transferData, instruction.getInfo()).getLeft();
-                return result == ReturnResult.REVISION_FOUND || result == ReturnResult.REVISION_CREATED;
+                OperationResponse result = repositories.getEdit().edit(transferData, instruction.getInfo()).getLeft();
+                ReturnResult rr = ReturnResult.valueOf(result.getResult());
+                return rr == ReturnResult.REVISION_FOUND || rr == ReturnResult.REVISION_CREATED;
             }
         }
 

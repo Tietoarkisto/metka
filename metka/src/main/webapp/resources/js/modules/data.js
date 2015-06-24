@@ -112,6 +112,19 @@ define(function (require) {
                 //onModified();
             };
 
+            /**
+             * This clears all rows from a transfer field.
+             * Should not be used to remove all rows from normal form-containers (in that case all rows should be marked removed)
+             * but instead for custom forms that are not saved to database and are compiled on the client.
+             * @param lang
+             */
+            byFieldKey.removeRows = function(lang) {
+                var transferField = getTransferField(true);
+                if(transferField.rows) {
+                    transferField.rows[lang] = [];
+                }
+            };
+            
             byFieldKey.appendByLang = function (lang, trasferRow) {
                 var transferField = getTransferField(true);
 

@@ -29,6 +29,8 @@
 define(function (require) {
     'use strict';
     var getPropertyNS = require('./utils/getPropertyNS');
+    var resultParser = require('./resultParser');
+
     return function (url, requestConf, getResults, mapResult, fields, columnFields, getViewRequestOptions, options) {
         function trOnClick(transferRow) {
             var viewRequestOptions = {
@@ -49,7 +51,6 @@ define(function (require) {
                 }
                 if (Array.isArray(requestConf)) {
                     var requestData = require('./commonSearchBooleans').requestData(options, {
-                        type: require('./../metka').PAGE,
                         values: {}
                     });
                     requestConf.map(function (field) {
@@ -105,7 +106,7 @@ define(function (require) {
                 throw 'Illegal search request';
             })()),
             success: function (data) {
-                if(data.result !== 'OPERATION_SUCCESSFUL') {
+                if(resultParser(data.result).getResult() !== 'OPERATION_SUCCESSFUL') {
                     require('./resultViewer')(data.result);
                 }
                 var fieldOptions = $.extend(true, options, {

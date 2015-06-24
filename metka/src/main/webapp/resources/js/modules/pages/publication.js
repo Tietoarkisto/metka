@@ -29,6 +29,8 @@
 define(function (require) {
     'use strict';
 
+    var resultParser = require('./../resultParser');
+
     if (location.pathname.split('/').indexOf('search') !== -1) {
         var commonSearchBooleans = require('./../commonSearchBooleans');
 
@@ -36,7 +38,7 @@ define(function (require) {
             require('./../server')('conf', {
                 method: 'GET',
                 success: function (response) {
-                    if (response.result === 'CONFIGURATION_FOUND') {
+                    if (resultParser(response.result).getResult() === 'CONFIGURATION_FOUND') {
                         $.extend(options, {
                             header: MetkaJS.L10N.get('type.PUBLICATION.search'),
                             fieldTitles: {
@@ -234,10 +236,11 @@ define(function (require) {
                                 }
                             ],
                             buttons: [
-                                require('./../searchButton')('/revision/ajax/search', [
+                                require('./../searchButton')('searchAjax', [
                                         {
                                             key: 'key.configuration.type',
-                                            value: "PUBLICATION"
+                                            value: "PUBLICATION",
+                                            addParens: false
                                         },
                                         'publicationid',
                                         {
@@ -328,7 +331,7 @@ define(function (require) {
                                                         type: 'PUBLICATION'
                                                     }),
                                                     success: function (response) {
-                                                        if (response.result === 'REVISION_CREATED') {
+                                                        if (resultParser(response.result).getResult() === 'REVISION_CREATED') {
                                                             require('./../assignUrl')('view', {
                                                                 id: response.data.key.id,
                                                                 no: response.data.key.no

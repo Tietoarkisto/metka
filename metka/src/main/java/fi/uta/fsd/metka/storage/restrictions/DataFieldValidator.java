@@ -49,19 +49,20 @@ class DataFieldValidator {
         this.configurations = configurations;
     }
 
-    boolean validate(List<Target> targets, DataFieldContainer context, Configuration configuration) {
+    ValidateResult validate(List<Target> targets, DataFieldContainer context, Configuration configuration) {
         for(Target target : targets) {
-            if(!validate(target, context, configuration)) {
-                return false;
+            ValidateResult vr = validate(target, context, configuration);
+            if(!vr.getResult()) {
+                return vr;
             }
             /*if(!validate(target.getTargets(), context, configuration)) {
                 return false;
             }*/
         }
-        return true;
+        return new ValidateResult(true);
     }
 
-    boolean validate(Target target, DataFieldContainer context, Configuration configuration) {
+    ValidateResult validate(Target target, DataFieldContainer context, Configuration configuration) {
         switch(target.getType()) {
             case NAMED:
                 return NamedTargetHandler.handle(target, configuration, context, this);
@@ -76,7 +77,7 @@ class DataFieldValidator {
             default:
                 // This catches types that are invalid for this point of validation operation such as VALUE
                 Logger.error(getClass(), "Reached TargetType " + target.getType());
-                return false;
+                return new ValidateResult(false, "CONFIG", null);
 
         }
     }

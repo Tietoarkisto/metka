@@ -48,8 +48,10 @@ import fi.uta.fsd.metka.storage.repository.RevisionHandlerRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
+import fi.uta.fsd.metka.storage.restrictions.ValidateResult;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -76,7 +78,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
     private Cascader cascader;
 
     @Override
-    public Pair<ReturnResult, RevisionData> edit(TransferData transferData, DateTimeUserPair info) {
+    public Pair<OperationResponse, RevisionData> edit(TransferData transferData, DateTimeUserPair info) {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
@@ -84,26 +86,24 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
                 transferData.getKey().getId(), false, transferData.getConfiguration().getType());
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "No revision for " + transferData.getConfiguration().getType() + " with id " + transferData.getKey().getId() + ". Can't get editable revision.");
-            return dataPair;
+            return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), null);
         }
         RevisionData data = dataPair.getRight();
         Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(data.getKey().getId());
         if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             Logger.error(getClass(), "No revisionable for object for which revision was already found "+data.toString());
-            return new ImmutablePair<>(infoPair.getLeft(), data);
+            return new ImmutablePair<>(OperationResponse.build(infoPair.getLeft()), data);
         }
 
         if(infoPair.getRight().getRemoved()) {
             Logger.warning(getClass(), "Can't create draft for removed Revisionable " + data.toString());
-            return new ImmutablePair<>(ReturnResult.REVISIONABLE_REMOVED, data);
+            return new ImmutablePair<>(OperationResponse.build(ReturnResult.REVISIONABLE_REMOVED), data);
         }
-
-        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
 
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(transferData.getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             Logger.error(getClass(), "Can't find configuration "+transferData.getConfiguration().toString()+" and so halting approval process.");
-            return new ImmutablePair<>(configPair.getLeft(), data);
+            return new ImmutablePair<>(OperationResponse.build(configPair.getLeft()), data);
         }
 
         // Do validation
@@ -111,16 +111,15 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             if(!(operation.getType() == OperationType.EDIT || operation.getType() == OperationType.ALL)) {
                 continue;
             }
-            if(!validator.validate(data, operation.getTargets(), configPair.getRight())) {
-                result = ReturnResult.RESTRICTION_VALIDATION_FAILURE;
-                break;
+            ValidateResult vr = validator.validate(data, operation.getTargets(), configPair.getRight());
+            if(!vr.getResult()) {
+                return new ImmutablePair<>(
+                        OperationResponse.build(vr),
+                        data);
             }
         }
-        // If validation fails then halt the whole process
-        if(result != ReturnResult.OPERATION_SUCCESSFUL) {
-            return new ImmutablePair<>(result, data);
-        }
 
+        ReturnResult result;
         // If data is not a draft then try to create a new draft
         // If data is missing a handler then try to claim the data
         // Return either a claimed draft or a draft that is handled by someone else
@@ -129,11 +128,11 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             result = checkEditPermissions(data);
             if(result != ReturnResult.CAN_CREATE_DRAFT) {
                 Logger.warning(getClass(), "User can't create draft revision because: "+result);
-                return new ImmutablePair<>(result, data);
+                return new ImmutablePair<>(OperationResponse.build(result), data);
             }
             Pair<ReturnResult, RevisionKey> keyPair = revisions.createNewRevision(data);
             if(keyPair.getLeft() != ReturnResult.REVISION_CREATED) {
-                return new ImmutablePair<>(keyPair.getLeft(), data);
+                return new ImmutablePair<>(OperationResponse.build(keyPair.getLeft()), data);
             }
 
             // TODO: If update fails then the possibly created revision should be removed
@@ -143,7 +142,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
 
             ReturnResult update = revisions.updateRevisionData(newData);
             if(update != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
-                return new ImmutablePair<>(update, data);
+                return new ImmutablePair<>(OperationResponse.build(update), data);
             } else {
                 data = newData;
             }
@@ -158,7 +157,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             // Get the revision again so that we have a claimed version
             dataPair = revisions.getRevisionData(RevisionKey.fromModelKey(data.getKey()));
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                return dataPair;
+                return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), dataPair.getRight());
             }
             data = dataPair.getRight();
         }
@@ -179,7 +178,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             revisions.indexRevision(data.getKey());
         }
 
-        return new ImmutablePair<>(result, data);
+        return new ImmutablePair<>(OperationResponse.build(result), data);
     }
 
     // TODO: Move to restrictions when time, requires making state checking restrictions but should be easy

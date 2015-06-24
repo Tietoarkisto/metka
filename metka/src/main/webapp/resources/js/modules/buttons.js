@@ -29,12 +29,14 @@
 define(function (require) {
     'use strict';
 
+    var resultParser = require('./resultParser');
+
     return {
         APPROVE: function (options) {
             this
                 .click(require('./formAction')('approve')(options, function (response) {
 
-                    if(response.result === 'NO_CHANGES') {
+                    if(resultParser(response.result).getResult() === 'NO_CHANGES') {
                         require('./assignUrl')('view', {no: ''});
                     } else {
                         $.extend(options.data, response.data);
@@ -67,31 +69,7 @@ define(function (require) {
             this.prop('disabled', true);
         },
         CUSTOM: function(options) {
-            if(options.customHandler) {
-                // If there is a custom handler then prevent dismiss. Each custom handler should decide for itself if it needs to close a dialog or not.
-                $.extend(true, options, {
-                    preventDismiss: true
-                });
-                require(['./custom/buttons/'+options.customHandler], function(customHandler) {
-                    switch (typeof customHandler) {
-                        case 'object':
-                            $.extend(true, options, customHandler);
-                            break;
-                        case 'function':
-                            customHandler.call(this, options);
-                            break;
-                    }
-                }.bind(this));
-                /*var customHandler = require('./custom/buttons')[options.customHandler];
-                switch (typeof customHandler) {
-                    case 'object':
-                        $.extend(true, options, customHandler);
-                        break;
-                    case 'function':
-                        customHandler.call(this, options);
-                        break;
-                }*/
-            }
+
         },
         DISMISS: function (options) {
             options.title = MetkaJS.L10N.get('general.buttons.close');
@@ -200,7 +178,7 @@ define(function (require) {
                                                 end: $('input[name="endGrp"]:checked').val()
                                             }),
                                             success: function (response) {
-                                                if (response.result === 'OPERATION_SUCCESSFUL') {
+                                                if (resultParser(response.result).getResult() === 'OPERATION_SUCCESSFUL') {
                                                     $table
                                                         .append($('<tbody>')
                                                             .append(response.rows.map(function (row) {

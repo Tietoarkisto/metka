@@ -29,6 +29,8 @@
 define(function (require) {
     'use strict';
 
+    var resultParser = require('./../../resultParser');
+
     return function(options) {
         this.click( function() {
             require('./../../modal')($.extend(true, require('./../../optionsBase')(options), {
@@ -106,7 +108,7 @@ define(function (require) {
                             require('./../../server')('/study/ddi/export', {
                                 data: JSON.stringify(request),
                                 success: function(response) {
-                                    if(response.result === "OPERATION_SUCCESSFUL") {
+                                    if(resultParser(response.result).getResult() === "OPERATION_SUCCESSFUL") {
                                         saveAs(new Blob([response.content], {type: "text/xml;charset=utf-8"}), "id_"+response.id+"_revision_"+response.no+"_ddi_"+response.language+".xml");
                                     }
                                 }

@@ -18,7 +18,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="201.7981099351989" width="289.91319444444457" x="609.6388888888889" y="560.875"/>
+          <y:Geometry height="216.8283389428325" width="289.91319444444457" x="609.6388888888889" y="560.875"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="123.99609375" x="82.95855034722229" y="3.0">FieldDescription<y:LabelModel>
@@ -34,6 +34,7 @@
 +multiline : Boolean
 +multichoice : Boolean
 +columnFields : Field [0..*] {ordered}
++disableRemoval : Boolean = false
 +showSaveInfo : Boolean = false
 +showReferenceValue : Boolean = false
 +displayHeader : Boolean = true
@@ -50,10 +51,10 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="872.5861625200769" width="436.4166666666665" x="411.1354166666671" y="837.75"/>
+          <y:Geometry height="931.9913533597714" width="436.4166666666665" x="411.1354166666671" y="837.75"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="870.0625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="424.205078125" x="4.0" y="4.0">key : Field key of the field being inserted into a cell.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="925.9375" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="425.41796875" x="4.0" y="4.0">key : Field key of the field being inserted into a cell.
 
 displayType : Override for the rendering of this field. Can display
     for example a textfield instead of a dropdown selection.
@@ -75,6 +76,10 @@ columnFields : Applicaple only to fields that display a table structure
     which fields should be used as columns for the table. Order of the
     keys in the array is the order in which the columns appear in the
     table. Should be empty if not needed.
+
+disableRemoval : Applicable only to fields that display a tale structure
+    when rendered. This makes the 'Remove' button not appear on the
+    table rows.
 
 showSaveInfo : At present applies only to components that are
     rendered as a table but it is possible to make implementations
@@ -163,7 +168,7 @@ LINK: Displays applicaple fields as links. Works mainly with Revisionable
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="125.25173611111086" ty="-87.93836179002624"/>
+          <y:Path sx="0.0" sy="0.0" tx="125.25173611111086" ty="-93.92515758011696"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -174,7 +179,7 @@ LINK: Displays applicaple fields as links. Works mainly with Revisionable
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-22.9809822943173" sy="-74.73287849701114" tx="3.502941176470813" ty="-19.261886130598896"/>
+          <y:Path sx="-9.806783821034628" sy="-82.24799300082793" tx="3.502941176470813" ty="-19.261886130598896"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

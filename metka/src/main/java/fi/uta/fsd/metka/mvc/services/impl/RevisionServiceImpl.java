@@ -40,6 +40,7 @@ import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
+import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.*;
@@ -92,102 +93,109 @@ public class RevisionServiceImpl implements RevisionService {
     @Autowired
     private JSONUtil json;
 
-    private RevisionDataResponse getResponse(Pair<ReturnResult, TransferData> dataPair) {
+    private RevisionDataResponse getResponse(OperationResponse result, TransferData data) {
         RevisionDataResponse response = new RevisionDataResponse();
-        fillResponseData(response, dataPair);
+        response.setResult(result);
+        response.setData(data);
         return response;
     }
 
-    private void fillResponseData(RevisionDataResponse response, Pair<ReturnResult, TransferData> dataPair) {
-        response.setResult(dataPair.getLeft().name());
-        response.setData(dataPair.getRight());
-    }
+    private RevisionDataResponse getResponseData(OperationResponse finalResult, RevisionData data) {
+        RevisionDataResponse response = getResponse(finalResult, null);
 
-    private void fillResponseData(String finalResult, RevisionDataResponse response, Pair<ReturnResult, RevisionData> dataPair) {
-        if(dataPair.getRight() == null) {
-            response.setResult(dataPair.getLeft().name());
-            return;
+        if(data == null) {
+            return response;
         }
-        Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(dataPair.getRight().getKey().getId());
+
+        Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(data.getKey().getId());
         if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
-            response.setResult(infoPair.getLeft().name());
+            response.setResult(OperationResponse.build(infoPair.getLeft()));
+            return response;
         }
-        response.setData(TransferData.buildFromRevisionData(dataPair.getRight(), infoPair.getRight()));
-        response.setResult(finalResult);
+
+        response.setData(TransferData.buildFromRevisionData(data, infoPair.getRight()));
+        return response;
     }
 
-    private void fillResponseConfiguration(String finalResult, RevisionDataResponse response, Pair<ReturnResult, RevisionData> dataPair) {
-        fillResponseData(finalResult, response, dataPair);
+    private RevisionDataResponse getResponseConfiguration(OperationResponse finalResult, RevisionData data) {
+        RevisionDataResponse response = getResponseData(finalResult, data);
 
-        Pair<ReturnResult, Configuration> configurationPair = configurations.findConfiguration(dataPair.getRight().getConfiguration());
+        if(data == null) {
+            return response;
+        }
+
+        Pair<ReturnResult, Configuration> configurationPair = configurations.findConfiguration(data.getConfiguration());
         if(configurationPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            response.setResult(configurationPair.getLeft().name());
-            return;
+            response.setResult(OperationResponse.build(configurationPair.getLeft()));
+            return response;
         }
-        response.setConfiguration(configurationPair.getRight());
 
-        response.setResult(finalResult);
+        response.setConfiguration(configurationPair.getRight());
+        return response;
     }
 
-    private void fillResponseGUI(String finalResult, RevisionDataResponse response, Pair<ReturnResult, RevisionData> dataPair) {
-        fillResponseConfiguration(finalResult, response, dataPair);
+    private RevisionDataResponse getResponseGUI(OperationResponse finalResult, RevisionData data) {
+        RevisionDataResponse response = getResponseConfiguration(finalResult, data);
 
-        Pair<ReturnResult, GUIConfiguration> guiPair = configurations.findLatestGUIConfiguration(dataPair.getRight().getConfiguration().getType());
-        if(guiPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            response.setResult(guiPair.getLeft().name());
-            return;
+        if(data == null) {
+            return response;
         }
-        response.setGui(guiPair.getRight());
 
-        response.setResult(finalResult);
+        Pair<ReturnResult, GUIConfiguration> guiPair = configurations.findLatestGUIConfiguration(data.getConfiguration().getType());
+        if(guiPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+            response.setResult(OperationResponse.build(guiPair.getLeft()));
+            return response;
+        }
+
+        response.setGui(guiPair.getRight());
+        return response;
     }
 
     @Override public RevisionDataResponse view(Long id, ConfigurationType type) {
-        RevisionDataResponse response = new RevisionDataResponse();
         Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(id, false, type);
-        fillResponseGUI(ReturnResult.VIEW_SUCCESSFUL.name(), response, dataPair);
-        return response;
+        return getResponseGUI(OperationResponse.build(dataPair.getRight() != null ? ReturnResult.VIEW_SUCCESSFUL.name() : dataPair.getLeft().name()), dataPair.getRight());
     }
 
     @Override public RevisionDataResponse view(Long id, Integer no, ConfigurationType type) {
-        RevisionDataResponse response = new RevisionDataResponse();
         Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionDataOfType(id, no, type);
-        fillResponseGUI(ReturnResult.VIEW_SUCCESSFUL.name(), response, dataPair);
-        return response;
+        return getResponseGUI(OperationResponse.build(dataPair.getRight() != null ? ReturnResult.VIEW_SUCCESSFUL.name() : dataPair.getLeft().name()), dataPair.getRight());
     }
 
     @Override public RevisionDataResponse create(RevisionCreateRequest request) {
         //RevisionDataResponse response = new RevisionDataResponse();
         Pair<ReturnResult, RevisionData> operationResult = create.create(request);
         //fillResponseData(ReturnResult.REVISION_CREATED.name(), response, operationResult);
-        RevisionDataResponse response = getResponse(new ImmutablePair<>(operationResult.getLeft(), TransferData.buildFromRevisionData(operationResult.getRight(), RevisionableInfo.FALSE)));
-        return response;
+        return getResponse(OperationResponse.build(operationResult.getLeft()),
+                operationResult.getRight() != null
+                        ? TransferData.buildFromRevisionData(operationResult.getRight(), RevisionableInfo.FALSE)
+                        : null);
     }
 
     @Override public RevisionDataResponse edit(TransferData transferData) {
-        RevisionDataResponse response = new RevisionDataResponse();
-        Pair<ReturnResult, RevisionData> operationResult = edit.edit(transferData, null);
-        fillResponseGUI(operationResult.getLeft().name(), response, operationResult);
-        return response;
+        Pair<OperationResponse, RevisionData> operationResult = edit.edit(transferData, null);
+        return getResponseGUI(operationResult.getLeft(), operationResult.getRight());
     }
 
     @Override public RevisionDataResponse save(TransferData transferData) {
         Pair<ReturnResult, TransferData> operationResult = save.saveRevision(transferData, null);
-
-        return getResponse(operationResult);
+        return getResponse(OperationResponse.build(operationResult.getLeft()), operationResult.getRight());
     }
 
     @Override public RevisionDataResponse approve(TransferData transferData) {
-        Pair<ReturnResult, TransferData> operationResult = save.saveRevision(transferData, null);
-        if(operationResult.getLeft() == ReturnResult.OPERATION_SUCCESSFUL || operationResult.getLeft() == ReturnResult.NO_CHANGES) {
-            operationResult = approve.approve(operationResult.getRight(), null);
+        Pair<ReturnResult, TransferData> savePair = save.saveRevision(transferData, null);
+        String result = savePair.getLeft().name();
+        TransferData data = savePair.getRight();
+        if(savePair.getLeft() == ReturnResult.OPERATION_SUCCESSFUL || savePair.getLeft() == ReturnResult.NO_CHANGES) {
+            Pair<OperationResponse, TransferData> response = approve.approve(savePair.getRight(), null);
+            return getResponse(response.getLeft(), response.getRight());
+        } else {
+            return getResponse(OperationResponse.build(savePair.getLeft()), savePair.getRight());
         }
-        return getResponse(operationResult);
     }
 
     @Override public RevisionDataResponse remove(TransferData transferData, Boolean draft) {
         RevisionDataResponse response = new RevisionDataResponse();
-        RemoveResult result;
+        OperationResponse result;
         if(draft == null) {
             result = remove.remove(transferData, null);
         } else if(draft) {
@@ -195,7 +203,7 @@ public class RevisionServiceImpl implements RevisionService {
         } else {
             result = remove.removeLogical(transferData, null);
         }
-        response.setResult(result.name());
+        response.setResult(result);
 
         return response;
     }
@@ -203,7 +211,7 @@ public class RevisionServiceImpl implements RevisionService {
     @Override public RevisionDataResponse restore(RevisionKey key) {
         RevisionDataResponse response = new RevisionDataResponse();
         RemoveResult result = restore.restore(key.getId());
-        response.setResult(result.name());
+        response.setResult(OperationResponse.build(result));
 
         response.setData(TransferData.buildFromRevisionData(revisions.getLatestRevisionForIdAndType(key.getId(), false, null).getRight(), RevisionableInfo.FALSE));
 
@@ -227,13 +235,13 @@ public class RevisionServiceImpl implements RevisionService {
     @Override
     public RevisionDataResponse claimRevision(RevisionKey key) {
         Pair<ReturnResult, TransferData> dataPair = handler.changeHandler(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key), false);
-        return getResponse(dataPair);
+        return getResponse(OperationResponse.build(dataPair.getLeft()), dataPair.getRight());
     }
 
     @Override
     public RevisionDataResponse releaseRevision(RevisionKey key) {
         Pair<ReturnResult, TransferData> dataPair = handler.changeHandler(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key), true);
-        return getResponse(dataPair);
+        return getResponse(OperationResponse.build(dataPair.getLeft()), dataPair.getRight());
     }
 
     @Override
@@ -264,10 +272,8 @@ public class RevisionServiceImpl implements RevisionService {
 
     @Override
     public RevisionDataResponse adjacentRevision(AdjacentRevisionRequest request) {
-        RevisionDataResponse response = new RevisionDataResponse();
         Pair<ReturnResult, RevisionData> pair = revisions.getAdjacentRevision(request);
-        fillResponseData(ReturnResult.REVISION_FOUND.name(), response, pair);
-        return response;
+        return getResponseData(OperationResponse.build(pair.getRight() != null ? ReturnResult.REVISION_FOUND.name() : pair.getLeft().name()), pair.getRight());
     }
 
     @Override

@@ -1,0 +1,140 @@
+{
+	"key": {
+		"type": "BINDER_PAGE",
+		"version": 1
+	},
+	"content": [{
+        "type": "COLUMN",
+        "columns": 1,
+        "rows": [{
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Mappinumero",
+                "required": true,
+                "field": {
+                    "key": "binderid"
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Aineistonumero",
+                "required": true,
+                "field": {
+                    "key": "studyid"
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Aineiston nimi",
+                "field": {
+                    "key": "studytitle"
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Kuvaus",
+                "field": {
+                    "key": "description",
+                    "multiline": true
+                }
+            }]
+        }]
+    }],
+    "buttons": [{
+        "title": "Hyväksy",
+        "type": "CUSTOM",
+        "customHandler": "binderPageApprove",
+        "isHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canApproveRevision"
+        ]
+    }, {
+        "title": "Tee luonnos",
+        "type": "CUSTOM",
+        "customHandler": "binderPageEdit",
+        "states": [
+            "APPROVED"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "title": "Poista",
+        "type": "CUSTOM",
+        "customHandler": "binderPageRemove",
+        "states": [
+            "DRAFT",
+            "APPROVED"
+        ],
+        "isHandler": true,
+        "permissions": [
+            "canRemoveRevision"
+        ]
+    }, {
+        "title": "Palauta",
+        "type": "CUSTOM",
+        "customHandler": "binderPageRestore",
+        "states": [
+            "REMOVED"
+        ],
+        "permissions": [
+            "canRestoreRevision"
+        ]
+    }, {
+        "title": "Aloita muokkaus",
+        "type": "CLAIM",
+        "hasHandler": false,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "title": "Ota haltuun",
+        "type": "CLAIM",
+        "hasHandler": true,
+        "isHandler": false,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canEditRevision",
+            "canForceClaimRevision"
+        ]
+    }, {
+        "title": "Lopeta muokkaus",
+        "type": "RELEASE",
+        "isHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "title": "Vapauta luonnos",
+        "type": "RELEASE",
+        "isHandler": false,
+        "hasHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canForceReleaseRevision"
+        ]
+    }, {
+        "title": "Sulje",
+        "type": "CANCEL"
+    }]
+}

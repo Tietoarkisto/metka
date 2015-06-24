@@ -43,10 +43,10 @@ import org.apache.commons.lang3.tuple.Pair;
  */
 class ParentTargetHandler {
 
-    static boolean handle(DataFieldValidator validator, Target t, DataFieldContainer context, Configuration configuration, ConfigurationRepository configurations) {
+    static ValidateResult handle(DataFieldValidator validator, Target t, DataFieldContainer context, Configuration configuration, ConfigurationRepository configurations) {
         if(context.getParent() == null) {
             // Configuration error, return false
-            return false;
+            return new ValidateResult(false, "CONFIG", null);
         }
 
         // We have to check whether we're crossing a reference line, if so then get the old configuration.
@@ -57,7 +57,7 @@ class ParentTargetHandler {
             if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
                 // We've found a revision but can't find configuration for it, we can't accept this as a success
                 Logger.error(ParentTargetHandler.class, "Could not find configuration for revision " + context.getRevisionKey().toString());
-                return false;
+                return new ValidateResult(false, "CONFIG", null);
             }
             configuration = confPair.getRight();
         }

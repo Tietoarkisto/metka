@@ -42,7 +42,7 @@ define(function (require) {
 
     var pages = {
         expert: require('./pages/expert'),
-        binder: require('./pages/binder'),
+        binder_page: require('./pages/binder'),
         publication: require('./pages/publication'),
         series: require('./pages/series'),
         study: require('./pages/study'),

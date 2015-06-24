@@ -52,23 +52,23 @@ import org.springframework.util.StringUtils;
  */
 class ChildrenTargetHandler {
 
-    static boolean handle(DataFieldValidator validator, Target t, DataFieldContainer context, Configuration configuration
+    static ValidateResult handle(DataFieldValidator validator, Target t, DataFieldContainer context, Configuration configuration
             , RevisionRepository revisions, ConfigurationRepository configurations) {
         Target parent = t.getParent();
         if(parent == null) {
             // We can't process children of null
-            return false;
+            return new ValidateResult(false, "CONFIG", null);
         }
 
         if(parent.getType() != TargetType.FIELD) {
             // At the moment only Fields can have children and so any other parent is a configuration problem
-            return false;
+            return new ValidateResult(false, "CONFIG", null);
         }
 
         Field field = configuration.getField(parent.getContent());
         if(field == null) {
             // If we can't find the parent from the configuration then no further validation can take place
-            return false;
+            return new ValidateResult(false, "CONFIG", null);
         }
 
         DataField d;
@@ -81,12 +81,12 @@ class ChildrenTargetHandler {
                 reference = configuration.getReference(field.getReference());
                 if(reference == null) {
                     // Reference not found, configuration error
-                    return false;
+                    return new ValidateResult(false, "CONFIG", null);
                 }
                 if(!(reference.getType() == ReferenceType.REVISION || reference.getType() == ReferenceType.REVISIONABLE)) {
                     // Context changing should only happen on actual REVISION or REVISIONABLE reference field.
                     // TODO: There might be some corner case where dependency field is also a field that can have children but it can be solved when that happens
-                    return false;
+                    return new ValidateResult(false, "CONFIG", null);
                 }
                 d = context.dataField(ReferenceContainerDataFieldCall.get(field.getKey())).getRight();
                 break;
@@ -94,17 +94,17 @@ class ChildrenTargetHandler {
                 SelectionList list = configuration.getRootSelectionList(field.getSelectionList());
                 if(list.getType() != SelectionListType.REFERENCE) {
                     // Only REFERENCE type SELECTION fields can have children
-                    return false;
+                    return new ValidateResult(false, "CONFIG", null);
                 }
                 reference = configuration.getReference(list.getReference());
                 if(reference == null) {
                     // Reference not found, configuration error
-                    return false;
+                    return new ValidateResult(false, "CONFIG", null);
                 }
                 if(!(reference.getType() == ReferenceType.REVISION || reference.getType() == ReferenceType.REVISIONABLE)) {
                     // Context changing should only happen on actual REVISION or REVISIONABLE reference field.
                     // TODO: There might be some corner case where dependency field is also a field that can have children but it can be solved when that happens
-                    return false;
+                    return new ValidateResult(false, "CONFIG", null);
                 }
                 d = context.dataField(ValueDataFieldCall.get(field.getKey())).getRight();
                 break;
@@ -113,17 +113,17 @@ class ChildrenTargetHandler {
                 if(!(reference.getType() == ReferenceType.REVISION || reference.getType() == ReferenceType.REVISIONABLE)) {
                     // Context changing should only happen on actual REVISION or REVISIONABLE reference field.
                     // TODO: There might be some corner case where dependency field is also a field that can have children but it can be solved when that happens
-                    return false;
+                    return new ValidateResult(false, "CONFIG", null);
                 }
                 if(reference == null) {
                     // Reference not found, configuration error
-                    return false;
+                    return new ValidateResult(false, "CONFIG", null);
                 }
                 d = context.dataField(ValueDataFieldCall.get(field.getKey())).getRight();
                 break;
             default:
                 // Field can not have children and so no context switching can take place. Configuration mistake
-                return false;
+                return new ValidateResult(false, "CONFIG", null);
         }
 
         if(d == null) {
@@ -131,7 +131,7 @@ class ChildrenTargetHandler {
             // since no context switching can take place and all further calls would be made to an empty context.
             // The point of CHILDREN target is not to require children but just to move validation down a level.
             // If chidlren are required then a separate NOT_EMPTY validation has to be made.
-            return true;
+            return new ValidateResult(true);
         }
 
         // Check for the existence of children
@@ -140,35 +140,35 @@ class ChildrenTargetHandler {
             case CONTAINER:
                 if(!((ContainerDataField)d).hasRows()) {
                     // No chidlren, can't change context. Everything in this target is valid
-                    return true;
+                    return new ValidateResult(true);
                 } else {
                     return changeContext((ContainerDataField)d, t, validator, configuration);
                 }
             case REFERENCECONTAINER:
                 if(!((ReferenceContainerDataField)d).hasRows()) {
                     // No chidlren, can't change context. Everything in this target is valid
-                    return true;
+                    return new ValidateResult(true);
                 } else {
                     if(reference == null) {
                         // This should have been found earlier
-                        return false;
+                        return new ValidateResult(false, "CONFIG", null);
                     }
                     return changeContext((ReferenceContainerDataField)d, t, reference, context, configuration, revisions, validator, configurations);
                 }
             default:
                 if(!((ValueDataField)d).hasAnyValue()) {
-                    return false;
+                    return new ValidateResult(true);
                 } else {
                     if(reference == null) {
                         // This should have been found earlier
-                        return false;
+                        return new ValidateResult(false, "CONFIG", null);
                     }
                     return changeContext((ValueDataField)d, t, reference, context, configuration, revisions, validator, configurations);
                 }
         }
     }
 
-    private static boolean changeContext(ContainerDataField d, Target t, DataFieldValidator validator, Configuration configuration) {
+    private static ValidateResult changeContext(ContainerDataField d, Target t, DataFieldValidator validator, Configuration configuration) {
         // TODO: For now validates all languages, fix this when language support is added to validation
         for(Language l : Language.values()) {
             if(!d.hasRowsFor(l)) {
@@ -178,15 +178,16 @@ class ChildrenTargetHandler {
                 if(row.getRemoved()) {
                     continue;
                 }
-                if(!validator.validate(t.getTargets(), row, configuration)) {
-                    return false;
+                ValidateResult vr = validator.validate(t.getTargets(), row, configuration);
+                if(!vr.getResult()) {
+                    return vr;
                 }
             }
         }
-        return true;
+        return new ValidateResult(true);
     }
 
-    private static boolean changeContext(ReferenceContainerDataField d, Target t, Reference reference, DataFieldContainer context, Configuration configuration
+    private static ValidateResult changeContext(ReferenceContainerDataField d, Target t, Reference reference, DataFieldContainer context, Configuration configuration
             , RevisionRepository revisions, DataFieldValidator validator, ConfigurationRepository configurations) {
         Field field = configuration.getField(d.getKey());
 
@@ -199,29 +200,50 @@ class ChildrenTargetHandler {
                     Logger.error(ChildrenTargetHandler.class, "Encountered a reference row without value in "+context.toString());
                     continue;
                 }
-
-                if(!changeContext(row.getActualValue(), t, context, validator, reference, revisions, configurations)) {
+                ValidateResult vr = changeContext(row.getActualValue(), t, context, validator, reference, revisions, configurations);
+                if(!vr.getResult()) {
                     // Failed validation
-                    return false;
+                    return vr;
                 }
             }
         }
-        return true;
+        return new ValidateResult(true);
     }
 
-    private static boolean changeContext(ValueDataField d, Target t, Reference reference, DataFieldContainer context, Configuration configuration
+    private static ValidateResult changeContext(ValueDataField d, Target t, Reference reference, DataFieldContainer context, Configuration configuration
             , RevisionRepository revisions, DataFieldValidator validator, ConfigurationRepository configurations) {
         Field field = configuration.getField(d.getKey());
         for(Language l : Language.values()) {
             if(!d.hasValueFor(l)) {
                 continue;
             }
-            if(!changeContext(d.getActualValueFor(l), t, context, validator, reference, revisions, configurations)) {
+            ValidateResult vr = changeContext(d.getActualValueFor(l), t, context, validator, reference, revisions, configurations);
+            if(!vr.getResult()) {
                 // Failed validation
-                return false;
+                return vr;
             }
         }
-        return true;
+        return new ValidateResult(true);
+    }
+
+    private static ValidateResult changeContext(String value, Target t, DataFieldContainer context, DataFieldValidator validator, Reference reference
+            , RevisionRepository revisions, ConfigurationRepository configurations) {
+        Pair<ReturnResult, RevisionData> pair = fetchRevisionData(reference, value, revisions);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            // If we don't find the revision data then return true by default, existence should have been checked earlier if this is required
+            return new ValidateResult(true);
+        }
+
+        Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(pair.getRight().getConfiguration());
+        if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+            // We've found a revision but can't find configuration for it, we can't accept this as a success
+            Logger.error(FieldTargetHandler.class, "Could not find configuration for revision "+pair.getRight().toString());
+            return new ValidateResult(false, "CONFIG", null);
+        }
+
+        RevisionData rev = pair.getRight();
+        rev.initParents(context);
+        return validator.validate(t.getTargets(), rev, confPair.getRight());
     }
 
     private static Pair<ReturnResult, RevisionData> fetchRevisionData(Reference reference, String value, RevisionRepository revisions) {
@@ -247,25 +269,5 @@ class ChildrenTargetHandler {
         } else {
             return revisions.getRevisionData(Long.parseLong(id), Integer.parseInt(no));
         }
-    }
-
-    private static boolean changeContext(String value, Target t, DataFieldContainer context, DataFieldValidator validator, Reference reference
-            , RevisionRepository revisions, ConfigurationRepository configurations) {
-        Pair<ReturnResult, RevisionData> pair = fetchRevisionData(reference, value, revisions);
-        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            // If we don't find the revision data then return true by default, existence should have been checked earlier if this is required
-            return true;
-        }
-
-        Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(pair.getRight().getConfiguration());
-        if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            // We've found a revision but can't find configuration for it, we can't accept this as a success
-            Logger.error(FieldTargetHandler.class, "Could not find configuration for revision "+pair.getRight().toString());
-            return false;
-        }
-
-        RevisionData rev = pair.getRight();
-        rev.initParents(context);
-        return validator.validate(t.getTargets(), rev, confPair.getRight());
     }
 }

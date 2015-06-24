@@ -26,17 +26,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.storage.repository;
+define(function (require) {
+    'use strict';
 
-import fi.uta.fsd.metka.model.general.DateTimeUserPair;
-import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
-import fi.uta.fsd.metka.storage.response.OperationResponse;
-import org.springframework.transaction.annotation.Transactional;
+    var resultParser = require('./../../resultParser');
 
-@Transactional
-public interface RevisionRemoveRepository {
-    public OperationResponse remove(TransferData transferData, DateTimeUserPair info);
-    public OperationResponse removeDraft(TransferData transferData, DateTimeUserPair info);
-    public OperationResponse removeLogical(TransferData transferData, DateTimeUserPair info);
-}
+    return function(options) {
+        options.preventDismiss = true;
+
+        this
+            .click(require('./../../formAction')('approve')(options, function (response) {
+                if(resultParser(response.result).getResult() === 'OPERATION_SUCCESSFUL_WITH_ERRORS' || resultParser(response.result).getResult() === 'RESTRICTION_VALIDATION_FAILURE') {
+                    $.extend(options.data, response.data);
+                    options.$events.trigger('refresh.metka');
+                } else {
+                    $('#'+options.modalTarget).modal('hide');
+                }
+                options.$events.trigger('modal.refresh');
+            }, [
+                'OPERATION_SUCCESSFUL',
+                'OPERATION_SUCCESSFUL_WITH_ERRORS',
+                'RESTRICTION_VALIDATION_FAILURE',
+                'NO_CHANGES'
+            ], "approve"));
+    };
+});
