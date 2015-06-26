@@ -916,6 +916,23 @@
 			"target": "user-list",
 			"valuePath": "userName",
 			"titlePath": "displayName"
+		},
+		"related_binder_ref": {
+			"key": "related_binder_ref",
+			"type": "REVISIONABLE",
+			"target": "BINDER_PAGE"
+		},
+		"binder_id_ref": {
+			"key": "binder_id_ref",
+			"type": "DEPENDENCY",
+			"target": "studyRelatedBinders",
+			"valuePath": "binderid"
+		},
+		"binder_description_ref": {
+			"key": "binder_description_ref",
+			"type": "DEPENDENCY",
+			"target": "studyRelatedBinders",
+			"valuePath": "description"
 		}
 	},
 	"displayId": "studyid",
@@ -2229,7 +2246,32 @@
         	"type": "STRING",
         	"subfield": true,
         	"translatable": true
-        }
+        },
+		"studyRelatedBinders": {
+			"_comment": "This provides configuration for the related binders container, this data is not saved to database",
+			"key": "studyRelatedBinders",
+			"type": "REFERENCECONTAINER",
+			"reference": "related_binder_ref",
+			"writable": false,
+			"subfields": [
+				"binderid",
+				"binderdescription"
+			]
+		},
+		"binderid": {
+			"key": "binderid",
+			"type": "REFERENCE",
+			"subfield": true,
+			"writable": false,
+			"reference": "binder_id_ref"
+		},
+		"binderdescription": {
+			"key": "binderdescription",
+			"type": "REFERENCE",
+			"subfield": true,
+			"writable": false,
+			"reference": "binder_description_ref"
+		}
 	},
 	"namedTargets": {
 		"quantitative": {

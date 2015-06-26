@@ -41,7 +41,7 @@ define(function (require) {
             } else {
                 $('#'+options.modalTarget).modal('hide');
             }
-            options.$events.trigger('attachment.refresh');
+            options.$events.trigger('modal.refresh');
         }));
     };
 });

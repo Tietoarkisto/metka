@@ -26,23 +26,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.storage.repository;
+package fi.uta.fsd.metkaAmqp;
 
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.transfer.binder.BinderPageListEntry;
-import fi.uta.fsd.metka.transfer.binder.SaveBinderPageRequest;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.transaction.annotation.Transactional;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferencePath;
 
 import java.util.List;
 
-@Transactional(readOnly = true)
-public interface BinderRepository {
-    @Transactional(readOnly = false) public Pair<ReturnResult, BinderPageListEntry> saveBinderPage(SaveBinderPageRequest request);
-    @Transactional(readOnly = false) public ReturnResult removePage(Long pageId);
-    @Transactional(readOnly = false) public void removeStudyBinderPages(Long study);
+public class MetkaMessage0 extends MetkaMessage {
 
-    public Pair<ReturnResult, List<BinderPageListEntry>> listStudyBinderPages(Long study);
-    public Pair<ReturnResult, List<BinderPageListEntry>> listBinderPages();
-    public Pair<ReturnResult, List<BinderPageListEntry>> binderContent(Long binderId);
+    public MetkaMessage0(ReferenceService references) {
+        super(references, "0");
+    }
+
+    @Override
+    public void send(AmqpMessenger messenger, Object... parameters) {
+        String key = (String)parameters[0];
+        String exchange = getExchange(key);
+        String routingKey = getRoutingKey(key);
+        String message = getMessage(key);
+
+        messenger.write(exchange, routingKey, message);
+    }
 }

@@ -204,8 +204,7 @@ abstract class DDIWriteSectionBase {
     }*/
 
     protected String getDDIText(Language language, String value) {
-        Reference reference = new Reference("", ReferenceType.JSON, "ddi_texts", "key");
-        reference.setTitlePath("text");
+        Reference reference = new Reference("", ReferenceType.JSON, "ddi_texts", "key", "text");
         ReferencePath root = new ReferencePath(reference, value);
         return getReferenceTitle(language, root);
     }
@@ -215,9 +214,8 @@ abstract class DDIWriteSectionBase {
     }*/
 
     protected String getDDIRestriction(Language language, String value) {
-        Reference rest_reference = new Reference("", ReferenceType.JSON, "ddi_texts", "key");
-        Reference rest_value_reference = new Reference("", ReferenceType.DEPENDENCY, "", "values.value");
-        rest_value_reference.setTitlePath("text");
+        Reference rest_reference = new Reference("", ReferenceType.JSON, "ddi_texts", "key", null);
+        Reference rest_value_reference = new Reference("", ReferenceType.DEPENDENCY, "", "values.value", "text");
         ReferencePath root = new ReferencePath(rest_reference, "RESTRICTION");
         root.setNext(new ReferencePath(rest_value_reference, value));
         return getReferenceTitle(language, root);

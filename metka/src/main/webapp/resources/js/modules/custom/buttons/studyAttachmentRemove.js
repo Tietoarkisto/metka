@@ -33,7 +33,7 @@ define(function (require) {
         options.preventDismiss = true;
 
         function closeAndRefresh() {
-            options.$events.trigger('attachment.refresh');
+            options.$events.trigger('modal.refresh');
             $('#'+options.modalTarget).modal('hide');
         }
         this.click(require('./../../remove')($.extend({

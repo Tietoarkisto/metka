@@ -84,7 +84,7 @@ class DDIWriteDocumentDescription extends DDIWriteSectionBase {
         usedVocabs.add(configuration.getReference("topicvocab_ref").getTarget());
 
         for(String target : usedVocabs) {
-            Reference usedVocabRef = new Reference("temp", ReferenceType.JSON, target, "codeListID");
+            Reference usedVocabRef = new Reference("temp", ReferenceType.JSON, target, "codeListID", null);
             ReferencePath usedVocabRoot = new ReferencePath(usedVocabRef, null);
             ReferencePathRequest request = new ReferencePathRequest();
             request.setRoot(usedVocabRoot);
@@ -95,7 +95,7 @@ class DDIWriteDocumentDescription extends DDIWriteSectionBase {
             for(ReferenceOption vocabId : vocabIds) {
                 ControlledVocabUsedType type = docDscrType.addNewControlledVocabUsed();
                 fillTextType(type.addNewCodeListID(), vocabId.getValue());
-                Reference singleValueRef = new Reference("single", ReferenceType.JSON, target, "codeListID");
+                Reference singleValueRef = new Reference("single", ReferenceType.JSON, target, "codeListID", null);
 
                 ReferencePath singleValuePath = new ReferencePath(singleValueRef, vocabId.getValue());
                 request.setLanguage(language);

@@ -30,8 +30,8 @@ define(function (require) {
     'use strict';
 
     var resultParser = require('./../resultParser');
+    var commonSearchBooleans = require('./../commonSearchBooleans');
 
-    var setContent;
     var dataConf = {
         references: {
             binder_page_ref: {
@@ -68,6 +68,18 @@ define(function (require) {
             findBinderId: {
                 key: "findBinderId",
                 type: "INTEGER"
+            },
+            findStudyId: {
+                key: "findStudyId",
+                type: "STRING"
+            },
+            findStudyTitle: {
+                key: "findStudyTitle",
+                type: "STRING"
+            },
+            findBinderDescription: {
+                key: "findBinderDescription",
+                type: "STRING"
             },
             pages: {
                 key: "pages",
@@ -133,20 +145,38 @@ define(function (require) {
 
     return function (options, onLoad) {
         function performSearch() {
-            var binderSearch = {
-                searchApproved: true,
-                searchDraft: true,
-                searchRemoved: true,
+            /*var binderSearch = commonSearchBooleans.requestData(options, {
                 values: {
                     'key.configuration.type': "BINDER_PAGE"
                 }
-            };
+            });
             var fbId = require('./../data')(options)("findBinderId").getByLang('DEFAULT');
             if(fbId) {
                 binderSearch.values.binderid = fbId;
-            }
+            }*/
+
             require('./../server')('searchAjax', {
-                data: JSON.stringify(binderSearch),
+                data: JSON.stringify(require('./../searchRequest')(options, [{
+                    key: 'key.configuration.type',
+                    value: "BINDER_PAGE",
+                    addParens: false
+                }, {
+                    key: 'findBinderId',
+                    rename: 'binderid',
+                    exactValue: true
+                }, {
+                    key: 'findStudyId',
+                    rename: 'studyid',
+                    exactValue: true
+                }, {
+                    key: 'findStudyTitle',
+                    rename: 'studytitle',
+                    exactValue: true
+                }, {
+                    key: 'findBinderDescription',
+                    rename: 'description',
+                    exactValue: true
+                }])),
                 success: function(response) {
                     var rowId = 0;
                     require('./../data')(options)("pages").removeRows('DEFAULT');
@@ -165,33 +195,7 @@ define(function (require) {
         }
 
         function view(requestOptions) {
-            require('./../server')('viewAjax', $.extend({
-                PAGE: 'BINDER_PAGE'
-            }, requestOptions), {
-                method: 'GET',
-                success: function (response) {
-
-                    // TODO: check status
-                    if (resultParser(response.result).getResult() === 'VIEW_SUCCESSFUL') {
-                    }
-                    var modalOptions = $.extend({}, response.gui, {
-                        //title: 'Muokkaa tiedostoa',
-                        data: response.data,
-                        dataConf: response.configuration,
-                        //$events: options.$events,
-                        // TODO: Events need better management so that some events can be inherited and others can be overwritten
-                        $events: $({}),
-                        defaultLang: 'DEFAULT',
-                        large: false,
-                        dialogTitles: options.dialogTitles || {}
-                    });
-                    modalOptions.$events.on('modal.refresh', performSearch);
-                    // We need the isReadOnly function at this point so we need to add it before calling modal
-                    modalOptions = $.extend(true, require('./../optionsBase')(), modalOptions);
-                    modalOptions.type = modalOptions.isReadOnly(modalOptions) ? 'VIEW' : 'MODIFY';
-                    require('./../modal')(modalOptions);
-                }
-            });
+            require('./../revisionModal')(options, requestOptions, 'BINDER_PAGE', performSearch, 'pages');
         }
 
         $.extend(options, {
@@ -199,7 +203,9 @@ define(function (require) {
             fieldTitles: fieldTitles,
             dialogTitles: dialogTitles,
             dataConf: dataConf,
-            content: [{
+            content: [
+                commonSearchBooleans.column,
+                {
                 "type": "COLUMN",
                 "columns": 2,
                 "rows": [{
@@ -210,6 +216,36 @@ define(function (require) {
                         "horizontal": true,
                         "field": {
                             "key": "findBinderId"
+                        }
+                    }]
+                }, {
+                    "type": "ROW",
+                    "cells": [{
+                        "type": "CELL",
+                        "title": "Aineistonro",
+                        "horizontal": true,
+                        "field": {
+                            "key": "findStudyId"
+                        }
+                    }]
+                }, {
+                    "type": "ROW",
+                    "cells": [{
+                        "type": "CELL",
+                        "title": "Aineiston nimi",
+                        "horizontal": true,
+                        "field": {
+                            "key": "findStudyTitle"
+                        }
+                    }]
+                }, {
+                    "type": "ROW",
+                    "cells": [{
+                        "type": "CELL",
+                        "title": "Mapitettu aineisto",
+                        "horizontal": true,
+                        "field": {
+                            "key": "findBinderDescription"
                         }
                     }, {
                         "type": "CELL",
@@ -246,7 +282,6 @@ define(function (require) {
                             ],
                             onClick: function(transferRow) {
                                 view({
-                                    type: 'BINDER_PAGE',
                                     id: transferRow.value.split('-')[0],
                                     no: transferRow.value.split('-')[1]});
                             }
@@ -254,6 +289,7 @@ define(function (require) {
                     }]
                 }]
             }],
+            data: commonSearchBooleans.initialData({}),
             buttons: [{
                 "&title": {
                     "default": "Lisää aineisto mappiin"
@@ -278,88 +314,6 @@ define(function (require) {
                                 }
                             }
                         });
-
-                        /*var containerOptions = $.extend(true, require('./../optionsBase')(), {
-                            title: 'Lisää aineisto mappiin',
-                            data: {},
-                            dataConf: {},
-                            $events: $({}),
-                            defaultLang: options.defaultLang,
-                            content: [{
-                                type: 'COLUMN',
-                                columns: 1,
-                                rows: [
-                                    {
-                                        "type": "ROW",
-                                        "cells": [
-                                            {
-                                                "type": "CELL",
-                                                "title": "Mappinumero",
-                                                "colspan": 1,
-                                                "field": {
-                                                    "displayType": "STRING",
-                                                    "key": "binderId"
-                                                }
-                                            }
-                                        ]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [
-                                            {
-                                                "type": "CELL",
-                                                "title": "Aineistonumero",
-                                                "colspan": 1,
-                                                "field": {
-                                                    "displayType": "STRING",
-                                                    "key": "studyId"
-                                                }
-                                            }
-                                        ]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [
-                                            {
-                                                "type": "CELL",
-                                                "title": "Mapitettu aineisto",
-                                                "colspan": 1,
-                                                "field": {
-                                                    "displayType": "STRING",
-                                                    "key": "description",
-                                                    multiline: true
-                                                }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }],
-                            buttons: [{
-                                create: function () {
-                                    this
-                                        .text(MetkaJS.L10N.get('general.buttons.ok'))
-                                        .click(function () {
-                                            require('./../server')('/binder/saveBinderPage', {
-                                                data: JSON.stringify({
-                                                    pageId: null,
-                                                    binderId: require('./../data')(containerOptions)('binderId').getByLang(options.defaultLang),
-                                                    studyId: require('./../data')(containerOptions)('studyId').getByLang(options.defaultLang),
-                                                    description: require('./../data')(containerOptions)('description').getByLang(options.defaultLang)
-                                                }),
-                                                success: function(data) {
-                                                    require('./../resultViewer')(data.result, "binder", function() {
-                                                        if (data.result === 'PAGE_CREATED') {
-                                                            setContent(data);
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                        });
-                                }
-                            }, {
-                                type: 'CANCEL'
-                            }]
-                        });
-
-                        require('./../modal')(containerOptions);*/
                     });
                 }
             }]

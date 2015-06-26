@@ -36,7 +36,6 @@ define(function (require) {
         return function (options, onLoad) {
             $.extend(options, {
                 header: MetkaJS.L10N.get('type.SERIES.search'),
-                // TODO: try to add reference options request and remove custom "getAbbreviations" request
                 dataConf: {
                     key: {
                         version: 1,
@@ -152,6 +151,7 @@ define(function (require) {
                         return {
                             id: result.id,
                             no: result.no,
+                            TYPE: result.type,
                             seriesabbr: result.values.seriesabbr,
                             seriesname: result.values.seriesname,
                             state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
@@ -174,7 +174,7 @@ define(function (require) {
                         "seriesabbr",
                         "seriesname",
                         "state"
-                    ], null, options),
+                    ], options),
                     /*{
                         "&title": {
                             "default": "Tyhjennä"

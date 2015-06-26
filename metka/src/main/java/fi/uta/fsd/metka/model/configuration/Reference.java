@@ -49,11 +49,12 @@ public class Reference {
     private Boolean ignoreRemoved = false;
 
     @JsonCreator
-    public Reference(@JsonProperty("key")String key, @JsonProperty("type")ReferenceType type, @JsonProperty("target")String target, @JsonProperty("valuePath")String valuePath) {
+    public Reference(@JsonProperty("key")String key, @JsonProperty("type")ReferenceType type, @JsonProperty("target")String target, @JsonProperty("valuePath")String valuePath, @JsonProperty("titlePath")String titlePath) {
         this.key = key;
         this.type = type;
         this.target = target;
         this.valuePath = valuePath;
+        this.titlePath = titlePath;
     }
 
     public String getKey() {
@@ -145,8 +146,7 @@ public class Reference {
 
     @JsonIgnore
     public Reference copy() {
-        Reference ref = new Reference(key, type, target, valuePath);
-        ref.setTitlePath(titlePath);
+        Reference ref = new Reference(key, type, target, valuePath, titlePath);
         ref.setApprovedOnly(approvedOnly);
         ref.setIgnoreRemoved(ignoreRemoved);
 

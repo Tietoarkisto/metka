@@ -115,7 +115,6 @@ define(function (require) {
         $modal.modal({
             backdrop: 'static'
         }).on('hidden.bs.modal', function () {
-            var $this =$(this);
             $(this).remove();
 
             // workaround to keep scrolling enabled for nested modals
@@ -134,16 +133,7 @@ define(function (require) {
             }
         });
 
-
-
         options.$events.trigger('refresh.metka');
-
-        if(options.modalEvents) {
-            $.each(options.modalEvents, function(prop, callback) {
-                log(prop, callback, $modal);
-                $modal.on(prop, callback);
-            });
-        }
 
         return $modal;
     };

@@ -84,11 +84,11 @@ class AmqpMessenger {
             Logger.debug(getClass(), "AMQP Messenger is currently at state: "+state);
         }
 
-        void write(String message) {
+        void write(String exchange, String routingKey, String message) {
             if(state == AMQPState.AMQP_READY) {
                 try {
                     // TODO: Move routing key to message
-                    channel.basicPublish("metka.test", "metka.queue", MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
+                    channel.basicPublish(exchange, routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
                 } catch(IOException ioe) {
                     Logger.error(getClass(), "AMQP message write failed.", ioe);
                     state = AMQPState.AMQP_CONNECTION_FAILED;

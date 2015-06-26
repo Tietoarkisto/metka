@@ -52,13 +52,13 @@
             "key" : "authortype",
             "title" : "Tyyppi"
         },
-        "binderDescription": {
+        "binderdescription": {
             "key" : "binderDescription",
             "title" : "Mapitetun aineiston kuvaus"
         },
-        "binderId": {
+        "binderid": {
             "key" : "binderId",
-            "title" : "Mappinumero"
+            "title" : "Mappinro"
         },
         "cbattachmentlocation": {
             "key": "cbattachmentlocation",
@@ -901,9 +901,14 @@
                             {
                                 "type": "CELL",
                                 "title": "Liittyvät mapit",
+                                "readOnly": true,
                                 "field": {
                                     "displayType": "CUSTOM_JS",
-                                    "key": "studyRelatedBinders"
+                                    "key": "studyRelatedBinders",
+                                    "columnFields": [
+                                        "binderid",
+                                        "binderdescription"
+                                    ]
                                 }
                             }
                         ]
@@ -2121,6 +2126,7 @@
                         "displayType": "CUSTOM_JS",
                         "showReferenceSaveInfo": true,
                         "showReferenceState": true,
+                        "disableRemoval": true,
                         "dialogTitle": {
                             "key": "files",
                             "MODIFY": "Muokkaa liitetiedostoa",

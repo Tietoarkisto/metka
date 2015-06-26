@@ -40,13 +40,11 @@ import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
-import fi.uta.fsd.metka.storage.repository.BinderRepository;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.StudyErrorsRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
-import fi.uta.fsd.metka.transfer.binder.BinderPageListEntry;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferencePath;
 import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
@@ -77,7 +75,6 @@ class GeneralRevisionHandler implements RevisionHandler {
     private final ConfigurationRepository configurations;
     private final ReferenceService references;
     private final StudyErrorsRepository studyErrors;
-    private final BinderRepository binders;
 
     private final Map<ConfigurationKey, Configuration> configCache = new HashMap<>();
 
@@ -88,14 +85,13 @@ class GeneralRevisionHandler implements RevisionHandler {
 
     GeneralRevisionHandler(Indexer indexer, RevisionRepository revisions,
                            ConfigurationRepository configurations, ReferenceService references,
-                           StudyErrorsRepository studyErrors, BinderRepository binders) {
+                           StudyErrorsRepository studyErrors) {
         this.indexer = indexer;
 
         this.revisions = revisions;
         this.configurations = configurations;
         this.references = references;
         this.studyErrors = studyErrors;
-        this.binders = binders;
     }
 
     private Pair<ReturnResult, Configuration> getConfiguration(ConfigurationKey key) {
@@ -240,17 +236,17 @@ class GeneralRevisionHandler implements RevisionHandler {
     }
 
     private void indexFields(RevisionData data, IndexerDocument document, String root, Step path, Configuration config, Language language) {
-        for(String key : data.getFields().keySet()) {
+        /*for(String key : data.getFields().keySet()) {
             indexField(config.getField(key), data, document, root, path, config, data, language);
-        }
+        }*/
 
-        /*for(Field field : config.getFields().values()) {
+        for(Field field : config.getFields().values()) {
             // Ignore subfields, they're indexed through container indexing
             if(field.getSubfield()) {
                 continue;
             }
             indexField(field, data, document, root, path, config, data, language);
-        }*/
+        }
     }
 
     private void indexField(Field field, DataFieldContainer fieldContainer, IndexerDocument document,
@@ -538,7 +534,7 @@ class GeneralRevisionHandler implements RevisionHandler {
     private void finalizeStudyIndexing(RevisionData data, IndexerDocument document, Configuration config, Language language) {
         indexStudyErrors(data, document, language);
 
-        indexStudyBinderPages(data, document, language);
+        //indexStudyBinderPages(data, document, language);
     }
 
     private void indexStudyErrors(RevisionData data, IndexerDocument document, Language language) {
@@ -551,14 +547,11 @@ class GeneralRevisionHandler implements RevisionHandler {
         ReferencePathRequest refReq = new ReferencePathRequest();
         ReferenceOption option;
         refReq.setLanguage(language);
-        Reference datasetpart = new Reference("errordatasetpart", ReferenceType.JSON, "errordatasetpart", "value");
-        datasetpart.setTitlePath("title");
+        Reference datasetpart = new Reference("errordatasetpart", ReferenceType.JSON, "errordatasetpart", "value", "title");
 
-        Reference partsection = new Reference("errorpartsection", ReferenceType.JSON, "errorpartsection", "value");
-        datasetpart.setTitlePath("title");
+        Reference partsection = new Reference("errorpartsection", ReferenceType.JSON, "errorpartsection", "value", "title");
 
-        Reference errorlanguage = new Reference("errorlanguage", ReferenceType.JSON, "errorlanguage", "value");
-        datasetpart.setTitlePath("title");
+        Reference errorlanguage = new Reference("errorlanguage", ReferenceType.JSON, "errorlanguage", "value", "title");
 
         for(StudyError error : errors) {
             // errordatasetpart
@@ -631,7 +624,8 @@ class GeneralRevisionHandler implements RevisionHandler {
         }
     }
 
-    private void indexStudyBinderPages(RevisionData data, IndexerDocument document, Language language) {
+    // TODO: How to index binder pages to study now or to use subqueries to find binder pages?
+    /*private void indexStudyBinderPages(RevisionData data, IndexerDocument document, Language language) {
         Pair<ReturnResult, List<BinderPageListEntry>> pages = binders.listStudyBinderPages(data.getKey().getId());
         if(pages.getLeft() == ReturnResult.NO_RESULTS) {
             return;
@@ -663,7 +657,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 document.indexKeywordField(root + "savedBy", page.getSaved().getUser(), false);
             }
         }
-    }
+    }*/
 
     private static class Step {
         private final String value;

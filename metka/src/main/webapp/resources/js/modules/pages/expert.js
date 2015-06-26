@@ -157,11 +157,18 @@ define(function (require) {
                     "id",
                     "no",
                     "state"
-                ], function (transferRow) {
-                    return {
-                        PAGE: transferRow.fields.TYPE.values.DEFAULT.current
-                    };
-                }, options),
+                ],
+                options,
+                function(transferRow) {
+                    switch(transferRow.fields.TYPE.values.DEFAULT.current) {
+                        default:
+                            return false;
+                        case 'STUDY_VARIABLE':
+                        case 'STUDY_ERROR':
+                        case 'BINDER_PAGE':
+                            return true;
+                    }
+                }),
                 {
                     "&title": {
                         "default": "Tyhjennä"

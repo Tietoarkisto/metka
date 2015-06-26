@@ -33,48 +33,30 @@ define(function (require) {
         options.field.displayType = 'CONTAINER';
 
         return {
-            field: {
-                key: "relatedBinders",
-                columnFields: [
-                    'binderId',
-                    'binderDescription'
-                ]
-            },
-            dataConf: {
-                fields: {
-                    relatedBinders: {
-                        type: "CONTAINER",
-                        fixedOrder: true,
-                        subfields: [
-                            "binderId",
-                            "binderDescription"
-                        ]
-                    },
-                    binderId: {
-                        type: 'INTEGER',
-                        subfield: true
-                    },
-                    binderDescription: {
-                        type: 'STRING',
-                        subfield: true
-                    }
-                }
-            },
-            readOnly: true,
             postCreate: function(options) {
-                var $field = this.children().first();
-                require('./../../server')('/binder/listStudyBinderPages/{id}', {
-                    method: 'GET',
-                    success: function (data) {
-                        if (data.pages) {
-                            var objectToTransferRow = require('./../../map/object/transferRow');
-                            $field.find("tbody").empty();
-                            data.pages.map(function (result) {
-                                result.binderDescription = result.description;
-                                delete result.description;
-                                $field.data("addRow")(objectToTransferRow(result, options.defaultLang));
-                            });
-                        }
+                var binderSearch = {
+                    searchApproved: true,
+                    searchDraft: true,
+                    searchRemoved: false,
+                    values: {
+                        'key.configuration.type': "BINDER_PAGE",
+                        'studyid.value': options.data.key.id
+                    }
+                };
+                require('./../../server')('searchAjax', {
+                    data: JSON.stringify(binderSearch),
+                    success: function(response) {
+                        var rowId = 0;
+                        response.rows.map(function(row) {
+                            require('./../../data')(options).appendByLang('DEFAULT', {
+                                key: options.field.key,
+                                rowId: ++rowId,
+                                value: row.id,
+                                removed: false,
+                                unapproved: true
+                            })
+                        });
+                        options.$events.trigger('redraw-'+options.field.key);
                     }
                 });
             }

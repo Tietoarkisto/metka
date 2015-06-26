@@ -31,80 +31,34 @@ define(function (require) {
     var getPropertyNS = require('./utils/getPropertyNS');
     var resultParser = require('./resultParser');
 
-    return function (url, requestConf, getResults, mapResult, fields, columnFields, getViewRequestOptions, options) {
+    return function (url, requestConf, getResults, mapResult, fields, columnFields, options, showInModal) {
         function trOnClick(transferRow) {
             var viewRequestOptions = {
+                PAGE: transferRow.fields.TYPE.values.DEFAULT.current,
                 id: transferRow.fields.id.values.DEFAULT.current,
                 no: transferRow.fields.no.values.DEFAULT.current
             };
-            if (getViewRequestOptions) {
-                $.extend(viewRequestOptions, getViewRequestOptions(transferRow));
+            var useModal = false;
+            if(showInModal) {
+                switch(typeof showInModal) {
+                    case 'function':
+                        useModal = showInModal(transferRow);
+                        break;
+                    default:
+                        useModal = showInModal;
+                        break;
+                }
             }
-            require('./assignUrl')('view', viewRequestOptions);
+            if(useModal) {
+                require('./revisionModal')(options, viewRequestOptions, null, null, null, true, null);
+            } else {
+                require('./assignUrl')('view', viewRequestOptions);
+            }
         }
 
         var data = require('./data')(options);
         require('./server')(url, {
-            data: JSON.stringify((function () {
-                if (typeof requestConf === 'function') {
-                    return requestConf();
-                }
-                if (Array.isArray(requestConf)) {
-                    var requestData = require('./commonSearchBooleans').requestData(options, {
-                        values: {}
-                    });
-                    requestConf.map(function (field) {
-                            // validate input and (in case of string) transform to object
-                            switch (typeof field) {
-                                case 'string':
-                                    return {
-                                        key: field
-                                    };
-                                case 'object':
-                                    if (field !== null) {
-                                        return field;
-                                    }
-                            }
-                            throw 'Illegal search configuration entry.';
-                        }).map(function (searchOptions) {
-                            // set defaults
-                            return $.extend({
-                                useSelectionText: true,
-                                exactValue: false,
-                                addWildcard: false,
-                                addParens: true
-                            }, searchOptions);
-                        }).forEach(function (searchOptions) {
-                            var key = searchOptions.key;
-                            var value = searchOptions.value || (function() {
-                                var temp = data(searchOptions.key).getByLang(options.defaultLang) || '';
-                                if (require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'type') === 'SELECTION') {
-                                    if (temp && searchOptions.useSelectionText) {
-                                        temp = $('select[data-metka-field-key="{key}"][data-metka-field-lang="{lang}"] option[value="{value}"]'.supplant({
-                                            key: key,
-                                            lang: options.defaultLang,
-                                            value: temp
-                                        })).text();
-                                    }
-                                }
-                                return temp;
-                            })();
-                            if (value && searchOptions.exactValue) {
-                                value = '/' + value + (searchOptions.addWildcard?".*":"") + '/';
-                            } else if(value && searchOptions.addWildcard) {
-                                value = value+"*";
-                            }
-                            if (value && searchOptions.addParens) {
-                                value = '(' + value + ')';
-                            }
-                            if (value) {
-                                requestData.values[searchOptions.rename || key] = value;
-                            }
-                        });
-                    return requestData;
-                }
-                throw 'Illegal search request';
-            })()),
+            data: JSON.stringify(require('./searchRequest')(options, requestConf)),
             success: function (data) {
                 if(resultParser(data.result).getResult() !== 'OPERATION_SUCCESSFUL') {
                     require('./resultViewer')(data.result);

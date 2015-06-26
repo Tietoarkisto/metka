@@ -1,0 +1,34 @@
+{
+    "key": "amqp_messages",
+    "data": [{
+        "family": "0",
+        "exchange": "metka.test",
+        "routingKey": "metka.queue",
+        "messages": [{
+            "key": "TEST",
+            "exchange": "",
+            "routingKey": "",
+            "message": "Tämä on testiviesti"
+        }, {
+            "key": "",
+            "exchange": "",
+            "routingKey": "",
+            "message": ""
+        }]
+    }, {
+        "family": "",
+        "exchange": "",
+        "routingKey": "",
+        "messages": [{
+            "key": "",
+            "exchange": "",
+            "routingKey": "",
+            "message": ""
+        }, {
+            "key": "",
+            "exchange": "",
+            "routingKey": "",
+            "message": ""
+        }]
+    }]
+}

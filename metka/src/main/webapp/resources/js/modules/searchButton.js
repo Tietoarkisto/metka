@@ -29,7 +29,7 @@
 define(function (require) {
     'use strict';
 
-    return function (url, requestData, getResults, mapResult, fields, columnFields, getViewRequestOptions, options) {
+    return function (url, requestData, getResults, mapResult, fields, columnFields, options) {
         var args = arguments;
         return {
             "&title": {

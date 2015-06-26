@@ -33,7 +33,7 @@ define(function (require) {
 
     return function(options) {
         this.click(require('./../../save')(options, function (response) {
-            options.$events.trigger('attachment.refresh');
+            options.$events.trigger('modal.refresh');
             if(resultParser(response.result).getResult() === "OPERATION_SUCCESSFUL_WITH_ERRORS") {
                 $.extend(options.data, response.data);
                 options.$events.trigger('refresh.metka');

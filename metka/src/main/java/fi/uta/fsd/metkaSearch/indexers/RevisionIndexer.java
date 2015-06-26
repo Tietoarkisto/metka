@@ -31,7 +31,6 @@ package fi.uta.fsd.metkaSearch.indexers;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
-import fi.uta.fsd.metka.storage.repository.BinderRepository;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.StudyErrorsRepository;
@@ -49,7 +48,7 @@ import org.apache.lucene.search.NumericRangeQuery;
 public class RevisionIndexer extends Indexer {
     public static RevisionIndexer build(DirectoryManager manager, DirectoryManager.DirectoryPath path, IndexerCommandRepository commands,
                                         RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references,
-                                        StudyErrorsRepository studyErrors, BinderRepository binders) throws UnsupportedOperationException {
+                                        StudyErrorsRepository studyErrors) throws UnsupportedOperationException {
         checkPathType(path, IndexerConfigurationType.REVISION);
         if(manager == null) {
             throw new UnsupportedOperationException("Needs a directory manager");
@@ -63,24 +62,22 @@ public class RevisionIndexer extends Indexer {
             throw new UnsupportedOperationException("Revision indexer needs access to revision and configuration repositories");
         }
 
-        return new RevisionIndexer(manager, path, commands, revisions, configurations, references, studyErrors, binders);
+        return new RevisionIndexer(manager, path, commands, revisions, configurations, references, studyErrors);
     }
 
     private RevisionRepository revisions;
     private ConfigurationRepository configurations;
     private ReferenceService references;
     private StudyErrorsRepository studyErrors;
-    private BinderRepository binders;
 
     private RevisionIndexer(DirectoryManager manager, DirectoryManager.DirectoryPath path, IndexerCommandRepository commands,
                             RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references,
-                            StudyErrorsRepository studyErrors, BinderRepository binders) throws UnsupportedOperationException {
+                            StudyErrorsRepository studyErrors) throws UnsupportedOperationException {
         super(manager, path, commands);
         this.revisions = revisions;
         this.configurations = configurations;
         this.references = references;
         this.studyErrors = studyErrors;
-        this.binders = binders;
     }
 
     protected void handleCommand(IndexerCommand command) {
@@ -118,7 +115,7 @@ public class RevisionIndexer extends Indexer {
      */
     private void indexCommand(RevisionIndexerCommand command) {
         Logger.debug(getClass(), "Trying to build revision handler");
-        RevisionHandler handler = HandlerFactory.buildRevisionHandler(this, revisions, configurations, references, studyErrors, binders);
+        RevisionHandler handler = HandlerFactory.buildRevisionHandler(this, revisions, configurations, references, studyErrors);
         try {
             Logger.debug(getClass(), "Trying to handle revision command");
             handler.handle(command);

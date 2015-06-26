@@ -163,6 +163,11 @@ define(function (require) {
                 "&title": {
                     "default": "Hallinta"
                 }
+            },
+            "BINDER_PAGE": {
+                "&title": {
+                    "default": "Mapitus"
+                }
             }
         },
 

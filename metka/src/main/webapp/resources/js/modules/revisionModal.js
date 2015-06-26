@@ -26,29 +26,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.mvc.services;
+define(function(require) {
+    'use strict';
 
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.transfer.binder.BinderListResponse;
-import fi.uta.fsd.metka.transfer.binder.SaveBinderPageRequest;
-import fi.uta.fsd.metkaAuthentication.Permission;
-import fi.uta.fsd.metkaAuthentication.PermissionCheck;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
+    return function(options, requestOptions, page, modalRefresh, containerKey, large, title) {
+        require('./server')('viewAjax', $.extend({
+            PAGE: page
+        }, requestOptions), {
+            method: 'GET',
+            success: function(response) {
+                var modalOptions = $.extend({}, response.gui, {
+                    data: response.data,
+                    title: title,
+                    dataConf: response.configuration,
+                    // TODO: Events need better management so that some events can be inherited and others can be overwritten
+                    $events: $({}),
+                    containerKey: containerKey,
+                    large: !!large,
+                    defaultLang: 'DEFAULT',
+                    dialogTitle: options.field ? options.field.dialogTitle : {},
+                    dialogTitles: options.dialogTitles || {}
+                });
 
-@PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_BINDER_PAGES +"', '" + PermissionCheck.Values.PERMISSION + "')")
-@Transactional
-public interface BinderService {
-    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_BINDER_PAGES +"', '" + PermissionCheck.Values.PERMISSION + "')")
-    BinderListResponse saveBinderPage(SaveBinderPageRequest request);
+                if(modalRefresh) modalOptions.$events.on('modal.refresh', modalRefresh);
+                modalOptions = $.extend(true, require('./optionsBase')(), modalOptions);
+                modalOptions.type = modalOptions.isReadOnly(modalOptions) ? 'VIEW' : 'MODIFY';
 
-    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_BINDER_PAGES +"', '" + PermissionCheck.Values.PERMISSION + "')")
-    ReturnResult removePage(Long pageId);
-
-    @Transactional(readOnly = true) BinderListResponse listBinderPages();
-
-    @Transactional(readOnly = true) BinderListResponse binderContent(Long binderId);
-
-    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
-    @Transactional(readOnly = true) BinderListResponse listStudyBinderPages(Long id);
-}
+                require('./modal')(modalOptions);
+            }
+        });
+    }
+});

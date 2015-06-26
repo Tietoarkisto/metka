@@ -28,6 +28,8 @@
 
 package fi.uta.fsd.metkaAmqp;
 
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -53,12 +55,15 @@ public class Messenger {
     @Value("${rabbit.password}")
     private String RABBIT_PASSWORD;
 
+    @Autowired
+    private ReferenceService references;
+
     private final Map<AmqpMessageType, MetkaAmqpMessage> amqpMessages = new HashMap<>();
 
     @PostConstruct
     private void initAmqpMessages() {
         amqpMessages.put(AmqpMessageType.TEST, new TestMessage());
-        amqpMessages.put(AmqpMessageType.STUDY_ERROR_POINTS_OVER_TRESHOLD, new StudyErrorPointWarningMessage());
+        amqpMessages.put(AmqpMessageType.METKA_MESSAGE_0, new MetkaMessage0(references));
     }
 
     public void sendAmqpMessage(AmqpMessageType type, Object... parameters) {
@@ -77,7 +82,12 @@ public class Messenger {
 
     public static enum AmqpMessageType {
         TEST,       // Sends a test message
-        STUDY_ERROR_POINTS_OVER_TRESHOLD;
+        METKA_MESSAGE_0,
+        METKA_MESSAGE_A,
+        METKA_MESSAGE_B,
+        METKA_MESSAGE_C,
+        METKA_MESSAGE_D,
+        METKA_MESSAGE_E
     }
 
     // Clean up

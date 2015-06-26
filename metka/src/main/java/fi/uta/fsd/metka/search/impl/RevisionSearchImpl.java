@@ -354,19 +354,18 @@ public class RevisionSearchImpl implements RevisionSearch {
             if(request == null) {
                 continue;
             }
-            if(request.getValues().containsKey("key.configuration.type") && ConfigurationType.isValue(request.getValues().get("key.configuration.type"))) {
-                // Add type specific search result values
-                switch(ConfigurationType.fromValue(request.getValues().get("key.configuration.type"))) {
-                    case SERIES:
-                        addSeriesSearchResults(searchResult, data);
-                        break;
-                    case STUDY:
-                        addStudySearchResults(searchResult, data);
-                        break;
-                    case PUBLICATION:
-                        addPublicationSearchResults(searchResult, data);
-                        break;
-                }
+            searchResult.setType(info.getType());
+            // Add type specific search result values
+            switch(info.getType()) {
+                case SERIES:
+                    addSeriesSearchResults(searchResult, data);
+                    break;
+                case STUDY:
+                    addStudySearchResults(searchResult, data);
+                    break;
+                case PUBLICATION:
+                    addPublicationSearchResults(searchResult, data);
+                    break;
             }
             results.add(searchResult);
         }

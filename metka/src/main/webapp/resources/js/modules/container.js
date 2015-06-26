@@ -56,7 +56,8 @@ define(function (require) {
                 var content = contents[type];
                 if (content) {
                     var handler = handlers[type];
-                    handler.add.call(this, content.map(handler.create(options), this));
+                    var createResult = handler.create(options);
+                    handler.add.call(this, content.map(createResult, this));
                 }
             }, this);
         }

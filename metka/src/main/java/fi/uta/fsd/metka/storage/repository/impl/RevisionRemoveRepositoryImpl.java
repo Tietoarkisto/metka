@@ -93,9 +93,6 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     @Autowired
     private StudyErrorsRepository errors;
 
-    @Autowired
-    private BinderRepository binders;
-
     @Override
     public OperationResponse remove(TransferData transferData, DateTimeUserPair info) {
         if(info == null) {
@@ -232,7 +229,8 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
                 // Remove study errors and binder pages linking to this study
                 errors.removeErrorsForStudy(data.getKey().getId());
-                binders.removeStudyBinderPages(data.getKey().getId());
+                // TODO: This should be done through cascade when QUERY based cascade is done
+                //binders.removeStudyBinderPages(data.getKey().getId());
                 break;
             }
             case STUDY_ATTACHMENT: {

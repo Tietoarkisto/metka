@@ -295,6 +295,7 @@ define(function (require) {
                                         return {
                                             id: result.id,
                                             no: result.no,
+                                            TYPE: result.type,
                                             publicationid: result.values.publicationid,
                                             publicationtitle: result.values.publicationtitle,
                                             state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
@@ -314,7 +315,6 @@ define(function (require) {
                                         "publicationtitle",
                                         "state"
                                     ],
-                                    null,
                                     options),
                                 {
                                     "&title": {

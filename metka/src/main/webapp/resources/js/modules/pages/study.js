@@ -573,6 +573,7 @@ define(function (require) {
                                                     return {
                                                         id: result.id,
                                                         no: result.no,
+                                                        TYPE: result.type,
                                                         studyid: result.values.studyid,
                                                         studyname: result.values.title,
                                                         authors: result.values.authors,
@@ -605,7 +606,7 @@ define(function (require) {
                                                     "datakind",
                                                     "termsofuse",
                                                     "state"
-                                                ], function () {}, $.extend(options, {resultContainer: "searchResult"}))
+                                                ], $.extend(options, {resultContainer: "searchResult"}))
                                         }]
                                     }, {
                                         "type": "ROW",

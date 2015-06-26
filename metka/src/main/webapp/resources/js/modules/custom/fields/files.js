@@ -58,34 +58,7 @@ define(function (require) {
                 }
 
                 function view(requestOptions) {
-                    require('./../../server')('viewAjax', $.extend({
-                        PAGE: 'STUDY_ATTACHMENT'
-                    }, requestOptions), {
-                        method: 'GET',
-                        success: function (response) {
-
-                            // TODO: check status
-                            if (resultParser(response.result).getResult() === 'VIEW_SUCCESSFUL') {
-                            }
-                            var modalOptions = $.extend({}, response.gui, {
-                                //title: 'Muokkaa tiedostoa',
-                                data: response.data,
-                                dataConf: response.configuration,
-                                //$events: options.$events,
-                                // TODO: Events need better management so that some events can be inherited and others can be overwritten
-                                $events: $({}),
-                                defaultLang: 'DEFAULT',
-                                large: true,
-                                dialogTitle: options.field.dialogTitle,
-                                dialogTitles: options.dialogTitles
-                            });
-                            modalOptions.$events.on('attachment.refresh', partialRefresh);
-                            // We need the isReadOnly function at this point so we need to add it before calling modal
-                            modalOptions = $.extend(true, require('./../../optionsBase')(), modalOptions);
-                            modalOptions.type = modalOptions.isReadOnly(modalOptions) ? 'VIEW' : 'MODIFY';
-                            require('./../../modal')(modalOptions);
-                        }
-                    });
+                    require('./../../revisionModal')(options, requestOptions, 'STUDY_ATTACHMENT', partialRefresh, options.field.key, true);
                 }
 
                 var $filesContainer = $('<div>').appendTo(this);

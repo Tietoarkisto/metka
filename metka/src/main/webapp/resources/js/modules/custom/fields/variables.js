@@ -39,10 +39,11 @@ define(function (require) {
         return {
             field: {
                 onClick: function (transferRow, replaceTr) {
-                    require('./../../variableModal')(options.field.key, {
+                    var requestOptions = {
                         id: transferRow.value,
                         no: ''
-                    }, partialRefresh);
+                    };
+                    require('./../../revisionModal')(options, requestOptions, 'STUDY_VARIABLE', partialRefresh, options.field.key, true, 'Muokkaa muuttujaa');
                 }
             }
         };

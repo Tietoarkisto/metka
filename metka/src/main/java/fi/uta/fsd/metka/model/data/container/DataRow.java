@@ -79,7 +79,7 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
     }
 
     @Override
-    public RevisionData getContainingRevision() {
+    @JsonIgnore public RevisionData getContainingRevision() {
         return parent != null ? parent.getContainingRevision() : null;
     }
 

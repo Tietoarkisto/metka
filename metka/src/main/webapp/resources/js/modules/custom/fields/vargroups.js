@@ -117,10 +117,11 @@ define(function (require) {
                                     if (!require('./../../isFieldDisabled')(options, options.defaultLang)) {
                                         treeViewEvents.onClick = function (node) {
                                             if (!node.children) {
-                                                require('./../../variableModal')(options.field.key, {
+                                                var requestOptions = {
                                                     id: node.transferRow.value,
                                                     no: ''
-                                                }, onChange);
+                                                };
+                                                require('./../../revisionModal')(options, requestOptions, 'STUDY_VARIABLE', onChange, options.field.key, true, 'Muokkaa muuttujaa');
                                             } else {
                                                 rowDialog('modify', 'ok')(node.transferRow, function () {
                                                     hasChanges = true;

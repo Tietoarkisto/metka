@@ -123,7 +123,7 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
         }
         if(points >= THRESHOLD) {
             // TODO: Check how to decide the trigger recipient and where to send it.
-            messenger.sendAmqpMessage(Messenger.AmqpMessageType.STUDY_ERROR_POINTS_OVER_TRESHOLD);
+            messenger.sendAmqpMessage(Messenger.AmqpMessageType.METKA_MESSAGE_0, "TEST");
         }
 
         return ReturnResult.OPERATION_SUCCESSFUL;

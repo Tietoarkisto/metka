@@ -33,7 +33,7 @@ define(function (require) {
         options.type = "RESTORE";
 
         options.request = {
-            success: function() {options.$events.trigger('attachment.refresh')}
+            success: function() {options.$events.trigger('modal.refresh')}
         };
     };
 });

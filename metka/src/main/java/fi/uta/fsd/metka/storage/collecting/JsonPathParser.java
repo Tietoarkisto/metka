@@ -389,8 +389,7 @@ class JsonPathParser {
                     }
                 }
             }
-        }
-        if(titleStr == null) {
+        } else {
             titleStr = valueStr;
         }
 
