@@ -170,6 +170,7 @@
 			"DRAFT"
 		],
 		"isHandler": true,
+		"isHandledByUser": "study",
 		"permissions": [
 			"canEditRevision"
 		],

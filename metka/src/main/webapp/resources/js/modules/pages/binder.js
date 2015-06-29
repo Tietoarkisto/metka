@@ -30,7 +30,7 @@ define(function (require) {
     'use strict';
 
     var resultParser = require('./../resultParser');
-    var commonSearchBooleans = require('./../commonSearchBooleans');
+    var commonSearchBooleans = require('./../commonSearchBooleans')();
 
     var dataConf = {
         references: {
@@ -145,16 +145,6 @@ define(function (require) {
 
     return function (options, onLoad) {
         function performSearch() {
-            /*var binderSearch = commonSearchBooleans.requestData(options, {
-                values: {
-                    'key.configuration.type': "BINDER_PAGE"
-                }
-            });
-            var fbId = require('./../data')(options)("findBinderId").getByLang('DEFAULT');
-            if(fbId) {
-                binderSearch.values.binderid = fbId;
-            }*/
-
             require('./../server')('searchAjax', {
                 data: JSON.stringify(require('./../searchRequest')(options, [{
                     key: 'key.configuration.type',
@@ -178,7 +168,8 @@ define(function (require) {
                     exactValue: true
                 }])),
                 success: function(response) {
-                    var rowId = 0;
+                    require('./../updateSearchResultContainer')(options, response, 'pages');
+                    /*var rowId = 0;
                     require('./../data')(options)("pages").removeRows('DEFAULT');
                     response.rows.map(function(row) {
                         require('./../data')(options)("pages").appendByLang('DEFAULT', {
@@ -189,7 +180,7 @@ define(function (require) {
                             unapproved: true
                         })
                     });
-                    options.$events.trigger('redraw-pages');
+                    options.$events.trigger('redraw-pages');*/
                 }
             });
         }
@@ -205,7 +196,7 @@ define(function (require) {
             dataConf: dataConf,
             content: [
                 commonSearchBooleans.column,
-                {
+            {
                 "type": "COLUMN",
                 "columns": 2,
                 "rows": [{
@@ -251,7 +242,7 @@ define(function (require) {
                         "type": "CELL",
                         "contentType": "BUTTON",
                         "button": {
-                            "title": "Hae",
+                            "title": MetkaJS.L10N.get('general.buttons.search'),
                             "create": function() {
                                 this.click(performSearch);
                             }

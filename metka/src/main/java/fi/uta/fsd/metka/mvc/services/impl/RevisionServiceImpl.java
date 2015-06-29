@@ -239,6 +239,12 @@ public class RevisionServiceImpl implements RevisionService {
     }
 
     @Override
+    public RevisionDataResponse beginEditingRevision(RevisionKey key) {
+        Pair<ReturnResult, TransferData> dataPair = handler.beginEditing(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+        return getResponse(OperationResponse.build(dataPair.getLeft()), dataPair.getRight());
+    }
+
+    @Override
     public RevisionDataResponse releaseRevision(RevisionKey key) {
         Pair<ReturnResult, TransferData> dataPair = handler.changeHandler(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key), true);
         return getResponse(OperationResponse.build(dataPair.getLeft()), dataPair.getRight());

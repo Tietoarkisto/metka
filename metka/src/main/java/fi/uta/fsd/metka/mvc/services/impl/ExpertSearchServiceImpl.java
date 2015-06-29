@@ -146,6 +146,20 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
                     }
                     break;
                 }
+                case STUDY_VARIABLE: {
+                    Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get(Fields.VARLABEL));
+                    if(field.getLeft() == StatusCode.FIELD_FOUND) {
+                        qr.setTitle(field.getRight().getActualValueFor(result.getLanguage()));
+                    }
+                    break;
+                }
+                case STUDY_ATTACHMENT: {
+                    Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get(Fields.FILE));
+                    if(field.getLeft() == StatusCode.FIELD_FOUND) {
+                        qr.setTitle(field.getRight().getActualValueFor(result.getLanguage()));
+                    }
+                    break;
+                }
             }
             response.getResults().add(qr);
         }

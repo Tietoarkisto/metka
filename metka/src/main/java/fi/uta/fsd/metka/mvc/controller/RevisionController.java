@@ -59,6 +59,11 @@ public class RevisionController {
         return revisions.approve(transferData);
     }
 
+    @RequestMapping(value = "ajax/beginEdit", method = RequestMethod.POST)
+    public @ResponseBody RevisionDataResponse beginEdit(@RequestBody RevisionKey key) {
+        return revisions.beginEditingRevision(key);
+    }
+
     @RequestMapping(value = "ajax/claim", method = RequestMethod.POST)
     public @ResponseBody RevisionDataResponse claim(@RequestBody RevisionKey key) {
         return revisions.claimRevision(key);

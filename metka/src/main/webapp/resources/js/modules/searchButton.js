@@ -33,7 +33,7 @@ define(function (require) {
         var args = arguments;
         return {
             "&title": {
-                "default": "Tee haku"
+                "default": MetkaJS.L10N.get('general.buttons.search')
             },
             create: function () {
                 this

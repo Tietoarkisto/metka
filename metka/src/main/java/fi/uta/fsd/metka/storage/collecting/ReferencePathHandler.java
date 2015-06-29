@@ -120,93 +120,6 @@ public class ReferencePathHandler {
         }
     }
 
-    private void referencePathStep(DataFieldContainer context, ReferencePath step, Configuration configuration, List<ReferenceOption> options, Language language, boolean returnFirst) {
-        // We should not arrive here if this is not a dependency step
-        if(step.getReference().getType() != ReferenceType.DEPENDENCY) {
-            Logger.error(getClass(), "Tried to parse DEPENDENCY step with a reference that is not a DEPENDENCY");
-            return;
-        }
-        if(!StringUtils.hasText(step.getValue()) && step.getNext() != null) {
-            Logger.error(getClass(), "Malformed path. Since current step does not have a selected value there should be no following steps.");
-            return;
-        }
-        if(StringUtils.hasText(step.getValue()) && step.getNext() != null && step.getNext().getReference().getType() != ReferenceType.DEPENDENCY) {
-            Logger.error(getClass(), "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
-            return;
-        }
-
-        DataFieldPathParser parser = new DataFieldPathParser(context, step.getReference().getValuePathParts(), configuration, language, references);
-        if(StringUtils.hasText(step.getValue())) {
-            // Step has value, either continue on or add a single option
-            context = parser.findRootObjectWithTerminatingValue(step.getValue());
-            if(step.getNext() != null) {
-                referencePathStep(context, step.getNext(), configuration, options, language, returnFirst);
-            } else {
-                ReferenceOption option = parser.getOption(context, step.getReference());
-                if(option != null) {
-                    options.add(option);
-                }
-            }
-        } else {
-            // Add all terminating values as options
-            List<DataFieldContainer> contexts = parser.findTermini();
-            for(DataFieldContainer terminus : contexts) {
-                ReferenceOption option = parser.getOption(terminus, step.getReference());
-                if(option != null) {
-                    options.add(option);
-                    if(returnFirst) {
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    private void referencePathStep(JsonNode node, ReferencePath step, List<ReferenceOption> options, Language language, boolean returnFirst) {
-        // We should not arrive here if this is not a dependency step
-        if(step.getReference().getType() != ReferenceType.DEPENDENCY) {
-            Logger.error(getClass(), "Tried to parse DEPENDENCY step with a reference that is not a DEPENDENCY");
-            return;
-        }
-        if(!StringUtils.hasText(step.getValue()) && step.getNext() != null) {
-            Logger.error(getClass(), "Malformed path. Since current step does not have a selected value there should be no following steps.");
-            return;
-        }
-        if(StringUtils.hasText(step.getValue()) && step.getNext() != null && step.getNext().getReference().getType() != ReferenceType.DEPENDENCY) {
-            Logger.error(getClass(), "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
-            return;
-        }
-
-        JsonPathParser parser = new JsonPathParser(node, step.getReference().getValuePathParts());
-        if(StringUtils.hasText(step.getValue())) {
-            // There's a value, we either add a single option or then we continue on with the next step
-            node = parser.findRootObjectWithTerminatingValue(step.getValue());
-            if(step.getNext() != null) {
-                referencePathStep(node, step.getNext(), options, language, returnFirst);
-            } else {
-                ReferenceOption option = parser.getOption(node, step.getReference(), language);
-                if(option != null) {
-                    options.add(option);
-                }
-            }
-        } else {
-            // We add all possible options starting from the given JsonNode
-            List<JsonNode> termini = parser.findTermini();
-            for(JsonNode termNode : termini) {
-                // Get node containing value, Has to be ValueNode due to JsonParser only returning objects containing terminating value node.
-                ReferenceOption option = parser.getOption(termNode, step.getReference(), language);
-                if(option != null) {
-                    options.add(option);
-                    if(returnFirst) {
-                        break;
-                    }
-                }
-            }
-        }
-
-    }
-
-
     private void handleRevisionableStep(ReferencePath step, List<ReferenceOption> options, Language language, boolean returnFirst) {
         if(StringUtils.hasText(step.getValue())) {
             Long start = System.currentTimeMillis();
@@ -362,5 +275,91 @@ public class ReferencePathHandler {
                 }
             }
         }
+    }
+
+    private void referencePathStep(DataFieldContainer context, ReferencePath step, Configuration configuration, List<ReferenceOption> options, Language language, boolean returnFirst) {
+        // We should not arrive here if this is not a dependency step
+        if(step.getReference().getType() != ReferenceType.DEPENDENCY) {
+            Logger.error(getClass(), "Tried to parse DEPENDENCY step with a reference that is not a DEPENDENCY");
+            return;
+        }
+        if(!StringUtils.hasText(step.getValue()) && step.getNext() != null) {
+            Logger.error(getClass(), "Malformed path. Since current step does not have a selected value there should be no following steps.");
+            return;
+        }
+        if(StringUtils.hasText(step.getValue()) && step.getNext() != null && step.getNext().getReference().getType() != ReferenceType.DEPENDENCY) {
+            Logger.error(getClass(), "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
+            return;
+        }
+
+        DataFieldPathParser parser = new DataFieldPathParser(context, step.getReference().getValuePathParts(), configuration, language, references);
+        if(StringUtils.hasText(step.getValue())) {
+            // Step has value, either continue on or add a single option
+            context = parser.findRootObjectWithTerminatingValue(step.getValue());
+            if(step.getNext() != null) {
+                referencePathStep(context, step.getNext(), configuration, options, language, returnFirst);
+            } else {
+                ReferenceOption option = parser.getOption(context, step.getReference());
+                if(option != null) {
+                    options.add(option);
+                }
+            }
+        } else {
+            // Add all terminating values as options
+            List<DataFieldContainer> contexts = parser.findTermini();
+            for(DataFieldContainer terminus : contexts) {
+                ReferenceOption option = parser.getOption(terminus, step.getReference());
+                if(option != null) {
+                    options.add(option);
+                    if(returnFirst) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void referencePathStep(JsonNode node, ReferencePath step, List<ReferenceOption> options, Language language, boolean returnFirst) {
+        // We should not arrive here if this is not a dependency step
+        if(step.getReference().getType() != ReferenceType.DEPENDENCY) {
+            Logger.error(getClass(), "Tried to parse DEPENDENCY step with a reference that is not a DEPENDENCY");
+            return;
+        }
+        if(!StringUtils.hasText(step.getValue()) && step.getNext() != null) {
+            Logger.error(getClass(), "Malformed path. Since current step does not have a selected value there should be no following steps.");
+            return;
+        }
+        if(StringUtils.hasText(step.getValue()) && step.getNext() != null && step.getNext().getReference().getType() != ReferenceType.DEPENDENCY) {
+            Logger.error(getClass(), "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
+            return;
+        }
+
+        JsonPathParser parser = new JsonPathParser(node, step.getReference().getValuePathParts());
+        if(StringUtils.hasText(step.getValue())) {
+            // There's a value, we either add a single option or then we continue on with the next step
+            node = parser.findRootObjectWithTerminatingValue(step.getValue());
+            if(step.getNext() != null) {
+                referencePathStep(node, step.getNext(), options, language, returnFirst);
+            } else {
+                ReferenceOption option = parser.getOption(node, step.getReference(), language);
+                if(option != null) {
+                    options.add(option);
+                }
+            }
+        } else {
+            // We add all possible options starting from the given JsonNode
+            List<JsonNode> termini = parser.findTermini();
+            for(JsonNode termNode : termini) {
+                // Get node containing value, Has to be ValueNode due to JsonParser only returning objects containing terminating value node.
+                ReferenceOption option = parser.getOption(termNode, step.getReference(), language);
+                if(option != null) {
+                    options.add(option);
+                    if(returnFirst) {
+                        break;
+                    }
+                }
+            }
+        }
+
     }
 }

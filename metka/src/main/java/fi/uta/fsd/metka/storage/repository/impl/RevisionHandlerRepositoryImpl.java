@@ -28,6 +28,7 @@
 
 package fi.uta.fsd.metka.storage.repository.impl;
 
+import com.ctc.wstx.util.StringUtil;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
@@ -49,12 +50,44 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 @Repository
 public class RevisionHandlerRepositoryImpl implements RevisionHandlerRepository {
 
     @Autowired
     private RevisionRepository revisions;
+
+    @Override
+    public Pair<ReturnResult, TransferData> beginEditing(RevisionKey key) {
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            return new ImmutablePair<>(pair.getLeft(), null);
+        }
+
+        RevisionData data = pair.getRight();
+        if(StringUtils.hasText(data.getHandler())) {
+            return new ImmutablePair<>(ReturnResult.HAS_HANDLER, null);
+        }
+
+        data.setHandler(AuthenticationUtil.getUserName());
+        ReturnResult result = revisions.updateRevisionData(data);
+        if (result != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
+            return new ImmutablePair<>(result, null);
+        }
+
+        // For now let's assume that these just work
+        finalizeChange(data, false);
+
+        Pair<ReturnResult, RevisionableInfo> info = revisions.getRevisionableInfo(data.getKey().getId());
+        if(info.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
+            return new ImmutablePair<>(info.getLeft(), null);
+        }
+
+        revisions.indexRevision(data.getKey());
+
+        return new ImmutablePair<>(ReturnResult.REVISION_UPDATE_SUCCESSFUL, TransferData.buildFromRevisionData(data, info.getRight()));
+    }
 
     @Override
     public Pair<ReturnResult, TransferData> changeHandler(RevisionKey key, boolean clear) {

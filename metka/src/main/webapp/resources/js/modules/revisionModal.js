@@ -30,6 +30,9 @@ define(function(require) {
     'use strict';
 
     return function(options, requestOptions, page, modalRefresh, containerKey, large, title) {
+        if(!title) {
+            title = MetkaJS.L10N.get('type.'+(page || requestOptions.PAGE)+".title");
+        }
         require('./server')('viewAjax', $.extend({
             PAGE: page
         }, requestOptions), {

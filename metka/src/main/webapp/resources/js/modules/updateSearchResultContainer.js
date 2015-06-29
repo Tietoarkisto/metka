@@ -26,47 +26,23 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    return function (options) {
-        options.field.displayType = 'CONTAINER';
-
-        return {
-            postCreate: function(options) {
-                var binderSearch = {
-                    searchApproved: true,
-                    searchDraft: true,
-                    searchRemoved: false,
-                    values: {
-                        'key.configuration.type': "BINDER_PAGE",
-                        'studyid.value': options.data.key.id
-                    }
-                };
-                require('./../../server')('searchAjax', {
-                    data: JSON.stringify(binderSearch),
-                    success: function(response) {
-                        var rowId = 0;
-                        response.rows.map(function(row) {
-                            require('./../../data')(options).appendByLang('DEFAULT', {
-                                key: options.field.key,
-                                rowId: ++rowId,
-                                value: row.id,
-                                removed: false,
-                                unapproved: true
-                            })
-                        });
-                        options.$events.trigger('redraw-'+options.field.key);
-                    }
-                });
-            },
-            field: {
-                onClick: function(transferRow) {
-                    require('./../../revisionModal')(options, {
-                        id: transferRow.value,
-                        no: ''}, 'BINDER_PAGE');
-                }
-            }
-        };
+    return function(options, response, key) {
+        var rowId = 0;
+        require('./data')(options)(key).removeRows('DEFAULT');
+        response.rows.map(function(row) {
+            require('./data')(options)(key).appendByLang('DEFAULT', {
+                key: key,
+                rowId: ++rowId,
+                value: row.id+"-"+row.no,
+                removed: false,
+                unapproved: true
+            })
+        });
+        options.$events.trigger('redraw-{key}'.supplant({
+            key: key
+        }));
     }
 });

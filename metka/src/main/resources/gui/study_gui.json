@@ -2279,7 +2279,7 @@
         ]
     }, {
         "title": "Aloita muokkaus",
-        "type": "CLAIM",
+        "type": "BEGIN_EDIT",
         "hasHandler": false,
         "states": [
             "DRAFT"

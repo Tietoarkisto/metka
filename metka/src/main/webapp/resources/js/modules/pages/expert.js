@@ -152,8 +152,8 @@ define(function (require) {
                         type: 'STRING'
                     }
                 }, [
-                    "title",
                     "type",
+                    "title",
                     "id",
                     "no",
                     "state"

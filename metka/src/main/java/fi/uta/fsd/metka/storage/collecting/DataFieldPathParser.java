@@ -98,14 +98,16 @@ class DataFieldPathParser {
             return;
         }
 
+        // Check non writable terminating references
         if(!field.getWritable() && field.getType() == FieldType.REFERENCE) {
-            // TODO: Does the path actually have to terminate here since we might be crossing a reference barrier?
             // Checks that path should terminate at this value. If so then add the current field map to termini
             if(level == path.length-1) {
                 // Value is the terminating value of path,
                 termini.add(context);
                 return;
             }
+
+            // TODO: Resolve non writable non terminating references
         }
 
         DataField dataField = context.getField(field.getKey());
@@ -386,6 +388,8 @@ class DataFieldPathParser {
         String titleStr = getTitleString(context, path);
         if(titleStr == null && field.getType() == FieldType.SELECTION) {
             titleStr = getSelectionTitle(field, valueStr);
+        } else if(titleStr == null && field.getType() == FieldType.REFERENCE) {
+            titleStr = getReferenceTitle(field);
         }
         if(titleStr == null) {
             titleStr = valueStr;
@@ -430,11 +434,18 @@ class DataFieldPathParser {
                 titleStr = option.getTitleFor(optionLang);
             }
         } else if(list.getType() == SelectionListType.REFERENCE) {
-            // TODO: Follow reference using reference service, then return the title
-            ReferenceOption option = references.getCurrentFieldOption(language, context.getContainingRevision(), configuration, field.getKey());
-            if(option != null) {
-                titleStr = option.getTitle().getValue();
-            }
+            titleStr = getReferenceTitle(field);
+        }
+
+        return titleStr;
+    }
+
+    private String getReferenceTitle(Field field) {
+        String titleStr = null;
+
+        ReferenceOption option = references.getCurrentFieldOption(language, context.getContainingRevision(), configuration, field.getKey());
+        if(option != null) {
+            titleStr = option.getTitle().getValue();
         }
 
         return titleStr;

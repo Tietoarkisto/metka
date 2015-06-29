@@ -37,7 +37,13 @@
             "key": "study_ref",
             "type": "REVISIONABLE",
             "target": "STUDY",
-            "titlePath": "title"
+            "titlePath": "studyid"
+        },
+        "study_title_ref": {
+            "key": "study_title_ref",
+            "type": "DEPENDENCY",
+            "target": "study",
+            "valuePath": "title"
         },
         "variables_ref": {
             "key": "variables_ref",
@@ -62,6 +68,15 @@
             "editable": false,
             "type": "REFERENCE",
             "reference": "study_ref"
+        },
+        "studytitle": {
+            "key": "studytitle",
+            "writable": false,
+            "translatable": false,
+            "immutable": true,
+            "editable": false,
+            "type": "REFERENCE",
+            "reference": "study_title_ref"
         },
         "variables": {
             "_comment": "This is a reference to the language specific variables revisionable that contains this variable. This language and the language of the referenced study variables must be the same",

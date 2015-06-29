@@ -38,6 +38,17 @@ import org.springframework.transaction.annotation.Transactional;
 public interface RevisionHandlerRepository {
 
     /**
+     * Claims a revision without handler to the requesting user.
+     * Revision must be without handler or else the operation fails.
+     * In the case of two people pushing the 'start editing' button simultaneously
+     * (i.e. without refreshing their browser after one of them has performed the operation)
+     * the person that first pushed the button receives priority.
+     * @param key      RevisionKey to find the revision
+     * @return  Pair
+     */
+    Pair<ReturnResult, TransferData> beginEditing(RevisionKey key);
+
+    /**
      * Changes revision handler if revision can be found and there is a need to change the handler.
      * @param key      RevisionKey to find the revision
      * @param clear    Should handler be cleared or set to current user

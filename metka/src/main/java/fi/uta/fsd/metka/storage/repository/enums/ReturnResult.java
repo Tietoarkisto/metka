@@ -88,6 +88,7 @@ public enum ReturnResult {
     EMPTY_PATH,                         // Required path was empty
     MALFORMED_PATH,                     // Required path was malformed e.g. incomplete or didn't point to valid end
     EMPTY_SUBQUERY,                     // If subquery returns an empty list then the whole query is aborted. The Main query won't compile if subquery is empty
-    NO_CHANGES,
+    NO_CHANGES,                         // Operation did not result in any changes
+    HAS_HANDLER,                        // Revision already has handler in a situation where null handler is required
     FILE_ALREADY_EXISTS                // Special failure condition when file move is tried to a location that already contains a file
 }

@@ -157,6 +157,15 @@
 			"text": "Vain osa alilomakkeista poistettiin onnistuneesti joten päälomaketta ei poistettu."
 		}]
 	}, {
+		"key": "HAS_HANDLER",
+		"title": "ERROR",
+		"text": "Revisiolla on jo käsittelijä",
+		"operations": [{
+			"key": "beginEdit",
+			"title": "ERROR",
+			"text": "Luonnoksella on jo käsittelijä. Jos haluat varmasti editoida luonnosta käytä 'ota haltuun'-toimintoa"
+		}]
+	}, {
 		"key": "",
 		"title": "",
 		"text": ""

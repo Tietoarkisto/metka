@@ -27,7 +27,7 @@
  **************************************************************************************/
 
 define(function(require) {
-    'use strict'
+    'use strict';
 
     return function(result) {
         return {

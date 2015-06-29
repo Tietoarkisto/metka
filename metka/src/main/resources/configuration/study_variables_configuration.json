@@ -11,7 +11,13 @@
             "key": "study_ref",
             "type": "REVISIONABLE",
             "target": "STUDY",
-            "titlePath": "title"
+            "titlePath": "studyid"
+        },
+        "study_title_ref": {
+            "key": "study_title_ref",
+            "type": "DEPENDENCY",
+            "target": "study",
+            "valuePath": "title"
         },
         "file_ref": {
             "key": "file_ref",
@@ -53,6 +59,15 @@
             "editable": false,
             "type": "REFERENCE",
             "reference": "study_ref"
+        },
+        "studytitle": {
+            "key": "studytitle",
+            "writable": false,
+            "translatable": false,
+            "immutable": true,
+            "editable": false,
+            "type": "REFERENCE",
+            "reference": "study_title_ref"
         },
         "language": {
             "key": "language",

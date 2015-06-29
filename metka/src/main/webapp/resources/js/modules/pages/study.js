@@ -32,7 +32,7 @@ define(function (require) {
     var resultParser = require('./../resultParser');
 
     if (location.pathname.split('/').indexOf('search') !== -1) {
-        var commonSearchBooleans = require('./../commonSearchBooleans');
+        var commonSearchBooleans = require('./../commonSearchBooleans')();
 
         return function (options, onLoad) {
             require('./../server')('conf', {

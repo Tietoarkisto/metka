@@ -35,6 +35,7 @@ public enum ButtonType {
     REMOVE,
     HISTORY,
     CLAIM,
+    BEGIN_EDIT,
     RELEASE,
     RESTORE,
     SEARCH,

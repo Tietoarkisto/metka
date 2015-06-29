@@ -132,7 +132,7 @@ define(function (require) {
                                     '<div class="input-group">',
                                                     '<input type="text" class="form-control" autocomplete="on" placeholder="Aineistonumero">',
                                                     '<div class="input-group-btn">',
-                                                        '<button class="btn btn-primary" type="submit">Hae</button>',
+                                                        '<button class="btn btn-primary" type="submit">'+MetkaJS.L10N.get('general.buttons.search')+'</button>',
                                                     '</div>',
                                                 '</div>',
                                             '</form>',

@@ -70,6 +70,10 @@ public interface RevisionService {
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#key, '" + PermissionCheck.Values.CLAIM_REVISION + "')")
+    RevisionDataResponse beginEditingRevision(RevisionKey key);
+
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
+            "and hasPermission(#key, '" + PermissionCheck.Values.CLAIM_REVISION + "')")
     RevisionDataResponse claimRevision(RevisionKey key);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +

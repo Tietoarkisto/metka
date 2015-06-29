@@ -29,13 +29,13 @@
 define(function(require) {
     'use strict';
 
-    return function(options, requestConf) {
+    return function(options, requestConf, prefix) {
         var data = require('./data')(options);
         if (typeof requestConf === 'function') {
             return requestConf();
         }
         if (Array.isArray(requestConf)) {
-            var requestData = require('./commonSearchBooleans').requestData(options, {
+            var requestData = require('./commonSearchBooleans')(prefix).requestData(options, {
                 values: {}
             });
             requestConf.map(function (field) {
@@ -59,7 +59,8 @@ define(function(require) {
                     addWildcard: false,
                     addParens: true,
                     value: null,
-                    rename: null
+                    rename: null,
+                    useSubquery: null
                 }, searchOptions);
             }).forEach(function (searchOptions) {
                 var key = searchOptions.key;
@@ -77,12 +78,17 @@ define(function(require) {
                         return temp;
                     })();
                 if (value && searchOptions.exactValue) {
-                    value = '/' + value + (searchOptions.addWildcard?".*":"") + '/';
+                    value = '/' + (searchOptions.addWildcard?".*":"") + value + (searchOptions.addWildcard?".*":"") + '/';
                 } else if(value && searchOptions.addWildcard) {
-                    value = value+"*";
+                    value = "*"+value+"*";
                 }
                 if (value && searchOptions.addParens) {
                     value = '(' + value + ')';
+                }
+                if(value && searchOptions.useSubquery) {
+                    value = 'S{'+useSubquery.supplant({
+                        value: value
+                    })+'}S'
                 }
                 if (value) {
                     requestData.values[searchOptions.rename || key] = value;

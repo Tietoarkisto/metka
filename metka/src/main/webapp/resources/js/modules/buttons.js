@@ -54,12 +54,29 @@ define(function (require) {
         CLAIM: function (options) {
             this
                 .click(function () {
-                    var $this = $(this);
                     require('./server')('/revision/ajax/claim', {
                         data: JSON.stringify(options.data.key),
                         success: function (response) {
                             $.extend(options.data, response.data);
                             options.$events.trigger('refresh.metka');
+                        }
+                    });
+                });
+        },
+        BEGIN_EDIT: function (options) {
+            this
+                .click(function () {
+                    require('./server')('/revision/ajax/beginEdit', {
+                        data: JSON.stringify(options.data.key),
+                        success: function (response) {
+                            if(resultParser(response.result).getResult() === 'REVISION_UPDATE_SUCCESSFUL') {
+                                $.extend(options.data, response.data);
+                                options.$events.trigger('refresh.metka');
+                            } else {
+                                require('./resultViewer')(response.result, 'beginEdit', function() {
+                                    require('./assignUrl')('view');
+                                });
+                            }
                         }
                     });
                 });
