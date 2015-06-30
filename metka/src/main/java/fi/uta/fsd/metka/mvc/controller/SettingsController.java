@@ -124,6 +124,11 @@ public class SettingsController {
         return service.removeAPIUser(key);
     }
 
+    @RequestMapping(value="stopIndexers", method = RequestMethod.GET)
+    public @ResponseBody ReturnResult stopIndexers() {
+        return service.stopIndexers();
+    }
+
     /**
      * Takes a string and a type and tries to read the string as json of the provided type.
      * If the string can be deserialized then saves it to database and to file system while making a backup of the previous file.

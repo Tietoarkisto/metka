@@ -33,6 +33,7 @@ import fi.uta.fsd.metka.storage.repository.StudyErrorsRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.study.StudyError;
 import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.messages.family0.TestMessage;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -123,7 +124,7 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
         }
         if(points >= THRESHOLD) {
             // TODO: Check how to decide the trigger recipient and where to send it.
-            messenger.sendAmqpMessage(Messenger.AmqpMessageType.METKA_MESSAGE_0, "TEST");
+            messenger.sendAmqpMessage(new TestMessage());
         }
 
         return ReturnResult.OPERATION_SUCCESSFUL;

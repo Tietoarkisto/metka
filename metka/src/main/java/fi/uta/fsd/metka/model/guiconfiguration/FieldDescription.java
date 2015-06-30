@@ -49,6 +49,7 @@ public class FieldDescription {
     private Boolean disableRemoval = false;
     private Boolean showSaveInfo;
     private Boolean showReferenceValue;
+    private Boolean showReferenceType;
     private Boolean displayHeader = true;
     private DialogTitle dialogTitle;
     private Boolean showReferenceSaveInfo = false;
@@ -114,6 +115,14 @@ public class FieldDescription {
 
     public void setShowReferenceValue(Boolean showReferenceValue) {
         this.showReferenceValue = (showReferenceValue == null) ? false : showReferenceValue;
+    }
+
+    public Boolean getShowReferenceType() {
+        return (showReferenceType == null) ? false : showReferenceType;
+    }
+
+    public void setShowReferenceType(Boolean showReferenceType) {
+        this.showReferenceType = (showReferenceType == null) ? false : showReferenceType;
     }
 
     public Boolean getDisplayHeader() {

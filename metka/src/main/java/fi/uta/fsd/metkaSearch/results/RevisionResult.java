@@ -33,10 +33,10 @@ import fi.uta.fsd.metka.enums.Language;
 public class RevisionResult implements SearchResult {
     private final ResultList.ResultType type = ResultList.ResultType.REVISION;
     private final Long id;
-    private final Long no;
+    private final Integer no;
     private final Language language;
 
-    public RevisionResult(Long id, Long no, Language language) {
+    public RevisionResult(Long id, Integer no, Language language) {
         this.id = id;
         this.no = no;
         this.language = language;
@@ -51,7 +51,7 @@ public class RevisionResult implements SearchResult {
         return id;
     }
 
-    public Long getNo() {
+    public Integer getNo() {
         return no;
     }
 

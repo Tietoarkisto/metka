@@ -198,6 +198,7 @@ public class ReferenceServiceImpl implements ReferenceService {
             return new ReferenceStatusResponse(
                     ReturnResult.REVISION_FOUND.name()
                     , true
+                    , revPair.getRight().getConfiguration().getType()
                     , removed
                     , revPair.getRight().getSaved()
                     , revPair.getRight().getApproved()
@@ -208,6 +209,7 @@ public class ReferenceServiceImpl implements ReferenceService {
             return new ReferenceStatusResponse(
                     ReturnResult.REVISION_NOT_FOUND.name()
                     , true
+                    , null
                     , removed
                     , null
                     , null

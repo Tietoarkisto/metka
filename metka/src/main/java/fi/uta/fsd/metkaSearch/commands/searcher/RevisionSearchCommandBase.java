@@ -135,7 +135,7 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
                     if(field != null) {
                         language = Language.fromValue(field.stringValue());
                     }
-                    list.addResult(new RevisionResult(id, no, language));
+                    list.addResult(new RevisionResult(id, no.intValue(), language));
                 } catch(IOException ioe) {
                     list.addResult(new RevisionResult(null, null, null));
                 }

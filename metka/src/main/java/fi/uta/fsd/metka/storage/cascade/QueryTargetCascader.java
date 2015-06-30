@@ -26,75 +26,68 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.storage.restrictions;
+package fi.uta.fsd.metka.storage.cascade;
 
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.model.configuration.Check;
-import fi.uta.fsd.metka.model.configuration.Condition;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Target;
+import fi.uta.fsd.metka.model.configuration.*;
+import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
-import fi.uta.fsd.metkaSearch.results.ListBasedResultList;
-import fi.uta.fsd.metkaSearch.results.ResultList;
-import fi.uta.fsd.metkaSearch.results.SearchResult;
+import fi.uta.fsd.metkaSearch.results.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
+import org.springframework.util.StringUtils;
 
 /**
- * Handles QUERY type target.
+ * Handles QUERY type targets.
+ * Performs the query given in 'content' and cascades the operation to each revision found by the query.
  * Query can contain placeholders:
  *  {id}    - Context id is placed here
  *  {key}   - Context key is placed here in the form {id}-{no}
  */
-class QueryTargetHandler {
+class QueryTargetCascader {
 
-    static ValidateResult handle(Target target, DataFieldContainer context, DataFieldValidator validator, Configuration configuration, SearcherComponent searcher) {
-        ResultList<? extends SearchResult> result = performQuery(target.getContent(), searcher, context, configuration);
-        for(Check check : target.getChecks()) {
+    static boolean cascade(CascadeInstruction instruction, Target t, DataFieldContainer context,
+            Configuration configuration, Cascader.RepositoryHolder repositories) {
+        if(!StringUtils.hasText(t.getContent())) {
+            // No content means no cascade and successful operation
+            return true;
+        }
+
+        // TODO: Allow restrictions in cascade operations, this gives more control and is easy to do
+        /*for(Check check : target.getChecks()) {
             // Check is enabled
-            if(validator.validate(check.getRestrictors(), context, configuration).getResult()) {
-                if(!checkCondition(result, check.getCondition())) {
-                    return new ValidateResult(false, target.getType().name(), target.getContent());
+            if(cascader.cascade(check.getRestrictors(), context, configuration)) {
+                if(!checkConditionForField(field, d, check.getCondition(), context, configuration, searcher)) {
+                    return false;
                 }
             }
+        }*/
+
+        ResultList<RevisionResult> revisions = performQuery(t.getContent(), repositories.getSearcher(), context, configuration);
+
+        for(RevisionResult revision : revisions.getResults()) {
+            Pair<ReturnResult, RevisionData> dataPair = repositories.getRevisions().getRevisionData(revision.getId(), revision.getNo());
+            if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+                continue;
+            }
+            if(!OperationCascader.cascade(dataPair.getRight(), instruction, repositories)) {
+                return false;
+            }
         }
-        return validator.validate(target.getTargets(), context, configuration);
+        return true;
     }
 
-    private static ResultList<? extends SearchResult> performQuery(String query, SearcherComponent searcher, DataFieldContainer context, Configuration configuration) {
+    private static ResultList<RevisionResult> performQuery(String query, SearcherComponent searcher, DataFieldContainer context, Configuration configuration) {
         query = query.replace("{id}", context.getRevisionKey().getId().toString());
         query = query.replace("{key}", context.getRevisionKey().getId().toString()+"-"+context.getRevisionKey().getNo().toString());
         try {
             return searcher.executeSearch(ExpertRevisionSearchCommand.build(query, configuration));
         } catch (QueryNodeException qne) {
-            Logger.error(QueryTargetHandler.class, "Exception while performing query: " + query);
+            Logger.error(QueryTargetCascader.class, "Exception while performing query: " + query);
             return new ListBasedResultList<>(ResultList.ResultType.REVISION);
         }
-    }
-
-    private static boolean checkCondition(ResultList<? extends SearchResult> result, Condition condition) {
-        switch(condition.getType()) {
-            case NOT_EMPTY:
-                return notEmpty(result);
-            case IS_EMPTY:
-                return isEmpty(result);
-            case UNIQUE:
-                return unique(result);
-            default:
-                return true;
-        }
-    }
-
-    private static boolean notEmpty(ResultList<? extends SearchResult> results) {
-        return !results.getResults().isEmpty();
-    }
-
-    private static boolean isEmpty(ResultList<? extends SearchResult> results) {
-        return results.getResults().isEmpty();
-    }
-
-    private static boolean unique(ResultList<? extends SearchResult> results) {
-        return results.getResults().size() == 1;
     }
 }

@@ -42,10 +42,11 @@ define(function (require) {
     return function (options, lang) {
         var getPropertyNS = require('./utils/getPropertyNS');
 
-        function addRowCommand($container, className, html, click) {
+        function addRowCommand($container, className, html, click, rowFilter) {
             rowCommands.push({
                 className: className,
-                html: html
+                html: html,
+                rowFilter: rowFilter
             });
             $container
                 .on('click', 'tr button.' + className, click);
@@ -75,12 +76,22 @@ define(function (require) {
         function tr(transferRow) {
             var key = options.field.key;
             var $tr = $('<tr>');
+            var infoTDs = {
+                saved: {},
+                approved: {}
+            };
 
             tableError.call($tr, transferRow.errors);
 
             if(options.fieldOptions.type === 'REFERENCECONTAINER') {
                 if(options.field.showReferenceValue) {
-                    $tr.append($('<td>').text(transferRow.value));
+                    infoTDs.value = $('<td>').text(EMPTY);
+                    $tr.append(infoTDs.value);
+                }
+
+                if(options.field.showReferenceType) {
+                    infoTDs.type = $('<td>').text(EMPTY);
+                    $tr.append(infoTDs.type);
                 }
             }
 
@@ -247,36 +258,43 @@ define(function (require) {
             }
 
             if(options.fieldOptions.type === 'REFERENCECONTAINER') {
-                if(options.field.showReferenceSaveInfo || (options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0) || options.field.showReferenceState) {
-                    var infoTDs = {
-                        saved: {},
-                        approved: {}
-                    };
-                    if(options.field.showReferenceSaveInfo) {
-                        infoTDs.saved.at = $('<td>').text(EMPTY);
-                        infoTDs.saved.by = $('<td>').text(EMPTY);
-                        $tr.append(infoTDs.saved.at, infoTDs.saved.by);
-                    }
-                    if(options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0) {
-                        $.each(options.field.showReferenceApproveInfo, function(index, lang) {
-                            lang = lang.toUpperCase();
-                            infoTDs.approved[lang] = {};
-                            infoTDs.approved[lang].at = $('<td>').text(EMPTY);
-                            infoTDs.approved[lang].by = $('<td>').text(EMPTY);
-                            infoTDs.approved[lang].revision = $('<td>').text(EMPTY);
-                            $tr.append(infoTDs.approved[lang].at, infoTDs.approved[lang].by, infoTDs.approved[lang].revision);
-                        });
-                    }
-                    if(options.field.showReferenceState) {
-                        infoTDs.state = $('<td>').text(EMPTY);
-                        $tr.append(infoTDs.state);
-                    }
+                if(infoTDs.value) {
+                    infoTDs.value.text(transferRow.value);
+                }
+                if(options.field.showReferenceSaveInfo) {
+                    infoTDs.saved.at = $('<td>').text(EMPTY);
+                    infoTDs.saved.by = $('<td>').text(EMPTY);
+                    $tr.append(infoTDs.saved.at, infoTDs.saved.by);
+                }
+                if(options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0) {
+                    $.each(options.field.showReferenceApproveInfo, function(index, lang) {
+                        lang = lang.toUpperCase();
+                        infoTDs.approved[lang] = {};
+                        infoTDs.approved[lang].at = $('<td>').text(EMPTY);
+                        infoTDs.approved[lang].by = $('<td>').text(EMPTY);
+                        infoTDs.approved[lang].revision = $('<td>').text(EMPTY);
+                        $tr.append(infoTDs.approved[lang].at, infoTDs.approved[lang].by, infoTDs.approved[lang].revision);
+                    });
+                }
+                if(options.field.showReferenceState) {
+                    infoTDs.state = $('<td>').text(EMPTY);
+                    $tr.append(infoTDs.state);
+                }
+                if(options.field.showReferenceType
+                        || options.field.showReferenceSaveInfo
+                        || (options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0)
+                        || options.field.showReferenceState) {
                     require('./server')('/references/referenceStatus/{value}', transferRow, {
                         method: 'GET',
                         success: function (response) {
                             if(resultParser(response.result).getResult() !== 'REVISION_FOUND') {
                                 require('./resultViewer')(response.result);
                                 return false;
+                            }
+                            if(infoTDs.type) {
+                                if(response.type) {
+                                    infoTDs.type.text(MetkaJS.L10N.get('type.'+response.type+".title"))
+                                }
                             }
                             if(response.saved) {
                                 if(response.saved.time && infoTDs.saved.at) {
@@ -316,11 +334,18 @@ define(function (require) {
                 $tr.append($('<td>')
                     .css('text-align', 'right')
                     .append($('<div class="btn-group btn-group-xs">')
-                    .append(rowCommands.map(function (button) {
-                        return $('<button type="button" class="btn btn-default">')
-                            .addClass(button.className)
-                            .html(button.html);
-                    }))));
+                        .append(rowCommands.map(
+                            function (button) {
+                                if(button.rowFilter && !button.rowFilter(transferRow)) {
+                                    return false;
+                                }
+                                return $('<button type="button" class="btn btn-default">')
+                                    .addClass(button.className)
+                                    .html(button.html);
+                            })
+                        )
+                    )
+                );
             }
 
             return $tr;
@@ -432,6 +457,9 @@ define(function (require) {
                                     if(options.field.showReferenceValue) {
                                         return [th(MetkaJS.L10N.get('general.referenceValue'))];
                                     }
+                                    if(options.field.showReferenceType) {
+                                        return [th(MetkaJS.L10N.get('general.referenceType'))];
+                                    }
                                 }
                             })
                             .append(function () {
@@ -515,7 +543,7 @@ define(function (require) {
                                             $tr.remove();
                                         }
                                         return false;
-                                    });
+                                    }, options.field.removeFilter);
                                 }
                                 if (rowCommands.length) {
                                     return th('');

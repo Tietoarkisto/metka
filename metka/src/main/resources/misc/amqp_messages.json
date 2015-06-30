@@ -2,33 +2,29 @@
     "key": "amqp_messages",
     "data": [{
         "family": "0",
-        "exchange": "metka.test",
-        "routingKey": "metka.queue",
-        "messages": [{
+        "exchange": "metka.topic",
+        "resource": "test",
+        "events": [{
             "key": "TEST",
             "exchange": "",
-            "routingKey": "",
-            "message": "Tämä on testiviesti"
+            "event": "message"
         }, {
             "key": "",
             "exchange": "",
-            "routingKey": "",
-            "message": ""
+            "event": ""
         }]
     }, {
         "family": "",
         "exchange": "",
-        "routingKey": "",
-        "messages": [{
+        "resource": "",
+        "events": [{
             "key": "",
             "exchange": "",
-            "routingKey": "",
-            "message": ""
+            "event": ""
         }, {
             "key": "",
             "exchange": "",
-            "routingKey": "",
-            "message": ""
+            "event": ""
         }]
     }]
 }

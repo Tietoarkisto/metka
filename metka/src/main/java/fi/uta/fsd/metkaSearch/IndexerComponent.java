@@ -221,7 +221,7 @@ public class IndexerComponent {
         }
     }
 
-    public void startIndexer(DirectoryManager.DirectoryPath path) {
+    public synchronized void startIndexer(DirectoryManager.DirectoryPath path) {
         if(!isIndexerRunning(path)) {
             // Remove possible stopped handlers
             clearHandlers();
@@ -232,10 +232,19 @@ public class IndexerComponent {
         }
     }
 
-    public void clearHandlers() {
+    public synchronized void clearHandlers() {
         for(Iterator<Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>>> i = handlers.entrySet().iterator(); i.hasNext(); ) {
             Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> e = i.next();
             if(e.getValue().isDone()) {
+                i.remove();
+            }
+        }
+    }
+
+    public synchronized void stopIndexers() {
+        for(Iterator<Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>>> i = handlers.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> e = i.next();
+            if(e.getValue().cancel(true)) {
                 i.remove();
             }
         }

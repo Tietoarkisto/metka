@@ -255,6 +255,9 @@ define(function (require) {
             "&referenceValue": {
                 "default": "Referenssiarvo"
             },
+            "&referenceType": {
+                "default": "Tyyppi"
+            },
 
             "saveInfo": {
                 "&savedAt": {

@@ -57,6 +57,7 @@ public class FieldDescriptionSerializer extends ObjectSerializer<FieldDescriptio
         jgen.writeBooleanField("showSaveInfo", value.getShowSaveInfo());
         jgen.writeBooleanField("displayHeader", value.getDisplayHeader());
         jgen.writeBooleanField("showReferenceValue", value.getShowReferenceValue());
+        jgen.writeBooleanField("showReferenceType", value.getShowReferenceType());
         jgen.writeBooleanField("showReferenceSaveInfo", value.getShowReferenceSaveInfo());
         jgen.writeArrayFieldStart("showReferenceApproveInfo");
         for(Language lang : value.getShowReferenceApproveInfo()) {

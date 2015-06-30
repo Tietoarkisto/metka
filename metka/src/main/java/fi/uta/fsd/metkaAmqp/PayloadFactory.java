@@ -28,10 +28,6 @@
 
 package fi.uta.fsd.metkaAmqp;
 
-public class TestMessage implements MetkaAmqpMessage {
-    @Override
-    public void send(AmqpMessenger messenger, Object... parameters) {
-
-        messenger.write("metka.test", "metka.queue", "This is a test message");
-    }
+public interface PayloadFactory {
+    byte[] build(MetkaMessage message);
 }

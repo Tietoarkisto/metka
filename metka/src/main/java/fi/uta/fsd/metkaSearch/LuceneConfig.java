@@ -79,7 +79,7 @@ public final class LuceneConfig {
     /**
      * Defines maximum number of commands to handle between flushes if FORCE_FLUSH_AFTER_BATCH_OF_COMMANDS is true.
      */
-    public static final int MAX_COMMAND_BATCH_SIZE = 5;
+    public static final int MAX_COMMAND_BATCH_SIZE = 100;
 
     static {
         // Set LongType no store

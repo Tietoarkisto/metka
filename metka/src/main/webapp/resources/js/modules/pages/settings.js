@@ -216,6 +216,32 @@ define(function (require) {
 
                                         }
                                     ]
+                                },
+                                {
+                                    type: "ROW",
+                                    cells: [
+                                        {
+                                            type: "CELL",
+                                            contentType: "BUTTON",
+                                            button: {
+                                                title: "Sammuta indekserit",
+                                                permissions: [
+                                                    "canManuallyIndexContent"
+                                                ],
+                                                create: function(options) {
+                                                    this.click(function() {
+                                                        require('./../server')('/settings/stopIndexers', {
+                                                            method: "GET",
+                                                            success: function() {
+                                                            }
+                                                        });
+
+                                                    });
+                                                }
+                                            }
+
+                                        }
+                                    ]
                                 }
                             ]
                         }

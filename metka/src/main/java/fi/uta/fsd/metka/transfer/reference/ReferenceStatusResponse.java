@@ -28,8 +28,7 @@
 
 package fi.uta.fsd.metka.transfer.reference;
 
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.UIRevisionState;
+import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.general.ApproveInfo;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -38,19 +37,21 @@ import java.util.Map;
 
 public class ReferenceStatusResponse {
     public static ReferenceStatusResponse returnResultResponse(ReturnResult result) {
-        return new ReferenceStatusResponse(result.name(), false, null, null, null, null);
+        return new ReferenceStatusResponse(result.name(), false, null, null, null, null, null);
     }
 
     private final String result;
     private final boolean exists;
+    private final ConfigurationType type;
     private final DateTimeUserPair removed;
     private final DateTimeUserPair saved;
     private final Map<Language, ApproveInfo> approved;
     private final UIRevisionState state;
 
-    public ReferenceStatusResponse(String result, boolean exists, DateTimeUserPair removed, DateTimeUserPair saved, Map<Language, ApproveInfo> approved, UIRevisionState state) {
+    public ReferenceStatusResponse(String result, boolean exists, ConfigurationType type, DateTimeUserPair removed, DateTimeUserPair saved, Map<Language, ApproveInfo> approved, UIRevisionState state) {
         this.result = result;
         this.exists = exists;
+        this.type = type;
         this.removed = removed;
         this.saved = saved;
         this.approved = approved;
@@ -63,6 +64,10 @@ public class ReferenceStatusResponse {
 
     public boolean isExists() {
         return exists;
+    }
+
+    public ConfigurationType getType() {
+        return type;
     }
 
     public DateTimeUserPair getRemoved() {

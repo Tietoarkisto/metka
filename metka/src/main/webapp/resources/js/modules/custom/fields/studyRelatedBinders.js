@@ -46,25 +46,15 @@ define(function (require) {
                 require('./../../server')('searchAjax', {
                     data: JSON.stringify(binderSearch),
                     success: function(response) {
-                        var rowId = 0;
-                        response.rows.map(function(row) {
-                            require('./../../data')(options).appendByLang('DEFAULT', {
-                                key: options.field.key,
-                                rowId: ++rowId,
-                                value: row.id,
-                                removed: false,
-                                unapproved: true
-                            })
-                        });
-                        options.$events.trigger('redraw-'+options.field.key);
+                        require('./../../updateSearchResultContainer')(options, response, options.field.key);
                     }
                 });
             },
             field: {
                 onClick: function(transferRow) {
                     require('./../../revisionModal')(options, {
-                        id: transferRow.value,
-                        no: ''}, 'BINDER_PAGE');
+                        id: transferRow.value.split("-")[0],
+                        no: transferRow.value.split("-")[1]}, 'BINDER_PAGE');
                 }
             }
         };

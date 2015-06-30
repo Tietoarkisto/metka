@@ -55,6 +55,8 @@ class DataFieldCascader {
 
     static boolean cascade(CascadeInstruction instruction, Target target, DataFieldContainer context, Configuration configuration, Cascader.RepositoryHolder repositories) {
         switch(target.getType()) {
+            case QUERY:
+                return QueryTargetCascader.cascade(instruction, target, context, configuration, repositories);
             case NAMED:
                 return NamedTargetCascader.cascade(instruction, target, context, configuration, repositories);
             case PARENT:

@@ -172,6 +172,12 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
+    public ReturnResult stopIndexers() {
+        indexer.stopIndexers();
+        return ReturnResult.OPERATION_SUCCESSFUL;
+    }
+
+    @Override
     public ReturnResult uploadConfiguration(Configuration configuration) {
         //backupAndCopy(file, "configuration");
 

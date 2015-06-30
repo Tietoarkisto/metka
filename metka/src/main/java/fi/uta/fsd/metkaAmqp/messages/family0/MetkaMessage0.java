@@ -26,8 +26,19 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaAmqp;
+package fi.uta.fsd.metkaAmqp.messages.family0;
 
-interface MetkaAmqpMessage {
-    void send(AmqpMessenger messenger, Object... parameters);
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferencePath;
+import fi.uta.fsd.metkaAmqp.MetkaMessage;
+import fi.uta.fsd.metkaAmqp.PayloadFactory;
+
+import java.util.List;
+
+public abstract class MetkaMessage0 extends MetkaMessage {
+
+    public MetkaMessage0(PayloadFactory payload, String messageKey) {
+        super(payload, "0", messageKey);
+    }
 }

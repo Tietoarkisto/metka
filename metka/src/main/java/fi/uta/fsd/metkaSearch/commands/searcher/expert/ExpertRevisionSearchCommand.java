@@ -175,17 +175,13 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
             throw new ParseException(new MessageImpl("EMPTY_QUERY"));
         }
         query = parser.parse(qry, "general");
-        if(configuration != null) {
-            // If we're in config mode we need to parse the query twice, once to get all the fields in the query and second time with the actual numeric configs and analyzers
 
-            addAnalyzersAndConfigs(query, nums, configuration);
-            //ComplexPhraseQueryParser complex = new ComplexPhraseQueryParser(LuceneConfig.USED_VERSION, "general", getAnalyzer());
-            //complex.setAllowLeadingWildcard(true);
-            //query = complex.parse(qry);
-            parser.setAnalyzer(getAnalyzer());
-            parser.setNumericConfigMap(nums);
-            query = parser.parse(qry, "general");
-        }
+        // No matter if we have configuraion or not we'll parse the query twice. This second parsing will add analyzers for known keys like key.id
+        // as well as fields found from configuration if configuration is provided
+        addAnalyzersAndConfigs(query, nums, configuration);
+        parser.setAnalyzer(getAnalyzer());
+        parser.setNumericConfigMap(nums);
+        query = parser.parse(qry, "general");
     }
 
     @Override
@@ -252,30 +248,32 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
             addKeywordAnalyzer(key);
             return;
         }
-
-        Field field = config.getField(splits[splits.length-1]);
-        if(field == null) {
-            // Search with indexName
-            for(Field f : config.getFields().values()) {
-                if(f.getIndexName() != null && f.getIndexName().equals(splits[splits.length-1])) {
-                    field = f;
-                    break;
+        // If we have config we can use field configuration to decide how to process the field, otherwise use default analyzer
+        if(config != null) {
+            Field field = config.getField(splits[splits.length-1]);
+            if(field == null) {
+                // Search with indexName
+                for(Field f : config.getFields().values()) {
+                    if(f.getIndexName() != null && f.getIndexName().equals(splits[splits.length-1])) {
+                        field = f;
+                        break;
+                    }
                 }
             }
-        }
-        if(field == null) {
-            addKeywordAnalyzer(key);
-            return;
-        }
-        if(field.getType() == INTEGER) {
-            nums.put(key, new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.LONG));
-        } else if(field.getType() == REAL) {
-            nums.put(key, new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.DOUBLE));
-        } else {
-            if (!field.getExact()) {
-                addTextAnalyzer(key);
-            } else {
+            if(field == null) {
                 addKeywordAnalyzer(key);
+                return;
+            }
+            if(field.getType() == INTEGER) {
+                nums.put(key, new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.LONG));
+            } else if(field.getType() == REAL) {
+                nums.put(key, new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.DOUBLE));
+            } else {
+                if (!field.getExact()) {
+                    addTextAnalyzer(key);
+                } else {
+                    addKeywordAnalyzer(key);
+                }
             }
         }
     }

@@ -101,10 +101,13 @@ define(function (require) {
                 'REVISION_CREATED'
             ], "edit"));
         },
-        HISTORY: function () {
-            var metka = require('./../metka');
+        HISTORY: function (options) {
+            $.extend(true, options, {
+                preventDismiss: true
+            });
             this
                 .click(function () {
+                    var o = options;
                     function checkRadioGroups() {
                         var beginVal = $('input[name="beginGrp"]:checked').val();
                         var endVal = $('input[name="endGrp"]:checked').val();
@@ -145,10 +148,6 @@ define(function (require) {
                                         'general.revision.compare.begin',
                                         'general.revision.compare.end'
                                     ];
-                                    /*
-                                     if (metka.state === 'DRAFT') {
-                                     arr.push('general.revision.replace');
-                                     }*/
 
                                     return arr.map(function (entry) {
                                         return $('<th>')
@@ -190,7 +189,7 @@ define(function (require) {
 
                                         require('./server')('/revision/revisionCompare', {
                                             data: JSON.stringify({
-                                                id: metka.id,
+                                                id: o.data.key.id,
                                                 begin: $('input[name="beginGrp"]:checked').val(),
                                                 end: $('input[name="endGrp"]:checked').val()
                                             }),
@@ -229,7 +228,7 @@ define(function (require) {
                     }));
                     require('./server')('/revision/revisionHistory', {
                         data: JSON.stringify({
-                            id: metka.id
+                            id: options.data.key.id
                         }),
                         success: function (response) {
                             $table
@@ -256,13 +255,6 @@ define(function (require) {
                                                         change: checkRadioGroups
                                                     })
                                                 ];
-
-                                                /*if (metka.state === 'DRAFT') {
-                                                 items.push(require('./button')()()
-                                                 .addClass('btn-xs')
-                                                 .prop('disabled', true)
-                                                 .text(MetkaJS.L10N.get('general.revision.replace')));
-                                                 }*/
 
                                                 return items.map(function (entry) {
                                                     return $('<td>')

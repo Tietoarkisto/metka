@@ -36,28 +36,30 @@ import fi.uta.fsd.metka.transfer.reference.*;
 
 import java.util.List;
 
-public abstract class MetkaMessage implements MetkaAmqpMessage {
-
-    protected final ReferenceService references;
+public abstract class MetkaMessage {
 
     private final Reference familyRef;
     protected final Reference familyExchangeRef;
-    protected final Reference familyRoutingKeyRef;
-    protected final Reference messageExchangeRef;
-    protected final Reference messageRoutingKeyRef;
-    protected final Reference messageRef;
+    protected final Reference familyResourceRef;
+    protected final Reference eventRef;
+    protected final Reference eventExchangeRef;
 
     protected final ReferencePathRequest request;
 
-    public MetkaMessage(ReferenceService references, String family) {
-        this.references = references;
+    protected final PayloadFactory payload;
+
+    protected final String messageKey;
+
+    public MetkaMessage(PayloadFactory payload, String family, String messageKey) {
+        this.payload = payload;
 
         familyRef = new Reference("family_ref", ReferenceType.JSON, "amqp_messages", "family", null);
         familyExchangeRef = new Reference("family_exchange_ref", ReferenceType.DEPENDENCY, "amqp_messages", "exchange", null);
-        familyRoutingKeyRef = new Reference("family_routingKey_ref", ReferenceType.DEPENDENCY, "amqp_messages", "routingKey", null);
-        messageExchangeRef = new Reference("message_exchange_ref", ReferenceType.DEPENDENCY, "amqp_messages", "messages.key", "exchange");
-        messageRoutingKeyRef = new Reference("message_routingKey_ref", ReferenceType.DEPENDENCY, "amqp_messages", "messages.key", "routingKey");
-        messageRef = new Reference("message_ref", ReferenceType.DEPENDENCY, "amqp_messages", "messages.key", "message");
+        familyResourceRef = new Reference("resource_ref", ReferenceType.DEPENDENCY, "amqp_messages", "resource", null);
+        eventRef = new Reference("message_event_ref", ReferenceType.DEPENDENCY, "amqp_messages", "events.key", "event");
+        eventExchangeRef = new Reference("message_exchange_ref", ReferenceType.DEPENDENCY, "amqp_messages", "events.key", "exchange");
+
+        this.messageKey = messageKey;
 
         request = new ReferencePathRequest();
         request.setLanguage(Language.DEFAULT);
@@ -65,21 +67,29 @@ public abstract class MetkaMessage implements MetkaAmqpMessage {
         request.setRoot(new ReferencePath(familyRef, family));
     }
 
-    protected String getExchange(String key) {
-        String exchange = getTitle(new ReferencePath(messageExchangeRef, key));
-        return (exchange != null ? exchange : getValue(familyExchangeRef));
+    public void send(ReferenceService references, Messenger.AmqpMessenger messenger) {
+        String exchange = getExchange(references);
+        String routingKey = buildRoutingKey(references);
+
+        messenger.write(exchange, routingKey, payload.build(this));
     }
 
-    protected String getRoutingKey(String key) {
-        String exchange = getTitle(new ReferencePath(messageRoutingKeyRef, key));
-        return (exchange != null ? exchange : getValue(familyRoutingKeyRef));
+    public abstract String buildRoutingKey(ReferenceService references);
+
+    protected String getExchange(ReferenceService references) {
+        String exchange = getTitle(references, new ReferencePath(eventExchangeRef, messageKey));
+        return (exchange != null ? exchange : getValue(references, familyExchangeRef));
     }
 
-    protected String getMessage(String key) {
-        return getTitle(new ReferencePath(messageRef, key));
+    public String getResource(ReferenceService references) {
+        return getValue(references, familyResourceRef);
     }
 
-    protected String getValue(Reference reference) {
+    public String getEvent(ReferenceService references) {
+        return getTitle(references, new ReferencePath(eventRef, messageKey));
+    }
+
+    private String getValue(ReferenceService references, Reference reference) {
         request.getRoot().setNext(new ReferencePath(reference, null));
         List<ReferenceOption> options = references.collectReferenceOptions(request);
         if(options.isEmpty()) {
@@ -88,7 +98,7 @@ public abstract class MetkaMessage implements MetkaAmqpMessage {
         return options.get(0).getValue();
     }
 
-    protected String getTitle(ReferencePath path) {
+    private String getTitle(ReferenceService references, ReferencePath path) {
         request.getRoot().setNext(path);
         List<ReferenceOption> options = references.collectReferenceOptions(request);
         if(options.isEmpty()) {

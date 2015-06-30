@@ -905,6 +905,7 @@
                                 "field": {
                                     "displayType": "CUSTOM_JS",
                                     "key": "studyRelatedBinders",
+                                    "showReferenceState": true,
                                     "columnFields": [
                                         "binderid",
                                         "binderdescription"

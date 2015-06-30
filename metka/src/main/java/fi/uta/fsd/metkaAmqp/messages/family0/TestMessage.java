@@ -26,27 +26,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaAmqp;
+package fi.uta.fsd.metkaAmqp.messages.family0;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
-import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
-import fi.uta.fsd.metka.transfer.reference.ReferencePath;
+import fi.uta.fsd.metkaAmqp.*;
 
-import java.util.List;
-
-public class MetkaMessage0 extends MetkaMessage {
-
-    public MetkaMessage0(ReferenceService references) {
-        super(references, "0");
+public class TestMessage extends MetkaMessage0 {
+    public TestMessage() {
+        super(new Factory(), "TEST");
     }
 
     @Override
-    public void send(AmqpMessenger messenger, Object... parameters) {
-        String key = (String)parameters[0];
-        String exchange = getExchange(key);
-        String routingKey = getRoutingKey(key);
-        String message = getMessage(key);
+    public String buildRoutingKey(ReferenceService references) {
+        return getResource(references)+"."+getEvent(references);
+    }
 
-        messenger.write(exchange, routingKey, message);
+    private static class Factory implements PayloadFactory {
+        @Override
+        public byte[] build(MetkaMessage message) {
+            return "Tämä on testiviesti".getBytes();
+        }
     }
 }

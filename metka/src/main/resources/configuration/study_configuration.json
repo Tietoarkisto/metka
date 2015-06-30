@@ -919,7 +919,7 @@
 		},
 		"related_binder_ref": {
 			"key": "related_binder_ref",
-			"type": "REVISIONABLE",
+			"type": "REVISION",
 			"target": "BINDER_PAGE"
 		},
 		"binder_id_ref": {
@@ -3533,6 +3533,12 @@
 		}]
 	}],
 	"cascade": [{
+		"type": "REMOVE_LOGICAL",
+		"targets": [{
+			"type": "QUERY",
+			"content": "+key.configuration.type:BINDER_PAGE +studyid.value:{id}"
+		}]
+	}, {
 		"type": "ALL",
 		"targets": [{
 			"type": "FIELD",

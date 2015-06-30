@@ -32,6 +32,7 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Target;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.repository.*;
+import fi.uta.fsd.metkaSearch.SearcherComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -61,9 +62,12 @@ public class Cascader {
     @Autowired
     private RevisionHandlerRepository handler;
 
+    @Autowired
+    private SearcherComponent searcher;
+
     public boolean cascade(CascadeInstruction instruction, RevisionData revision, List<Target> targets, Configuration configuration) {
         initParents(revision, targets);
-        return DataFieldCascader.cascade(instruction, targets, revision, configuration, new RepositoryHolder(configurations, revisions, save, approve, remove, edit, handler));
+        return DataFieldCascader.cascade(instruction, targets, revision, configuration, new RepositoryHolder(configurations, revisions, save, approve, remove, edit, handler, searcher));
     }
 
     /**
@@ -86,10 +90,11 @@ public class Cascader {
         private final RevisionRemoveRepository remove;
         private final RevisionEditRepository edit;
         private final RevisionHandlerRepository handler;
+        private final SearcherComponent searcher;
 
         public RepositoryHolder(
                 ConfigurationRepository configurations, RevisionRepository revisions, RevisionSaveRepository save, RevisionApproveRepository approve,
-                RevisionRemoveRepository remove, RevisionEditRepository edit, RevisionHandlerRepository handler) {
+                RevisionRemoveRepository remove, RevisionEditRepository edit, RevisionHandlerRepository handler, SearcherComponent searcher) {
             this.configurations = configurations;
             this.revisions = revisions;
             this.save = save;
@@ -97,6 +102,7 @@ public class Cascader {
             this.remove = remove;
             this.edit = edit;
             this.handler = handler;
+            this.searcher = searcher;
         }
 
         public ConfigurationRepository getConfigurations() {
@@ -125,6 +131,10 @@ public class Cascader {
 
         public RevisionHandlerRepository getHandler() {
             return handler;
+        }
+
+        public SearcherComponent getSearcher() {
+            return searcher;
         }
     }
 }

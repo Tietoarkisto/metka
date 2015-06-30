@@ -28,12 +28,15 @@
 
 package fi.uta.fsd.metkaAmqp;
 
+import com.rabbitmq.client.*;
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,18 +61,9 @@ public class Messenger {
     @Autowired
     private ReferenceService references;
 
-    private final Map<AmqpMessageType, MetkaAmqpMessage> amqpMessages = new HashMap<>();
-
-    @PostConstruct
-    private void initAmqpMessages() {
-        amqpMessages.put(AmqpMessageType.TEST, new TestMessage());
-        amqpMessages.put(AmqpMessageType.METKA_MESSAGE_0, new MetkaMessage0(references));
-    }
-
-    public void sendAmqpMessage(AmqpMessageType type, Object... parameters) {
-        MetkaAmqpMessage message = amqpMessages.get(type);
+    public void sendAmqpMessage(MetkaMessage message) {
         AmqpMessenger messenger = getAmqpMessenger();
-        message.send(messenger, parameters);
+        message.send(references, messenger);
         messenger.clean();
     }
 
@@ -80,14 +74,73 @@ public class Messenger {
         return amqpMessenger;
     }
 
-    public static enum AmqpMessageType {
-        TEST,       // Sends a test message
-        METKA_MESSAGE_0,
-        METKA_MESSAGE_A,
-        METKA_MESSAGE_B,
-        METKA_MESSAGE_C,
-        METKA_MESSAGE_D,
-        METKA_MESSAGE_E
+    public static class AmqpMessenger {
+
+        private ConnectionFactory factory = null;
+        private Connection connection = null;
+        private Channel channel = null;
+        private AMQPState state = AMQPState.AMQP_STOPPED;
+
+        void init(String host, int port, String user, String password) {
+            try {
+                if (factory == null) {
+                    factory = new ConnectionFactory();
+                }
+                factory.setHost(host);
+                factory.setUsername(user);
+                factory.setPassword(password);
+                factory.setPort(port);
+                connection = factory.newConnection();
+
+                if (!connection.isOpen()) {
+                    connection = factory.newConnection();
+                }
+                channel = connection.createChannel();
+                state = AMQPState.AMQP_READY;
+            } catch(IOException ioe) {
+                Logger.error(AmqpMessenger.class, "AMQP channel creation failed.", ioe);
+                channel = null;
+                state = AMQPState.AMQP_CONNECTION_FAILED;
+            }
+        }
+
+        void clean() {
+            try {
+                if (channel != null && channel.isOpen()) {
+                    channel.close();
+                }
+                if (connection != null && connection.isOpen()) {
+                    connection.close();
+                }
+                state = AMQPState.AMQP_STOPPED;
+            } catch(IOException ioe) {
+                Logger.error(getClass(), "IOException during AMQP cleanup.", ioe);
+            }
+        }
+
+        void logState() {
+            Logger.debug(getClass(), "AMQP Messenger is currently at state: "+state);
+        }
+
+        void write(String exchange, String routingKey, byte[] message) {
+            if(state == AMQPState.AMQP_READY) {
+                try {
+                    channel.basicPublish(exchange, routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, message);
+                } catch(IOException ioe) {
+                    Logger.error(getClass(), "AMQP message write failed.", ioe);
+                    state = AMQPState.AMQP_CONNECTION_FAILED;
+                    logState();
+                }
+            } else {
+                Logger.error(getClass(), "AMQP messenger is not in READY state, instead being in state: "+state);
+            }
+        }
+
+        private static enum AMQPState {
+            AMQP_READY,
+            AMQP_CONNECTION_FAILED,
+            AMQP_STOPPED
+        }
     }
 
     // Clean up

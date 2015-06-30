@@ -95,6 +95,9 @@ define(function (require) {
                                                 }
                                             });
                                         },
+                                        removeFilter: function(transferRow) {
+                                            return require('./../hasEveryPermission')(['canRemoveNotOwnedExpertSearch']) || MetkaJS.User.userName===transferRow.saved.user;
+                                        },
                                         onClick: function () {
                                             $query
                                                 .val($(this).data('transferRow').fields.query.values.DEFAULT.current)

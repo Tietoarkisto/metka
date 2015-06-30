@@ -79,6 +79,9 @@ public interface SettingsService {
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_MANUALLY_INDEX_CONTENT +"', 'PERMISSION')")
     ReturnResult indexEverything();
 
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_MANUALLY_INDEX_CONTENT +"', 'PERMISSION')")
+    ReturnResult stopIndexers();
+
     /*@PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_CONFIGURATIONS +"', 'PERMISSION')")
     void uploadDataConfig(MultipartFile file) throws IOException;
 
