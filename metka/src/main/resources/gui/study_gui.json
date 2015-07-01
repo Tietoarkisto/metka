@@ -1893,6 +1893,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "ei painokertoimia",
+                                    "horizontal": true,
                                     "field": {
                                         "key": "weightyesno",
                                         "displayType": "CUSTOM_JS"

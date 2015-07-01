@@ -26,35 +26,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-define(function(require) {
+define(function (require) {
     'use strict';
 
-    var getPropertyNS = require('./utils/getPropertyNS');
+    var resultParser = require('./../../resultParser');
 
-    return function(options, response, key) {
-        var field = getPropertyNS(options, 'dataConf.fields', key);
-        if(field.type !== 'REFERENCECONTAINER') {
-            return;
-        }
-        var reference = getPropertyNS(options, 'dataConf.references', field.reference);
+    return function(options) {
+        options.preventDismiss = true;
 
-        if(!(reference.type === 'REVISIONABLE' || reference.type === 'REVISION')) {
-            return;
-        }
-
-        var rowId = 0;
-        require('./data')(options)(key).removeRows('DEFAULT');
-        response.rows.map(function(row) {
-            require('./data')(options)(key).appendByLang('DEFAULT', {
-                key: key,
-                rowId: ++rowId,
-                value: (reference.type === 'REVISIONABLE' ? row.id : row.id+"-"+row.no),
-                removed: false,
-                unapproved: true
-            })
-        });
-        options.$events.trigger('redraw-{key}'.supplant({
-            key: key
-        }));
-    }
+        this
+            .click(require('./../../formAction')('approve')(options, function (response) {
+                if(resultParser(response.result).getResult() === 'OPERATION_SUCCESSFUL_WITH_ERRORS' || resultParser(response.result).getResult() === 'RESTRICTION_VALIDATION_FAILURE') {
+                    $.extend(options.data, response.data);
+                    options.$events.trigger('refresh.metka');
+                } else {
+                    $('#'+options.modalTarget).modal('hide');
+                }
+                options.$events.trigger('modal.refresh');
+            }, [
+                'OPERATION_SUCCESSFUL',
+                'OPERATION_SUCCESSFUL_WITH_ERRORS',
+                'RESTRICTION_VALIDATION_FAILURE',
+                'NO_CHANGES'
+            ], "approve"));
+    };
 });

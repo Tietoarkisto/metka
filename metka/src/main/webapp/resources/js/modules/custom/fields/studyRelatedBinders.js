@@ -34,7 +34,7 @@ define(function (require) {
 
         return {
             postCreate: function(options) {
-                var binderSearch = {
+                require('./../../searchValueSearch')(options, {
                     searchApproved: true,
                     searchDraft: true,
                     searchRemoved: false,
@@ -42,13 +42,7 @@ define(function (require) {
                         'key.configuration.type': "BINDER_PAGE",
                         'studyid.value': options.data.key.id
                     }
-                };
-                require('./../../server')('searchAjax', {
-                    data: JSON.stringify(binderSearch),
-                    success: function(response) {
-                        require('./../../updateSearchResultContainer')(options, response, options.field.key);
-                    }
-                });
+                }, options.field.key).search();
             },
             field: {
                 onClick: function(transferRow) {

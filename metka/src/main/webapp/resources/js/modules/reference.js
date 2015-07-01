@@ -71,6 +71,10 @@ define(function (require) {
                             targetRef = getPropertyNS(options, 'dataConf.references', target.reference);
                         } else if(target.type === "SELECTION") {
                             var list = getPropertyNS(options, 'dataConf.selectionLists', target.selectionList);
+                            if(!list) {
+                                log("No list found for "+target.key);
+                                return path;
+                            }
                             if(list.type === "REFERENCE") {
                                 targetRef = getPropertyNS(options, 'dataConf.references', list.reference);
                             }

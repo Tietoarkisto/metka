@@ -36,6 +36,7 @@ define(function (require) {
             approved: {
                 "type": "CELL",
                 "title": "Hyväksyttyjä",
+                "horizontal": true,
                 "field": {
                     "displayType": "BOOLEAN",
                     "key": prefix+"searchApproved"
@@ -44,6 +45,7 @@ define(function (require) {
             draft: {
                 "type": "CELL",
                 "title": "Luonnoksia",
+                "horizontal": true,
                 "field": {
                     "displayType": "BOOLEAN",
                     "key": prefix+"searchDraft"
@@ -52,6 +54,7 @@ define(function (require) {
             removed: {
                 "type": "CELL",
                 "title": "Poistettuja",
+                "horizontal": true,
                 "field": {
                     "displayType": "BOOLEAN",
                     "key": prefix+"searchRemoved"
@@ -61,13 +64,13 @@ define(function (require) {
         return {
             column: {
                 "type": "COLUMN",
-                "columns": 6,
+                "columns": 4,
                 "rows": [
                     {
                         "type": "ROW",
-                        "cells": [{
-                            "type": "EMPTYCELL"
-                        }, cells.approved, cells.draft, cells.removed]
+                        "cells": [cells.approved, cells.draft, cells.removed, {
+                         "type": "EMPTYCELL"
+                         }]
                     }
                 ]
             },

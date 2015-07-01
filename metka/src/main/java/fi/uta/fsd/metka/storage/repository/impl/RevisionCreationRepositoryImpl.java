@@ -85,21 +85,27 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
 
     @Override
     public Pair<ReturnResult, RevisionData> create(RevisionCreateRequest request) {
-        Pair<ReturnResult, Configuration> configPair;
-        switch(request.getType()) {
+        if(request.getType() == null) {
+            Logger.error(getClass(), "No configuration type given and so no creation can occur");
+            return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
+        }
+
+        Pair<ReturnResult, Configuration> configPair = configurations.findLatestConfiguration(request.getType());
+        /*switch(request.getType()) {
             case SERIES:
             case STUDY:
             case PUBLICATION:
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLES:
             case STUDY_VARIABLE:
+            case STUDY_ERROR:
             case BINDER_PAGE:
                 configPair = configurations.findLatestConfiguration(request.getType());
                 break;
             default:
                 Logger.warning(getClass(), "Tried to create revisionable " + request.getType() + " which is not handled here but is instead created through some other means");
                 return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
-        }
+        }*/
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             Logger.error(getClass(), "No configuration found for "+request.getType()+", halting new revisionable creation.");
             return new ImmutablePair<>(configPair.getLeft(), null);
@@ -224,6 +230,9 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case BINDER_PAGE:
                 revisionable = new BinderPageEntity();
                 break;
+            case STUDY_ERROR:
+                revisionable = new StudyErrorEntity();
+                break;
             case SERIES:
                 revisionable = new SeriesEntity();
                 break;
@@ -272,6 +281,10 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         Pair<ReturnResult, RevisionData> data;
         switch(request.getType()) {
             case BINDER_PAGE:
+                data = new ImmutablePair<>(ReturnResult.REVISION_CREATED,
+                        DataFactory.createDraftRevision(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration.getKey()));
+                break;
+            case STUDY_ERROR:
                 data = new ImmutablePair<>(ReturnResult.REVISION_CREATED,
                         DataFactory.createDraftRevision(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration.getKey()));
                 break;

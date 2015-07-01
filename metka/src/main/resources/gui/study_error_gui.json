@@ -1,9 +1,9 @@
 {
-	"key": {
-		"type": "BINDER_PAGE",
-		"version": 1
-	},
-	"content": [{
+    "key": {
+        "type": "STUDY_ERROR",
+        "version": 1
+    },
+    "content": [{
         "type": "COLUMN",
         "columns": 1,
         "rows": [{
@@ -11,9 +11,8 @@
             "cells": [{
                 "type": "CELL",
                 "title": "Aineistonumero",
-                "required": true,
                 "field": {
-                    "key": "studyid"
+                    "key": "study"
                 }
             }]
         }, {
@@ -29,20 +28,73 @@
             "type": "ROW",
             "cells": [{
                 "type": "CELL",
-                "title": "Mappinumero",
-                "required": true,
+                "title": "Pisteet",
                 "field": {
-                    "key": "binderid"
+                    "key": "errorscore"
                 }
             }]
         }, {
             "type": "ROW",
             "cells": [{
                 "type": "CELL",
-                "title": "Kuvaus",
+                "title": "Aineiston osa",
                 "field": {
-                    "key": "description",
+                    "key": "errordatasetpart"
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Osio",
+                "field": {
+                    "key": "errorpartsection"
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Kieli",
+                "field": {
+                    "key": "errorlanguage"
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Selite",
+                "field": {
+                    "key": "errorlabel"
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Pitkä selite",
+                "field": {
+                    "key": "errornotes",
                     "multiline": true
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Herätepäivämäärä",
+                "field": {
+                    "key": "errortriggerdate"
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Herätteen saaja",
+                "field": {
+                    "key": "errortriggerpro"
                 }
             }]
         }]
@@ -50,7 +102,7 @@
     "buttons": [{
         "title": "Hyväksy",
         "type": "CUSTOM",
-        "customHandler": "binderPageApprove",
+        "customHandler": "studyErrorApprove",
         "isHandler": true,
         "states": [
             "DRAFT"
@@ -61,7 +113,7 @@
     }, {
         "title": "Tee luonnos",
         "type": "CUSTOM",
-        "customHandler": "binderPageEdit",
+        "customHandler": "studyErrorEdit",
         "states": [
             "APPROVED"
         ],
@@ -71,7 +123,7 @@
     }, {
         "title": "Poista",
         "type": "CUSTOM",
-        "customHandler": "binderPageRemove",
+        "customHandler": "studyErrorRemove",
         "states": [
             "DRAFT",
             "APPROVED"
@@ -83,7 +135,7 @@
     }, {
         "title": "Palauta",
         "type": "CUSTOM",
-        "customHandler": "binderPageRestore",
+        "customHandler": "studyErrorRestore",
         "states": [
             "REMOVED"
         ],

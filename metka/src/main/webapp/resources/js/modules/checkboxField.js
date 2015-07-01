@@ -30,8 +30,20 @@ define(function (require) {
     'use strict';
 
     return function (options, lang) {
+        var getPropertyNS = require('./utils/getPropertyNS');
         var reverseBoolean = !!options.field.reverseBoolean;
-        var $input = $('<input type="checkbox">')
+        var id = require('./autoId')();
+        var $label = require('./label')(options, lang)
+            .attr('for', id);
+        var elemOptions = {
+            'class': 'form-control',
+            id: id,
+            'data-metka-field-key': options.field.key,
+            'data-metka-field-lang': lang,
+            'type': 'checkbox'
+        };
+
+        var $input = $('<input>', elemOptions)
             .prop('disabled', require('./isFieldDisabled')(options))
             .change(function () {
                 require('./data')(options).setByLang(lang, reverseBoolean !== $(this).prop('checked'));
@@ -41,8 +53,29 @@ define(function (require) {
         var boolValue = typeof value === 'string' ? value.bool() : !!value;
         $input.prop('checked', reverseBoolean !== boolValue);
 
-        this
-            .append(require('./label')(options, lang))
-            .append(require('./input').call($input, options));
+        var $field = (function () {
+            if (options.horizontal) {
+
+                // horizontal label should be 2 boostrap main columns wide, even when it's inside column
+                var labelWidth = 2 * (getPropertyNS(options, 'parent.parent.columns') || 1) / (options.colspan || 1);
+
+                $label.addClass('col-xs-' + labelWidth);
+
+                var $inputWrapper = $('<div>')
+                    .addClass('col-xs-' + (12 - labelWidth));
+
+                this
+                    .append($('<div class="form-horizontal">')
+                        .append($('<div class="form-group">')
+                            .append($label)
+                            .append($inputWrapper)));
+
+                return $inputWrapper;
+            } else {
+                return this.append($label);
+            }
+        }).call(this);
+
+        $field.append(require('./input').call($input, options));
     };
 });

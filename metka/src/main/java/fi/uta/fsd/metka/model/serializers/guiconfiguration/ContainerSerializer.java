@@ -120,6 +120,7 @@ public class ContainerSerializer extends ObjectSerializer<Container> {
             }
 
             if(value.getType() == ContainerType.CELL) {
+                jgen.writeBooleanField("horizontal", value.getHorizontal());
                 if(value.getContentType() == ContentType.FIELD) {
                     jgen.writeObjectField("field", value.getField());
                 } else if(value.getContentType() == ContentType.BUTTON) {

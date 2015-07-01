@@ -56,14 +56,53 @@ define(function (require) {
                             target: 'SERIES',
                             valuePath: 'seriesabbr',
                             titlePath: 'seriesabbr'
-                        }
+                        }/*,
+                        result_ref: {
+                            key: "result_ref",
+                            type: "REVISION",
+                            target: "SERIES"
+                        },
+                        result_abbr_ref: {
+                            key: "result_abbr_ref",
+                            type: "DEPENDENCY",
+                            target: "searchresults",
+                            valuePath: "seriesabbr"
+                        },
+                        result_name_ref: {
+                            key: "result_name_ref",
+                            type: "DEPENDENCY",
+                            target: "searchresults",
+                            valuePath: "seriesname"
+                        }*/
                     },
                     fields: {
                         seriesabbr: {
                             key: 'seriesabbr',
                             type: 'SELECTION',
                             selectionList: 'seriesabbr_list'
-                        }
+                        }/*,
+                        searchresults: {
+                            key: 'searchresults',
+                            type: "REFERENCECONTAINER",
+                            reference: "result_ref",
+                            fixedOrder: true,
+                            subfields: [
+                                "resultabbr",
+                                "resultname"
+                            ]
+                        },
+                        resultabbr: {
+                            key: "resultabbr",
+                            type: "REFERENCE",
+                            reference: "result_abbr_ref",
+                            subfield: true
+                        },
+                        resultname: {
+                            key: "resultname",
+                            type: "REFERENCE",
+                            reference: "result_name_ref",
+                            subfield: true
+                        }*/
                     }
                 },
                 fieldTitles: {
@@ -128,11 +167,53 @@ define(function (require) {
                                     },
                                     commonSearchBooleans.cells.removed
                                 ]
-                            }
+                            }/*,
+                            {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Sarjat",
+                                        "colspan": 3,
+                                        "readOnly": true,
+                                        "field": {
+                                            "displayType": "REFERENCECONTAINER",
+                                            "key": "searchresults",
+                                            "disableRemoval": true,
+                                            //"displayType": "CONTAINER",
+                                            "showReferenceValue": true,
+                                            "showReferenceState": true,
+                                            "columnFields": [
+                                                "resultabbr",
+                                                "resultname"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }*/
                         ]
                     }
                 ],
-                buttons: [
+                buttons: [ /*{
+                    title: "Hae",
+                    create: function(options) {
+                        this.click(function() {
+                            require('./../searchRequestSearch')(options, [
+                                {
+                                    key: 'key.configuration.type',
+                                    value: "SERIES",
+                                    addParens: false
+                                },
+                                'key.id',
+                                {
+                                    key: 'seriesabbr',
+                                    exactValue: true
+                                },
+                                'seriesname'
+                            ], 'searchresults').search();
+                        });
+                    }
+                },*/
                     require('./../searchButton')('searchAjax', [
                         {
                             key: 'key.configuration.type',
@@ -175,16 +256,6 @@ define(function (require) {
                         "seriesname",
                         "state"
                     ], options),
-                    /*{
-                        "&title": {
-                            "default": "Tyhjennä"
-                        },
-                        create: function () {
-                            this.click(function () {
-                                log('TODO: tyhjennä lomake')
-                            });
-                        }
-                    },*/
                     {
                         "&title": {
                             "default": "Lisää uusi"

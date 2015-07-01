@@ -261,6 +261,12 @@ label {
 
 /* Metka CSS */
 
+input[type="checkbox"], input[type="radio"] {
+    margin: 5px;
+    width: 22px;
+    height: 22px;
+}
+
 .temporary {
     color: red;
 }

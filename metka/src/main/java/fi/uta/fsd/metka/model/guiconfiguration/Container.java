@@ -51,6 +51,7 @@ public class Container {
     private Integer columns = 1;
     private Boolean required = false;
     private Integer colspan = 1;
+    private Boolean horizontal = false;
     private final Map<String, Container> subfieldConfiguration = new HashMap<>();
     private Boolean hidePageButtons = false;
 
@@ -94,6 +95,14 @@ public class Container {
 
     public void setHidden(Boolean hidden) {
         this.hidden = (hidden == null) ? false : hidden;
+    }
+
+    public Boolean getHorizontal() {
+        return (horizontal == null) ? false : horizontal;
+    }
+
+    public void setHorizontal(Boolean horizontal) {
+        this.horizontal = (horizontal == null) ? false : horizontal;
     }
 
     public Boolean getReadOnly() {

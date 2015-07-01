@@ -168,6 +168,11 @@ define(function (require) {
                 "&title": {
                     "default": "Mapitus"
                 }
+            },
+            "STUDY_ERROR": {
+                "&title": {
+                    "default": "Aineistovirhe"
+                }
             }
         },
 

@@ -80,6 +80,12 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
             con.setHidden(hidden.booleanValue());
         }
 
+        // Set horizontal
+        JsonNode horizontal = node.get("horizontal");
+        if(horizontal != null && horizontal.getNodeType() == JsonNodeType.BOOLEAN) {
+            con.setHorizontal(horizontal.booleanValue());
+        }
+
         // Set readOnly
         JsonNode readOnly = node.get("readOnly");
         if(readOnly != null && readOnly.getNodeType() == JsonNodeType.BOOLEAN) {

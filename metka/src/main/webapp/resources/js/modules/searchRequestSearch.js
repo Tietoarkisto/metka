@@ -29,32 +29,16 @@
 define(function(require) {
     'use strict';
 
-    var getPropertyNS = require('./utils/getPropertyNS');
-
-    return function(options, response, key) {
-        var field = getPropertyNS(options, 'dataConf.fields', key);
-        if(field.type !== 'REFERENCECONTAINER') {
-            return;
+    return function(options, searchOptions, resultFieldKey, prefix) {
+        return {
+            search: function() {
+                require('./server')('searchAjax', {
+                    data: JSON.stringify(require('./searchRequest')(options, searchOptions, prefix)),
+                    success: function(response) {
+                        require('./updateSearchResultContainer')(options, response, resultFieldKey);
+                    }
+                });
+            }
         }
-        var reference = getPropertyNS(options, 'dataConf.references', field.reference);
-
-        if(!(reference.type === 'REVISIONABLE' || reference.type === 'REVISION')) {
-            return;
-        }
-
-        var rowId = 0;
-        require('./data')(options)(key).removeRows('DEFAULT');
-        response.rows.map(function(row) {
-            require('./data')(options)(key).appendByLang('DEFAULT', {
-                key: key,
-                rowId: ++rowId,
-                value: (reference.type === 'REVISIONABLE' ? row.id : row.id+"-"+row.no),
-                removed: false,
-                unapproved: true
-            })
-        });
-        options.$events.trigger('redraw-{key}'.supplant({
-            key: key
-        }));
     }
 });

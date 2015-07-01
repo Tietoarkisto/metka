@@ -31,62 +31,48 @@ define(function (require) {
     var variablesBooleans = require('./../commonSearchBooleans')('variables');
     var variableBooleans = require('./../commonSearchBooleans')('variable');
 
-    var performSearch = [
-    function(options) {
-        require('./../server')('searchAjax', {
-            data: JSON.stringify(require('./../searchRequest')(options, [{
-                key: 'key.configuration.type',
-                value: "STUDY_VARIABLES",
-                addParens: false
-            }, {
-                key: 'findvariablesstudyid',
-                rename: 'study',
-                exactValue: true
-            }, {
-                key: 'findvariableslanguage',
-                rename: 'language.value',
-                exactValue: true,
-                useSelectionText: false
-            }], 'variables')),
-            success: function(response) {
-                require('./../updateSearchResultContainer')(options, response, 'variableslist');
-            }
-        });
-    }, function(options) {
-        require('./../server')('searchAjax', {
-            data: JSON.stringify(require('./../searchRequest')(options, [{
-                key: 'key.configuration.type',
-                value: "STUDY_VARIABLE",
-                addParens: false
-            }, {
-                key: 'findvariablestudyid',
-                rename: 'study',
-                exactValue: true
-            }, {
-                key: 'findvariablevarlabel',
-                rename: 'varlabel',
-                exactValue: true,
-                addWildcard: true
-            }, {
-                key: 'findvariableqstnlit',
-                rename: 'qstnlits.qstnlit',
-                exactValue: false
-            }, {
-                key: 'findvariablevaluelabel',
-                rename: 'valuelabels.label',
-                exactValue: true,
-                addWildcard: true
-            }, {
-                key: 'findvariablelanguage',
-                rename: 'language.value',
-                exactValue: true,
-                useSelectionText: false
-            }], 'variable')),
-            success: function(response) {
-                require('./../updateSearchResultContainer')(options, response, 'variablelist');
-            }
-        });
-    }];
+    var variablesSearchOptions = [{
+            key: 'key.configuration.type',
+            value: "STUDY_VARIABLES",
+            addParens: false
+        }, {
+            key: 'findvariablesstudyid',
+            rename: 'study',
+            exactValue: true
+        }, {
+            key: 'findvariableslanguage',
+            rename: 'language.value',
+            exactValue: true,
+            useSelectionText: false
+        }];
+    var variableSearchOptions = [{
+            key: 'key.configuration.type',
+            value: "STUDY_VARIABLE",
+            addParens: false
+        }, {
+            key: 'findvariablestudyid',
+            rename: 'study',
+            exactValue: true
+        }, {
+            key: 'findvariablevarlabel',
+            rename: 'varlabel',
+            exactValue: true,
+            addWildcard: true
+        }, {
+            key: 'findvariableqstnlit',
+            rename: 'qstnlits.qstnlit',
+            exactValue: false
+        }, {
+            key: 'findvariablevaluelabel',
+            rename: 'valuelabels.label',
+            exactValue: true,
+            addWildcard: true
+        }, {
+            key: 'findvariablelanguage',
+            rename: 'language.value',
+            exactValue: true,
+            useSelectionText: false
+        }];
 
     if (location.pathname.split('/').indexOf('search') === -1) {
         return function (options, onLoad) {
@@ -330,7 +316,7 @@ define(function (require) {
                                     "title": MetkaJS.L10N.get('general.buttons.search'),
                                     "create": function() {
                                         this.click(function() {
-                                            performSearch[0](options);
+                                            require('./../searchRequestSearch')(options, variablesSearchOptions, 'variableslist', 'variables');
                                         });
                                     }
                                 }
@@ -427,7 +413,7 @@ define(function (require) {
                                     "title": MetkaJS.L10N.get('general.buttons.search'),
                                     "create": function() {
                                         this.click(function() {
-                                            performSearch[1](options);
+                                            require('./../searchRequestSearch')(options, variableSearchOptions, 'variablelist', 'variable');
                                         });
                                     }
                                 }

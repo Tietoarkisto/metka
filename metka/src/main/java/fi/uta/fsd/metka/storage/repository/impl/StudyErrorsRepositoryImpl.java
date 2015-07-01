@@ -28,7 +28,7 @@
 
 package fi.uta.fsd.metka.storage.repository.impl;
 
-import fi.uta.fsd.metka.storage.entity.StudyErrorEntity;
+import fi.uta.fsd.metka.storage.entity.StudyErrorEntityOld;
 import fi.uta.fsd.metka.storage.repository.StudyErrorsRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.study.StudyError;
@@ -40,7 +40,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -59,14 +58,14 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
 
     @Override
     public List<StudyError> listErrorsForStudy(Long studyId) {
-        List<StudyErrorEntity> errors = em.createQuery(
-                "SELECT e FROM StudyErrorEntity e WHERE e.studyErrorStudy=:studyId ORDER BY e.savedAt ASC",
-                StudyErrorEntity.class)
+        List<StudyErrorEntityOld> errors = em.createQuery(
+                "SELECT e FROM StudyErrorEntityOld e WHERE e.studyErrorStudy=:studyId ORDER BY e.savedAt ASC",
+                StudyErrorEntityOld.class)
                 .setParameter("studyId", studyId)
                 .getResultList();
 
         List<StudyError> result = new ArrayList<>();
-        for(StudyErrorEntity entity : errors) {
+        for(StudyErrorEntityOld entity : errors) {
             result.add(studyErrorFromEntity(entity));
         }
 
@@ -75,20 +74,20 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
 
     @Override
     public void removeErrorsForStudy(Long studyId) {
-        List<StudyErrorEntity> errors = em.createQuery(
-                "SELECT e FROM StudyErrorEntity e WHERE e.studyErrorStudy=:studyId ORDER BY e.savedAt ASC",
-                StudyErrorEntity.class)
+        List<StudyErrorEntityOld> errors = em.createQuery(
+                "SELECT e FROM StudyErrorEntityOld e WHERE e.studyErrorStudy=:studyId ORDER BY e.savedAt ASC",
+                StudyErrorEntityOld.class)
                 .setParameter("studyId", studyId)
                 .getResultList();
 
-        for(StudyErrorEntity error : errors) {
+        for(StudyErrorEntityOld error : errors) {
             em.remove(error);
         }
     }
 
     @Override
     public Pair<ReturnResult, StudyError> loadStudyError(Long id) {
-        StudyErrorEntity error = em.find(StudyErrorEntity.class, id);
+        StudyErrorEntityOld error = em.find(StudyErrorEntityOld.class, id);
         if(error == null) {
             return new ImmutablePair<>(ReturnResult.NO_RESULTS, null);
         } else {
@@ -98,15 +97,15 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
 
     @Override
     public ReturnResult updateStudyError(StudyError error) {
-        StudyErrorEntity entity;
+        StudyErrorEntityOld entity;
         if(error.getId() == null) {
-            entity = new StudyErrorEntity();
+            entity = new StudyErrorEntityOld();
             entity.setStudyErrorStudy(error.getStudyId());
             entity.setSavedAt(new LocalDateTime());
             entity.setSavedBy(AuthenticationUtil.getUserName());
             em.persist(entity);
         } else {
-            entity = em.find(StudyErrorEntity.class, error.getId());
+            entity = em.find(StudyErrorEntityOld.class, error.getId());
             if(entity == null) {
                 return ReturnResult.NO_RESULTS;
             }
@@ -114,12 +113,12 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
         updateStudyErrorEntity(entity, error);
         em.merge(entity);
 
-        List<StudyErrorEntity> entities = em.createQuery("SELECT e FROM StudyErrorEntity e WHERE e.studyErrorStudy=:study", StudyErrorEntity.class)
+        List<StudyErrorEntityOld> entities = em.createQuery("SELECT e FROM StudyErrorEntityOld e WHERE e.studyErrorStudy=:study", StudyErrorEntityOld.class)
                 .setParameter("study", error.getStudyId())
                 .getResultList();
 
         Integer points = 0;
-        for(StudyErrorEntity e : entities) {
+        for(StudyErrorEntityOld e : entities) {
             points += e.getErrorscore();
         }
         if(points >= THRESHOLD) {
@@ -132,7 +131,7 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
 
     @Override
     public ReturnResult deleteStudyError(Long id) {
-        StudyErrorEntity entity = em.find(StudyErrorEntity.class, id);
+        StudyErrorEntityOld entity = em.find(StudyErrorEntityOld.class, id);
         if(entity != null) {
             em.remove(entity);
             return ReturnResult.OPERATION_SUCCESSFUL;
@@ -141,7 +140,7 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
         }
     }
 
-    private StudyError studyErrorFromEntity(StudyErrorEntity entity) {
+    private StudyError studyErrorFromEntity(StudyErrorEntityOld entity) {
         StudyError error = new StudyError();
         error.setId(entity.getId());
         error.setStudyId(entity.getStudyErrorStudy());
@@ -158,7 +157,7 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
         return error;
     }
 
-    private void updateStudyErrorEntity(StudyErrorEntity entity, StudyError error) {
+    private void updateStudyErrorEntity(StudyErrorEntityOld entity, StudyError error) {
         entity.setErrorscore(error.getErrorscore());
         entity.setErrordatasetpart(error.getErrordatasetpart());
         entity.setErrorpartsection(error.getErrorpartsection());

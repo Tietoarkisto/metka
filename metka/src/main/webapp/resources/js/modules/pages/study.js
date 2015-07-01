@@ -29,12 +29,30 @@
 define(function (require) {
     'use strict';
 
-    var resultParser = require('./../resultParser');
-
     if (location.pathname.split('/').indexOf('search') !== -1) {
+        var resultParser = require('./../resultParser');
         var commonSearchBooleans = require('./../commonSearchBooleans')();
+        var studyErrorSearchBooleans = require('./../commonSearchBooleans')('error');
 
         return function (options, onLoad) {
+            var errorSearch = require('./../searchRequestSearch')(options, [{
+                key: 'key.configuration.type',
+                value: "STUDY_ERROR",
+                addParens: false
+            }, {
+                key: 'findBinderId',
+                rename: 'binderid',
+                exactValue: false
+            }, {
+                key: 'findstudyid',
+                rename: 'studyid',
+                exactValue: true
+            }], 'studyerrors', 'error');
+
+            function viewError(requestOptions) {
+                require('./../revisionModal')(options, requestOptions, 'STUDY_ERROR', errorSearch.search, 'studyerrors');
+            }
+
             require('./../server')('conf', {
                 method: 'GET',
                 success: function (response) {
@@ -130,7 +148,7 @@ define(function (require) {
                                 studyerrorsstudyid: {
                                     title: "Aineistonumero"
                                 },
-                                studyerrorstitle: {
+                                studyerrorsstudytitle: {
                                     title: "Aineiston nimi"
                                 },
                                 studyerrorsscore: {
@@ -622,7 +640,88 @@ define(function (require) {
                                 "type": "TAB",
                                 "title": "Virheelliset",
                                 "hidePageButtons": true,
-                                "content": [{
+                                "content": [
+                                    studyErrorSearchBooleans.column,
+                                    {
+                                        "type": "COLUMN",
+                                        "columns": 2,
+                                        "rows": [{
+                                            "type": "ROW",
+                                            "cells": [{
+                                                "type": "CELL",
+                                                "title": "Aineistonro",
+                                                "horizontal": true,
+                                                "field": {
+                                                    "key": "findstudyid"
+                                                }
+                                            }]
+                                        }, {
+                                            "type": "ROW",
+                                            "cells": [{
+                                                "type": "CELL",
+                                                "title": "Pisteet",
+                                                "horizontal": true,
+                                                "field": {
+                                                    "key": "finderrorscore"
+                                                }
+                                            }, {
+                                                "type": "CELL",
+                                                "contentType": "BUTTON",
+                                                "button": {
+                                                    "title": MetkaJS.L10N.get('general.buttons.search'),
+                                                    "create": function() {
+                                                        this.click(errorSearch.search);
+                                                    }
+                                                }
+                                            }]
+                                        }]
+                                    }, {
+                                        "type": "COLUMN",
+                                        "columns": 1,
+                                        "rows": [{
+                                            "type": "ROW",
+                                            "cells": [{
+                                                "type": "CELL",
+                                                "title": "Virheet",
+                                                "colspan": 1,
+                                                "field": {
+                                                    "key": "studyerrors",
+                                                    "disableRemoval": true,
+                                                    "showReferenceValue": true,
+                                                    "showReferenceState": true,
+                                                    "columnFields": [
+                                                        "studyerrorsstudyid",
+                                                        "studyerrorsstudytitle",
+                                                        "studyerrorsscore"
+                                                    ],
+                                                    onClick: function(transferRow) {
+                                                        viewError({
+                                                            id: transferRow.value.split('-')[0],
+                                                            no: transferRow.value.split('-')[1]});
+                                                    },
+                                                    onAdd: function () {
+                                                        require('./../server')('create', {
+                                                            data: JSON.stringify({
+                                                                type: 'STUDY_ERROR'
+                                                            }),
+                                                            success: function(response) {
+                                                                if(resultParser(response.result).getResult() === 'REVISION_CREATED') {
+                                                                    viewError({
+                                                                        type: 'STUDY_ERROR',
+                                                                        id: response.data.key.id,
+                                                                        no: response.data.key.no});
+                                                                } else {
+                                                                    require('./../resultViewer')(response.result);
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            }]
+                                        }]
+                                    }
+
+                                /*{
                                     type: "COLUMN",
                                     columns: 1,
                                     rows: [{
@@ -638,7 +737,7 @@ define(function (require) {
                                                     "studyerrorstitle",
                                                     "studyerrorsscore"
                                                 ],
-                                                onClick: function(transferRow, callback) {
+                                                onClick: function(transferRow) {
                                                     require('./../assignUrl')('view', {
                                                         id: require('./../data').latestValue(transferRow.fields["studyerrorsid"], options.defaultLang),
                                                         no: ''
@@ -666,25 +765,30 @@ define(function (require) {
                                             }
                                         }]
                                     }]
-                                }]
+                                }*/]
                             }],
-                            data: commonSearchBooleans.initialData({}),
+                            data: commonSearchBooleans.initialData(studyErrorSearchBooleans.initialData({})),
                             dataConf: {
                                 key: response.configuration.key,
                                 references: $.extend(true, response.configuration.references, {
-                                    studyerrorsid_ref: {
-                                        type: "REVISIONABLE",
-                                        target: "STUDY"
+                                    studyerrors_ref: {
+                                        type: "REVISION",
+                                        target: "STUDY_ERROR"
                                     },
                                     studyerrorsstudyid_ref: {
                                         type: "DEPENDENCY",
-                                        target: "studyerrorsid",
-                                        valuePath: "studyid"
+                                        target: "studyerrors",
+                                        valuePath: "study"
                                     },
-                                    studyerrorstitle_ref: {
+                                    studyerrorsstudytitle_ref: {
                                         type: "DEPENDENCY",
-                                        target: "studyerrorsid",
-                                        valuePath: "title"
+                                        target: "studyerrors",
+                                        valuePath: "studytitle"
+                                    },
+                                    studyerrorsscore_ref: {
+                                        type: "DEPENDENCY",
+                                        target: "studyerrors",
+                                        valuePath: "errorscore"
                                     },
                                     seriesname_ref: {
                                         key: 'seriesname_ref',
@@ -752,6 +856,22 @@ define(function (require) {
                                         key: 'publication_list',
                                         type: 'REFERENCE',
                                         reference: 'publication_ref'
+                                    },
+                                    "finderrorscore_list": {
+                                        "key": "finderrorscore_list",
+                                        "type": "LITERAL",
+                                        "includeEmpty": true,
+                                        "options": [{
+                                            "value": "1"
+                                        }, {
+                                            "value": "2"
+                                        }, {
+                                            "value": "3"
+                                        }, {
+                                            "value": "4"
+                                        }, {
+                                            "value": "5"
+                                        }]
                                     }
                                 }),
                                 fields: (function () {
@@ -812,19 +932,13 @@ define(function (require) {
                                             "type": "STRING"
                                         },
                                         studyerrors: {
-                                            type: "CONTAINER",
+                                            type: "REFERENCECONTAINER",
+                                            reference: "studyerrors_ref",
                                             subfields: [
-                                                "studyerrorsid",
                                                 "studyerrorsstudyid",
-                                                "studyerrorstitle",
+                                                "studyerrorsstudytitle",
                                                 "studyerrorsscore"
                                             ]
-                                        },
-                                        studyerrorsid: {
-                                            key: "studyerrorsid",
-                                            subfield: true,
-                                            type: "REFERENCE",
-                                            reference: "studyerrorsid_ref"
                                         },
                                         studyerrorsstudyid: {
                                             key: "studyerrorsstudyid",
@@ -832,16 +946,24 @@ define(function (require) {
                                             type: "REFERENCE",
                                             reference: "studyerrorsstudyid_ref"
                                         },
-                                        studyerrorstitle: {
-                                            key: "studyerrorstitle",
+                                        studyerrorsstudytitle: {
+                                            key: "studyerrorsstudytitle",
                                             subfield: true,
                                             type: "REFERENCE",
-                                            reference: "studyerrorstitle_ref"
+                                            reference: "studyerrorsstudytitle_ref"
                                         },
                                         studyerrorsscore: {
                                             key: "studyerrorsscore",
                                             subfield: true,
-                                            type: "INTEGER"
+                                            type: "REFERENCE",
+                                            reference: "studyerrorsscore_ref"
+                                        },
+                                        findstudyid: {
+                                            type: "STRING"
+                                        },
+                                        finderrorscore: {
+                                            type: "SELECTION",
+                                            selectionList: "finderrorscore_list"
                                         }
                                     });
                                 })()

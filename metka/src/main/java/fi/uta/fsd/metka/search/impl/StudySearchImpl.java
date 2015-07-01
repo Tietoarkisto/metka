@@ -37,7 +37,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.search.StudySearch;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.StudyErrorEntity;
+import fi.uta.fsd.metka.storage.entity.StudyErrorEntityOld;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariablesEntity;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -137,22 +137,22 @@ public class StudySearchImpl implements StudySearch {
 
     @Override
     public Pair<ReturnResult, List<RevisionSearchResult>> getStudiesWithErrors() {
-        List<StudyErrorEntity> errors = em.createQuery("SELECT e FROM StudyErrorEntity e ORDER BY e.studyErrorStudy", StudyErrorEntity.class)
+        List<StudyErrorEntityOld> errors = em.createQuery("SELECT e FROM StudyErrorEntityOld e ORDER BY e.studyErrorStudy", StudyErrorEntityOld.class)
                 .getResultList();
 
         List<RevisionSearchResult> results = new ArrayList<>();
 
-        Map<Long, List<StudyErrorEntity>> groups = new HashMap<>();
-        for(StudyErrorEntity error : errors) {
+        Map<Long, List<StudyErrorEntityOld>> groups = new HashMap<>();
+        for(StudyErrorEntityOld error : errors) {
             if(!groups.containsKey(error.getStudyErrorStudy())) {
-                groups.put(error.getStudyErrorStudy(), new ArrayList<StudyErrorEntity>());
+                groups.put(error.getStudyErrorStudy(), new ArrayList<StudyErrorEntityOld>());
             }
             groups.get(error.getStudyErrorStudy()).add(error);
         }
 
         for(Long id : groups.keySet()) {
             Long score = 0L;
-            for(StudyErrorEntity error : groups.get(id)) {
+            for(StudyErrorEntityOld error : groups.get(id)) {
                 score += error.getErrorscore();
             }
             RevisionSearchResult result = new RevisionSearchResult();

@@ -32,168 +32,144 @@ define(function (require) {
     var resultParser = require('./../resultParser');
     var commonSearchBooleans = require('./../commonSearchBooleans')();
 
-    var dataConf = {
-        references: {
-            binder_page_ref: {
-                key: "binder_page_ref",
-                type: "REVISION",
-                target: "BINDER_PAGE"
-            },
-            study_id_ref: {
-                key: "study_id_ref",
-                type: "DEPENDENCY",
-                target: "pages",
-                valuePath: "studyid"
-            },
-            study_title_ref: {
-                key: "study_title_ref",
-                type: "DEPENDENCY",
-                target: "pages",
-                valuePath: "studytitle"
-            },
-            binder_id_ref: {
-                key: "study_id_ref",
-                type: "DEPENDENCY",
-                target: "pages",
-                valuePath: "binderid"
-            },
-            description_ref: {
-                key: "description_ref",
-                type: "DEPENDENCY",
-                target: "pages",
-                valuePath: "description"
-            }
-        },
-        fields: {
-            findBinderId: {
-                key: "findBinderId",
-                type: "INTEGER"
-            },
-            findStudyId: {
-                key: "findStudyId",
-                type: "STRING"
-            },
-            findStudyTitle: {
-                key: "findStudyTitle",
-                type: "STRING"
-            },
-            findBinderDescription: {
-                key: "findBinderDescription",
-                type: "STRING"
-            },
-            pages: {
-                key: "pages",
-                type: "REFERENCECONTAINER",
-                reference: "binder_page_ref",
-                fixedOrder: true,
-                subfields: [
-                    "studyId",
-                    "studyTitle",
-                    "binderId",
-                    "description"
-                ]
-            },
-            studyId: {
-                key: "studyId",
-                type: 'REFERENCE',
-                subfield: true,
-                reference: "study_id_ref"
-            },
-            studyTitle: {
-                key: "studyTitle",
-                type: 'REFERENCE',
-                subfield: true,
-                reference: "study_title_ref"
-            },
-            binderId: {
-                key: "binderId",
-                type: 'REFERENCE',
-                subfield: true,
-                reference: "binder_id_ref"
-            },
-            description: {
-                key: "description",
-                type: 'REFERENCE',
-                subfield: true,
-                reference: "description_ref"
-            }
-        }
-    };
-    var fieldTitles = {
-        "studyId": {
-            "title": "Aineistonro"
-        },
-        "studyTitle": {
-            "title": "Aineiston nimi"
-        },
-        "binderId": {
-            "title": "Mappinro"
-        },
-        "description": {
-            "title": "Mapitettu aineisto"
-        }
-    };
-
-    var dialogTitles = {
-        "pages": {
-            "key": "pages",
-            "ADD": "Mapitus",
-            "MODIFY": "Muokkaa mapitusta",
-            "VIEW": "Mapitus"
-        }
-    };
-
     return function (options, onLoad) {
-        function performSearch() {
-            require('./../server')('searchAjax', {
-                data: JSON.stringify(require('./../searchRequest')(options, [{
-                    key: 'key.configuration.type',
-                    value: "BINDER_PAGE",
-                    addParens: false
-                }, {
-                    key: 'findBinderId',
-                    rename: 'binderid',
-                    exactValue: true
-                }, {
-                    key: 'findStudyId',
-                    rename: 'studyid',
-                    exactValue: true
-                }, {
-                    key: 'findStudyTitle',
-                    rename: 'studytitle',
-                    exactValue: true
-                }, {
-                    key: 'findBinderDescription',
-                    rename: 'description',
-                    exactValue: true
-                }])),
-                success: function(response) {
-                    require('./../updateSearchResultContainer')(options, response, 'pages');
-                    /*var rowId = 0;
-                    require('./../data')(options)("pages").removeRows('DEFAULT');
-                    response.rows.map(function(row) {
-                        require('./../data')(options)("pages").appendByLang('DEFAULT', {
-                            key: 'pages',
-                            rowId: ++rowId,
-                            value: row.id+"-"+row.no,
-                            removed: false,
-                            unapproved: true
-                        })
-                    });
-                    options.$events.trigger('redraw-pages');*/
-                }
-            });
-        }
+        var pagesSearch = require('./../searchRequestSearch')(options, [{
+                key: 'key.configuration.type',
+                value: "BINDER_PAGE",
+                addParens: false
+            }, {
+                key: 'findBinderId',
+                rename: 'binderid',
+                exactValue: false
+            }, {
+                key: 'findStudyId',
+                rename: 'studyid',
+                exactValue: true
+            }, {
+                key: 'findStudyTitle',
+                rename: 'studytitle',
+                exactValue: true
+            }, {
+                key: 'findBinderDescription',
+                rename: 'description',
+                exactValue: true
+            }], 'pages');
 
         function view(requestOptions) {
-            require('./../revisionModal')(options, requestOptions, 'BINDER_PAGE', performSearch, 'pages');
+            require('./../revisionModal')(options, requestOptions, 'BINDER_PAGE', pagesSearch.search, 'pages');
         }
 
         $.extend(options, {
             header: MetkaJS.L10N.get('type.BINDERS.title'),
-            fieldTitles: fieldTitles,
-            dialogTitles: dialogTitles,
-            dataConf: dataConf,
+            fieldTitles: {
+                "studyId": {
+                    "title": "Aineistonro"
+                },
+                "studyTitle": {
+                    "title": "Aineiston nimi"
+                },
+                "binderId": {
+                    "title": "Mappinro"
+                },
+                "description": {
+                    "title": "Mapitettu aineisto"
+                }
+            },
+            dialogTitles: {
+                "pages": {
+                    "key": "pages",
+                    "ADD": "Mapitus",
+                    "MODIFY": "Muokkaa mapitusta",
+                    "VIEW": "Mapitus"
+                }
+            },
+            dataConf: {
+                references: {
+                    binder_page_ref: {
+                        key: "binder_page_ref",
+                        type: "REVISION",
+                        target: "BINDER_PAGE"
+                    },
+                    study_id_ref: {
+                        key: "study_id_ref",
+                        type: "DEPENDENCY",
+                        target: "pages",
+                        valuePath: "studyid"
+                    },
+                    study_title_ref: {
+                        key: "study_title_ref",
+                        type: "DEPENDENCY",
+                        target: "pages",
+                        valuePath: "studytitle"
+                    },
+                    binder_id_ref: {
+                        key: "study_id_ref",
+                        type: "DEPENDENCY",
+                        target: "pages",
+                        valuePath: "binderid"
+                    },
+                    description_ref: {
+                        key: "description_ref",
+                        type: "DEPENDENCY",
+                        target: "pages",
+                        valuePath: "description"
+                    }
+                },
+                fields: {
+                    findBinderId: {
+                        key: "findBinderId",
+                        type: "INTEGER"
+                    },
+                    findStudyId: {
+                        key: "findStudyId",
+                        type: "STRING"
+                    },
+                    findStudyTitle: {
+                        key: "findStudyTitle",
+                        type: "STRING"
+                    },
+                    findBinderDescription: {
+                        key: "findBinderDescription",
+                        type: "STRING"
+                    },
+                    pages: {
+                        key: "pages",
+                        type: "REFERENCECONTAINER",
+                        reference: "binder_page_ref",
+                        fixedOrder: true,
+                        subfields: [
+                            "studyId",
+                            "studyTitle",
+                            "binderId",
+                            "description"
+                        ]
+                    },
+                    studyId: {
+                        key: "studyId",
+                        type: 'REFERENCE',
+                        subfield: true,
+                        reference: "study_id_ref"
+                    },
+                    studyTitle: {
+                        key: "studyTitle",
+                        type: 'REFERENCE',
+                        subfield: true,
+                        reference: "study_title_ref"
+                    },
+                    binderId: {
+                        key: "binderId",
+                        type: 'REFERENCE',
+                        subfield: true,
+                        reference: "binder_id_ref"
+                    },
+                    description: {
+                        key: "description",
+                        type: 'REFERENCE',
+                        subfield: true,
+                        reference: "description_ref"
+                    }
+                }
+            },
             content: [
                 commonSearchBooleans.column,
             {
@@ -203,20 +179,20 @@ define(function (require) {
                     "type": "ROW",
                     "cells": [{
                         "type": "CELL",
-                        "title": "Mappinro",
+                        "title": "Aineistonro",
                         "horizontal": true,
                         "field": {
-                            "key": "findBinderId"
+                            "key": "findStudyId"
                         }
                     }]
                 }, {
                     "type": "ROW",
                     "cells": [{
                         "type": "CELL",
-                        "title": "Aineistonro",
+                        "title": "Mappinro",
                         "horizontal": true,
                         "field": {
-                            "key": "findStudyId"
+                            "key": "findBinderId"
                         }
                     }]
                 }, {
@@ -244,7 +220,7 @@ define(function (require) {
                         "button": {
                             "title": MetkaJS.L10N.get('general.buttons.search'),
                             "create": function() {
-                                this.click(performSearch);
+                                this.click(pagesSearch.search);
                             }
                         }
                     }]
@@ -310,7 +286,7 @@ define(function (require) {
             }]
         });
 
-        performSearch();
+        pagesSearch.search();
 
         onLoad();
     };

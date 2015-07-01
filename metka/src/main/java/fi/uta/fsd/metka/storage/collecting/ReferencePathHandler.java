@@ -104,6 +104,10 @@ public class ReferencePathHandler {
             Logger.error(getClass(), "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
             return;
         }
+        if(step.getReference() == null) {
+            Logger.error(getClass(), "Null reference sent to reference handling, can't continue");
+            return;
+        }
         switch(step.getReference().getType()) {
             case DEPENDENCY:
                 Logger.error(getClass(), "First step reference was a DEPENDENCY. Can not proceed");
@@ -182,7 +186,8 @@ public class ReferencePathHandler {
                     return;
                 }
                 Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(Long.parseLong(splits[0]), Integer.parseInt(splits[1]));
-                if(pair.getLeft() == ReturnResult.REVISION_FOUND && pair.getRight().getConfiguration().getType() == ConfigurationType.fromValue(step.getReference().getTarget())) {
+                if(pair.getLeft() == ReturnResult.REVISION_FOUND
+                        && (step.getReference().getTarget() == null || pair.getRight().getConfiguration().getType() == ConfigurationType.fromValue(step.getReference().getTarget()))) {
                     handleRevisionStep(pair.getRight(), step, options, language, returnFirst);
                 }
             }

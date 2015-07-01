@@ -26,35 +26,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-define(function(require) {
+define(function (require) {
     'use strict';
 
-    var getPropertyNS = require('./utils/getPropertyNS');
+    return function(options) {
+        options.preventDismiss = false;
 
-    return function(options, response, key) {
-        var field = getPropertyNS(options, 'dataConf.fields', key);
-        if(field.type !== 'REFERENCECONTAINER') {
-            return;
+        function closeAndRefresh() {
+            options.$events.trigger('modal.refresh');
+            $('#'+options.modalTarget).modal('hide');
         }
-        var reference = getPropertyNS(options, 'dataConf.references', field.reference);
-
-        if(!(reference.type === 'REVISIONABLE' || reference.type === 'REVISION')) {
-            return;
-        }
-
-        var rowId = 0;
-        require('./data')(options)(key).removeRows('DEFAULT');
-        response.rows.map(function(row) {
-            require('./data')(options)(key).appendByLang('DEFAULT', {
-                key: key,
-                rowId: ++rowId,
-                value: (reference.type === 'REVISIONABLE' ? row.id : row.id+"-"+row.no),
-                removed: false,
-                unapproved: true
-            })
-        });
-        options.$events.trigger('redraw-{key}'.supplant({
-            key: key
-        }));
-    }
+        this.click(require('./../../remove')($.extend({
+            success: {
+                SUCCESS_LOGICAL: closeAndRefresh,
+                SUCCESS_DRAFT: closeAndRefresh,
+                SUCCESS_REVISIONABLE: closeAndRefresh
+            }
+        }, options)));
+    };
 });

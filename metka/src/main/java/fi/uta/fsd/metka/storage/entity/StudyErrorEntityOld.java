@@ -35,8 +35,8 @@ import org.joda.time.LocalDateTime;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "STUDY_ERROR")
-public class StudyErrorEntity {
+@Table(name = "STUDY_ERROR_OLD")
+public class StudyErrorEntityOld {
     @Id
     @SequenceGenerator(name="STUDY_ERROR_ID_SEQ", sequenceName="STUDY_ERROR_ID_SEQ", allocationSize=1)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="STUDY_ERROR_ID_SEQ")

@@ -42,6 +42,7 @@ public enum ConfigurationType {
     STUDY_ATTACHMENT(Values.STUDY_ATTACHMENT),
     STUDY_VARIABLES(Values.STUDY_VARIABLES),
     STUDY_VARIABLE(Values.STUDY_VARIABLE),
+    STUDY_ERROR(Values.STUDY_ERROR),
     BINDER_PAGE(Values.BINDER_PAGE);
     // Add more as needed
 
@@ -87,6 +88,7 @@ public enum ConfigurationType {
         public static final String STUDY_ATTACHMENT = "STUDY_ATTACHMENT";
         public static final String STUDY_VARIABLES = "STUDY_VARIABLES";
         public static final String STUDY_VARIABLE = "STUDY_VARIABLE";
+        public static final String STUDY_ERROR = "STUDY_ERROR";
         public static final String BINDER_PAGE = "BINDER_PAGE";
     }
 }

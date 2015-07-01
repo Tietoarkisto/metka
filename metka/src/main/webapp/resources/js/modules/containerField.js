@@ -404,11 +404,18 @@ define(function (require) {
 
                     // open reference target in new window
                     var ref = options.dataConf.references[options.fieldOptions.reference];
+                    var transferRow = $tr.data('transferRow');
                     if (ref.type === 'REVISIONABLE') {
                         window.open(require('./url')('view', {
                             PAGE: ref.target,
-                            id: $tr.data('transferRow').value,
+                            id: transferRow.value,
                             no: ''
+                        }));
+                    } else if(ref.type === 'REVISION') {
+                        window.open(require('./url')('view', {
+                            PAGE: ref.target,
+                            id: transferRow.value.split("-")[0],
+                            no: transferRow.value.split("-")[1]
                         }));
                     }
                 } else {
