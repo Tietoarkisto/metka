@@ -42,7 +42,6 @@ import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.StudyErrorsRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
@@ -74,7 +73,6 @@ class GeneralRevisionHandler implements RevisionHandler {
     private final RevisionRepository revisions;
     private final ConfigurationRepository configurations;
     private final ReferenceService references;
-    private final StudyErrorsRepository studyErrors;
 
     private final Map<ConfigurationKey, Configuration> configCache = new HashMap<>();
 
@@ -84,14 +82,12 @@ class GeneralRevisionHandler implements RevisionHandler {
     private boolean contentForLanguage = false;
 
     GeneralRevisionHandler(Indexer indexer, RevisionRepository revisions,
-                           ConfigurationRepository configurations, ReferenceService references,
-                           StudyErrorsRepository studyErrors) {
+                           ConfigurationRepository configurations, ReferenceService references) {
         this.indexer = indexer;
 
         this.revisions = revisions;
         this.configurations = configurations;
         this.references = references;
-        this.studyErrors = studyErrors;
     }
 
     private Pair<ReturnResult, Configuration> getConfiguration(ConfigurationKey key) {
@@ -523,141 +519,10 @@ class GeneralRevisionHandler implements RevisionHandler {
 
     private void finalizeIndexing(RevisionData data, IndexerDocument document, Configuration config, Language language) {
         switch(data.getConfiguration().getType()) {
-            case STUDY:
-                finalizeStudyIndexing(data, document, config, language);
-                break;
             default:
                 break;
         }
     }
-
-    private void finalizeStudyIndexing(RevisionData data, IndexerDocument document, Configuration config, Language language) {
-        indexStudyErrors(data, document, language);
-
-        //indexStudyBinderPages(data, document, language);
-    }
-
-    private void indexStudyErrors(RevisionData data, IndexerDocument document, Language language) {
-        List<StudyError> errors = studyErrors.listErrorsForStudy(data.getKey().getId());
-        if(errors.isEmpty()) {
-            return;
-        }
-        String root = "errors.";
-
-        ReferencePathRequest refReq = new ReferencePathRequest();
-        ReferenceOption option;
-        refReq.setLanguage(language);
-        Reference datasetpart = new Reference("errordatasetpart", ReferenceType.JSON, "errordatasetpart", "value", "title");
-
-        Reference partsection = new Reference("errorpartsection", ReferenceType.JSON, "errorpartsection", "value", "title");
-
-        Reference errorlanguage = new Reference("errorlanguage", ReferenceType.JSON, "errorlanguage", "value", "title");
-
-        for(StudyError error : errors) {
-            // errordatasetpart
-            if(StringUtils.hasText(error.getErrordatasetpart())) {
-                ReferencePath datasetpartPath = new ReferencePath(datasetpart, error.getErrordatasetpart());
-                refReq.setRoot(datasetpartPath);
-                option = references.getCurrentFieldOption(refReq);
-                if(option != null) {
-                    document.indexStringField(root+"errordatasetpart", option.getTitle().getValue(), NO, false);
-                    document.indexKeywordField(root+"errordatasetpart.value", option.getValue());
-                }
-            }
-
-            // errorlabel
-            if(StringUtils.hasText(error.getErrorlabel())) {
-                document.indexText(language, root+"errorlabel", error.getErrorlabel(), false, NO, false);
-            }
-
-            // errorlanguage
-            if(StringUtils.hasText(error.getErrorlanguage())) {
-                ReferencePath errorlanguagePath = new ReferencePath(errorlanguage, error.getErrorlanguage());
-                refReq.setRoot(errorlanguagePath);
-                option = references.getCurrentFieldOption(refReq);
-                if(option != null) {
-                    document.indexStringField(root+"errorlanguage", option.getTitle().getValue(), NO, false);
-                    document.indexKeywordField(root+"errorlanguage.value", option.getValue());
-                }
-            }
-
-            // errornotes
-            if(StringUtils.hasText(error.getErrornotes())) {
-                document.indexText(language, root+"errornotes", error.getErrorlabel(), false, NO, false);
-            }
-
-            // errorpartsection
-            if(StringUtils.hasText(error.getErrorpartsection())) {
-                ReferencePath partsectionPath = new ReferencePath(partsection, error.getErrorpartsection());
-                refReq.setRoot(partsectionPath);
-                option = references.getCurrentFieldOption(refReq);
-                if(option != null) {
-                    document.indexStringField(root+"errorpartsection", option.getTitle().getValue(), NO, false);
-                    document.indexKeywordField(root+"errorpartsection.value", option.getValue());
-                }
-            }
-
-            // errorscore
-            if(error.getErrorscore() != null) {
-                document.indexIntegerField(root+"errorscore", error.getErrorscore().longValue(), false, false);
-            }
-
-            // errortriggerdate
-            if(error.getErrortriggerdate() != null && StringUtils.hasText(error.getErrortriggerdate().toString())) {
-                document.indexKeywordField(root + "errortriggerdate", error.getErrortriggerdate().toString(), false);
-            }
-
-            // errortriggerpro
-            if(StringUtils.hasText(error.getErrortriggerpro())) {
-                document.indexKeywordField(root + "errortriggerpro", error.getErrortriggerpro(), false);
-            }
-
-            // savedAt
-            if(StringUtils.hasText(error.getSavedAt().toString())) {
-                document.indexKeywordField(root + "savedAt", error.getSavedAt().toString(), false);
-            }
-
-            // savedBy
-            if(StringUtils.hasText(error.getSavedBy())) {
-                document.indexKeywordField(root + "savedBy", error.getSavedBy(), false);
-            }
-        }
-    }
-
-    // TODO: How to index binder pages to study now or to use subqueries to find binder pages?
-    /*private void indexStudyBinderPages(RevisionData data, IndexerDocument document, Language language) {
-        Pair<ReturnResult, List<BinderPageListEntry>> pages = binders.listStudyBinderPages(data.getKey().getId());
-        if(pages.getLeft() == ReturnResult.NO_RESULTS) {
-            return;
-        }
-        String root = "binders.";
-        for(BinderPageListEntry page : pages.getRight()) {
-            // description
-            if(StringUtils.hasText(page.getDescription())) {
-                document.indexText(language, root+"description", page.getDescription(), false, NO, true);
-            }
-
-            // binderid
-            if(page.getBinderId() != null) {
-                document.indexIntegerField(root+"binderid", page.getBinderId(), false, false);
-            }
-
-            // studyid
-            if(StringUtils.hasText(page.getStudyId())) {
-                document.indexKeywordField(root + "studyid", page.getStudyId(), true);
-            }
-
-            // savedAt
-            if(page.getSaved() != null && StringUtils.hasText(page.getSaved().getTime().toString())) {
-                document.indexKeywordField(root + "savedAt", page.getSaved().getTime().toString(), false);
-            }
-
-            // savedBy
-            if(page.getSaved() != null && StringUtils.hasText(page.getSaved().getUser())) {
-                document.indexKeywordField(root + "savedBy", page.getSaved().getUser(), false);
-            }
-        }
-    }*/
 
     private static class Step {
         private final String value;

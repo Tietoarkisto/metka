@@ -642,130 +642,84 @@ define(function (require) {
                                 "hidePageButtons": true,
                                 "content": [
                                     studyErrorSearchBooleans.column,
-                                    {
-                                        "type": "COLUMN",
-                                        "columns": 2,
-                                        "rows": [{
-                                            "type": "ROW",
-                                            "cells": [{
-                                                "type": "CELL",
-                                                "title": "Aineistonro",
-                                                "horizontal": true,
-                                                "field": {
-                                                    "key": "findstudyid"
-                                                }
-                                            }]
-                                        }, {
-                                            "type": "ROW",
-                                            "cells": [{
-                                                "type": "CELL",
-                                                "title": "Pisteet",
-                                                "horizontal": true,
-                                                "field": {
-                                                    "key": "finderrorscore"
-                                                }
-                                            }, {
-                                                "type": "CELL",
-                                                "contentType": "BUTTON",
-                                                "button": {
-                                                    "title": MetkaJS.L10N.get('general.buttons.search'),
-                                                    "create": function() {
-                                                        this.click(errorSearch.search);
-                                                    }
-                                                }
-                                            }]
+                                {
+                                    "type": "COLUMN",
+                                    "columns": 2,
+                                    "rows": [{
+                                        "type": "ROW",
+                                        "cells": [{
+                                            "type": "CELL",
+                                            "title": "Aineistonro",
+                                            "horizontal": true,
+                                            "field": {
+                                                "key": "findstudyid"
+                                            }
                                         }]
                                     }, {
-                                        "type": "COLUMN",
-                                        "columns": 1,
-                                        "rows": [{
-                                            "type": "ROW",
-                                            "cells": [{
-                                                "type": "CELL",
-                                                "title": "Virheet",
-                                                "colspan": 1,
-                                                "field": {
-                                                    "key": "studyerrors",
-                                                    "disableRemoval": true,
-                                                    "showReferenceValue": true,
-                                                    "showReferenceState": true,
-                                                    "columnFields": [
-                                                        "studyerrorsstudyid",
-                                                        "studyerrorsstudytitle",
-                                                        "studyerrorsscore"
-                                                    ],
-                                                    onClick: function(transferRow) {
-                                                        viewError({
-                                                            id: transferRow.value.split('-')[0],
-                                                            no: transferRow.value.split('-')[1]});
-                                                    },
-                                                    onAdd: function () {
-                                                        require('./../server')('create', {
-                                                            data: JSON.stringify({
-                                                                type: 'STUDY_ERROR'
-                                                            }),
-                                                            success: function(response) {
-                                                                if(resultParser(response.result).getResult() === 'REVISION_CREATED') {
-                                                                    viewError({
-                                                                        type: 'STUDY_ERROR',
-                                                                        id: response.data.key.id,
-                                                                        no: response.data.key.no});
-                                                                } else {
-                                                                    require('./../resultViewer')(response.result);
-                                                                }
-                                                            }
-                                                        });
-                                                    }
+                                        "type": "ROW",
+                                        "cells": [{
+                                            "type": "CELL",
+                                            "title": "Pisteet",
+                                            "horizontal": true,
+                                            "field": {
+                                                "key": "finderrorscore"
+                                            }
+                                        }, {
+                                            "type": "CELL",
+                                            "contentType": "BUTTON",
+                                            "button": {
+                                                "title": MetkaJS.L10N.get('general.buttons.search'),
+                                                "create": function() {
+                                                    this.click(errorSearch.search);
                                                 }
-                                            }]
-                                        }]
-                                    }
-
-                                /*{
-                                    type: "COLUMN",
-                                    columns: 1,
-                                    rows: [{
-                                        type: "ROW",
-                                        cells: [{
-                                            type: "CELL",
-                                            title: "Virheelliset aineistot",
-                                            readOnly: true,
-                                            field: {
-                                                key: "studyerrors",
-                                                columnFields: [
-                                                    "studyerrorsstudyid",
-                                                    "studyerrorstitle",
-                                                    "studyerrorsscore"
-                                                ],
-                                                onClick: function(transferRow) {
-                                                    require('./../assignUrl')('view', {
-                                                        id: require('./../data').latestValue(transferRow.fields["studyerrorsid"], options.defaultLang),
-                                                        no: ''
-                                                    });
-                                                }
-                                            },
-                                            preCreate: function() {
-                                                var $field = this.children().first();
-                                                require('./../server')('/study/studiesWithErrors', {
-                                                    method: 'GET',
-                                                    success: function (data) {
-                                                        $field.find("tbody").empty();
-                                                        if(data.rows && data.rows.length > 0) {
-                                                            var objectToTransferRow = require('./../map/object/transferRow');
-                                                            data.rows.map(function(row) {
-                                                                var studyerror = {
-                                                                    studyerrorsid: row.id,
-                                                                    studyerrorsscore: row.values["score"]
-                                                                };
-                                                                $field.data("addRow")(objectToTransferRow(studyerror, options.defaultLang));
-                                                            });
-                                                        }
-                                                    }
-                                                });
                                             }
                                         }]
                                     }]
-                                }*/]
+                                }, {
+                                    "type": "COLUMN",
+                                    "columns": 1,
+                                    "rows": [{
+                                        "type": "ROW",
+                                        "cells": [{
+                                            "type": "CELL",
+                                            "title": "Virheet",
+                                            "colspan": 1,
+                                            "field": {
+                                                "key": "studyerrors",
+                                                "disableRemoval": true,
+                                                "showReferenceValue": true,
+                                                "showReferenceState": true,
+                                                "columnFields": [
+                                                    "studyerrorsstudyid",
+                                                    "studyerrorsstudytitle",
+                                                    "studyerrorsscore"
+                                                ],
+                                                onClick: function(transferRow) {
+                                                    viewError({
+                                                        id: transferRow.value.split('-')[0],
+                                                        no: transferRow.value.split('-')[1]});
+                                                },
+                                                onAdd: function () {
+                                                    require('./../server')('create', {
+                                                        data: JSON.stringify({
+                                                            type: 'STUDY_ERROR'
+                                                        }),
+                                                        success: function(response) {
+                                                            if(resultParser(response.result).getResult() === 'REVISION_CREATED') {
+                                                                viewError({
+                                                                    type: 'STUDY_ERROR',
+                                                                    id: response.data.key.id,
+                                                                    no: response.data.key.no});
+                                                            } else {
+                                                                require('./../resultViewer')(response.result);
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }]
+                                    }]
+                                }]
                             }],
                             data: commonSearchBooleans.initialData(studyErrorSearchBooleans.initialData({})),
                             dataConf: {

@@ -431,7 +431,7 @@ class DataFieldPathParser {
         if(list.getType() == SelectionListType.LITERAL || list.getType() == SelectionListType.VALUE) {
             Option option = list.getOptionWithValue(value);
             if(option != null) {
-                titleStr = option.getTitleFor(optionLang);
+                titleStr = list.getType() == SelectionListType.VALUE ? option.getTitleFor(optionLang) : option.getValue();
             }
         } else if(list.getType() == SelectionListType.REFERENCE) {
             titleStr = getReferenceTitle(field);

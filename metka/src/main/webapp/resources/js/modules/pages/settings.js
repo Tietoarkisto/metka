@@ -1017,6 +1017,12 @@ define(function (require) {
                             ]
                         }
                     ]
+                }, {
+                    type: "TAB",
+                    title: "API-käyttäjät",
+                    permissions: [
+                        "canViewAPIUsers"
+                    ]
                 }
             ]
         });

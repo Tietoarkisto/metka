@@ -30,7 +30,7 @@ define(function (require) {
     'use strict';
 
     return function (options) {
-        options.field.displayType = 'CONTAINER';
+        delete options.field.displayType;
 
         return {
             postCreate: function(options) {

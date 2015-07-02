@@ -90,9 +90,6 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     @Autowired
     private Cascader cascader;
 
-    @Autowired
-    private StudyErrorsRepository errors;
-
     @Override
     public OperationResponse remove(TransferData transferData, DateTimeUserPair info) {
         if(info == null) {
@@ -223,16 +220,6 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         // and enabling cascade effects.
 
         switch(data.getConfiguration().getType()) {
-            case STUDY: {
-                // Study attachments, variables and variable revisions should have already been removed earlier during removal propagation.
-                // This part should only remove things that are removed only if we don't have any revisions left.
-
-                // Remove study errors and binder pages linking to this study
-                errors.removeErrorsForStudy(data.getKey().getId());
-                // TODO: This should be done through cascade when QUERY based cascade is done
-                //binders.removeStudyBinderPages(data.getKey().getId());
-                break;
-            }
             case STUDY_ATTACHMENT: {
                 Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
                 if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {

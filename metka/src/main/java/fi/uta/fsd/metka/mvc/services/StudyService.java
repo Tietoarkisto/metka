@@ -46,11 +46,8 @@ import org.springframework.transaction.annotation.Transactional;
 @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', 'PERMISSION')")
 @Transactional(readOnly = true)
 public interface StudyService {
-    StudyVariablesStudiesResponse collectStudiesWithVariables();
 
     RevisionSearchResponse collectAttachmentHistory(TransferData transferData);
-
-    StudyErrorsResponse getStudiesWithErrors();
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EXPORT_REVISION+"', '" + PermissionCheck.Values.PERMISSION + "')")
     Pair<ReturnResult, CodeBookDocument> exportDDI(Long id, Integer no, Language language);

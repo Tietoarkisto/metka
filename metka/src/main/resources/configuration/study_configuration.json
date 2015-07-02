@@ -933,6 +933,53 @@
 			"type": "DEPENDENCY",
 			"target": "studyRelatedBinders",
 			"valuePath": "description"
+		},
+		"studyerrors_ref": {
+			"key": "studyerrors_ref",
+			"type": "REVISION",
+			"target": "STUDY_ERROR"
+		},
+		"errorscore_ref": {
+			"key": "errorscore_ref",
+			"type": "DEPENDENCY",
+			"target": "studyerrors",
+			"valuePath": "errorscore"
+		},
+		"errordatasetpart_ref": {
+			"key": "errordatasetpart_ref",
+			"type": "DEPENDENCY",
+			"target": "studyerrors",
+			"valuePath": "errordatasetpart"
+		},
+		"errorpartsection_ref": {
+			"key": "errorpartsection_ref",
+			"type": "DEPENDENCY",
+			"target": "studyerrors",
+			"valuePath": "errorpartsection"
+		},
+		"errorlanguage_ref": {
+			"key": "errorlanguage_ref",
+			"type": "DEPENDENCY",
+			"target": "studyerrors",
+			"valuePath": "errorlanguage"
+		},
+		"errorlabel_ref": {
+			"key": "errorlabel_ref",
+			"type": "DEPENDENCY",
+			"target": "studyerrors",
+			"valuePath": "errorlabel"
+		},
+		"errortriggerdate_ref": {
+			"key": "errortriggerdate_ref",
+			"type": "DEPENDENCY",
+			"target": "studyerrors",
+			"valuePath": "errortriggerdate"
+		},
+		"errortriggerpro_ref": {
+			"key": "errortriggerpro_ref",
+			"type": "DEPENDENCY",
+			"target": "studyerrors",
+			"valuePath": "errortriggerpro"
 		}
 	},
 	"displayId": "studyid",
@@ -2271,6 +2318,71 @@
 			"subfield": true,
 			"writable": false,
 			"reference": "binder_description_ref"
+		},
+		"studyerrors": {
+			"_comment": "This provides configuration for the related errors container, this data is not saved to database",
+			"key": "studyerrors",
+			"type": "REFERENCECONTAINER",
+			"reference": "studyerrors_ref",
+			"writable": false,
+			"subfields": [
+				"errorscore",
+				"errordatasetpart",
+				"errorpartsection",
+				"errorlanguage",
+				"errorlabel",
+				"errortriggerdate",
+				"errortriggerpro"
+			]
+		},
+		"errorscore": {
+			"key": "errorscore",
+			"type": "REFERENCE",
+			"subfield": true,
+			"writable": false,
+			"reference": "errorscore_ref"
+		},
+		"errordatasetpart": {
+			"key": "errordatasetpart",
+			"type": "REFERENCE",
+			"subfield": true,
+			"writable": false,
+			"reference": "errordatasetpart_ref"
+		},
+		"errorpartsection": {
+			"key": "errorpartsection",
+			"type": "REFERENCE",
+			"subfield": true,
+			"writable": false,
+			"reference": "errorpartsection_ref"
+		},
+		"errorlanguage": {
+			"key": "errorlanguage",
+			"type": "REFERENCE",
+			"subfield": true,
+			"writable": false,
+			"reference": "errorlanguage_ref"
+		},
+		"errorlabel": {
+			"key": "errorlabel",
+			"type": "REFERENCE",
+			"subfield": true,
+			"writable": false,
+			"reference": "errorlabel_ref"
+		},
+		"errortriggerdate": {
+			"key": "errortriggerdate",
+			"type": "REFERENCE",
+			"subfield": true,
+			"writable": false,
+			"reference": "errortriggerdate_ref"
+		},
+		"errortriggerpro": {
+			"key": "errortriggerpro",
+			"type": "REFERENCE",
+			"subfield": true,
+			"writable": false,
+			"reference": "errortriggerpro_ref"
 		}
 	},
 	"namedTargets": {

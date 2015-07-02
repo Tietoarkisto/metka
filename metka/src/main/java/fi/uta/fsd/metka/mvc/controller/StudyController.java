@@ -32,16 +32,12 @@ import codebook25.CodeBookDocument;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.mvc.services.StudyErrorService;
 import fi.uta.fsd.metka.mvc.services.StudyService;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
-import fi.uta.fsd.metka.transfer.settings.JSONListEntry;
 import fi.uta.fsd.metka.transfer.settings.UploadJsonRequest;
 import fi.uta.fsd.metka.transfer.study.*;
 import org.apache.commons.lang3.tuple.Pair;
@@ -60,9 +56,6 @@ public class StudyController {
 
     @Autowired
     private StudyService service;
-
-    @Autowired
-    private StudyErrorService errors;
 
     @Autowired
     private JSONUtil json;
@@ -94,31 +87,6 @@ public class StudyController {
         ReturnResult result = service.importDDI(request.getTransferData(), request.getPath());
 
         return result;
-    }
-
-    @RequestMapping(value="listErrors/{id}", method = RequestMethod.GET)
-    public @ResponseBody StudyErrorListResponse listStudyErrors(@PathVariable Long id) {
-        return errors.getStudyErrorList(id);
-    }
-
-    @RequestMapping(value = "removeError/{id}", method = RequestMethod.GET)
-    public @ResponseBody ReturnResult removeStudyError(@PathVariable Long id) {
-        return errors.removeStudyError(id);
-    }
-
-    @RequestMapping(value = "studiesWithErrors", method = RequestMethod.GET)
-    public @ResponseBody StudyErrorsResponse getStudiesWithErrors() {
-        return service.getStudiesWithErrors();
-    }
-
-    @RequestMapping(value = "studiesWithVariables", method = RequestMethod.GET)
-    public @ResponseBody StudyVariablesStudiesResponse listStudiesWithVariables() {
-        return service.collectStudiesWithVariables();
-    }
-
-    @RequestMapping(value="updateError", method = RequestMethod.POST)
-    public @ResponseBody ReturnResult updateStudyError(@RequestBody StudyError error) {
-        return errors.insertOrUpdateStudyError(error);
     }
 
     @RequestMapping(value = "getOrganizations", method = RequestMethod.GET)

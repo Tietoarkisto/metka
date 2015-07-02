@@ -26,36 +26,31 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.mvc.services.impl;
+define(function (require) {
+    'use strict';
 
-import fi.uta.fsd.metka.mvc.services.StudyErrorService;
-import fi.uta.fsd.metka.storage.repository.StudyErrorsRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.transfer.study.StudyError;
-import fi.uta.fsd.metka.transfer.study.StudyErrorListResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+    return function (options) {
+        delete options.field.displayType;
 
-import java.util.List;
-
-@Service
-public class StudyErrorServiceImpl implements StudyErrorService {
-    @Autowired
-    private StudyErrorsRepository errors;
-
-    @Override public StudyErrorListResponse getStudyErrorList(Long id) {
-        List<StudyError> list = errors.listErrorsForStudy(id);
-        StudyErrorListResponse response = new StudyErrorListResponse();
-        response.setResult(list.isEmpty()? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL);
-        response.setErrors(list);
-        return response;
-    }
-
-    @Override public ReturnResult insertOrUpdateStudyError(StudyError error) {
-        return errors.updateStudyError(error);
-    }
-
-    @Override public ReturnResult removeStudyError(Long id) {
-        return errors.deleteStudyError(id);
-    }
-}
+        return {
+            postCreate: function(options) {
+                require('./../../searchValueSearch')(options, {
+                    searchApproved: true,
+                    searchDraft: true,
+                    searchRemoved: false,
+                    values: {
+                        'key.configuration.type': "STUDY_ERROR",
+                        'study.value': options.data.key.id
+                    }
+                }, options.field.key).search();
+            },
+            field: {
+                onClick: function(transferRow) {
+                    require('./../../revisionModal')(options, {
+                        id: transferRow.value.split("-")[0],
+                        no: transferRow.value.split("-")[1]}, 'STUDY_ERROR');
+                }
+            }
+        };
+    };
+});

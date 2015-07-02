@@ -62,6 +62,7 @@ define(function (require) {
                 }
             },
             postCreate: function (options) {
+                // TODO: Can be replaced with search and data insert instead.
                 var $containerField = $(this).children();
                 require('./../../server')('/study/attachmentHistory/', {
                     data: JSON.stringify(options.data),

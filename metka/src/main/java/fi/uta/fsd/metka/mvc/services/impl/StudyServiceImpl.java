@@ -80,27 +80,6 @@ public class StudyServiceImpl implements StudyService {
     @Autowired
     private DDIReaderService ddiReaderService;
 
-    @Override public StudyVariablesStudiesResponse collectStudiesWithVariables() {
-        Pair<ReturnResult, List<RevisionSearchResult>> result = search.getStudiesWithVariables();
-        StudyVariablesStudiesResponse response = new StudyVariablesStudiesResponse();
-        if(result.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
-            response.setResult(result.getLeft());
-        }
-        for(RevisionSearchResult sr : result.getRight()) {
-            StudyVariablesStudyPair pair = new StudyVariablesStudyPair();
-            pair.setId(sr.getId());
-            pair.setTitle(sr.getValues().get("title"));
-            response.getStudies().add(pair);
-        }
-        Collections.sort(response.getStudies(), new Comparator<StudyVariablesStudyPair>() {
-            @Override
-            public int compare(StudyVariablesStudyPair o1, StudyVariablesStudyPair o2) {
-                return o1.getTitle().compareTo(o2.getTitle());
-            }
-        });
-        return response;
-    }
-
     @Override public RevisionSearchResponse collectAttachmentHistory(TransferData transferData) {
         RevisionSearchResponse response = new RevisionSearchResponse();
         if(transferData.getConfiguration().getType() != ConfigurationType.STUDY_ATTACHMENT) {
@@ -113,14 +92,6 @@ public class StudyServiceImpl implements StudyService {
         if(results.getLeft() == ReturnResult.OPERATION_SUCCESSFUL) {
             response.getRows().addAll(results.getRight());
         }
-        return response;
-    }
-
-    @Override
-    public StudyErrorsResponse getStudiesWithErrors() {
-        Pair<ReturnResult, List<RevisionSearchResult>> results = search.getStudiesWithErrors();
-        StudyErrorsResponse response = new StudyErrorsResponse(results.getLeft());
-        response.getRows().addAll(results.getRight());
         return response;
     }
 

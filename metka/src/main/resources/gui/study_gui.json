@@ -2199,9 +2199,20 @@
                 "cells": [{
                     "type": "CELL",
                     "title": "Virheet",
+                    "readOnly": true,
                     "field": {
                         "displayType": "CUSTOM_JS",
-                        "key": "studyErrors"
+                        "key": "studyerrors",
+                        "showReferenceState": true,
+                        "columnFields": [
+                            "errorscore",
+                            "errordatasetpart",
+                            "errorpartsection",
+                            "errorlanguage",
+                            "errorlabel",
+                            "errortriggerdate",
+                            "errortriggerpro"
+                        ]
                     }
                 }]
             }]

@@ -39,10 +39,5 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface StudySearch {
 
-    public Pair<ReturnResult, List<RevisionSearchResult>> getStudiesWithVariables();
-    public Pair<ReturnResult, RevisionData> getLatestRevisionWithStudyId(String studyId);
-
     public Pair<ReturnResult, List<RevisionSearchResult>> collectAttachmentHistory(Long attachmentId);
-
-    public Pair<ReturnResult, List<RevisionSearchResult>> getStudiesWithErrors();
 }
