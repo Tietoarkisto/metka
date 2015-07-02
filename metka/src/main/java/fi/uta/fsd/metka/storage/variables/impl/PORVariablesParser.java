@@ -59,8 +59,8 @@ import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import spssio.por.PORFile;
-import spssio.por.input.PORReader;
+import fi.uta.fsd.metka.spssio.por.PORFile;
+import fi.uta.fsd.metka.spssio.por.input.PORReader;
 
 import java.io.IOException;
 import java.util.*;
