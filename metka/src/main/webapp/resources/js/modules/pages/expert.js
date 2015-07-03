@@ -87,7 +87,7 @@ define(function (require) {
                                         "columnFields": [
                                             "name"
                                         ],
-                                        onRemove: function ($row, remove) {
+                                        onRemove: function ($row) {
                                             require('./../server')('/expert/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow'), options.defaultLang), {
                                                 method: 'GET',
                                                 success: function () {

@@ -30,18 +30,18 @@ package fi.uta.fsd.metkaExternal;
 
 public class APISignature {
     // Public key of the program making the request
-    private String key;
+    private String userName;
     // RequestSignature created using programs api key and some other parameters
     private String signature;
     // ISO_8601 encoded timestamp of when the request was made, part of the signature creation
     private String accessTime;
 
-    public String getKey() {
-        return key;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getSignature() {

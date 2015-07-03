@@ -28,38 +28,12 @@
 
 package fi.uta.fsd.metkaExternal;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
-import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
-import fi.uta.fsd.metka.storage.repository.APIRepository;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.response.RevisionableInfo;
-import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
-import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
-import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
-import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
+import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
-import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
-import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
-import fi.uta.fsd.metkaSearch.results.ResultList;
-import fi.uta.fsd.metkaSearch.results.RevisionResult;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "")
@@ -82,7 +56,9 @@ public class APIController {
     @Autowired
     private RevisionRepository revisions;
 
-    @RequestMapping(value = "createStudy", method = RequestMethod.POST)
+    // TODO: implement request forwarding to needed services
+
+    /*@RequestMapping(value = "createStudy", method = RequestMethod.POST)
     public @ResponseBody
     APIStudyCreateResponse createStudy(@RequestBody APIStudyCreateRequest request) {
         // Authenticate using API key mechanism
@@ -194,5 +170,5 @@ public class APIController {
             response.setResult(ReturnResult.MALFORMED_QUERY);
             return response;
         }
-    }
+    }*/
 }

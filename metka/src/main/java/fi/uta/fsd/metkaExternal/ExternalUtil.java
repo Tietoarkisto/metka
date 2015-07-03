@@ -29,6 +29,7 @@
 package fi.uta.fsd.metkaExternal;
 
 import fi.uta.fsd.metka.storage.repository.APIRepository;
+import fi.uta.fsd.metka.transfer.settings.APIUserEntry;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import fi.uta.fsd.metkaAuthentication.MetkaAuthenticationDetails;
 import org.springframework.security.crypto.codec.Base64;
@@ -41,10 +42,6 @@ import java.util.Random;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class ExternalUtil {
-    public static final short FLAG_STUDY_CREATE     = 0b00000001;
-    public static final short FLAG_SEARCH           = 0b00000010;
-    public static final short FLAG_READ             = 0b00000100;
-    public static final short FLAG_EDIT             = 0b00001000;
 
     public static String makeUrl(HttpServletRequest request) {
         // For now we don't need to return parameters since none should be in use with our REST interface
@@ -52,11 +49,11 @@ public class ExternalUtil {
     }
 
     public static boolean authenticate(APIRepository repository, APISignature signature, short permission) {
-        if(isBlank(signature.getKey()) || isBlank(signature.getAccessTime()) || isBlank(signature.getSignature())) {
+        if(isBlank(signature.getUserName()) || isBlank(signature.getAccessTime()) || isBlank(signature.getSignature())) {
             return false;
         }
 
-        APIRepository.APIUser user = repository.getAPIUser(signature.getKey());
+        APIUserEntry user = repository.getAPIUser(signature.getUserName());
         if(user == null) {
             return false;
         }
@@ -66,17 +63,13 @@ public class ExternalUtil {
             return false;
         }*/
 
-        if((permission & user.getPermissions()) != permission) {
-            return false;
-        }
-
         // Get url of current request
         String url = makeUrl(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest());
 
         // Create signature:
         //   Concatenate users secret key with access time provided in api signature object, users public key and the url that was requested.
         //   If required we can salt this even more but this should be enough for now
-        String sig = user.getSecret()+signature.getAccessTime()+signature.getKey()+url;
+        String sig = user.getSecret()+signature.getAccessTime()+url;
         // We could hash the sig here if we wanted to but atm. it's not really productive
         // TODO: We should actually use SHA or some other hash since right now the users secret key can be read through just reversing the base64
         // Hash the signature using base64
@@ -87,9 +80,9 @@ public class ExternalUtil {
             return false;
         }
 
-        repository.updateAPIAccess(signature.getKey());
+        repository.updateAPIAccess(signature.getUserName());
 
-        MetkaAuthenticationDetails details = new MetkaAuthenticationDetails((new Random()).nextLong()+"", "api:"+user.getName(), user.getName(), "metka:basic-user");
+        MetkaAuthenticationDetails details = new MetkaAuthenticationDetails((new Random()).nextLong()+"", "api:"+user.getUserName(), user.getName(), user.getRole());
         AuthenticationUtil.authenticate(details);
         return true;
     }

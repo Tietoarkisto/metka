@@ -31,11 +31,21 @@ package fi.uta.fsd.metka.storage.repository.impl;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.storage.entity.APIUserEntity;
 import fi.uta.fsd.metka.storage.repository.APIRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.settings.APIUserEntry;
+import fi.uta.fsd.metka.transfer.settings.NewAPIUserRequest;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
+import org.apache.commons.codec.digest.Sha2Crypt;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,9 +59,9 @@ public class APIRepositoryImpl implements APIRepository {
     private EntityManager em;
 
     @Override
-    public APIUser getAPIUser(String key) {
-        List<APIUserEntity> entities = em.createQuery("SELECT u FROM APIUserEntity u WHERE u.publicKey=:key", APIUserEntity.class)
-                .setParameter("key", key)
+    public APIUserEntry getAPIUser(String userName) {
+        List<APIUserEntity> entities = em.createQuery("SELECT u FROM APIUserEntity u WHERE u.userName=:userName", APIUserEntity.class)
+                .setParameter("userName", userName)
                 .getResultList();
 
         if(entities.isEmpty()) {
@@ -59,23 +69,18 @@ public class APIRepositoryImpl implements APIRepository {
         }
 
         if(entities.size() > 1) {
-            Logger.error(getClass(), "Found " + entities.size() + " API users with public key " + key);
+            Logger.error(getClass(), "Found " + entities.size() + " API users with user name " + userName);
             return null;
         }
 
         APIUserEntity entity = entities.get(0);
-        APIUser user = new APIUser();
-        user.setName(entity.getName());
-        user.setSecret(entity.getSecret());
-        user.setPermissions(entity.getPermissions());
-        user.setLastAccess(entity.getLastAccess());
-        return user;
+        return formAPIUserEntry(entity);
     }
 
     @Override
-    public void updateAPIAccess(String key) {
-        List<APIUserEntity> entities = em.createQuery("SELECT u FROM APIUserEntity u WHERE u.publicKey=:key", APIUserEntity.class)
-                .setParameter("key", key)
+    public void updateAPIAccess(String userName) {
+        List<APIUserEntity> entities = em.createQuery("SELECT u FROM APIUserEntity u WHERE u.userName=:userName", APIUserEntity.class)
+                .setParameter("userName", userName)
                 .getResultList();
 
         if(entities.isEmpty()) {
@@ -83,11 +88,76 @@ public class APIRepositoryImpl implements APIRepository {
         }
 
         if(entities.size() > 1) {
-            Logger.error(getClass(), "Found "+entities.size()+" API users with public key "+key);
+            Logger.error(getClass(), "Found "+entities.size()+" API users with user name "+userName);
         }
 
         for(APIUserEntity entity : entities) {
             entity.setLastAccess(new LocalDateTime());
         }
+    }
+
+    @Override
+    public Pair<ReturnResult, List<APIUserEntry>> listAPIUsers() {
+        List<APIUserEntity> entities = em.createQuery("SELECT u FROM APIUserEntity u ORDER BY u.name", APIUserEntity.class).getResultList();
+        List<APIUserEntry> users = new ArrayList<>();
+        if(entities.isEmpty()) {
+            return new ImmutablePair<>(ReturnResult.NO_RESULTS,users);
+        }
+        for(APIUserEntity entity : entities) {
+            users.add(formAPIUserEntry(entity));
+        }
+        return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, users);
+    }
+
+    @Override
+    public ReturnResult removeAPIUser(String userName) {
+        List<APIUserEntity> entities = em.createQuery("SELECT u FROM APIUserEntity u WHERE u.userName=:userName", APIUserEntity.class)
+                .setParameter("userName", userName)
+                .getResultList();
+
+        if(entities.isEmpty()) {
+            return ReturnResult.OPERATION_FAIL;
+        }
+
+        if(entities.size() > 1) {
+            Logger.error(getClass(), "Found " + entities.size() + " API users with user name " + userName);
+            return ReturnResult.OPERATION_FAIL;
+        }
+
+        em.remove(entities.get(0));
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
+    }
+
+    @Override
+    public Pair<ReturnResult, APIUserEntry> newAPIUser(NewAPIUserRequest request) {
+        if(StringUtils.isBlank(request.getUsername()) || StringUtils.isBlank(request.getRole())) {
+            return new ImmutablePair<>(ReturnResult.PARAMETERS_MISSING, null);
+        }
+        APIUserEntity entity = new APIUserEntity();
+        entity.setLastAccess(new LocalDateTime());
+
+        entity.setUserName(request.getUsername());
+        entity.setName(request.getName());
+        entity.setCreatedBy(AuthenticationUtil.getUserName());
+        entity.setRole(request.getRole());
+        // Let's create the secret for signatures. This is going to be a bit more complex than public key
+        String secret = (new LocalDateTime()).toString()+entity.getCreatedBy()+entity.getUserName()+entity.getRole();
+        secret = new String(Base64.encode(Sha2Crypt.sha256Crypt(secret.getBytes()).getBytes()));
+        entity.setSecret(secret);
+
+        em.persist(entity);
+        return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, formAPIUserEntry(entity));
+    }
+
+    private APIUserEntry formAPIUserEntry(APIUserEntity entity) {
+        APIUserEntry user = new APIUserEntry();
+        user.setUserName(entity.getUserName());
+        user.setName(entity.getName());
+        user.setSecret(entity.getSecret());
+        user.setLastAccess(entity.getLastAccess());
+        user.setCreateBy(entity.getCreatedBy());
+        user.setRole(entity.getRole());
+        return user;
     }
 }

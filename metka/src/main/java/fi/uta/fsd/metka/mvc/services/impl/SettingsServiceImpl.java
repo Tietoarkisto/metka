@@ -33,10 +33,7 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.mvc.services.SettingsService;
-import fi.uta.fsd.metka.storage.repository.APIUserRepository;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.MiscJSONRepository;
-import fi.uta.fsd.metka.storage.repository.ReportRepository;
+import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.settings.*;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
@@ -44,7 +41,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +55,7 @@ public class SettingsServiceImpl implements SettingsService {
     private MiscJSONRepository miscJSONRepository;
 
     @Autowired
-    private APIUserRepository api;
+    private APIRepository api;
 
     @Autowired
     private ReportRepository reports;
@@ -94,8 +90,8 @@ public class SettingsServiceImpl implements SettingsService {
         return response;
     }
 
-    @Override public ReturnResult removeAPIUser(String publicKey) {
-        return api.removeAPIUser(publicKey);
+    @Override public ReturnResult removeAPIUser(String userName) {
+        return api.removeAPIUser(userName);
     }
 
     @Override
