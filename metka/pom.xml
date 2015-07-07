@@ -339,6 +339,13 @@
             <version>2.6.0</version>
         </dependency>
 
+        <!-- spssio -->
+        <dependency>
+            <groupId>fi.uta.fsd.metka</groupId>
+            <artifactId>spssio</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>metka</finalName>

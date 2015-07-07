@@ -19,3 +19,4 @@ deprecated/
 reloadWeb.sh
 *.odt#
 codebook/*
+spssio/*

@@ -28,9 +28,9 @@
 
 package fi.uta.fsd.metka.storage.variables.impl;
 
-import spssio.por.*;
-import spssio.util.NumberParser;
-import spssio.util.NumberSystem;
+import fi.uta.fsd.metka.spssio.por.*;
+import fi.uta.fsd.metka.spssio.util.NumberParser;
+import fi.uta.fsd.metka.spssio.util.NumberSystem;
 
 import java.util.*;
 
