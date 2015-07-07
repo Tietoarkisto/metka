@@ -55,6 +55,7 @@ public class FieldDescription {
     private Boolean showReferenceSaveInfo = false;
     private final List<Language> showReferenceApproveInfo = new ArrayList<>();
     private Boolean showReferenceState = false;
+    private Integer rowsPerPage;
 
     @JsonCreator
     public FieldDescription(@JsonProperty("key")String key) {
@@ -176,5 +177,13 @@ public class FieldDescription {
     @Override
     public int hashCode() {
         return key.hashCode();
+    }
+
+    public Integer getRowsPerPage() {
+        return rowsPerPage;
+    }
+
+    public void setRowsPerPage(Integer rowsPerPage) {
+        this.rowsPerPage = (rowsPerPage == null || rowsPerPage < 1 ? null : rowsPerPage);
     }
 }
