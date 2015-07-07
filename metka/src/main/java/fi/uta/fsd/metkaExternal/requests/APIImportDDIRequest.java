@@ -26,14 +26,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 
-public class IndexTarget {
+public class APIImportDDIRequest extends APIRequest {
     private RevisionKey key;
-    private ConfigurationType type;
+    private String path;
 
     public RevisionKey getKey() {
         return key;
@@ -43,11 +42,11 @@ public class IndexTarget {
         this.key = key;
     }
 
-    public ConfigurationType getType() {
-        return type;
+    public String getPath() {
+        return path;
     }
 
-    public void setType(ConfigurationType type) {
-        this.type = type;
+    public void setPath(String path) {
+        this.path = path;
     }
 }

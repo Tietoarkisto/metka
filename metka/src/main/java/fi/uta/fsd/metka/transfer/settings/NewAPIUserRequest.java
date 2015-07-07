@@ -29,17 +29,8 @@
 package fi.uta.fsd.metka.transfer.settings;
 
 public class NewAPIUserRequest {
-    private String username;
     private String name;
     private String role;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getName() {
         return name;

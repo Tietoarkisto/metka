@@ -31,20 +31,11 @@ package fi.uta.fsd.metka.transfer.settings;
 import org.joda.time.LocalDateTime;
 
 public class APIUserEntry {
-    private String userName;
     private String name;
     private String secret;
     private String role;
     private LocalDateTime lastAccess;
     private String createdBy;
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     public String getName() {
         return name;

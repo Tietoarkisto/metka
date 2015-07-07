@@ -31,6 +31,4 @@
         <beans:property name="prefix" value="/WEB-INF/jsp/" />
         <beans:property name="suffix" value=".jsp" />
     </beans:bean>
-
-    <beans:bean id="uploadValidator" class="fi.uta.fsd.metka.mvc.validator.UploadRequestValidator" />
 </beans:beans>

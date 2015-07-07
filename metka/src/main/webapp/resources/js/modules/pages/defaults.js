@@ -125,10 +125,10 @@ define(function (require) {
                                     .text(MetkaJS.L10N.get('general.buttons.download'))
                                     .click(function () {
                                         require('./../server')("download", {
-                                            data: JSON.stringify(options.data),
+                                            data: JSON.stringify(options.data.key),
                                             success: function (response) {
                                                 if(resultParser(response.result).getResult() === "REVISION_FOUND") {
-                                                    saveAs(new Blob([response.content], {type: "text/json;charset=utf-8"}), "id_"+response.id+"_revision_"+response.no+".json");
+                                                    saveAs(new Blob([response.content], {type: "text/json;charset=utf-8"}), "id_"+response.key.id+"_revision_"+response.key.no+".json");
                                                 } else {
                                                     require('./../resultViewer')(response.result);
                                                 }

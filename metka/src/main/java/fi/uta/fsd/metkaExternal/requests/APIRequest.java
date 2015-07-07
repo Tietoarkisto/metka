@@ -26,18 +26,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.model.general.RevisionKey;
+public abstract class APIRequest {
+    private String authentication;
 
-public class APIRevisionReadRequest extends APIRequest {
-    private RevisionKey key;
-
-    public RevisionKey getKey() {
-        return key;
+    public String getAuthentication() {
+        return authentication;
     }
 
-    public void setKey(RevisionKey key) {
-        this.key = key;
+    public void setAuthentication(String authentication) {
+        this.authentication = authentication;
     }
 }

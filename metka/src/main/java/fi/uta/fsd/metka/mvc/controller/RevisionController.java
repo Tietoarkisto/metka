@@ -28,13 +28,11 @@
 
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
-import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.*;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
@@ -90,7 +88,7 @@ public class RevisionController {
 
     @RequestMapping(value="ajax/edit", method = RequestMethod.POST)
     public @ResponseBody RevisionDataResponse edit(@RequestBody TransferData transferData) {
-        return revisions.edit(transferData);
+        return revisions.edit(transferData.getKey());
     }
 
     @RequestMapping(value = "ajax/release", method = RequestMethod.POST)
@@ -147,8 +145,8 @@ public class RevisionController {
     }
 
     @RequestMapping(value="download", method = RequestMethod.POST)
-    public @ResponseBody RevisionExportResponse downloadRevision(@RequestBody TransferData transferData) {
-        return revisions.exportRevision(transferData);
+    public @ResponseBody RevisionExportResponse downloadRevision(@RequestBody RevisionKey key) {
+        return revisions.exportRevision(key);
     }
 
     @RequestMapping(value = "revisionCompare", method = RequestMethod.POST)

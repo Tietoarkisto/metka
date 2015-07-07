@@ -28,13 +28,13 @@
 
 package fi.uta.fsd.metka.transfer.revision;
 
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
 public class RevisionExportResponse {
     private ReturnResult result;
     private String content;
-    private Long id;
-    private Integer no;
+    private RevisionKey key;
 
     public ReturnResult getResult() {
         return result;
@@ -52,19 +52,11 @@ public class RevisionExportResponse {
         this.content = content;
     }
 
-    public Long getId() {
-        return id;
+    public RevisionKey getKey() {
+        return key;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getNo() {
-        return no;
-    }
-
-    public void setNo(Integer no) {
-        this.no = no;
+    public void setKey(RevisionKey key) {
+        this.key = key;
     }
 }

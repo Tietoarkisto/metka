@@ -2,47 +2,113 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Hello World</title>
+		<title>API-testit</title>
 		<script src="https://code.jquery.com/jquery-2.1.3.js"></script>
-		<script>
-			var accesstime = "2014-10-03";
-			var reqUrl = "/metka/api/search";
-			var qry = "state.draft:true";
-			var sig = {
-				key: 1,
-				accessTime: accesstime,
-				signature: window.btoa("10"+accesstime+"1"+reqUrl)
-			};
-			var searchRequest = {
-				query: "state.draft:true",
-				authentication: sig
-			};
-			var createRequest = {
-				parameters: {
-					submissionid: "1002",
-					dataarrivaldate: "2014-10-03"
-				},
-				authentication: sig
-			};
-			
-			$.ajax({
-				type: "POST",
-				url: "http://localhost:8080"+reqUrl,
-				data: JSON.stringify(searchRequest),
-				headers: {
-	                'Accept': 'application/json',
-	                'Content-Type': 'application/json'
-	            },
-	            dataType: 'json'
-			})
-			.done(function(result) {
-				alert(result);
-			});
-			
+        <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+		<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js"></script>
+        <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js"></script>
+		<script>function Tester() {
+            var secret = "b2dmRUtTaE5tT3RiWi9IUTQ5VzBLcEM1UlBRUDRMSE5hd3NIZ1VqU0VSQVZmcVM2ZXVoSS9rbnVLMFNJb1FYdEpQeXdyeTdqSlVkQ0JyLldKUDhpby8";
+
+            function call(url, request, success) {
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:8080"+url,
+                    data: JSON.stringify(request),
+                    cache: false,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    dataType: 'json',
+                    jsonp: false,
+                    success: success || function(response) {
+                        alert(response.result);
+                    },
+                    error: function(response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+
+            return {
+                query: function() {
+                    var reqUrl = "/metka/api/performQuery";
+                    var searchRequest = {
+                        request: {
+                            query: $('#queryField').val()
+                        },
+                        authentication: secret
+                    };
+                    call(reqUrl, searchRequest, function(response) {
+                        alert("Hakutulos: "+response.result+"\n"+response.response.results.length)
+                    });
+                },
+                index: function() {
+                    var reqUrl = "/metka/api/indexRevisions";
+                    var searchRequest = {
+                        targets: [{
+                            id: $('#indexIdField').val(),
+                            no: $('#indexNoField').val()
+                        }],
+                        authentication: secret
+                    };
+                    call(reqUrl, searchRequest, function(response) {
+                        alert("Indektointitestin tulos: "+response.result)
+                    });
+                }
+            }
+        }
 		</script>
 	</head>
 	<body>
-		<h1>Hello World</h1>
-		
+		<h1>API-testit</h1>
+        <div>
+            <h2>Hakutesti</h2>
+            <label>
+                Hakulause:
+                <input type="text" id="queryField" />
+            </label>
+            <input type="button" value="Hakutesti" onclick="Tester().query()" />
+        </div>
+        <div>
+            <h2>Indeksointitesti</h2>
+            <label>
+                ID:
+                <input type="text" id="indexIdField" />
+            </label>
+            <label>
+                No:
+                <input type="text" id="indexNoField" />
+            </label>
+            <input type="button" value="Indeksitesti" onclick="Tester().index()" />
+        </div>
+        <div>
+            <h2>DDI</h2>
+            <div>
+                <h3>Export</h3>
+                <label>
+                    ID:
+                    <input type="text" id="indexIdField" />
+                </label>
+                <label>
+                    No:
+                    <input type="text" id="indexNoField" />
+                </label>
+                <input type="button" value="Indeksitesti" onclick="Tester().index()" />
+            </div>
+            <div>
+                <h3>Import</h3>
+                <label>
+                    ID:
+                    <input type="text" id="indexIdField" />
+                </label>
+                <label>
+                    No:
+                    <input type="text" id="indexNoField" />
+                </label>
+                <input type="button" value="Indeksitesti" onclick="Tester().index()" />
+            </div>
+        </div>
 	</body>
 </html>

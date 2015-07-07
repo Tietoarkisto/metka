@@ -31,25 +31,20 @@ package fi.uta.fsd.metka.transfer.study;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 
 public class DDIExportRequest {
-    private final Long id;
-    private final Integer no;
+    private final RevisionKey key;
     private final Language language;
 
     @JsonCreator
-    public DDIExportRequest(@JsonProperty("id") Long id, @JsonProperty("no") Integer no, @JsonProperty("language") String language) {
-        this.id = id;
-        this.no = no;
+    public DDIExportRequest(@JsonProperty("key") RevisionKey key, @JsonProperty("language") String language) {
+        this.key = key;
         this.language = Language.fromValue(language);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Integer getNo() {
-        return no;
+    public RevisionKey getKey() {
+        return key;
     }
 
     public Language getLanguage() {

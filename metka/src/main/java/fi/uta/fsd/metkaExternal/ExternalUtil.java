@@ -32,9 +32,6 @@ import fi.uta.fsd.metka.storage.repository.APIRepository;
 import fi.uta.fsd.metka.transfer.settings.APIUserEntry;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import fi.uta.fsd.metkaAuthentication.MetkaAuthenticationDetails;
-import org.springframework.security.crypto.codec.Base64;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Random;
@@ -48,12 +45,12 @@ public class ExternalUtil {
         return request.getRequestURI();
     }
 
-    public static boolean authenticate(APIRepository repository, APISignature signature, short permission) {
-        if(isBlank(signature.getUserName()) || isBlank(signature.getAccessTime()) || isBlank(signature.getSignature())) {
+    public static boolean authenticate(APIRepository repository, String authentication) {
+        if(isBlank(authentication)) {
             return false;
         }
 
-        APIUserEntry user = repository.getAPIUser(signature.getUserName());
+        APIUserEntry user = repository.getAPIUser(authentication);
         if(user == null) {
             return false;
         }
@@ -63,6 +60,8 @@ public class ExternalUtil {
             return false;
         }*/
 
+        /*Base64 b64 = new Base64(false);
+
         // Get url of current request
         String url = makeUrl(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest());
 
@@ -70,19 +69,21 @@ public class ExternalUtil {
         //   Concatenate users secret key with access time provided in api signature object, users public key and the url that was requested.
         //   If required we can salt this even more but this should be enough for now
         String sig = user.getSecret()+signature.getAccessTime()+url;
-        // We could hash the sig here if we wanted to but atm. it's not really productive
-        // TODO: We should actually use SHA or some other hash since right now the users secret key can be read through just reversing the base64
+        String sigCrypt = Sha2Crypt.sha512Crypt(sig.getBytes(), "$6$0$");
+        sigCrypt = sigCrypt.substring(5);
         // Hash the signature using base64
-        String hash = new String(Base64.encode(sig.getBytes()));
+        String temp = new String(b64.decodeBase64(signature.getSignature()));
+        String hash = new String(b64.encodeBase64(sigCrypt.getBytes()));
+        //String hash = new String(b64.encodeBase64(sig.getBytes()));
 
         // If generated signature doesn't match the provided signature then don't authenticate user
         if(!hash.equals(signature.getSignature())) {
             return false;
-        }
+        }*/
 
-        repository.updateAPIAccess(signature.getUserName());
+        repository.updateAPIAccess(authentication);
 
-        MetkaAuthenticationDetails details = new MetkaAuthenticationDetails((new Random()).nextLong()+"", "api:"+user.getUserName(), user.getName(), user.getRole());
+        MetkaAuthenticationDetails details = new MetkaAuthenticationDetails((new Random()).nextLong()+"", "api:"+user.getName(), user.getName(), user.getRole());
         AuthenticationUtil.authenticate(details);
         return true;
     }

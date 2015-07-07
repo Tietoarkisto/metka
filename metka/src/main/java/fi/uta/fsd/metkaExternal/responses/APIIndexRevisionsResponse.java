@@ -26,16 +26,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.responses;
 
-public class APISearchRequest extends APIRequest {
-    private String query;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
-    public String getQuery() {
-        return query;
+public class APIIndexRevisionsResponse extends APIResponse {
+    public static APIIndexRevisionsResponse authFail() {
+        return new APIIndexRevisionsResponse(false, ReturnResult.API_AUTHENTICATION_FAILED);
     }
 
-    public void setQuery(String query) {
-        this.query = query;
+    public static APIIndexRevisionsResponse caughtException(Exception e) {
+        APIIndexRevisionsResponse response = new APIIndexRevisionsResponse(true, ReturnResult.EXCEPTION_DURING_API_CALL);
+        response.setException(e);
+        return response;
+    }
+
+    public static APIIndexRevisionsResponse success(boolean missing) {
+        return new APIIndexRevisionsResponse(true, missing ? ReturnResult.OPERATION_SUCCESSFUL_WITH_ERRORS : ReturnResult.OPERATION_SUCCESSFUL);
+    }
+
+    private APIIndexRevisionsResponse(boolean authenticated, ReturnResult result) {
+        super(authenticated, result);
     }
 }

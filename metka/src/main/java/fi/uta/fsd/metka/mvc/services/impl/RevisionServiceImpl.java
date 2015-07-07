@@ -31,22 +31,18 @@ package fi.uta.fsd.metka.mvc.services.impl;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
 import fi.uta.fsd.metka.search.RevisionSearch;
 import fi.uta.fsd.metka.storage.repository.*;
-import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
+import fi.uta.fsd.metka.storage.repository.enums.*;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.*;
-import fi.uta.fsd.metkaSearch.IndexerComponent;
-import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -166,13 +162,11 @@ public class RevisionServiceImpl implements RevisionService {
         Pair<ReturnResult, RevisionData> operationResult = create.create(request);
         //fillResponseData(ReturnResult.REVISION_CREATED.name(), response, operationResult);
         return getResponse(OperationResponse.build(operationResult.getLeft()),
-                operationResult.getRight() != null
-                        ? TransferData.buildFromRevisionData(operationResult.getRight(), RevisionableInfo.FALSE)
-                        : null);
+                operationResult.getRight() != null ? TransferData.buildFromRevisionData(operationResult.getRight(), RevisionableInfo.FALSE) : null);
     }
 
-    @Override public RevisionDataResponse edit(TransferData transferData) {
-        Pair<OperationResponse, RevisionData> operationResult = edit.edit(transferData, null);
+    @Override public RevisionDataResponse edit(RevisionKey key) {
+        Pair<OperationResponse, RevisionData> operationResult = edit.edit(key, null);
         return getResponseGUI(operationResult.getLeft(), operationResult.getRight());
     }
 
@@ -277,15 +271,21 @@ public class RevisionServiceImpl implements RevisionService {
     }
 
     @Override
+    public ConfigurationResponse getConfiguration(ConfigurationKey key) {
+        Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(key);
+        return new ConfigurationResponse(pair.getLeft(), pair.getRight());
+    }
+
+    @Override
     public RevisionDataResponse adjacentRevision(AdjacentRevisionRequest request) {
         Pair<ReturnResult, RevisionData> pair = revisions.getAdjacentRevision(request);
         return getResponseData(OperationResponse.build(pair.getRight() != null ? ReturnResult.REVISION_FOUND.name() : pair.getLeft().name()), pair.getRight());
     }
 
     @Override
-    public RevisionExportResponse exportRevision(TransferData transferData) {
+    public RevisionExportResponse exportRevision(RevisionKey key) {
 
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(transferData.getKey()));
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
         RevisionExportResponse response = new RevisionExportResponse();
         response.setResult(pair.getLeft());
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -298,8 +298,7 @@ public class RevisionServiceImpl implements RevisionService {
             return response;
         }
         response.setContent(result.getRight());
-        response.setId(transferData.getKey().getId());
-        response.setNo(transferData.getKey().getNo());
+        response.setKey(key);
         return response;
     }
 }

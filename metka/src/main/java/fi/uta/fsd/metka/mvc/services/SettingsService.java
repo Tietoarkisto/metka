@@ -30,6 +30,7 @@ package fi.uta.fsd.metka.mvc.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.settings.*;
@@ -63,7 +64,7 @@ public interface SettingsService {
     APIUserListResponse newAPIUser(NewAPIUserRequest request);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_API_USERS +"', 'PERMISSION')")
-    ReturnResult removeAPIUser(String publicKey);
+    ReturnResult removeAPIUser(String secret);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_CONFIGURATIONS +"', 'PERMISSION') OR " +
             "hasPermission('"+ Permission.Values.CAN_UPLOAD_JSON +"', 'PERMISSION')")
@@ -78,6 +79,9 @@ public interface SettingsService {
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_MANUALLY_INDEX_CONTENT +"', 'PERMISSION')")
     ReturnResult indexEverything();
+
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_MANUALLY_INDEX_CONTENT +"', 'PERMISSION')")
+    ReturnResult indexRevision(RevisionKey key);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_MANUALLY_INDEX_CONTENT +"', 'PERMISSION')")
     ReturnResult stopIndexers();

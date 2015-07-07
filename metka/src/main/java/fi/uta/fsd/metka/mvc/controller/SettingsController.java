@@ -119,9 +119,9 @@ public class SettingsController {
         return service.getOpenIndexCommands();
     }
 
-    @RequestMapping(value="removeAPIUser/{userName}", method = RequestMethod.GET)
-    public @ResponseBody ReturnResult removeAPIUser(@PathVariable String userName) {
-        return service.removeAPIUser(userName);
+    @RequestMapping(value="removeAPIUser/{secret}", method = RequestMethod.GET)
+    public @ResponseBody ReturnResult removeAPIUser(@PathVariable String secret) {
+        return service.removeAPIUser(secret);
     }
 
     @RequestMapping(value="stopIndexers", method = RequestMethod.GET)
