@@ -26,18 +26,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.model.general.ConfigurationKey;
+public class APISignature {
+    // Public key of the program making the request
+    private String userName;
+    // RequestSignature created using programs api key and some other parameters
+    private String signature;
+    // ISO_8601 encoded timestamp of when the request was made, part of the signature creation
+    private String accessTime;
 
-public class APIConfigurationReadRequest extends APIRequest {
-    private ConfigurationKey key;
-
-    public ConfigurationKey getKey() {
-        return key;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setKey(ConfigurationKey key) {
-        this.key = key;
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public String getAccessTime() {
+        return accessTime;
+    }
+
+    public void setAccessTime(String accessTime) {
+        this.accessTime = accessTime;
     }
 }

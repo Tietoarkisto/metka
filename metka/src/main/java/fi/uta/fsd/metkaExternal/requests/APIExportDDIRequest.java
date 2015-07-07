@@ -26,47 +26,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.mvc.services.simple.study;
+package fi.uta.fsd.metkaExternal.requests;
 
-public class SeriesReference {
-    private Long id;
-    private String name;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 
-    public SeriesReference(Long id, String name) {
-        this.id = id;
-        this.name = name;
+public class APIExportDDIRequest extends APIRequest {
+    private RevisionKey key;
+    private Language language;
+
+    public RevisionKey getKey() {
+        return key;
     }
 
-    public Long getId() {
-        return id;
+    public void setKey(RevisionKey key) {
+        this.key = key;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Language getLanguage() {
+        return language;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SeriesReference that = (SeriesReference) o;
-
-        if (!id.equals(that.id)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
+    public void setLanguage(Language language) {
+        this.language = language;
     }
 }

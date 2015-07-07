@@ -28,14 +28,14 @@
 
 package fi.uta.fsd.metka.transfer.study;
 
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
 public class DDIExportResponse {
     private ReturnResult result;
     private String content;
     private String language;
-    private Long id;
-    private Integer no;
+    private RevisionKey key;
 
     public ReturnResult getResult() {
         return result;
@@ -61,19 +61,11 @@ public class DDIExportResponse {
         this.language = language;
     }
 
-    public Long getId() {
-        return id;
+    public RevisionKey getKey() {
+        return key;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getNo() {
-        return no;
-    }
-
-    public void setNo(Integer no) {
-        this.no = no;
+    public void setKey(RevisionKey key) {
+        this.key = key;
     }
 }

@@ -39,12 +39,12 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface APIRepository {
 
-    APIUserEntry getAPIUser(String userName);
-    @Transactional(readOnly = false) void updateAPIAccess(String userName);
+    APIUserEntry getAPIUser(String secret);
+    @Transactional(readOnly = false) void updateAPIAccess(String secret);
 
-    public Pair<ReturnResult, List<APIUserEntry>> listAPIUsers();
+    Pair<ReturnResult, List<APIUserEntry>> listAPIUsers();
 
-    @Transactional(readOnly = false) public ReturnResult removeAPIUser(String userName);
+    @Transactional(readOnly = false) ReturnResult removeAPIUser(String secret);
 
-    @Transactional(readOnly = false) public Pair<ReturnResult, APIUserEntry> newAPIUser(NewAPIUserRequest request);
+    @Transactional(readOnly = false) Pair<ReturnResult, APIUserEntry> newAPIUser(NewAPIUserRequest request);
 }

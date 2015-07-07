@@ -35,12 +35,12 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.settings.APIUserEntry;
 import fi.uta.fsd.metka.transfer.settings.NewAPIUserRequest;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.Sha2Crypt;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
-import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -59,9 +59,9 @@ public class APIRepositoryImpl implements APIRepository {
     private EntityManager em;
 
     @Override
-    public APIUserEntry getAPIUser(String userName) {
-        List<APIUserEntity> entities = em.createQuery("SELECT u FROM APIUserEntity u WHERE u.userName=:userName", APIUserEntity.class)
-                .setParameter("userName", userName)
+    public APIUserEntry getAPIUser(String secret) {
+        List<APIUserEntity> entities = em.createQuery("SELECT u FROM APIUserEntity u WHERE u.secret=:secret", APIUserEntity.class)
+                .setParameter("secret", secret)
                 .getResultList();
 
         if(entities.isEmpty()) {
@@ -69,7 +69,7 @@ public class APIRepositoryImpl implements APIRepository {
         }
 
         if(entities.size() > 1) {
-            Logger.error(getClass(), "Found " + entities.size() + " API users with user name " + userName);
+            Logger.error(getClass(), "Found " + entities.size() + " API users with secret " + secret);
             return null;
         }
 
@@ -78,9 +78,9 @@ public class APIRepositoryImpl implements APIRepository {
     }
 
     @Override
-    public void updateAPIAccess(String userName) {
-        List<APIUserEntity> entities = em.createQuery("SELECT u FROM APIUserEntity u WHERE u.userName=:userName", APIUserEntity.class)
-                .setParameter("userName", userName)
+    public void updateAPIAccess(String secret) {
+        List<APIUserEntity> entities = em.createQuery("SELECT u FROM APIUserEntity u WHERE u.secret=:secret", APIUserEntity.class)
+                .setParameter("secret", secret)
                 .getResultList();
 
         if(entities.isEmpty()) {
@@ -88,7 +88,7 @@ public class APIRepositoryImpl implements APIRepository {
         }
 
         if(entities.size() > 1) {
-            Logger.error(getClass(), "Found "+entities.size()+" API users with user name "+userName);
+            Logger.error(getClass(), "Found "+entities.size()+" API users with secret "+secret);
         }
 
         for(APIUserEntity entity : entities) {
@@ -110,9 +110,9 @@ public class APIRepositoryImpl implements APIRepository {
     }
 
     @Override
-    public ReturnResult removeAPIUser(String userName) {
-        List<APIUserEntity> entities = em.createQuery("SELECT u FROM APIUserEntity u WHERE u.userName=:userName", APIUserEntity.class)
-                .setParameter("userName", userName)
+    public ReturnResult removeAPIUser(String secret) {
+        List<APIUserEntity> entities = em.createQuery("SELECT u FROM APIUserEntity u WHERE u.secret=:secret", APIUserEntity.class)
+                .setParameter("secret", secret)
                 .getResultList();
 
         if(entities.isEmpty()) {
@@ -120,7 +120,7 @@ public class APIRepositoryImpl implements APIRepository {
         }
 
         if(entities.size() > 1) {
-            Logger.error(getClass(), "Found " + entities.size() + " API users with user name " + userName);
+            Logger.error(getClass(), "Found " + entities.size() + " API users with secret " + secret);
             return ReturnResult.OPERATION_FAIL;
         }
 
@@ -131,28 +131,27 @@ public class APIRepositoryImpl implements APIRepository {
 
     @Override
     public Pair<ReturnResult, APIUserEntry> newAPIUser(NewAPIUserRequest request) {
-        if(StringUtils.isBlank(request.getUsername()) || StringUtils.isBlank(request.getRole())) {
+        if(StringUtils.isBlank(request.getName()) || StringUtils.isBlank(request.getRole())) {
             return new ImmutablePair<>(ReturnResult.PARAMETERS_MISSING, null);
         }
         APIUserEntity entity = new APIUserEntity();
         entity.setLastAccess(new LocalDateTime());
 
-        entity.setUserName(request.getUsername());
+
         entity.setName(request.getName());
         entity.setCreatedBy(AuthenticationUtil.getUserName());
         entity.setRole(request.getRole());
         // Let's create the secret for signatures. This is going to be a bit more complex than public key
-        String secret = (new LocalDateTime()).toString()+entity.getCreatedBy()+entity.getUserName()+entity.getRole();
-        secret = new String(Base64.encode(Sha2Crypt.sha256Crypt(secret.getBytes()).getBytes()));
+        String secret = (new LocalDateTime()).toString()+entity.getName()+entity.getCreatedBy()+entity.getRole();
+        String secCrypt = Sha2Crypt.sha512Crypt(secret.getBytes(), "$6$0$");
+        secret = new String(Base64.encodeBase64(secCrypt.substring(5).getBytes(), false, true));
         entity.setSecret(secret);
-
         em.persist(entity);
         return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, formAPIUserEntry(entity));
     }
 
     private APIUserEntry formAPIUserEntry(APIUserEntity entity) {
         APIUserEntry user = new APIUserEntry();
-        user.setUserName(entity.getUserName());
         user.setName(entity.getName());
         user.setSecret(entity.getSecret());
         user.setLastAccess(entity.getLastAccess());

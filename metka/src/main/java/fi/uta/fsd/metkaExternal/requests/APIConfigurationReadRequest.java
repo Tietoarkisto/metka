@@ -26,16 +26,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.search;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
-import org.springframework.transaction.annotation.Transactional;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 
-import java.util.List;
+public class APIConfigurationReadRequest extends APIRequest {
+    private ConfigurationKey key;
 
-@Transactional(readOnly = true)
-public interface SeriesSearch {
-    public List<String> findAbbreviations();
+    public ConfigurationKey getKey() {
+        return key;
+    }
 
-    public List<RevisionSearchResult> findNames();
+    public void setKey(ConfigurationKey key) {
+        this.key = key;
+    }
 }

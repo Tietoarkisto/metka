@@ -26,18 +26,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryRequest;
 
-public class APIRevisionSaveRequest extends APIRequest {
-    private RevisionData revision;
+public class APIPerformQueryRequest extends APIRequest {
+    private ExpertSearchQueryRequest request;
 
-    public RevisionData getRevision() {
-        return revision;
+    public ExpertSearchQueryRequest getRequest() {
+        return request;
     }
 
-    public void setRevision(RevisionData revision) {
-        this.revision = revision;
+    public void setRequest(ExpertSearchQueryRequest request) {
+        this.request = request;
     }
 }

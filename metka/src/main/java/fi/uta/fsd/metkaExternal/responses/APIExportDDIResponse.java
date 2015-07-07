@@ -26,16 +26,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.responses;
 
-public abstract class APIRequest {
-    private APISignature authentication;
+import codebook25.CodeBookDocument;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
-    public APISignature getAuthentication() {
-        return authentication;
+public class APIExportDDIResponse extends APIResponse {
+    public static APIExportDDIResponse authFail() {
+        return new APIExportDDIResponse(false, ReturnResult.API_AUTHENTICATION_FAILED, null);
     }
 
-    public void setAuthentication(APISignature authentication) {
-        this.authentication = authentication;
+    public static APIExportDDIResponse caughtException(Exception e) {
+        APIExportDDIResponse response = new APIExportDDIResponse(true, ReturnResult.EXCEPTION_DURING_API_CALL, null);
+        response.setException(e);
+        return response;
+    }
+
+    public static APIExportDDIResponse success(ReturnResult result, CodeBookDocument ddi) {
+        return new APIExportDDIResponse(true, result, ddi);
+    }
+
+    private final CodeBookDocument ddi;
+
+    public APIExportDDIResponse(boolean authenticated, ReturnResult result, CodeBookDocument ddi) {
+        super(authenticated, result);
+        this.ddi = ddi;
+    }
+
+    public CodeBookDocument getDdi() {
+        return ddi;
     }
 }

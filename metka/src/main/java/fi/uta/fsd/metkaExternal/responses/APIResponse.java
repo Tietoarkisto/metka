@@ -26,37 +26,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.mvc.controller;
+package fi.uta.fsd.metkaExternal.responses;
 
-import fi.uta.fsd.metka.mvc.services.SeriesService;
-import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
-import fi.uta.fsd.metka.transfer.series.SeriesAbbreviationsResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
-/**
- * Handles all requests for series operations such as view and save.
- * All requests contain base address /series
- */
-@Controller
-@RequestMapping("series")
-public class SeriesController {
+public abstract class APIResponse {
+    private final boolean authenticated;
+    private final String result;
+    private Exception exception;
 
-    @Autowired
-    private SeriesService seriesService;
-
-    // TODO: not required, can be implemented using reference fields
-    @RequestMapping(value="getAbbreviations", method = RequestMethod.GET)
-    public @ResponseBody SeriesAbbreviationsResponse getAbbreviations() {
-        return seriesService.findAbbreviations();
+    protected APIResponse(boolean authenticated, ReturnResult result) {
+        this.authenticated = authenticated;
+        this.result = result.name();
     }
 
-    // TODO: not required, can be implemented using reference fields
-    @RequestMapping(value="getNames", method = RequestMethod.GET)
-    public @ResponseBody RevisionSearchResponse getNames() {
-        return seriesService.findNames();
+    protected APIResponse(boolean authenticated, String result) {
+        this.authenticated = authenticated;
+        this.result = result;
+    }
+
+    public boolean getAuthenticated() {
+        return authenticated;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public Exception getException() {
+        return exception;
+    }
+
+    public void setException(Exception exception) {
+        this.exception = exception;
     }
 }

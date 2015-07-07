@@ -26,16 +26,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.transfer.TransferData;
 
-import java.util.*;
+public class APITransferDataRequest extends APIRequest {
+    private TransferData transferData;
 
-public class APIMassIndexRequest extends APIRequest {
-    private final List<IndexTarget> targets = new ArrayList<>();
+    public TransferData getTransferData() {
+        return transferData;
+    }
 
-    public List<IndexTarget> getTargets() {
-        return targets;
+    public void setKey(TransferData transferData) {
+        this.transferData = transferData;
     }
 }

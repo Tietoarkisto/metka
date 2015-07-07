@@ -33,17 +33,12 @@ import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchRequest;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.commands.searcher.RevisionSearchCommandBase;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
-import fi.uta.fsd.metkaSearch.results.ResultHandler;
-import fi.uta.fsd.metkaSearch.results.ResultList;
-import fi.uta.fsd.metkaSearch.results.RevisionResult;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import fi.uta.fsd.metkaSearch.results.*;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.messages.MessageImpl;
@@ -55,10 +50,7 @@ import org.apache.lucene.search.spans.SpanQuery;
 import org.springframework.util.StringUtils;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static fi.uta.fsd.metka.enums.FieldType.INTEGER;
 import static fi.uta.fsd.metka.enums.FieldType.REAL;
@@ -133,13 +125,16 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         if(!StringUtils.hasText(qry)) {
             throw new ParseException(new MessageImpl("EMPTY_QUERY"));
         }
-
-        if(qry.contains("key.configuration.type:")) {
-            qry = qry.substring(qry.indexOf("key.configuration.type:")+"key.configuration.type:".length());
-            String[] split = qry.split("\\s");
-            if(split.length > 0) {
-                return ConfigurationType.fromValue(split[0]);
+        try {
+            if(qry.contains("key.configuration.type:")) {
+                qry = qry.substring(qry.indexOf("key.configuration.type:")+"key.configuration.type:".length());
+                String[] split = qry.split("\\s");
+                if(split.length > 0) {
+                    return ConfigurationType.fromValue(split[0]);
+                }
             }
+        } catch(IllegalArgumentException e) {
+            throw new ParseException(new MessageImpl("Illegal ConfigurationType"));
         }
         return null;
     }

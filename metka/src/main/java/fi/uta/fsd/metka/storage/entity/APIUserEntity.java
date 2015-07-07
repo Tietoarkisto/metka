@@ -42,9 +42,6 @@ public class APIUserEntity {
     @Column(name = "API_USER_ID", updatable = false, insertable = false, unique = true)
     private Long apiUserId;
 
-    @Column(name = "USER_NAME", unique = true, updatable = false)
-    private String userName;
-
     @Column(name = "SECRET", unique = true, updatable = false)
     private String secret;
 
@@ -67,14 +64,6 @@ public class APIUserEntity {
 
     public void setApiUserId(Long apiUserId) {
         this.apiUserId = apiUserId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public String getSecret() {

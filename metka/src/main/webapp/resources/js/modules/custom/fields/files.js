@@ -140,6 +140,7 @@ define(function (require) {
                 $filesContainer.find('tbody').empty();
                 $removedFilesContainer.find('tbody').empty();
 
+                // TODO: This can be made using two separate REFERENCECONTAINERS and making relevant searchers to fill both (i.e. attachments that are not removed versus those that are)
                 var rows = require('./../../data')(options).getByLang(options.defaultLang);
                 if (rows) {
                     var i = 0;

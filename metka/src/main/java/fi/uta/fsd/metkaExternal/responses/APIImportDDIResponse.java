@@ -26,14 +26,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.search;
+package fi.uta.fsd.metkaExternal.responses;
 
-import org.springframework.transaction.annotation.Transactional;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
-import java.util.List;
+public class APIImportDDIResponse extends APIResponse {
+    public static APIImportDDIResponse authFail() {
+        return new APIImportDDIResponse(false, ReturnResult.API_AUTHENTICATION_FAILED);
+    }
 
-@Transactional(readOnly = true)
-public interface GeneralSearch {
-    // TODO: Replace this with actual study search
-    public List<RevisionDataRemovedContainer> tempFindAllStudies();
+    public static APIImportDDIResponse caughtException(Exception e) {
+        APIImportDDIResponse response = new APIImportDDIResponse(true, ReturnResult.EXCEPTION_DURING_API_CALL);
+        response.setException(e);
+        return response;
+    }
+
+    public static APIImportDDIResponse success(ReturnResult result) {
+        return new APIImportDDIResponse(true, result);
+    }
+
+    public APIImportDDIResponse(boolean authenticated, ReturnResult result) {
+        super(authenticated, result);
+    }
 }

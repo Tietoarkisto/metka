@@ -26,23 +26,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.mvc.validator;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.mvc.services.requests.UploadRequest;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 
-public class UploadRequestValidator implements Validator {
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+public class APIRevisionKeyRequest extends APIRequest {
+    private RevisionKey key;
+
+    public RevisionKey getKey() {
+        return key;
     }
 
-    @Override
-    public void validate(Object target, Errors errors) {
-        UploadRequest request = (UploadRequest)target;
-        if(request.getFile().getSize() == 0) {
-            errors.rejectValue("file", "upload.selectFile");
-        }
+    public void setKey(RevisionKey key) {
+        this.key = key;
     }
 }

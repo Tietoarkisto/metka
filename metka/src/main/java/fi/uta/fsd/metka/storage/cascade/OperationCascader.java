@@ -70,7 +70,7 @@ class OperationCascader {
                 }
                 return true;
             } case EDIT: {
-                OperationResponse result = repositories.getEdit().edit(transferData, instruction.getInfo()).getLeft();
+                OperationResponse result = repositories.getEdit().edit(transferData.getKey(), instruction.getInfo()).getLeft();
                 ReturnResult rr = ReturnResult.valueOf(result.getResult());
                 return rr == ReturnResult.REVISION_FOUND || rr == ReturnResult.REVISION_CREATED;
             }

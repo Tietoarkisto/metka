@@ -72,16 +72,16 @@ define(function (require) {
                             value: "metka:reader",
                             title: "Lukija"
                         }, {
-                            value: "metka:user",
+                            value: "metka:basic-user",
                             title: "Käyttäjä"
                         }, {
                             value: "metka:translator",
                             title: "Kääntäjä"
                         }, {
-                            value: "metka:data-admin",
+                            value: "metka:data-administrator",
                             title: "Data admin"
                         }, {
-                            value: "metka:admin",
+                            value: "metka:administrator",
                             title: "Admin"
                         }]
                     }
@@ -142,7 +142,6 @@ define(function (require) {
                         type: "CONTAINER",
                         subfields: [
                             "apiusersname",
-                            "apiusersusername",
                             "apiusersrole",
                             "apiuserssecret",
                             "apiusersaccess",
@@ -151,11 +150,6 @@ define(function (require) {
                     },
                     apiusersname: {
                         key: "apiusersname",
-                        type: "STRING",
-                        subfield: true
-                    },
-                    apiusersusername: {
-                        key: "apiuserssuername",
                         type: "STRING",
                         subfield: true
                     },
@@ -179,10 +173,6 @@ define(function (require) {
                         type: "STRING",
                         subfield: true
                     },
-                    addapiuserusername: {
-                        key: "addapiuserusername",
-                        type: "STRING"
-                    },
                     addapiusername: {
                         key: "addapiusername",
                         type: "STRING"
@@ -191,11 +181,7 @@ define(function (require) {
                         key: "addapiuserrole",
                         type: "SELECTION",
                         selectionList: "addapiuserrole_list"
-                    }/*,
-                    addapiuserreadpermission: {
-                        key: "addapiuserreadpermission",
-                        type: "BOOLEAN"
-                    }*/
+                    }
                 }
             }),
             fieldTitles: {
@@ -210,10 +196,6 @@ define(function (require) {
                 apiusersname: {
                     key: "apiusersname",
                     title: "Käyttäjä"
-                },
-                apiusersusername: {
-                    key: "apiusersusername",
-                    title: "Käyttäjänimi"
                 },
                 apiusersrole: {
                     key: "apiusersrole",
@@ -1138,16 +1120,6 @@ define(function (require) {
                             rows: [{
                                 type: "ROW",
                                 cells: [{
-                                    title: "Käyttäjänimi",
-                                    type: "CELL",
-                                    horizontal: true,
-                                    field: {
-                                        key: "addapiuserusername"
-                                    }
-                                }]
-                            }, {
-                                type: "ROW",
-                                cells: [{
                                     title: "Nimi",
                                     type: "CELL",
                                     horizontal: true,
@@ -1177,7 +1149,6 @@ define(function (require) {
                                                 require('./../server')("/settings/newAPIUser", {
                                                     type: "POST",
                                                     data: JSON.stringify({
-                                                        username: require('./../data')(options)("addapiuserusername").getByLang('DEFAULT'),
                                                         name: require('./../data')(options)("addapiusername").getByLang('DEFAULT'),
                                                         role: require('./../data')(options)("addapiuserrole").getByLang('DEFAULT')
                                                     }),
@@ -1204,7 +1175,6 @@ define(function (require) {
                                     key: "apiusers",
                                     columnFields: [
                                         "apiusersname",
-                                        "apiusersusername",
                                         "apiusersrole",
                                         "apiusersaccess",
                                         "apiuserscreated"
@@ -1214,8 +1184,8 @@ define(function (require) {
                                     },
                                     onRemove: function($row) {
                                         var transferRow=$row.data('transferRow');
-                                        require('./../server')('/settings/removeAPIUser/{userName}'.supplant({
-                                            userName: transferRow.fields.apiusersusername.values.DEFAULT.current
+                                        require('./../server')('/settings/removeAPIUser/{secret}'.supplant({
+                                            secret: transferRow.fields.apiuserssecret.values.DEFAULT.current
                                         }), {
                                             type: 'GET',
                                             async: false,
@@ -1251,7 +1221,6 @@ define(function (require) {
                     response.users.map(function(user) {
                         require('./../data')(options)('apiusers').appendByLang('DEFAULT', require('./../map/object/transferRow')({
                             apiusersname: user.name,
-                            apiusersusername: user.userName,
                             apiusersrole: user.role,
                             apiuserssecret: user.secret,
                             apiusersaccess: user.lastAccess,

@@ -26,25 +26,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.responses;
 
-import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.revision.RevisionExportResponse;
 
-public class APIConfigurationReadResponse {
-    private final ReturnResult result;
-    private final Configuration configuration;
-
-    public APIConfigurationReadResponse(ReturnResult result, Configuration configuration) {
-        this.result = result;
-        this.configuration = configuration;
+public class APIExportRevisionResponse extends APIResponse {
+    public static APIExportRevisionResponse authFail() {
+        return new APIExportRevisionResponse(false, ReturnResult.API_AUTHENTICATION_FAILED, null);
     }
 
-    public ReturnResult getResult() {
-        return result;
+    public static APIExportRevisionResponse caughtException(Exception e) {
+        APIExportRevisionResponse response = new APIExportRevisionResponse(true, ReturnResult.EXCEPTION_DURING_API_CALL, null);
+        response.setException(e);
+        return response;
     }
 
-    public Configuration getConfiguration() {
-        return configuration;
+    public static APIExportRevisionResponse success(ReturnResult result, RevisionExportResponse response) {
+        return new APIExportRevisionResponse(true, result, response);
+    }
+
+    private final RevisionExportResponse response;
+
+    public APIExportRevisionResponse(boolean authenticated, ReturnResult result, RevisionExportResponse response) {
+        super(authenticated, result);
+        this.response = response;
+    }
+
+    public RevisionExportResponse getResponse() {
+        return response;
     }
 }

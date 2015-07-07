@@ -35,18 +35,12 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.DataField;
-import fi.uta.fsd.metka.model.data.container.ValueContainer;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
-import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionHandlerRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
+import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
@@ -78,14 +72,14 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
     private Cascader cascader;
 
     @Override
-    public Pair<OperationResponse, RevisionData> edit(TransferData transferData, DateTimeUserPair info) {
+    public Pair<OperationResponse, RevisionData> edit(fi.uta.fsd.metka.model.general.RevisionKey key, DateTimeUserPair info) {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
         Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
-                transferData.getKey().getId(), false, transferData.getConfiguration().getType());
+                key.getId(), false, null);
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(getClass(), "No revision for " + transferData.getConfiguration().getType() + " with id " + transferData.getKey().getId() + ". Can't get editable revision.");
+            Logger.error(getClass(), "No revision with id " + key.getId() + ". Can't get editable revision.");
             return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), null);
         }
         RevisionData data = dataPair.getRight();
@@ -100,9 +94,9 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return new ImmutablePair<>(OperationResponse.build(ReturnResult.REVISIONABLE_REMOVED), data);
         }
 
-        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(transferData.getConfiguration());
+        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            Logger.error(getClass(), "Can't find configuration "+transferData.getConfiguration().toString()+" and so halting approval process.");
+            Logger.error(getClass(), "Can't find configuration "+data.getConfiguration().toString()+" and so halting approval process.");
             return new ImmutablePair<>(OperationResponse.build(configPair.getLeft()), data);
         }
 

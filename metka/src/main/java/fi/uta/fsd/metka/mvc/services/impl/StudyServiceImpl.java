@@ -40,23 +40,15 @@ import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.services.StudyService;
 import fi.uta.fsd.metka.search.StudySearch;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.MiscJSONRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
+import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
-import fi.uta.fsd.metka.transfer.settings.JSONListEntry;
-import fi.uta.fsd.metka.transfer.study.StudyErrorsResponse;
-import fi.uta.fsd.metka.transfer.study.StudyVariablesStudiesResponse;
-import fi.uta.fsd.metka.transfer.study.StudyVariablesStudyPair;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -96,8 +88,8 @@ public class StudyServiceImpl implements StudyService {
     }
 
     @Override
-    public Pair<ReturnResult, CodeBookDocument> exportDDI(Long id, Integer no, Language language) {
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(id, no);
+    public Pair<ReturnResult, CodeBookDocument> exportDDI(fi.uta.fsd.metka.model.general.RevisionKey key, Language language) {
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(key));
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             // TODO: Return error to user
             return new ImmutablePair<>(pair.getLeft(), null);
@@ -116,8 +108,8 @@ public class StudyServiceImpl implements StudyService {
     }
 
     @Override
-    public ReturnResult importDDI(TransferData transferData, String path) {
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(transferData.getKey()));
+    public ReturnResult importDDI(fi.uta.fsd.metka.model.general.RevisionKey key, String path) {
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(key));
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return pair.getLeft();
         }

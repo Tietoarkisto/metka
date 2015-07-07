@@ -26,18 +26,43 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.mvc.services.requests;
+package fi.uta.fsd.metkaExternal.responses;
 
-import org.springframework.web.multipart.MultipartFile;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.revision.RevisionDataResponse;
 
-public class UploadRequest {
-    private MultipartFile file;
-
-    public MultipartFile getFile() {
-        return file;
+public class APIRevisionOperationResponse extends APIResponse {
+    public static APIRevisionOperationResponse authFail() {
+        return new APIRevisionOperationResponse(false, ReturnResult.API_AUTHENTICATION_FAILED, null);
     }
 
-    public void setFile(MultipartFile file) {
-        this.file = file;
+    public static APIRevisionOperationResponse caughtException(Exception e) {
+        APIRevisionOperationResponse response = new APIRevisionOperationResponse(true, ReturnResult.EXCEPTION_DURING_API_CALL, null);
+        response.setException(e);
+        return response;
+    }
+
+    public static APIRevisionOperationResponse success(ReturnResult result, RevisionDataResponse response) {
+        return new APIRevisionOperationResponse(true, result, response);
+    }
+
+    public static APIRevisionOperationResponse success(String result, RevisionDataResponse response) {
+        return new APIRevisionOperationResponse(true, result, response);
+    }
+
+    private final RevisionDataResponse response;
+
+    public APIRevisionOperationResponse(boolean authenticated, ReturnResult result, RevisionDataResponse response) {
+        super(authenticated, result);
+        this.response = response;
+    }
+
+    public APIRevisionOperationResponse(boolean authenticated, String result, RevisionDataResponse response) {
+        super(authenticated, result);
+        this.response = response;
+    }
+
+    public RevisionDataResponse getResponse() {
+        return response;
     }
 }

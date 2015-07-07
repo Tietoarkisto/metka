@@ -31,6 +31,7 @@ package fi.uta.fsd.metka.mvc.services.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.mvc.services.SettingsService;
 import fi.uta.fsd.metka.storage.repository.*;
@@ -50,6 +51,9 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Autowired
     private ConfigurationRepository configurations;
+
+    @Autowired
+    private RevisionRepository revisions;
 
     @Autowired
     private MiscJSONRepository miscJSONRepository;
@@ -164,6 +168,15 @@ public class SettingsServiceImpl implements SettingsService {
     @Override
     public ReturnResult indexEverything() {
         indexer.indexEverything();
+        return ReturnResult.OPERATION_SUCCESSFUL;
+    }
+
+    @Override
+    public ReturnResult indexRevision(RevisionKey key) {
+        if(key.getId() == null || key.getNo() == null) {
+            return ReturnResult.PARAMETERS_MISSING;
+        }
+        revisions.indexRevision(key);
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
 

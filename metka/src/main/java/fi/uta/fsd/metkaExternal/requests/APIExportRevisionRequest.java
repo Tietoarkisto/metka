@@ -26,37 +26,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.requests;
 
-public class APISignature {
-    // Public key of the program making the request
-    private String userName;
-    // RequestSignature created using programs api key and some other parameters
-    private String signature;
-    // ISO_8601 encoded timestamp of when the request was made, part of the signature creation
-    private String accessTime;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 
-    public String getUserName() {
-        return userName;
+public class APIExportRevisionRequest extends APIRequest {
+    private RevisionKey key;
+
+    public RevisionKey getKey() {
+        return key;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
-
-    public String getAccessTime() {
-        return accessTime;
-    }
-
-    public void setAccessTime(String accessTime) {
-        this.accessTime = accessTime;
+    public void setKey(RevisionKey key) {
+        this.key = key;
     }
 }
