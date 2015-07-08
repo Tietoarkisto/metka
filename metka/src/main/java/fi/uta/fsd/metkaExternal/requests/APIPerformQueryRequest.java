@@ -26,16 +26,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.requests;
 
-import java.util.HashMap;
-import java.util.Map;
+import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryRequest;
 
-public class APIStudyCreateRequest extends APIRequest {
+public class APIPerformQueryRequest extends APIRequest {
+    private ExpertSearchQueryRequest request;
 
-    private final Map<String, String> parameters = new HashMap<>();
+    public ExpertSearchQueryRequest getRequest() {
+        return request;
+    }
 
-    public Map<String, String> getParameters() {
-        return parameters;
+    public void setRequest(ExpertSearchQueryRequest request) {
+        this.request = request;
     }
 }

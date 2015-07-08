@@ -26,18 +26,36 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.mvc.services.requests;
+package fi.uta.fsd.metkaExternal.responses;
 
-import org.springframework.web.multipart.MultipartFile;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 
-public class UploadRequest {
-    private MultipartFile file;
+import java.util.List;
 
-    public MultipartFile getFile() {
-        return file;
+public class APIReferencePathResponse extends APIResponse {
+    public static APIReferencePathResponse authFail() {
+        return new APIReferencePathResponse(false, ReturnResult.API_AUTHENTICATION_FAILED, null);
     }
 
-    public void setFile(MultipartFile file) {
-        this.file = file;
+    public static APIReferencePathResponse caughtException(Exception e) {
+        APIReferencePathResponse response = new APIReferencePathResponse(true, ReturnResult.EXCEPTION_DURING_API_CALL, null);
+        response.setException(e);
+        return response;
+    }
+
+    public static APIReferencePathResponse success(ReturnResult result, List<ReferenceOption> options) {
+        return new APIReferencePathResponse(true, result, options);
+    }
+
+    private final List<ReferenceOption> options;
+
+    private APIReferencePathResponse(boolean authenticated, ReturnResult result, List<ReferenceOption> options) {
+        super(authenticated, result);
+        this.options = options;
+    }
+
+    public List<ReferenceOption> getOptions() {
+        return options;
     }
 }

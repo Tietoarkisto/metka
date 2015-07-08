@@ -28,51 +28,23 @@
 
 package fi.uta.fsd.metka.storage.repository;
 
-import org.joda.time.LocalDateTime;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.settings.APIUserEntry;
+import fi.uta.fsd.metka.transfer.settings.NewAPIUserRequest;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Transactional(readOnly = true)
 public interface APIRepository {
 
-    APIUser getAPIUser(String key);
-    @Transactional(readOnly = false) void updateAPIAccess(String key);
+    APIUserEntry getAPIUser(String secret);
+    @Transactional(readOnly = false) void updateAPIAccess(String secret);
 
-    public static class APIUser {
-        private String name;
-        private short permissions;
-        private String secret;
-        private LocalDateTime lastAccess;
+    Pair<ReturnResult, List<APIUserEntry>> listAPIUsers();
 
-        public String getName() {
-            return name;
-        }
+    @Transactional(readOnly = false) ReturnResult removeAPIUser(String secret);
 
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public short getPermissions() {
-            return permissions;
-        }
-
-        public void setPermissions(short permissions) {
-            this.permissions = permissions;
-        }
-
-        public String getSecret() {
-            return secret;
-        }
-
-        public void setSecret(String secret) {
-            this.secret = secret;
-        }
-
-        public LocalDateTime getLastAccess() {
-            return lastAccess;
-        }
-
-        public void setLastAccess(LocalDateTime lastAccess) {
-            this.lastAccess = lastAccess;
-        }
-    }
+    @Transactional(readOnly = false) Pair<ReturnResult, APIUserEntry> newAPIUser(NewAPIUserRequest request);
 }

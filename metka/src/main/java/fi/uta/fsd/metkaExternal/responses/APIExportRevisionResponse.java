@@ -26,16 +26,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.responses;
 
-public abstract class APIRequest {
-    private APISignature authentication;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.revision.RevisionExportResponse;
 
-    public APISignature getAuthentication() {
-        return authentication;
+public class APIExportRevisionResponse extends APIResponse {
+    public static APIExportRevisionResponse authFail() {
+        return new APIExportRevisionResponse(false, ReturnResult.API_AUTHENTICATION_FAILED, null);
     }
 
-    public void setAuthentication(APISignature authentication) {
-        this.authentication = authentication;
+    public static APIExportRevisionResponse caughtException(Exception e) {
+        APIExportRevisionResponse response = new APIExportRevisionResponse(true, ReturnResult.EXCEPTION_DURING_API_CALL, null);
+        response.setException(e);
+        return response;
+    }
+
+    public static APIExportRevisionResponse success(ReturnResult result, RevisionExportResponse response) {
+        return new APIExportRevisionResponse(true, result, response);
+    }
+
+    private final RevisionExportResponse response;
+
+    public APIExportRevisionResponse(boolean authenticated, ReturnResult result, RevisionExportResponse response) {
+        super(authenticated, result);
+        this.response = response;
+    }
+
+    public RevisionExportResponse getResponse() {
+        return response;
     }
 }

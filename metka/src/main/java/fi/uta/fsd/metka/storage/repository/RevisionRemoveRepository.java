@@ -29,14 +29,13 @@
 package fi.uta.fsd.metka.storage.repository;
 
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
-import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface RevisionRemoveRepository {
-    public OperationResponse remove(TransferData transferData, DateTimeUserPair info);
-    public OperationResponse removeDraft(TransferData transferData, DateTimeUserPair info);
-    public OperationResponse removeLogical(TransferData transferData, DateTimeUserPair info);
+    OperationResponse remove(RevisionKey key, DateTimeUserPair info);
+    OperationResponse removeDraft(RevisionKey key, DateTimeUserPair info);
+    OperationResponse removeLogical(RevisionKey key, DateTimeUserPair info);
 }

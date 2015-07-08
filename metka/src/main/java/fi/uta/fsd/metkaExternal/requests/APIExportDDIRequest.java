@@ -26,18 +26,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 
-public class APIRevisionSaveRequest extends APIRequest {
-    private RevisionData revision;
+public class APIExportDDIRequest extends APIRequest {
+    private RevisionKey key;
+    private Language language;
 
-    public RevisionData getRevision() {
-        return revision;
+    public RevisionKey getKey() {
+        return key;
     }
 
-    public void setRevision(RevisionData revision) {
-        this.revision = revision;
+    public void setKey(RevisionKey key) {
+        this.key = key;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
     }
 }

@@ -67,7 +67,7 @@ public class StudyController {
 
     @RequestMapping(value="ddi/export", method = RequestMethod.POST)
     public @ResponseBody DDIExportResponse ddiExport(@RequestBody DDIExportRequest request) {
-        Pair<ReturnResult, CodeBookDocument> pair = service.exportDDI(request.getId(), request.getNo(), request.getLanguage());
+        Pair<ReturnResult, CodeBookDocument> pair = service.exportDDI(request.getKey(), request.getLanguage());
         DDIExportResponse response = new DDIExportResponse();
         if(pair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             // Operation was not successful
@@ -76,15 +76,14 @@ public class StudyController {
         }
         response.setResult(pair.getLeft());
         response.setContent(pair.getRight().toString());
-        response.setId(request.getId());
-        response.setNo(request.getNo());
+        response.setKey(request.getKey());
         response.setLanguage(request.getLanguage() == Language.DEFAULT ? "fi" : request.getLanguage().toValue());
         return response;
     }
 
     @RequestMapping(value="ddi/import", method = RequestMethod.POST)
     public @ResponseBody ReturnResult ddiImport(@RequestBody DDIImportRequest request) {
-        ReturnResult result = service.importDDI(request.getTransferData(), request.getPath());
+        ReturnResult result = service.importDDI(request.getTransferData().getKey(), request.getPath());
 
         return result;
     }

@@ -90,5 +90,6 @@ public enum ReturnResult {
     EMPTY_SUBQUERY,                     // If subquery returns an empty list then the whole query is aborted. The Main query won't compile if subquery is empty
     NO_CHANGES,                         // Operation did not result in any changes
     HAS_HANDLER,                        // Revision already has handler in a situation where null handler is required
+    EXCEPTION_DURING_API_CALL,
     FILE_ALREADY_EXISTS                // Special failure condition when file move is tried to a location that already contains a file
 }

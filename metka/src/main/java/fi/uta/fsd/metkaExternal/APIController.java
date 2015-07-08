@@ -28,38 +28,24 @@
 
 package fi.uta.fsd.metkaExternal;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
-import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
+import codebook25.CodeBookDocument;
+import fi.uta.fsd.Logger;
+import fi.uta.fsd.metka.model.general.RevisionKey;
+import fi.uta.fsd.metka.mvc.services.*;
 import fi.uta.fsd.metka.storage.repository.APIRepository;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.response.RevisionableInfo;
-import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
-import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
-import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
-import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
-import fi.uta.fsd.metkaSearch.IndexerComponent;
-import fi.uta.fsd.metkaSearch.SearcherComponent;
-import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
-import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
-import fi.uta.fsd.metkaSearch.results.ResultList;
-import fi.uta.fsd.metkaSearch.results.RevisionResult;
+import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryResponse;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.revision.*;
+import fi.uta.fsd.metkaExternal.requests.*;
+import fi.uta.fsd.metkaExternal.responses.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "")
@@ -68,131 +54,271 @@ public class APIController {
     private APIRepository api;
 
     @Autowired
-    private RevisionCreationRepository create;
+    private ExpertSearchService search;
 
     @Autowired
-    private SearcherComponent searcher;
+    private SettingsService settings;
 
     @Autowired
-    private IndexerComponent indexer;
+    private StudyService studies;
 
     @Autowired
-    private ConfigurationRepository configurations;
+    private ReferenceService references;
 
     @Autowired
-    private RevisionRepository revisions;
+    private RevisionService revisions;
 
-    @RequestMapping(value = "createStudy", method = RequestMethod.POST)
-    public @ResponseBody
-    APIStudyCreateResponse createStudy(@RequestBody APIStudyCreateRequest request) {
+    @RequestMapping(value = "performQuery", method = RequestMethod.POST)
+    public @ResponseBody APIPerformQueryResponse performQuery(@RequestBody APIPerformQueryRequest request) {
         // Authenticate using API key mechanism
-        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_STUDY_CREATE)) {
-            APIStudyCreateResponse result = new APIStudyCreateResponse(ReturnResult.API_AUTHENTICATION_FAILED, null);
-            return result;
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIPerformQueryResponse.authFail();
         }
 
-        RevisionCreateRequest revReq = new RevisionCreateRequest();
-        revReq.setType(ConfigurationType.STUDY);
-        revReq.getParameters().putAll(request.getParameters());
-        Pair<ReturnResult, RevisionData> result = create.create(revReq);
-        if(result.getLeft() != ReturnResult.REVISION_CREATED) {
-            return new APIStudyCreateResponse(result.getLeft(), null);
+        try {
+            ExpertSearchQueryResponse searchResponse = search.performQuery(request.getRequest());
+            return APIPerformQueryResponse.success(searchResponse);
+        } catch(Exception e) {
+            Logger.error(getClass(), "Exception while performing API query request: ", e);
+            return APIPerformQueryResponse.caughtException(e);
+        }
+    }
+
+    @RequestMapping(value = "indexRevisions", method = RequestMethod.POST)
+    public @ResponseBody APIIndexRevisionsResponse performQuery(@RequestBody APIIndexRevisionsRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIIndexRevisionsResponse.authFail();
+        }
+        boolean missing = false;
+        for(RevisionKey key : request.getTargets()) {
+            if(key.getId() == null || key.getNo() == null) {
+                missing = true;
+                continue;
+            }
+            settings.indexRevision(key);
         }
 
-        Pair<StatusCode, ValueDataField> pair = result.getRight().dataField(ValueDataFieldCall.get("studyid"));
-        if(pair.getLeft() != StatusCode.FIELD_FOUND || !pair.getRight().hasValueFor(Language.DEFAULT)) {
-            return new APIStudyCreateResponse(ReturnResult.PARAMETERS_MISSING, null);
+        return APIIndexRevisionsResponse.success(missing);
+    }
+
+    @RequestMapping(value = "exportDDI", method = RequestMethod.POST)
+    public @ResponseBody APIExportDDIResponse exportDDI(@RequestBody APIExportDDIRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIExportDDIResponse.authFail();
         }
 
-        revisions.indexRevision(result.getRight().getKey());
+        if(request.getKey().getId() == null || request.getKey().getNo() == null) {
+            return APIExportDDIResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
 
-        return new APIStudyCreateResponse(ReturnResult.REVISION_CREATED, pair.getRight().getActualValueFor(Language.DEFAULT));
+        Pair<ReturnResult, CodeBookDocument> pair = studies.exportDDI(request.getKey(), request.getLanguage());
+
+        return APIExportDDIResponse.success(pair.getLeft(), pair.getRight().toString());
+    }
+
+    @RequestMapping(value = "importDDI", method = RequestMethod.POST)
+    public @ResponseBody APIImportDDIResponse importDDI(@RequestBody APIImportDDIRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIImportDDIResponse.authFail();
+        }
+
+        if(request.getKey().getId() == null || request.getKey().getNo() == null || StringUtils.isBlank(request.getPath())) {
+            return APIImportDDIResponse.success(ReturnResult.PARAMETERS_MISSING);
+        }
+
+        ReturnResult result = studies.importDDI(request.getKey(), request.getPath());
+
+        return APIImportDDIResponse.success(result);
+    }
+
+    @RequestMapping(value = "collectReferenceOptions", method = RequestMethod.POST)
+    public @ResponseBody APIReferencePathResponse collectReferenceOptions(@RequestBody APIReferencePathRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIReferencePathResponse.authFail();
+        }
+
+        if(request.getRequest() == null) {
+            return APIReferencePathResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
+
+        List<ReferenceOption> options = references.collectReferenceOptions(request.getRequest());
+
+        return APIReferencePathResponse.success(ReturnResult.OPERATION_SUCCESSFUL, options);
     }
 
     @RequestMapping(value = "getConfiguration", method = RequestMethod.POST)
-    public @ResponseBody
-    APIConfigurationReadResponse getConfiguration(@RequestBody APIConfigurationReadRequest request) {
+    public @ResponseBody APIConfigurationReadResponse getConfiguration(@RequestBody APIConfigurationReadRequest request) {
         // Authenticate using API key mechanism
-        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_READ)) {
-            APIConfigurationReadResponse response = new APIConfigurationReadResponse(ReturnResult.API_AUTHENTICATION_FAILED, null);
-            return response;
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIConfigurationReadResponse.authFail();
         }
-        Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(request.getKey());
-        return new APIConfigurationReadResponse(pair.getLeft(), pair.getRight());
+
+        if(request.getKey() == null) {
+            return APIConfigurationReadResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
+
+        ConfigurationResponse response = revisions.getConfiguration(request.getKey());
+
+        return APIConfigurationReadResponse.success(response.getResult(), response);
     }
 
-    @RequestMapping(value = "getRevision", method = RequestMethod.GET)
-    public @ResponseBody
-    APIRevisionReadResponse getData(@RequestBody APIRevisionReadRequest request) {
+    @RequestMapping(value = "exportRevision", method = RequestMethod.POST)
+    public @ResponseBody APIExportRevisionResponse exportRevision(@RequestBody APIRevisionKeyRequest request) {
         // Authenticate using API key mechanism
-        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_READ)) {
-            APIRevisionReadResponse response = new APIRevisionReadResponse(ReturnResult.API_AUTHENTICATION_FAILED, null);
-            return response;
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIExportRevisionResponse.authFail();
         }
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(RevisionKey.fromModelKey(request.getKey()));
-        APIRevisionReadResponse response = new APIRevisionReadResponse(dataPair.getLeft(), dataPair.getRight());
-        return response;
+
+        if(request.getKey() == null) {
+            return APIExportRevisionResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
+
+        RevisionExportResponse response = revisions.exportRevision(request.getKey());
+
+        return APIExportRevisionResponse.success(response.getResult(), response);
     }
 
-    @RequestMapping(value = "index", method = RequestMethod.POST)
-    public @ResponseBody ReturnResult indexRevisions(@RequestBody APIMassIndexRequest request) {
+    @RequestMapping(value = "viewRevision", method = RequestMethod.POST)
+    public @ResponseBody APIRevisionOperationResponse viewRevision(@RequestBody APIRevisionKeyRequest request) {
         // Authenticate using API key mechanism
-        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_SEARCH)) {
-            return ReturnResult.API_AUTHENTICATION_FAILED;
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIRevisionOperationResponse.authFail();
         }
-        for(IndexTarget target : request.getTargets()) {
-            revisions.indexRevision(target.getKey());
+
+        if(request.getKey() == null || request.getKey().getId() == null) {
+            return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
         }
-        return ReturnResult.OPERATION_SUCCESSFUL;
+        RevisionDataResponse response;
+        if(request.getKey().getNo() == null) {
+            response = revisions.view(request.getKey().getId(), null);
+        } else {
+            response = revisions.view(request.getKey().getId(), request.getKey().getNo(), null);
+        }
+
+        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
 
-    @RequestMapping(value = "save", method = RequestMethod.POST)
-    public @ResponseBody ReturnResult saveData(@RequestBody APIRevisionSaveRequest request) {
+    @RequestMapping(value = "editRevision", method = RequestMethod.POST)
+    public @ResponseBody APIRevisionOperationResponse editRevision(@RequestBody APIRevisionKeyRequest request) {
         // Authenticate using API key mechanism
-        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_EDIT)) {
-            return ReturnResult.API_AUTHENTICATION_FAILED;
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIRevisionOperationResponse.authFail();
         }
-        return revisions.updateRevisionData(request.getRevision());
+
+        if(request.getKey() == null || request.getKey().getId() == null) {
+            return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
+        RevisionDataResponse response = revisions.edit(request.getKey());
+
+        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
 
-    @RequestMapping(value = "search", method = RequestMethod.POST)
-    public @ResponseBody
-    RevisionSearchResponse performSearch(@RequestBody APISearchRequest request) {
+    @RequestMapping(value = "restoreRevision", method = RequestMethod.POST)
+    public @ResponseBody APIRevisionOperationResponse restoreRevision(@RequestBody APIRevisionKeyRequest request) {
         // Authenticate using API key mechanism
-        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_SEARCH)) {
-            RevisionSearchResponse response = new RevisionSearchResponse();
-            response.setResult(ReturnResult.API_AUTHENTICATION_FAILED);
-            return response;
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIRevisionOperationResponse.authFail();
         }
-        try {
-            System.err.println(AuthenticationUtil.getUserName());
-            ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build(request.getQuery(), configurations);
-            ResultList<RevisionResult> results = searcher.executeSearch(command);
-            RevisionSearchResponse response = new RevisionSearchResponse();
-            if(results.getResults().isEmpty()) {
-                response.setResult(ReturnResult.NO_RESULTS);
-                return response;
-            }
-            response.setResult(ReturnResult.OPERATION_SUCCESSFUL);
-            for(RevisionResult revResult : results.getResults()) {
-                Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(revResult.getId());
-                if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
-                    // No revisionable so no actual data, continue
-                    continue;
-                }
-                Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(revResult.getId(), revResult.getNo().intValue());
-                if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                    // No actual revision so no data, continue
-                    continue;
-                }
-                RevisionSearchResult result = RevisionSearchResult.build(dataPair.getRight(), infoPair.getRight());
-                response.getRows().add(result);
-            }
-            return response;
-        } catch(QueryNodeException qne) {
-            RevisionSearchResponse response = new RevisionSearchResponse();
-            response.setResult(ReturnResult.MALFORMED_QUERY);
-            return response;
+
+        if(request.getKey() == null || request.getKey().getId() == null) {
+            return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
         }
+        RevisionDataResponse response = revisions.restore(request.getKey());
+
+        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+    }
+
+    @RequestMapping(value = "claimRevision", method = RequestMethod.POST)
+    public @ResponseBody APIRevisionOperationResponse claimRevision(@RequestBody APIRevisionKeyRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIRevisionOperationResponse.authFail();
+        }
+
+        if(request.getKey() == null || request.getKey().getId() == null) {
+            return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
+        RevisionDataResponse response = revisions.claimRevision(request.getKey());
+
+        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+    }
+
+    @RequestMapping(value = "releaseRevision", method = RequestMethod.POST)
+    public @ResponseBody APIRevisionOperationResponse releaseRevision(@RequestBody APIRevisionKeyRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIRevisionOperationResponse.authFail();
+        }
+
+        if(request.getKey() == null || request.getKey().getId() == null) {
+            return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
+        RevisionDataResponse response = revisions.releaseRevision(request.getKey());
+
+        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+    }
+
+    @RequestMapping(value = "saveRevision", method = RequestMethod.POST)
+    public @ResponseBody APIRevisionOperationResponse saveRevision(@RequestBody APITransferDataRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIRevisionOperationResponse.authFail();
+        }
+
+        if(request.getTransferData() == null) {
+            return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
+        RevisionDataResponse response = revisions.save(request.getTransferData());
+
+        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+    }
+
+    @RequestMapping(value = "approveRevision", method = RequestMethod.POST)
+    public @ResponseBody APIRevisionOperationResponse approveRevision(@RequestBody APITransferDataRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIRevisionOperationResponse.authFail();
+        }
+
+        if(request.getTransferData() == null) {
+            return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
+        RevisionDataResponse response = revisions.approve(request.getTransferData());
+
+        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+    }
+
+    @RequestMapping(value = "removeRevision", method = RequestMethod.POST)
+    public @ResponseBody APIRevisionOperationResponse removeRevision(@RequestBody APIRevisionKeyRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIRevisionOperationResponse.authFail();
+        }
+
+        if(request.getKey() == null || request.getKey().getId() == null || request.getKey().getNo() == null) {
+            return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
+        RevisionDataResponse response = revisions.remove(request.getKey(), null);
+
+        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+    }
+
+    @RequestMapping(value = "createRevision", method = RequestMethod.POST)
+    public @ResponseBody APIRevisionOperationResponse createRevision(@RequestBody APICreateRevisionRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIRevisionOperationResponse.authFail();
+        }
+
+        if(request.getRequest() == null) {
+            return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
+        RevisionDataResponse response = revisions.create(request.getRequest());
+
+        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
 }

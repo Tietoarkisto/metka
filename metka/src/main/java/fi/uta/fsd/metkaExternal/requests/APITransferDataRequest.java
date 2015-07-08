@@ -26,18 +26,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.model.general.RevisionKey;
+import fi.uta.fsd.metka.model.transfer.TransferData;
 
-public class APIRevisionReadRequest extends APIRequest {
-    private RevisionKey key;
+public class APITransferDataRequest extends APIRequest {
+    private TransferData transferData;
 
-    public RevisionKey getKey() {
-        return key;
+    public TransferData getTransferData() {
+        return transferData;
     }
 
-    public void setKey(RevisionKey key) {
-        this.key = key;
+    public void setKey(TransferData transferData) {
+        this.transferData = transferData;
     }
 }

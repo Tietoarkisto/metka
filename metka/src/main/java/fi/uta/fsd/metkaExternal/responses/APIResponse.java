@@ -26,28 +26,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.responses;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.model.general.RevisionKey;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
-public class IndexTarget {
-    private RevisionKey key;
-    private ConfigurationType type;
+public abstract class APIResponse {
+    private final boolean authenticated;
+    private final String result;
+    private Exception exception;
 
-    public RevisionKey getKey() {
-        return key;
+    protected APIResponse(boolean authenticated, ReturnResult result) {
+        this.authenticated = authenticated;
+        this.result = result.name();
     }
 
-    public void setKey(RevisionKey key) {
-        this.key = key;
+    protected APIResponse(boolean authenticated, String result) {
+        this.authenticated = authenticated;
+        this.result = result;
     }
 
-    public ConfigurationType getType() {
-        return type;
+    public boolean getAuthenticated() {
+        return authenticated;
     }
 
-    public void setType(ConfigurationType type) {
-        this.type = type;
+    public String getResult() {
+        return result;
+    }
+
+    public Exception getException() {
+        return exception;
+    }
+
+    public void setException(Exception exception) {
+        this.exception = exception;
     }
 }

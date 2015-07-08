@@ -90,11 +90,6 @@ public class ReferenceController {
         return responses;
     }
 
-    @RequestMapping(value = "referenceRowRequest", method = RequestMethod.POST)
-    public @ResponseBody ReferenceRowResponse referenceRowRequest(@RequestBody ReferenceRowRequest request) {
-        return service.getReferenceRow(request);
-    }
-
     // TODO: Refactor to RevisionController as "revisionableStatus"
     @RequestMapping(value = "referenceStatus/{id}", method = RequestMethod.GET)
     public @ResponseBody ReferenceStatusResponse referenceStatus(@PathVariable String id) {

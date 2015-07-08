@@ -26,16 +26,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.responses;
 
-public class APISearchRequest extends APIRequest {
-    private String query;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryResponse;
 
-    public String getQuery() {
-        return query;
+public class APIPerformQueryResponse extends APIResponse {
+    public static APIPerformQueryResponse authFail() {
+        return new APIPerformQueryResponse(false, ReturnResult.API_AUTHENTICATION_FAILED, null);
     }
 
-    public void setQuery(String query) {
-        this.query = query;
+    public static APIPerformQueryResponse caughtException(Exception e) {
+        APIPerformQueryResponse response = new APIPerformQueryResponse(true, ReturnResult.EXCEPTION_DURING_API_CALL, null);
+        response.setException(e);
+        return response;
+    }
+
+    public static APIPerformQueryResponse success(ExpertSearchQueryResponse response) {
+        return new APIPerformQueryResponse(true, response.getResult(), response);
+    }
+
+    private final ExpertSearchQueryResponse response;
+
+    private APIPerformQueryResponse(boolean authenticated, ReturnResult result, ExpertSearchQueryResponse response) {
+        super(authenticated, result);
+        this.response = response;
+    }
+
+    public ExpertSearchQueryResponse getResponse() {
+        return response;
     }
 }

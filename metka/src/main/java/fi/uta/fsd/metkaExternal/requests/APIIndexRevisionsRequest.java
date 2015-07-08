@@ -26,42 +26,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.mvc.services.impl;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.mvc.services.SeriesService;
-import fi.uta.fsd.metka.search.SeriesSearch;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
-import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
-import fi.uta.fsd.metka.transfer.series.SeriesAbbreviationsResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 
-import java.util.List;
+import java.util.*;
 
-@Service
-public class SeriesServiceImpl implements SeriesService {
-    @Autowired
-    private SeriesSearch search;
+public class APIIndexRevisionsRequest extends APIRequest {
+    private final List<RevisionKey> targets = new ArrayList<>();
 
-    @Override public SeriesAbbreviationsResponse findAbbreviations() {
-        SeriesAbbreviationsResponse response = new SeriesAbbreviationsResponse();
-        List<String> list = search.findAbbreviations();
-        response.setResult(list.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL);
-        response.getAbbreviations().add(""); // Let's add an empty value as the first value
-        for(String string : list) {
-            response.getAbbreviations().add(string);
-        }
-        return response;
-    }
-
-    @Override public RevisionSearchResponse findNames() {
-        RevisionSearchResponse response = new RevisionSearchResponse();
-        List<RevisionSearchResult> results = search.findNames();
-        response.setResult(results.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL);
-        for(RevisionSearchResult result : results) {
-            response.getRows().add(result);
-        }
-        return response;
+    public List<RevisionKey> getTargets() {
+        return targets;
     }
 }

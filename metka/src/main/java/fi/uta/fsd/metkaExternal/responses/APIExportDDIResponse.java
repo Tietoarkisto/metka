@@ -26,47 +26,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.mvc.services.simple.study;
+package fi.uta.fsd.metkaExternal.responses;
 
-public class SeriesReference {
-    private Long id;
-    private String name;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
-    public SeriesReference(Long id, String name) {
-        this.id = id;
-        this.name = name;
+public class APIExportDDIResponse extends APIResponse {
+    public static APIExportDDIResponse authFail() {
+        return new APIExportDDIResponse(false, ReturnResult.API_AUTHENTICATION_FAILED, null);
     }
 
-    public Long getId() {
-        return id;
+    public static APIExportDDIResponse caughtException(Exception e) {
+        APIExportDDIResponse response = new APIExportDDIResponse(true, ReturnResult.EXCEPTION_DURING_API_CALL, null);
+        response.setException(e);
+        return response;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public static APIExportDDIResponse success(ReturnResult result, String ddi) {
+        return new APIExportDDIResponse(true, result, ddi);
     }
 
-    public String getName() {
-        return name;
+    private final String ddi;
+
+    public APIExportDDIResponse(boolean authenticated, ReturnResult result, String ddi) {
+        super(authenticated, result);
+        this.ddi = ddi;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SeriesReference that = (SeriesReference) o;
-
-        if (!id.equals(that.id)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
+    public String getDdi() {
+        return ddi;
     }
 }

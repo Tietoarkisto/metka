@@ -98,18 +98,15 @@ define(function (require) {
                     title: "Lataa",
                     create: function(options) {
                         this.click(function() {
-                            var $id = require('./../../root')(options).data.key.id;
-                            var $no = require('./../../root')(options).data.key.no;
                             var request = {
-                                id: $id,
-                                no: $no,
+                                key: require('./../../root')(options).data.key,
                                 language: require('./../../data')(options)("language").getByLang("DEFAULT")
                             };
                             require('./../../server')('/study/ddi/export', {
                                 data: JSON.stringify(request),
                                 success: function(response) {
                                     if(resultParser(response.result).getResult() === "OPERATION_SUCCESSFUL") {
-                                        saveAs(new Blob([response.content], {type: "text/xml;charset=utf-8"}), "id_"+response.id+"_revision_"+response.no+"_ddi_"+response.language+".xml");
+                                        saveAs(new Blob([response.content], {type: "text/xml;charset=utf-8"}), "id_"+response.key.id+"_revision_"+response.key.no+"_ddi_"+response.language+".xml");
                                     }
                                 }
                             });

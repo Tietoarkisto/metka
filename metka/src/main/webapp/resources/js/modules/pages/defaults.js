@@ -85,7 +85,7 @@ define(function (require) {
 
                     var header = {
                         localized: 'type.{page}.title',
-                        pattern: '{localized} - {id} - {no}{state}',
+                        pattern: '{localized} - {id} - {no}{state}{handler}',
                         buttons: $buttons
                             .append($('<div class="btn-group btn-group-xs">')
                                 .append([{
@@ -125,10 +125,10 @@ define(function (require) {
                                     .text(MetkaJS.L10N.get('general.buttons.download'))
                                     .click(function () {
                                         require('./../server')("download", {
-                                            data: JSON.stringify(options.data),
+                                            data: JSON.stringify(options.data.key),
                                             success: function (response) {
                                                 if(resultParser(response.result).getResult() === "REVISION_FOUND") {
-                                                    saveAs(new Blob([response.content], {type: "text/json;charset=utf-8"}), "id_"+response.id+"_revision_"+response.no+".json");
+                                                    saveAs(new Blob([response.content], {type: "text/json;charset=utf-8"}), "id_"+response.key.id+"_revision_"+response.key.no+".json");
                                                 } else {
                                                     require('./../resultViewer')(response.result);
                                                 }
@@ -152,7 +152,7 @@ define(function (require) {
                     });
 
                     supplant.state = data.data.state.uiState ? ' - ' + MetkaJS.L10N.get('state.' + data.data.state.uiState) : '';
-
+                    supplant.handler = data.data.state.handler ? ' - ' + MetkaJS.L10N.get('general.handler') + " " + data.data.state.handler : (data.data.state.uiState === 'DRAFT' ? ' - ' + MetkaJS.L10N.get('general.noHandler') : '');
                     supplant.localized = MetkaJS.L10N.get(header.localized.supplant(supplant));
                     $header.html(header.pattern.supplant(supplant));
 

@@ -30,28 +30,22 @@ package fi.uta.fsd.metka.ddi.reader;
 
 import codebook25.*;
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.RevisionState;
+import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.change.ContainerChange;
-import fi.uta.fsd.metka.model.data.change.RowChange;
+import fi.uta.fsd.metka.model.data.change.*;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
-import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.search.StudyVariableSearch;
 import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
-import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.StringUtils;
@@ -113,7 +107,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
 
     private ReturnResult readVariableGroups(DataDscrType dataDscr, RevisionData variables) {
         if(variables.getState() != RevisionState.DRAFT) {
-            Pair<OperationResponse, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(variables, RevisionableInfo.FALSE), info);
+            Pair<OperationResponse, RevisionData> pair = edit.edit(variables.getKey(), info);
             if(pair.getLeft().getResult().equals(ReturnResult.REVISION_FOUND.name())) {
                 if(!AuthenticationUtil.isHandler(pair.getRight())) {
                     return ReturnResult.USER_NOT_HANDLER;
@@ -285,7 +279,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
         RevisionData variable = variablePair.getRight();
 
         if(variable.getState() != RevisionState.DRAFT) {
-            Pair<OperationResponse, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(variable, RevisionableInfo.FALSE), info);
+            Pair<OperationResponse, RevisionData> pair = edit.edit(variable.getKey(), info);
             if(pair.getLeft().getResult().equals(ReturnResult.REVISION_FOUND)) {
                 if(!AuthenticationUtil.isHandler(pair.getRight())) {
                     return ReturnResult.USER_NOT_HANDLER;

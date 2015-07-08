@@ -38,14 +38,12 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
-import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -91,30 +89,37 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     private Cascader cascader;
 
     @Override
-    public OperationResponse remove(TransferData transferData, DateTimeUserPair info) {
+    public OperationResponse remove(RevisionKey key, DateTimeUserPair info) {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
-        if(transferData.getState().getUiState() == UIRevisionState.DRAFT) {
-            return removeDraft(transferData, info);
-        } else if(transferData.getState().getUiState() == UIRevisionState.APPROVED) {
-            return removeLogical(transferData, info);
-        } else {
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(key.getId(), key.getNo());
+        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             return OperationResponse.build(RemoveResult.ALREADY_REMOVED);
         }
+        if(dataPair.getRight().getState() == RevisionState.DRAFT) {
+            return removeDraft(key, info);
+        } else if(dataPair.getRight().getState() == RevisionState.APPROVED) {
+            RevisionableInfo revInfo = revisions.getRevisionableInfo(key.getId()).getRight();
+            if(!revInfo.getRemoved()) {
+                return removeLogical(key, info);
+            }
+        }
+
+        return OperationResponse.build(RemoveResult.ALREADY_REMOVED);
     }
 
     @Override
-    public OperationResponse removeDraft(TransferData transferData, DateTimeUserPair info) {
+    public OperationResponse removeDraft(RevisionKey key, DateTimeUserPair info) {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(transferData.getKey()));
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key.getId(), key.getNo());
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return OperationResponse.build(RemoveResult.NOT_FOUND);
         }
 
-        RemoveResult result = allowRemoval(transferData);
+        RemoveResult result = allowRemoval(pair.getRight());
         if(result != RemoveResult.ALLOW_REMOVAL) {
             return OperationResponse.build(result);
         }
@@ -137,7 +142,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return response;
         }
 
-        RevisionEntity revision = em.find(RevisionEntity.class, RevisionKey.fromModelKey(data.getKey()));
+        RevisionEntity revision = em.find(RevisionEntity.class, fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(data.getKey()));
         if(revision == null) {
             Logger.error(getClass(), "Draft revision with key "+data.getKey()+" was slated for removal but was not found from database.");
         } else {
@@ -155,26 +160,26 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             entity.setLatestRevisionNo(entity.getCurApprovedNo());
             result = RemoveResult.SUCCESS_DRAFT;
         }
-        addRemoveIndexCommand(transferData, result);
+        addRemoveIndexCommand(data.getKey(), result);
         return OperationResponse.build(result);
     }
 
     @Override
-    public OperationResponse removeLogical(TransferData transferData, DateTimeUserPair info) {
+    public OperationResponse removeLogical(RevisionKey key, DateTimeUserPair info) {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(transferData.getKey()));
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key.getId(), key.getNo());
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return OperationResponse.build(RemoveResult.NOT_FOUND);
         }
 
-        RemoveResult result = allowRemoval(transferData);
+        RemoveResult result = allowRemoval(pair.getRight());
         if(result != RemoveResult.ALLOW_REMOVAL) {
             return OperationResponse.build(result);
         }
 
-        pair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(), false, transferData.getConfiguration().getType());
+        pair = revisions.getLatestRevisionForIdAndType(key.getId(), false, pair.getRight().getConfiguration().getType());
 
         // NOTICE: These could be moved to restrictions quite easily
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -208,7 +213,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         finalizeLogicalRemoval(data, info);
 
         result = RemoveResult.SUCCESS_LOGICAL;
-        addRemoveIndexCommand(transferData, result);
+        addRemoveIndexCommand(data.getKey(), result);
         return OperationResponse.build(result);
     }
 
@@ -374,23 +379,23 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         return OperationResponse.build(RemoveResult.ALLOW_REMOVAL);
     }
 
-    private RemoveResult allowRemoval(TransferData transferData) {
-        switch(transferData.getConfiguration().getType()) {
+    private RemoveResult allowRemoval(RevisionData data) {
+        switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLES:
             case STUDY_VARIABLE:
-                return checkStudyAttachmentRemoval(transferData);
+                return checkStudyAttachmentRemoval(data);
             default:
                 return RemoveResult.ALLOW_REMOVAL;
         }
     }
 
-    private RemoveResult checkStudyAttachmentRemoval(TransferData transferData) {
-        TransferField field = transferData.getField(Fields.STUDY);
+    private RemoveResult checkStudyAttachmentRemoval(RevisionData data) {
+        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
         if(field == null || !field.hasValueFor(Language.DEFAULT)) {
             return RemoveResult.ALLOW_REMOVAL;
         }
-        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(field.asValueFor(Language.DEFAULT).asInteger(), false, ConfigurationType.STUDY);
+        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return RemoveResult.ALLOW_REMOVAL;
         }
@@ -401,19 +406,19 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                         : RemoveResult.WRONG_USER);
     }
 
-    private void addRemoveIndexCommand(TransferData transferData, RemoveResult result) {
+    private void addRemoveIndexCommand(RevisionKey key, RemoveResult result) {
         switch(result) {
             case SUCCESS_REVISIONABLE:
                 // TODO: In case of study we should check that references pointing to this study will get removed from revisions (from which point is the question).
             case SUCCESS_DRAFT:
                 // One remove operation should be enough for both of these since there should only be one affected document
-                revisions.removeRevision(transferData.getKey());
+                revisions.removeRevision(key);
                 break;
             case SUCCESS_LOGICAL:
                 // In this case we need to reindex all affected documents instead
-                List<Integer> nos = revisions.getAllRevisionNumbers(transferData.getKey().getId());
+                List<Integer> nos = revisions.getAllRevisionNumbers(key.getId());
                 for(Integer no : nos) {
-                    Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(transferData.getKey().getId(), no);
+                    Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key.getId(), key.getNo());
                     if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                         revisions.indexRevision(pair.getRight().getKey());
                     }

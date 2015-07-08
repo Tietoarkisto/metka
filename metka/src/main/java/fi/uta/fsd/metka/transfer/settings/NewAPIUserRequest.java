@@ -30,10 +30,7 @@ package fi.uta.fsd.metka.transfer.settings;
 
 public class NewAPIUserRequest {
     private String name;
-    private boolean hasStudyCreatePermission;
-    private boolean hasSearchPermission;
-    private boolean hasReadPermission;
-    private boolean hasEditPermission;
+    private String role;
 
     public String getName() {
         return name;
@@ -43,35 +40,11 @@ public class NewAPIUserRequest {
         this.name = name;
     }
 
-    public boolean isHasStudyCreatePermission() {
-        return hasStudyCreatePermission;
+    public String getRole() {
+        return role;
     }
 
-    public void setHasStudyCreatePermission(boolean hasStudyCreatePermission) {
-        this.hasStudyCreatePermission = hasStudyCreatePermission;
-    }
-
-    public boolean isHasSearchPermission() {
-        return hasSearchPermission;
-    }
-
-    public void setHasSearchPermission(boolean hasSearchPermission) {
-        this.hasSearchPermission = hasSearchPermission;
-    }
-
-    public boolean isHasReadPermission() {
-        return hasReadPermission;
-    }
-
-    public void setHasReadPermission(boolean hasReadPermission) {
-        this.hasReadPermission = hasReadPermission;
-    }
-
-    public boolean isHasEditPermission() {
-        return hasEditPermission;
-    }
-
-    public void setHasEditPermission(boolean hasEditPermission) {
-        this.hasEditPermission = hasEditPermission;
+    public void setRole(String role) {
+        this.role = role;
     }
 }

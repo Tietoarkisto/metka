@@ -52,9 +52,6 @@ public interface ReferenceService {
     List<ReferenceOption> collectReferenceOptions(ReferencePathRequest request);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
-    ReferenceRowResponse getReferenceRow(ReferenceRowRequest request);
-
-    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     ReferenceStatusResponse getReferenceStatus(Long id);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")

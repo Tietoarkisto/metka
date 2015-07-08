@@ -26,25 +26,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 
-public class APIConfigurationReadResponse {
-    private final ReturnResult result;
-    private final Configuration configuration;
+public class APIReferencePathRequest extends APIRequest {
+    private ReferencePathRequest request;
 
-    public APIConfigurationReadResponse(ReturnResult result, Configuration configuration) {
-        this.result = result;
-        this.configuration = configuration;
+    public ReferencePathRequest getRequest() {
+        return request;
     }
 
-    public ReturnResult getResult() {
-        return result;
-    }
-
-    public Configuration getConfiguration() {
-        return configuration;
+    public void setRequest(ReferencePathRequest request) {
+        this.request = request;
     }
 }

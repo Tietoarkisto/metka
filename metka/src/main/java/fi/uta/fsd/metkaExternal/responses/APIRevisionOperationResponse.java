@@ -26,16 +26,43 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.responses;
 
-import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.revision.RevisionDataResponse;
 
-import java.util.*;
+public class APIRevisionOperationResponse extends APIResponse {
+    public static APIRevisionOperationResponse authFail() {
+        return new APIRevisionOperationResponse(false, ReturnResult.API_AUTHENTICATION_FAILED, null);
+    }
 
-public class APIMassIndexRequest extends APIRequest {
-    private final List<IndexTarget> targets = new ArrayList<>();
+    public static APIRevisionOperationResponse caughtException(Exception e) {
+        APIRevisionOperationResponse response = new APIRevisionOperationResponse(true, ReturnResult.EXCEPTION_DURING_API_CALL, null);
+        response.setException(e);
+        return response;
+    }
 
-    public List<IndexTarget> getTargets() {
-        return targets;
+    public static APIRevisionOperationResponse success(ReturnResult result, RevisionDataResponse response) {
+        return new APIRevisionOperationResponse(true, result, response);
+    }
+
+    public static APIRevisionOperationResponse success(String result, RevisionDataResponse response) {
+        return new APIRevisionOperationResponse(true, result, response);
+    }
+
+    private final RevisionDataResponse response;
+
+    public APIRevisionOperationResponse(boolean authenticated, ReturnResult result, RevisionDataResponse response) {
+        super(authenticated, result);
+        this.response = response;
+    }
+
+    public APIRevisionOperationResponse(boolean authenticated, String result, RevisionDataResponse response) {
+        super(authenticated, result);
+        this.response = response;
+    }
+
+    public RevisionDataResponse getResponse() {
+        return response;
     }
 }

@@ -42,14 +42,11 @@ public class APIUserEntity {
     @Column(name = "API_USER_ID", updatable = false, insertable = false, unique = true)
     private Long apiUserId;
 
-    @Column(name = "PUBLIC_KEY", unique = true)
-    private String publicKey;
-
-    @Column(name = "SECRET", unique = true)
+    @Column(name = "SECRET", unique = true, updatable = false)
     private String secret;
 
-    @Column(name = "PERMISSIONS", updatable = false, insertable = false)
-    private short permissions;
+    @Column(name = "ROLE")
+    private String role;
 
     @Column(name = "NAME")
     private String name;
@@ -58,7 +55,7 @@ public class APIUserEntity {
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     private LocalDateTime lastAccess;
 
-    @Column(name = "CREATED_BY", updatable = false, insertable = false)
+    @Column(name = "CREATED_BY", updatable = false)
     private String createdBy;
 
     public Long getApiUserId() {
@@ -69,14 +66,6 @@ public class APIUserEntity {
         this.apiUserId = apiUserId;
     }
 
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        if(this.publicKey == null) this.publicKey = publicKey;
-    }
-
     public String getSecret() {
         return secret;
     }
@@ -85,12 +74,12 @@ public class APIUserEntity {
         if(this.secret == null) this.secret = secret;
     }
 
-    public short getPermissions() {
-        return permissions;
+    public String getRole() {
+        return role;
     }
 
-    public void setPermissions(short permissions) {
-        this.permissions = permissions;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getName() {

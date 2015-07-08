@@ -26,24 +26,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 
-public class APIStudyCreateResponse {
-    private final ReturnResult result;
-    private final String studyId;
+public class APIImportDDIRequest extends APIRequest {
+    private RevisionKey key;
+    private String path;
 
-    public APIStudyCreateResponse(ReturnResult result, String studyId) {
-        this.result = result;
-        this.studyId = studyId;
+    public RevisionKey getKey() {
+        return key;
     }
 
-    public ReturnResult getResult() {
-        return result;
+    public void setKey(RevisionKey key) {
+        this.key = key;
     }
 
-    public String getStudyId() {
-        return studyId;
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

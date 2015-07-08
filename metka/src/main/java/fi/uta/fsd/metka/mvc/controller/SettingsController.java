@@ -109,7 +109,7 @@ public class SettingsController {
         return service.listAPIUsers();
     }
 
-    @RequestMapping(value="newAPIUsers", method = RequestMethod.POST)
+    @RequestMapping(value="newAPIUser", method = RequestMethod.POST)
     public @ResponseBody APIUserListResponse newAPIUsers(@RequestBody NewAPIUserRequest request) {
         return service.newAPIUser(request);
     }
@@ -119,9 +119,9 @@ public class SettingsController {
         return service.getOpenIndexCommands();
     }
 
-    @RequestMapping(value="removeAPIUser/{key}", method = RequestMethod.GET)
-    public @ResponseBody ReturnResult removeAPIUser(@PathVariable String key) {
-        return service.removeAPIUser(key);
+    @RequestMapping(value="removeAPIUser/{secret}", method = RequestMethod.GET)
+    public @ResponseBody ReturnResult removeAPIUser(@PathVariable String secret) {
+        return service.removeAPIUser(secret);
     }
 
     @RequestMapping(value="stopIndexers", method = RequestMethod.GET)

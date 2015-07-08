@@ -50,11 +50,11 @@ class OperationCascader {
             } case REMOVE: {
                 OperationResponse result;
                 if(instruction.getDraft() == null) {
-                    result = repositories.getRemove().remove(transferData, instruction.getInfo());
+                    result = repositories.getRemove().remove(transferData.getKey(), instruction.getInfo());
                 } else if(instruction.getDraft()) {
-                    result = repositories.getRemove().removeDraft(transferData, instruction.getInfo());
+                    result = repositories.getRemove().removeDraft(transferData.getKey(), instruction.getInfo());
                 } else {
-                    result = repositories.getRemove().removeLogical(transferData, instruction.getInfo());
+                    result = repositories.getRemove().removeLogical(transferData.getKey(), instruction.getInfo());
                 }
                 RemoveResult rr = RemoveResult.valueOf(result.getResult());
                 return rr == RemoveResult.SUCCESS_LOGICAL
@@ -66,11 +66,11 @@ class OperationCascader {
                 // Cascade results don't matter for REMOVE_REVISIONABLE so we can just return true no matter the result
                 RevisionableInfo revInfo = repositories.getRevisions().getRevisionableInfo(transferData.getKey().getId()).getRight();
                 if(instruction.getDraft() && revInfo != null && revInfo.getApproved() == null) {
-                    repositories.getRemove().removeDraft(transferData, instruction.getInfo());
+                    repositories.getRemove().removeDraft(transferData.getKey(), instruction.getInfo());
                 }
                 return true;
             } case EDIT: {
-                OperationResponse result = repositories.getEdit().edit(transferData, instruction.getInfo()).getLeft();
+                OperationResponse result = repositories.getEdit().edit(transferData.getKey(), instruction.getInfo()).getLeft();
                 ReturnResult rr = ReturnResult.valueOf(result.getResult());
                 return rr == ReturnResult.REVISION_FOUND || rr == ReturnResult.REVISION_CREATED;
             }

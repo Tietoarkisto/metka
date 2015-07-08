@@ -29,6 +29,7 @@
 package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.transfer.revision.*;
@@ -40,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
 @Transactional(noRollbackFor = {NumberFormatException.class})
 public interface RevisionService {
+
     @Transactional(readOnly = true) RevisionDataResponse view(Long id, ConfigurationType type);
 
     @Transactional(readOnly = true) RevisionDataResponse view(Long id, Integer no, ConfigurationType type);
@@ -48,7 +50,7 @@ public interface RevisionService {
     RevisionDataResponse create(RevisionCreateRequest request);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
-    RevisionDataResponse edit(TransferData transferData);
+    RevisionDataResponse edit(RevisionKey key);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#transferData, '" + PermissionCheck.Values.IS_HANDLER + "')")
@@ -59,8 +61,8 @@ public interface RevisionService {
     RevisionDataResponse approve(TransferData transferData);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_REMOVE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
-            "and hasPermission(#transferData, '" + PermissionCheck.Values.IS_HANDLER + "')")
-    RevisionDataResponse remove(TransferData transferData, Boolean draft);
+            "and hasPermission(#key, '" + PermissionCheck.Values.IS_HANDLER + "')")
+    RevisionDataResponse remove(RevisionKey key, Boolean draft);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_RESTORE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     RevisionDataResponse restore(RevisionKey key);
@@ -85,8 +87,9 @@ public interface RevisionService {
     @Transactional(readOnly = true) RevisionCompareResponse revisionCompare(RevisionCompareRequest request);
 
     @Transactional(readOnly = true) ConfigurationResponse getConfiguration(ConfigurationType type);
+    @Transactional(readOnly = true) ConfigurationResponse getConfiguration(ConfigurationKey key);
 
     @Transactional(readOnly = true) RevisionDataResponse adjacentRevision(AdjacentRevisionRequest request);
 
-    @Transactional(readOnly = true) RevisionExportResponse exportRevision(TransferData transferData);
+    @Transactional(readOnly = true) RevisionExportResponse exportRevision(RevisionKey key);
 }

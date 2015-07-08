@@ -30,15 +30,11 @@ package fi.uta.fsd.metka.mvc.services.impl;
 
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.configuration.Reference;
-import fi.uta.fsd.metka.model.configuration.SelectionList;
+import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.general.ApproveInfo;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
-import fi.uta.fsd.metka.model.transfer.TransferRow;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.collecting.ReferenceCollector;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
@@ -146,18 +142,6 @@ public class ReferenceServiceImpl implements ReferenceService {
     public List<ReferenceOption> collectReferenceOptions(ReferencePathRequest request) {
         Pair<ReturnResult, List<ReferenceOption>> optionsPair = references.handleReferenceRequest(request);
         return optionsPair.getRight();
-    }
-
-    @Override public ReferenceRowResponse getReferenceRow(ReferenceRowRequest request) {
-        ReferenceRowResponse response = new ReferenceRowResponse();
-        Pair<ReturnResult, ReferenceRow> pair = references.getReferenceRow(request);
-
-        response.setResult(pair.getLeft());
-        if(pair.getLeft() == ReturnResult.REFERENCE_FOUND) {
-            response.setRow(TransferRow.buildFromContainerRow(pair.getRight()));
-        }
-
-        return response;
     }
 
     @Override

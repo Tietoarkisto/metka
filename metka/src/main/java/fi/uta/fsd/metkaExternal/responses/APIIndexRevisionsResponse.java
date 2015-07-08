@@ -26,22 +26,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.storage.repository;
+package fi.uta.fsd.metkaExternal.responses;
 
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.transfer.settings.APIUserEntry;
-import fi.uta.fsd.metka.transfer.settings.NewAPIUserRequest;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+public class APIIndexRevisionsResponse extends APIResponse {
+    public static APIIndexRevisionsResponse authFail() {
+        return new APIIndexRevisionsResponse(false, ReturnResult.API_AUTHENTICATION_FAILED);
+    }
 
-@Transactional(readOnly = true)
-public interface APIUserRepository {
+    public static APIIndexRevisionsResponse caughtException(Exception e) {
+        APIIndexRevisionsResponse response = new APIIndexRevisionsResponse(true, ReturnResult.EXCEPTION_DURING_API_CALL);
+        response.setException(e);
+        return response;
+    }
 
-    public Pair<ReturnResult, List<APIUserEntry>> listAPIUsers();
+    public static APIIndexRevisionsResponse success(boolean missing) {
+        return new APIIndexRevisionsResponse(true, missing ? ReturnResult.OPERATION_SUCCESSFUL_WITH_ERRORS : ReturnResult.OPERATION_SUCCESSFUL);
+    }
 
-    public ReturnResult removeAPIUser(String key);
-
-    public Pair<ReturnResult, APIUserEntry> newAPIUser(NewAPIUserRequest request);
+    private APIIndexRevisionsResponse(boolean authenticated, ReturnResult result) {
+        super(authenticated, result);
+    }
 }

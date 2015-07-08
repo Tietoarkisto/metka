@@ -26,19 +26,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.mvc.services;
+package fi.uta.fsd.metkaExternal.requests;
 
-import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
-import fi.uta.fsd.metka.transfer.series.SeriesAbbreviationsResponse;
-import fi.uta.fsd.metkaAuthentication.Permission;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 
-@PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', 'PERMISSION') " +
-        "and hasPermission('"+ Permission.Values.CAN_PERFORM_SEARCH +"', 'PERMISSION')")
-@Transactional
-public interface SeriesService {
-    SeriesAbbreviationsResponse findAbbreviations();
+public class APIConfigurationReadRequest extends APIRequest {
+    private ConfigurationKey key;
 
-    RevisionSearchResponse findNames();
+    public ConfigurationKey getKey() {
+        return key;
+    }
+
+    public void setKey(ConfigurationKey key) {
+        this.key = key;
+    }
 }

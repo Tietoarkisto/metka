@@ -61,6 +61,29 @@ define(function (require) {
                         type: "VALUE",
                         includeEmpty: true,
                         options: []
+                    },
+                    addapiuserrole_list: {
+                        key: "addapiuserrole_list",
+                        type: "VALUE",
+                        options: [{
+                            value: "metka:unknown",
+                            title: "Tuntematon"
+                        }, {
+                            value: "metka:reader",
+                            title: "Lukija"
+                        }, {
+                            value: "metka:basic-user",
+                            title: "Käyttäjä"
+                        }, {
+                            value: "metka:translator",
+                            title: "Kääntäjä"
+                        }, {
+                            value: "metka:data-administrator",
+                            title: "Data admin"
+                        }, {
+                            value: "metka:administrator",
+                            title: "Admin"
+                        }]
                     }
                 },
                 references: {
@@ -113,6 +136,51 @@ define(function (require) {
                     jsonText: {
                         key: "jsonText",
                         type: "STRING"
+                    },
+                    apiusers: {
+                        key: "apiusers",
+                        type: "CONTAINER",
+                        subfields: [
+                            "apiusersname",
+                            "apiusersrole",
+                            "apiuserssecret",
+                            "apiusersaccess",
+                            "apiuserscreated"
+                        ]
+                    },
+                    apiusersname: {
+                        key: "apiusersname",
+                        type: "STRING",
+                        subfield: true
+                    },
+                    apiusersrole: {
+                        key: "apiusersrole",
+                        type: "STRING",
+                        subfield: true
+                    },
+                    apiuserssecret: {
+                        key: "apiuserssecret",
+                        type: "STRING",
+                        subfield: true
+                    },
+                    apiusersaccess: {
+                        key: "apiusersaccess",
+                        type: "DATETIME",
+                        subfield: true
+                    },
+                    apiuserscreated: {
+                        key: "apiuserscreated",
+                        type: "STRING",
+                        subfield: true
+                    },
+                    addapiusername: {
+                        key: "addapiusername",
+                        type: "STRING"
+                    },
+                    addapiuserrole: {
+                        key: "addapiuserrole",
+                        type: "SELECTION",
+                        selectionList: "addapiuserrole_list"
                     }
                 }
             }),
@@ -124,6 +192,26 @@ define(function (require) {
                 "indexIsRunning": {
                     key: "indexIsRunning",
                     title: "Tila"
+                },
+                apiusersname: {
+                    key: "apiusersname",
+                    title: "Käyttäjä"
+                },
+                apiusersrole: {
+                    key: "apiusersrole",
+                    title: "Rooli"
+                },
+                apiuserssecret: {
+                    key: "apiuserssecret",
+                    title: "Avain"
+                },
+                apiusersaccess: {
+                    key: "apiusersaccess",
+                    title: "Viimeksi kirjautunut"
+                },
+                apiuserscreated: {
+                    key: "apiuserscreated",
+                    title: "Luoja"
                 }
             },
             content: [
@@ -1019,13 +1107,130 @@ define(function (require) {
                     ]
                 }, {
                     type: "TAB",
-                    title: "API-käyttäjät",
+                    title: "API",
                     permissions: [
                         "canViewAPIUsers"
-                    ]
+                    ],
+                    content: [{
+                        type: "SECTION",
+                        title: "Lisää käyttäjä",
+                        defaultState: "OPEN",
+                        content: [{
+                            type: "COLUMN",
+                            rows: [{
+                                type: "ROW",
+                                cells: [{
+                                    title: "Nimi",
+                                    type: "CELL",
+                                    horizontal: true,
+                                    field: {
+                                        key: "addapiusername"
+                                    }
+                                }]
+                            }, {
+                                type: "ROW",
+                                cells: [{
+                                    title: "Rooli",
+                                    type: "CELL",
+                                    horizontal: true,
+                                    field: {
+                                        key: "addapiuserrole"
+                                    }
+                                }]
+                            }, {
+                                type: "ROW",
+                                cells: [{
+                                    type: "CELL",
+                                    contentType: "BUTTON",
+                                    button: {
+                                        title: "Lisää käyttäjä",
+                                        create: function(options) {
+                                            this.click(function() {
+                                                require('./../server')("/settings/newAPIUser", {
+                                                    type: "POST",
+                                                    data: JSON.stringify({
+                                                        name: require('./../data')(options)("addapiusername").getByLang('DEFAULT'),
+                                                        role: require('./../data')(options)("addapiuserrole").getByLang('DEFAULT')
+                                                    }),
+                                                    async: false,
+                                                    success: function (response) {
+                                                        reloadAPIUsers();
+                                                    }
+                                                });
+                                            });
+                                        }
+                                    }
+                                }]
+                            }]
+                        }]
+                    }, {
+                        type: "COLUMN",
+                        rows: [{
+                            type: "ROW",
+                            cells: [{
+                                type: "CELL",
+                                title: "Käyttäjät",
+                                readOnly: true,
+                                field: {
+                                    key: "apiusers",
+                                    columnFields: [
+                                        "apiusersname",
+                                        "apiusersrole",
+                                        "apiusersaccess",
+                                        "apiuserscreated"
+                                    ],
+                                    dialogTitles: {
+                                        VIEW: "API-Käyttäjä"
+                                    },
+                                    onRemove: function($row) {
+                                        var transferRow=$row.data('transferRow');
+                                        require('./../server')('/settings/removeAPIUser/{secret}'.supplant({
+                                            secret: transferRow.fields.apiuserssecret.values.DEFAULT.current
+                                        }), {
+                                            type: 'GET',
+                                            async: false,
+                                            success: function(response) {
+                                                reloadAPIUsers();
+                                            }
+                                        });
+                                    }
+                                },
+                                subfieldConfiguration: {
+                                    apiuserssecret: {
+                                        field: {
+                                            multiline: true
+                                        }
+                                    }
+                                },
+                                postCreate: function() {
+                                    reloadAPIUsers();
+                                }
+                            }]
+                        }]
+                    }]
                 }
             ]
         });
+
+        function reloadAPIUsers() {
+            require('./../server')("/settings/listAPIUsers", {
+                type: "GET",
+                async: false,
+                success: function (response) {
+                    require('./../data')(options)('apiusers').removeRows('DEFAULT');
+                    response.users.map(function(user) {
+                        require('./../data')(options)('apiusers').appendByLang('DEFAULT', require('./../map/object/transferRow')({
+                            apiusersname: user.name,
+                            apiusersrole: user.role,
+                            apiuserssecret: user.secret,
+                            apiusersaccess: user.lastAccess,
+                            apiuserscreated: user.createdBy
+                        }, 'DEFAULT'));
+                    });
+                    options.$events.trigger('redraw-{key}'.supplant({key: 'apiusers'}));
+                }
+            });
+        }
 
         onLoad();
     };

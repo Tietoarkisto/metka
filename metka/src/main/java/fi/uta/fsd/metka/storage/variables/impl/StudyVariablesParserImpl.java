@@ -29,10 +29,7 @@
 package fi.uta.fsd.metka.storage.variables.impl;
 
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.RevisionState;
-import fi.uta.fsd.metka.enums.VariableDataType;
+import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
@@ -40,12 +37,10 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
-import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
-import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
@@ -170,7 +165,8 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         }
 
         if(variablesData.getState() != RevisionState.DRAFT) {
-            Pair<OperationResponse, RevisionData> dataPair = edit.edit(TransferData.buildFromRevisionData(variablesData, RevisionableInfo.FALSE), info);
+            //Pair<OperationResponse, RevisionData> dataPair = edit.edit(TransferData.buildFromRevisionData(variablesData, RevisionableInfo.FALSE), info);
+            Pair<OperationResponse, RevisionData> dataPair = edit.edit(variablesData.getKey(), info);
             if(!dataPair.getLeft().equals(ReturnResult.REVISION_CREATED.name())) {
                 Logger.error(getClass(), "Couldn't create new DRAFT revision for "+variablesData.getKey().toString());
                 return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES_DRAFT);

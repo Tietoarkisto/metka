@@ -26,16 +26,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.search;
+package fi.uta.fsd.metkaExternal.responses;
 
-import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
-import org.springframework.transaction.annotation.Transactional;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.revision.ConfigurationResponse;
 
-import java.util.List;
+public class APIConfigurationReadResponse extends APIResponse {
+    public static APIConfigurationReadResponse authFail() {
+        return new APIConfigurationReadResponse(false, ReturnResult.API_AUTHENTICATION_FAILED, null);
+    }
 
-@Transactional(readOnly = true)
-public interface SeriesSearch {
-    public List<String> findAbbreviations();
+    public static APIConfigurationReadResponse caughtException(Exception e) {
+        APIConfigurationReadResponse response = new APIConfigurationReadResponse(true, ReturnResult.EXCEPTION_DURING_API_CALL, null);
+        response.setException(e);
+        return response;
+    }
 
-    public List<RevisionSearchResult> findNames();
+    public static APIConfigurationReadResponse success(ReturnResult result, ConfigurationResponse response) {
+        return new APIConfigurationReadResponse(true, result, response);
+    }
+
+    private final ConfigurationResponse response;
+
+    public APIConfigurationReadResponse(boolean authenticated, ReturnResult result, ConfigurationResponse response) {
+        super(authenticated, result);
+        this.response = response;
+    }
+
+    public ConfigurationResponse getResponse() {
+        return response;
+    }
 }

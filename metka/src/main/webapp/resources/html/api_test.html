@@ -2,47 +2,318 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Hello World</title>
+		<title>API-testit</title>
 		<script src="https://code.jquery.com/jquery-2.1.3.js"></script>
-		<script>
-			var accesstime = "2014-10-03";
-			var reqUrl = "/metka/api/search";
-			var qry = "state.draft:true";
-			var sig = {
-				key: 1,
-				accessTime: accesstime,
-				signature: window.btoa("10"+accesstime+"1"+reqUrl)
-			};
-			var searchRequest = {
-				query: "state.draft:true",
-				authentication: sig
-			};
-			var createRequest = {
-				parameters: {
-					submissionid: "1002",
-					dataarrivaldate: "2014-10-03"
-				},
-				authentication: sig
-			};
-			
-			$.ajax({
-				type: "POST",
-				url: "http://localhost:8080"+reqUrl,
-				data: JSON.stringify(searchRequest),
-				headers: {
-	                'Accept': 'application/json',
-	                'Content-Type': 'application/json'
-	            },
-	            dataType: 'json'
-			})
-			.done(function(result) {
-				alert(result);
-			});
-			
+        <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+		<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js"></script>
+        <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js"></script>
+		<script>function Tester() {
+            var secret = "b2dmRUtTaE5tT3RiWi9IUTQ5VzBLcEM1UlBRUDRMSE5hd3NIZ1VqU0VSQVZmcVM2ZXVoSS9rbnVLMFNJb1FYdEpQeXdyeTdqSlVkQ0JyLldKUDhpby8";
+
+            function call(url, request, success) {
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:8080"+url,
+                    data: JSON.stringify(request),
+                    cache: false,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    dataType: 'json',
+                    jsonp: false,
+                    success: success || function(response) {
+                        alert(response.result);
+                    },
+                    error: function(response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+
+            return {
+                query: function() {
+                    var reqUrl = "/metka/api/performQuery";
+                    var request = {
+                        request: {
+                            query: $('#queryField').val()
+                        },
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert("Hakutulos: "+response.result+"\n"+response.response.results.length)
+                    });
+                },
+                index: function() {
+                    var reqUrl = "/metka/api/indexRevisions";
+                    var request = {
+                        targets: [{
+                            id: $('#indexIdField').val(),
+                            no: $('#indexNoField').val()
+                        }],
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert("Indektointitestin tulos: "+response.result)
+                    });
+                },
+                ddiExport: function() {
+                    var reqUrl = "/metka/api/exportDDI";
+                    var request = {
+                        key: {
+                            id: $('#ddiIdField').val(),
+                            no: $('#ddiNoField').val()
+                        },
+                        language: $('#ddiExportLanguageField').val(),
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert(response.result);
+                        saveAs(new Blob([response.ddi], {type: "text/xml;charset=utf-8"}), "id_"+request.key.id+"_revision_"+request.key.no+"_ddi_"+request.language+".xml");
+                    });
+                },
+                ddiImport: function() {
+                    var reqUrl = "/metka/api/importDDI";
+                    var request = {
+                        key: {
+                            id: $('#ddiIdField').val(),
+                            no: $('#ddiNoField').val()
+                        },
+                        path: $('#ddiImportPathField').val(),
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert(response.result);
+                    });
+                },
+                claimRevision: function() {
+                    var reqUrl = "/metka/api/claimRevision";
+                    var request = {
+                        key: {
+                            id: $('#revisionIdField').val(),
+                            no: $('#revisionNoField').val()
+                        },
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert(response.result);
+                    });
+                },
+                releaseRevision: function() {
+                    var reqUrl = "/metka/api/releaseRevision";
+                    var request = {
+                        key: {
+                            id: $('#revisionIdField').val(),
+                            no: $('#revisionNoField').val()
+                        },
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert(response.result);
+                    });
+                },
+                revisionExport: function() {
+                    var reqUrl = "/metka/api/exportRevision";
+                    var request = {
+                        key: {
+                            id: $('#revisionIdField').val(),
+                            no: $('#revisionNoField').val()
+                        },
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert(response.result);
+                        saveAs(new Blob([response.response.content], {type: "text/json;charset=utf-8"}), "id_"+response.response.key.id+"_revision_"+response.response.key.no+".json");
+                    });
+                },
+                revisionRemove: function() {
+                    var reqUrl = "/metka/api/removeRevision";
+                    var request = {
+                        key: {
+                            id: $('#revisionIdField').val(),
+                            no: $('#revisionNoField').val()
+                        },
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert(response.result);
+                    });
+                },
+                revisionRestore: function() {
+                    var reqUrl = "/metka/api/restoreRevision";
+                    var request = {
+                        key: {
+                            id: $('#revisionIdField').val(),
+                            no: $('#revisionNoField').val()
+                        },
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert(response.result);
+                    });
+                },
+                revisionView: function() {
+                    var reqUrl = "/metka/api/viewRevision";
+                    var request = {
+                        key: {
+                            id: $('#revisionIdField').val(),
+                            no: $('#revisionNoField').val()
+                        },
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert(response.result);
+                        $("#transferDataArea").text(JSON.stringify(response.response.data), null, 4);
+                    });
+                },
+                revisionEdit: function() {
+                    var reqUrl = "/metka/api/editRevision";
+                    var request = {
+                        key: {
+                            id: $('#revisionIdField').val(),
+                            no: $('#revisionNoField').val()
+                        },
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert(response.result);
+                        $("#transferDataArea").text(JSON.stringify(response.response.data), null, 4);
+                    });
+                },
+                revisionSave: function() {
+                    var reqUrl = "/metka/api/saveRevision";
+                    var request = {
+                        transferData: JSON.parse($('#transferDataArea').val()),
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert(response.result);
+                        $("#transferDataArea").text(JSON.stringify(response.response.data));
+                    });
+                },
+                revisionApprove: function() {
+                    var reqUrl = "/metka/api/approveRevision";
+                    var request = {
+                        transferData: JSON.parse($('#transferDataArea').val()),
+                        authentication: secret
+                    };
+                    call(reqUrl, request, function(response) {
+                        alert(response.result);
+                        $("#transferDataArea").text(JSON.stringify(response.response.data));
+                    });
+                }
+            }
+        }
 		</script>
 	</head>
 	<body>
-		<h1>Hello World</h1>
-		
+		<h1>API-testit</h1>
+        <div>
+            <h2>Hakutesti</h2>
+            <label>
+                Hakulause:
+                <input type="text" id="queryField" />
+            </label>
+            <input type="button" value="Hakutesti" onclick="Tester().query()" />
+        </div>
+        <div>
+            <h2>Indeksointitesti</h2>
+            <label>
+                ID:
+                <input type="text" id="indexIdField" />
+            </label>
+            <label>
+                No:
+                <input type="text" id="indexNoField" />
+            </label>
+            <input type="button" value="Indeksitesti" onclick="Tester().index()" />
+        </div>
+        <div>
+            <h2>DDI</h2>
+            <div>
+                <label>
+                    ID:
+                    <input type="text" id="ddiIdField" />
+                </label>
+                <label>
+                    No:
+                    <input type="text" id="ddiNoField" />
+                </label>
+            </div>
+            <div>
+                <h3>Export</h3>
+                <label>
+                    Kieli:
+                    <input type="text" id="ddiExportLanguageField" />
+                </label>
+                <input type="button" value="Export DDI" onclick="Tester().ddiExport()" />
+            </div>
+            <div>
+                <h3>Import</h3>
+                <label>
+                    Polku:
+                    <input type="text" id="ddiImportPathField" />
+                </label>
+                <input type="button" value="Import DDI" onclick="Tester().ddiImport()" />
+            </div>
+        </div>
+        <div>
+            <h2>Revision Key requests</h2>
+            <div>
+                <label>
+                    ID:
+                    <input type="text" id="revisionIdField" />
+                </label>
+                <label>
+                    No:
+                    <input type="text" id="revisionNoField" />
+                </label>
+            </div>
+            <div>
+                <h3>Ota revisio haltuun</h3>
+                <input type="button" value="Ota haltuun" onclick="Tester().claimRevision()" />
+            </div>
+            <div>
+                <h3>Vapauta revisio</h3>
+                <input type="button" value="Vapauta" onclick="Tester().releaseRevision()" />
+            </div>
+            <div>
+                <h3>JSON Export</h3>
+                <input type="button" value="Lataa Json" onclick="Tester().revisionExport()" />
+            </div>
+            <div>
+                <h3>Poista revisio</h3>
+                <input type="button" value="Poista" onclick="Tester().revisionRemove()" />
+            </div>
+            <div>
+                <h3>Palauta revisio</h3>
+                <input type="button" value="Palauta" onclick="Tester().revisionRestore()" />
+            </div>
+            <div>
+                <h3>Muokkaa revisiota</h3>
+                <input type="button" value="Muokkaa" onclick="Tester().revisionEdit()" />
+            </div>
+            <div>
+                <h3>View</h3>
+                <input type="button" value="Lataa TransferData" onclick="Tester().revisionView()" />
+            </div>
+        </div>
+        <div>
+            <label>
+                TransferData:
+                <textarea id="transferDataArea" ></textarea>
+            </label>
+        </div>
+        <div>
+            <h2>TransferData requests</h2>
+            <div>
+                <h3>Tallenna revisio</h3>
+                <input type="button" value="Tallenna" onclick="Tester().revisionSave()" />
+            </div>
+            <div>
+                <h3>Hyväksy revisio</h3>
+                <input type="button" value="Hyväksy" onclick="Tester().revisionApprove()" />
+            </div>
+        </div>
 	</body>
 </html>
