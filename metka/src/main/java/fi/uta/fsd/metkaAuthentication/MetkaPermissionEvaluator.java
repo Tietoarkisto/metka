@@ -102,10 +102,13 @@ public class MetkaPermissionEvaluator implements PermissionEvaluator {
                 hasPermission = claimReleaseCheck((RevisionKey)target, check);
                 break;
             case IS_HANDLER:
-                if(!(target instanceof TransferData)) {
-                    throw new RuntimeException("Target has to be TransferData");
+                if(target instanceof RevisionKey) {
+                    hasPermission = checkIsHandler((RevisionKey)target);
+                } else if(target instanceof TransferData) {
+                    hasPermission = checkIsHandler((TransferData)target);
+                } else {
+                    throw new RuntimeException("Target has to be RevisionKey or TransferData");
                 }
-                hasPermission = checkIsHandler((TransferData)target);
                 break;
             // TODO: add special case checking for cases where we have target object
         }
@@ -140,15 +143,26 @@ public class MetkaPermissionEvaluator implements PermissionEvaluator {
         }
     }
 
+
+
     /**
      * Checks if there's a handler and if the user is the handler of the latest revision of the revisionable with provided transfer data's id.
      * @param transferData    TransferData
      * @return boolean
      */
     private boolean checkIsHandler(TransferData transferData) {
-        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(), false, null);
+        return checkIsHandler(transferData.getKey());
+    }
+
+    /**
+     * Checks if there's a handler and if the user is the handler of the latest revision of the revisionable with provided transfer data's id.
+     * @param key    RevisionKey
+     * @return boolean
+     */
+    private boolean checkIsHandler(RevisionKey key) {
+        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(key.getId(), false, null);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.warning(getClass(), "No revision found for key " + transferData.getKey().toString() + " while checking handler permission.");
+            Logger.warning(getClass(), "No revision found for key " + key.toString() + " while checking handler permission.");
             return false;
         }
         RevisionData data = pair.getRight();

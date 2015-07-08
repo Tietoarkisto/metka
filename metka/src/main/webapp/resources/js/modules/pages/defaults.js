@@ -85,7 +85,7 @@ define(function (require) {
 
                     var header = {
                         localized: 'type.{page}.title',
-                        pattern: '{localized} - {id} - {no}{state}',
+                        pattern: '{localized} - {id} - {no}{state}{handler}',
                         buttons: $buttons
                             .append($('<div class="btn-group btn-group-xs">')
                                 .append([{
@@ -152,7 +152,7 @@ define(function (require) {
                     });
 
                     supplant.state = data.data.state.uiState ? ' - ' + MetkaJS.L10N.get('state.' + data.data.state.uiState) : '';
-
+                    supplant.handler = data.data.state.handler ? ' - ' + MetkaJS.L10N.get('general.handler') + " " + data.data.state.handler : (data.data.state.uiState === 'DRAFT' ? ' - ' + MetkaJS.L10N.get('general.noHandler') : '');
                     supplant.localized = MetkaJS.L10N.get(header.localized.supplant(supplant));
                     $header.html(header.pattern.supplant(supplant));
 

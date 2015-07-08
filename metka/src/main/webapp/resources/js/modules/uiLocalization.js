@@ -321,6 +321,13 @@ define(function (require) {
 
             "&revision": {
                 "default": "Revisio"
+            },
+
+            "&handler": {
+                "default": "Käsittelijä"
+            },
+            "&noHandler": {
+                "default": "Ei käsittelijää"
             }
         },
 

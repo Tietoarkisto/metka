@@ -61,8 +61,8 @@ public interface RevisionService {
     RevisionDataResponse approve(TransferData transferData);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_REMOVE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
-            "and hasPermission(#transferData, '" + PermissionCheck.Values.IS_HANDLER + "')")
-    RevisionDataResponse remove(TransferData transferData, Boolean draft);
+            "and hasPermission(#key, '" + PermissionCheck.Values.IS_HANDLER + "')")
+    RevisionDataResponse remove(RevisionKey key, Boolean draft);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_RESTORE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     RevisionDataResponse restore(RevisionKey key);

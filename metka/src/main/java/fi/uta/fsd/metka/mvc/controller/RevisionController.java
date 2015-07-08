@@ -97,8 +97,8 @@ public class RevisionController {
     }
 
     @RequestMapping(value="ajax/remove", method = RequestMethod.POST)
-    public @ResponseBody RevisionDataResponse remove(@RequestBody TransferData transferData, Boolean draft) {
-        return revisions.remove(transferData, draft);
+    public @ResponseBody RevisionDataResponse remove(@RequestBody RevisionKey key, Boolean draft) {
+        return revisions.remove(key, draft);
     }
 
     @RequestMapping(value="ajax/restore", method = RequestMethod.POST)

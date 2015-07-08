@@ -51,7 +51,7 @@ public interface StudyService {
     Pair<ReturnResult, CodeBookDocument> exportDDI(RevisionKey key, Language language);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_IMPORT_REVISION+"', '" + PermissionCheck.Values.PERMISSION + "') " +
-            "and hasPermission(#transferData, '" + PermissionCheck.Values.IS_HANDLER + "')")
+            "and hasPermission(#key, '" + PermissionCheck.Values.IS_HANDLER + "')")
     @Transactional(readOnly = false) ReturnResult importDDI(RevisionKey key, String path);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_ADD_ORGANIZATIONS +"', 'PERMISSION')")
