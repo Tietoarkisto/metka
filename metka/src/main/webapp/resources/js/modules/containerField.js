@@ -351,13 +351,48 @@ define(function (require) {
             return $tr;
         }
 
-        function redraw() {
+        function redraw(event, page) {
             $tbody.empty();
             var rows = require('./data')(options).getByLang(lang);
             if (rows) {
-                rows.forEach(function(transferRow) {
-                    appendRow($tbody, transferRow, columns)
-                });
+                //only if paging is enabled change current behavior
+                if (options.field.rowsPerPage != null) {
+
+                    //always trigger pager redraw with current row count
+                    //if we redraw component where pager is
+                    var redrawPaging = 'redraw-{key}-paging'.supplant({
+                        key: options.field.key
+                    });
+                    options.$events.trigger(redrawPaging, [options.field.rowsPerPage, rows.length]);
+
+                    //if there is "paging-info" on $tbody.data and new page to draw is not provided
+                    //we get current page from .data and just redraw that
+                    //otherwise we can just go to page 1
+                    var currentPage = page;
+                    if (!page && $tbody.data("currentPage") != null) {
+                        currentPage = $tbody.data("currentPage");
+                    } else if (!page) {
+                        currentPage = 1;
+                    }
+
+                    //now that we know currentPage we store it to tbody.data so
+                    //we can get it in case of redraw event
+                    $tbody.data("currentPage", currentPage);
+
+                    var lastElement = currentPage * options.field.rowsPerPage;
+                    if (lastElement > rows.length) {
+                        lastElement = rows.length;
+                    }
+
+                    for (var i = ((currentPage - 1) * options.field.rowsPerPage); i < lastElement; i++) {
+                        appendRow($tbody, rows[i], columns);
+                    }
+
+                } else {
+                    rows.forEach(function (transferRow) {
+                        appendRow($tbody, transferRow, columns)
+                    });
+                }
             }
             return $tbody;
         }
@@ -377,7 +412,17 @@ define(function (require) {
 
         function addRow($container, transferRow, columnList) {
             require('./data')(options).appendByLang(lang, transferRow);
-            return appendRow($container, transferRow, columnList);
+
+            //if paging is enabled and we add a new row just redraw current page
+            if(options.field.rowsPerPage) {
+                var redrawKey = 'redraw-{key}'.supplant({
+                    key: options.field.key
+                });
+                options.$events.trigger(redrawKey);
+            } else {
+                //otherwise we can just append new row without redrawing whole page
+                return appendRow($container, transferRow, columnList);
+            }
         }
 
         function addRowFromDataObject($container, data, columnList) {
@@ -455,6 +500,7 @@ define(function (require) {
         this.append($('<div class="panel">')
             .addClass('panel-' + (options.style || 'default'))
             .append($panelHeading)
+            .append(require('./pagination')(options))
             .append($('<table class="table table-condensed table-hover">')
                 .me(function () {
                     $thead

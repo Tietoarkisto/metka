@@ -23,7 +23,8 @@
                 "title": "Nimi",
                 "required": true,
                 "field": {
-                    "key": "seriesname"
+                    "key": "seriesname",
+                    "rowsPerPage": 10
                 }
             }]
         }, {
