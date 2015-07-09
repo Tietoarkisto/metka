@@ -51,7 +51,7 @@ define(function (require) {
                         this
                             .click(function () {
                                 require('./server')('remove', {
-                                    data: JSON.stringify(options.data),
+                                    data: JSON.stringify(options.data.key),
                                     success: function (response) {
                                         var success = $.extend({
                                             SUCCESS_LOGICAL: function () {

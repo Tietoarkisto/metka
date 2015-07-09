@@ -37,21 +37,19 @@ import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
-import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.names.Fields;
+import fi.uta.fsd.metka.spssio.por.PORFile;
+import fi.uta.fsd.metka.spssio.por.input.PORReader;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
-import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.ChangeUtil;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import fi.uta.fsd.metka.spssio.por.PORFile;
-import fi.uta.fsd.metka.spssio.por.input.PORReader;
 
 import java.io.IOException;
 import java.util.*;
@@ -188,9 +186,9 @@ class PORVariablesParser implements VariablesParser {
             // All remaining rows in variableEntities should be removed since no variable was found for them in the current POR-file
 
             // If removal of the revision returns SUCCESS_DRAFT this means that there's more revisions to remove and second call with new latest revision should clear out any remaining revisions.
-            if(RemoveResult.valueOf(remove.remove(TransferData.buildFromRevisionData(variableRevision, RevisionableInfo.FALSE), info).getResult()) == RemoveResult.SUCCESS_DRAFT) {
+            if(RemoveResult.valueOf(remove.remove(variableRevision.getKey(), info).getResult()) == RemoveResult.SUCCESS_DRAFT) {
                 Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(variableRevision.getKey().getId(), false, ConfigurationType.STUDY_VARIABLE);
-                remove.remove(TransferData.buildFromRevisionData(dataPair.getRight(), RevisionableInfo.FALSE), info);
+                remove.remove(dataPair.getRight().getKey(), info);
             }
 
             // Remove from variables container

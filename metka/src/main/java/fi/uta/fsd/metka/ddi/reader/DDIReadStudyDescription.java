@@ -153,7 +153,9 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
                     continue;
                 }
                 valueSet(row.getRight(), Fields.PARTITLE, getText(stt));
-                valueSet(row.getRight(), Fields.PARTITLELANG, getText(stt));
+                if(Language.isLanguage(stt.getXmlLang())) {
+                    valueSet(row.getRight(), Fields.PARTITLELANG, Language.fromValue(stt.getXmlLang()).toValue());
+                }
             }
         }
         return ReturnResult.OPERATION_SUCCESSFUL;

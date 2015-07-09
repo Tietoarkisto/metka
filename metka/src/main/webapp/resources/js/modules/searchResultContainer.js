@@ -86,6 +86,7 @@ define(function (require) {
                     field: {
                         key: "searchResults",
                         columnFields: columnFields,
+                        rowsPerPage: 10,
                         onClick: trOnClick
                     }
                 });

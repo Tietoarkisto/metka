@@ -30,21 +30,15 @@ package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.configuration.Operation;
+import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.ApproveInfo;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.model.transfer.TransferField;
-import fi.uta.fsd.metka.model.transfer.TransferValue;
-import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.repository.*;
@@ -61,7 +55,6 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -163,7 +156,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
             // No changes in this revision, remove it instead
             if(changesIn.isEmpty()) {
-                remove.removeDraft(transferData, info);
+                remove.removeDraft(transferData.getKey(), info);
                 return new ImmutablePair<>(OperationResponse.build(ReturnResult.NO_CHANGES), transferData);
             }
 

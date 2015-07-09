@@ -28,7 +28,6 @@
 
 package fi.uta.fsd.metkaExternal.responses;
 
-import codebook25.CodeBookDocument;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
 public class APIExportDDIResponse extends APIResponse {
@@ -42,18 +41,18 @@ public class APIExportDDIResponse extends APIResponse {
         return response;
     }
 
-    public static APIExportDDIResponse success(ReturnResult result, CodeBookDocument ddi) {
+    public static APIExportDDIResponse success(ReturnResult result, String ddi) {
         return new APIExportDDIResponse(true, result, ddi);
     }
 
-    private final CodeBookDocument ddi;
+    private final String ddi;
 
-    public APIExportDDIResponse(boolean authenticated, ReturnResult result, CodeBookDocument ddi) {
+    public APIExportDDIResponse(boolean authenticated, ReturnResult result, String ddi) {
         super(authenticated, result);
         this.ddi = ddi;
     }
 
-    public CodeBookDocument getDdi() {
+    public String getDdi() {
         return ddi;
     }
 }

@@ -115,7 +115,7 @@ public class APIController {
 
         Pair<ReturnResult, CodeBookDocument> pair = studies.exportDDI(request.getKey(), request.getLanguage());
 
-        return APIExportDDIResponse.success(pair.getLeft(), pair.getRight());
+        return APIExportDDIResponse.success(pair.getLeft(), pair.getRight().toString());
     }
 
     @RequestMapping(value = "importDDI", method = RequestMethod.POST)
@@ -167,7 +167,7 @@ public class APIController {
     }
 
     @RequestMapping(value = "exportRevision", method = RequestMethod.POST)
-    public @ResponseBody APIExportRevisionResponse getConfiguration(@RequestBody APIExportRevisionRequest request) {
+    public @ResponseBody APIExportRevisionResponse exportRevision(@RequestBody APIRevisionKeyRequest request) {
         // Authenticate using API key mechanism
         if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
             return APIExportRevisionResponse.authFail();
@@ -293,16 +293,16 @@ public class APIController {
     }
 
     @RequestMapping(value = "removeRevision", method = RequestMethod.POST)
-    public @ResponseBody APIRevisionOperationResponse removeRevision(@RequestBody APITransferDataRequest request) {
+    public @ResponseBody APIRevisionOperationResponse removeRevision(@RequestBody APIRevisionKeyRequest request) {
         // Authenticate using API key mechanism
         if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
             return APIRevisionOperationResponse.authFail();
         }
 
-        if(request.getTransferData() == null) {
+        if(request.getKey() == null || request.getKey().getId() == null || request.getKey().getNo() == null) {
             return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
         }
-        RevisionDataResponse response = revisions.remove(request.getTransferData(), null);
+        RevisionDataResponse response = revisions.remove(request.getKey(), null);
 
         return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
     }

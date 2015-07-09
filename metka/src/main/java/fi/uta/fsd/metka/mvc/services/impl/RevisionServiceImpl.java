@@ -187,15 +187,15 @@ public class RevisionServiceImpl implements RevisionService {
         }
     }
 
-    @Override public RevisionDataResponse remove(TransferData transferData, Boolean draft) {
+    @Override public RevisionDataResponse remove(RevisionKey key, Boolean draft) {
         RevisionDataResponse response = new RevisionDataResponse();
         OperationResponse result;
         if(draft == null) {
-            result = remove.remove(transferData, null);
+            result = remove.remove(key, null);
         } else if(draft) {
-            result = remove.removeDraft(transferData, null);
+            result = remove.removeDraft(key, null);
         } else {
-            result = remove.removeLogical(transferData, null);
+            result = remove.removeLogical(key, null);
         }
         response.setResult(result);
 

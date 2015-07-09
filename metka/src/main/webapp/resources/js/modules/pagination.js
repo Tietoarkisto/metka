@@ -26,18 +26,41 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaExternal.requests;
+define(function (require) {
+    'use strict';
 
-import fi.uta.fsd.metka.model.general.RevisionKey;
+    return function (options) {
+        var $paging;
+        if (options.field.rowsPerPage != null) {
+            $paging = $('<div>');
+            //it doesn't matter how many pages we show initially as we almost immediately
+            //trigger redraw within containerField.js with correct rows and perPage values
+            $paging.bootpag({
+                total: 5,
+                page: 1,
+                maxVisible: 5,
+                leaps: true,
+                firstLastUse: true,
+                first: '←',
+                last: '→'
+            }).on("page", function (event, num) {
+                //this event is triggered when we change pages and this triggers
+                //redraw on containerField.js
+                var redraw = 'redraw-{key}'.supplant({
+                    key: options.field.key
+                });
+                options.$events.trigger(redraw, [num]);
+            });
 
-public class APIExportRevisionRequest extends APIRequest {
-    private RevisionKey key;
+            var redrawPaging = 'redraw-{key}-paging'.supplant({
+                key: options.field.key
+            });
+            //event to trigger paging redraw/recalc
+            options.$events.on(redrawPaging, function (event, perPage, rows) {
+                $paging.bootpag({total: Math.ceil(rows / perPage)});
+            });
+        }
 
-    public RevisionKey getKey() {
-        return key;
-    }
-
-    public void setKey(RevisionKey key) {
-        this.key = key;
-    }
-}
+        return $paging;
+    };
+});
