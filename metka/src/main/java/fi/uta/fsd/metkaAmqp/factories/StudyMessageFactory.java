@@ -26,26 +26,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaAmqp.messages.family0;
+package fi.uta.fsd.metkaAmqp.factories;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import fi.uta.fsd.metka.mvc.services.ReferenceService;
-import fi.uta.fsd.metkaAmqp.*;
+import com.fasterxml.jackson.databind.node.*;
+import fi.uta.fsd.metkaAmqp.payloads.StudyPayload;
 
-public class TestMessage extends MetkaMessage0 {
-    public TestMessage() {
-        super(new Factory(), "TEST");
-    }
-
+public class StudyMessageFactory<T extends StudyPayload> extends PayloadFactoryBase<T> {
     @Override
-    public String buildRoutingKey(ReferenceService references) {
-        return getResource(references)+"."+getEvent(references);
-    }
+    public JsonNode build(String resource, String event, T payload) {
+        ObjectNode base = (ObjectNode)super.build(resource, event, payload);
+        base.set("revisionable_id", new LongNode(payload.getId()));
+        base.set("revisionable_no", new IntNode(payload.getNo()));
+        base.set("study_id", new TextNode(payload.getStudyId()));
 
-    private static class Factory implements PayloadFactory {
-        @Override
-        public byte[] build(MetkaMessage message) {
-            return "Tämä on testiviesti".getBytes();
-        }
+        return base;
     }
 }

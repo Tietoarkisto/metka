@@ -26,27 +26,32 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.transfer.study;
+package fi.uta.fsd.metkaAmqp.payloads;
 
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.data.RevisionData;
 
-import java.util.ArrayList;
-import java.util.List;
+public class AipCompletePayload extends StudyPayload {
+    private final Language language;
+    private final String aip_old;
+    private final String aip_new;
 
-public class StudyErrorsResponse {
-    private final ReturnResult result;
-    private final List<RevisionSearchResult> rows = new ArrayList<>();
-
-    public StudyErrorsResponse(ReturnResult result) {
-        this.result = result;
+    public AipCompletePayload(RevisionData revision, Language language, String aip_old, String aip_new) {
+        super(revision);
+        this.language = language;
+        this.aip_old = aip_old;
+        this.aip_new = aip_new;
     }
 
-    public ReturnResult getResult() {
-        return result;
+    public Language getLanguage() {
+        return language;
     }
 
-    public List<RevisionSearchResult> getRows() {
-        return rows;
+    public String getAip_old() {
+        return aip_old;
+    }
+
+    public String getAip_new() {
+        return aip_new;
     }
 }

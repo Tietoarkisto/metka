@@ -39,6 +39,7 @@ import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.ApproveInfo;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferData;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.repository.*;
@@ -49,14 +50,22 @@ import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
 import fi.uta.fsd.metka.storage.restrictions.ValidateResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
+import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.payloads.AipCompletePayload;
+import fi.uta.fsd.metkaAmqp.payloads.StudyPayload;
+import fi.uta.fsd.metkaAmqp.MetkaMessageType;
+import fi.uta.fsd.metkaSearch.SearcherComponent;
+import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
+import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 // TODO: at the moment does mostly DEFAULT language approval for restrictions
 @Repository
@@ -80,14 +89,19 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     @Autowired
     private Cascader cascader;
 
+    @Autowired
+    private Messenger messenger;
+
+    @Autowired
+    private SearcherComponent searcher;
+
     @Override
     public Pair<OperationResponse, TransferData> approve(TransferData transferData, DateTimeUserPair info) {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
 
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(),
-                false, transferData.getConfiguration().getType());
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(), false, transferData.getConfiguration().getType());
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "No revision to approve for " + transferData.getKey().toString());
             return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), transferData);
@@ -99,14 +113,16 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), transferData);
         }
 
+        Configuration configuration = configPair.getRight();
+
         RevisionData data = dataPair.getRight();
         if(data.getState() != RevisionState.DRAFT) {
             // Still do cascade since there could be drafts under this revision
-            for(Operation operation : configPair.getRight().getCascade()) {
+            for(Operation operation : configuration.getCascade()) {
                 if(!(operation.getType() == OperationType.APPROVE || operation.getType() == OperationType.ALL)) {
                     continue;
                 }
-                cascader.cascade(CascadeInstruction.build(OperationType.APPROVE, info), data, operation.getTargets(), configPair.getRight());
+                cascader.cascade(CascadeInstruction.build(OperationType.APPROVE, info), data, operation.getTargets(), configuration);
             }
 
             Logger.info(getClass(), "Can't approve revision "+data.getKey().toString()+" since it is not in DRAFT state");
@@ -114,11 +130,11 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         }
 
         // Do validation
-        for(Operation operation : configPair.getRight().getRestrictions()) {
+        for(Operation operation : configuration.getRestrictions()) {
             if(!(operation.getType() == OperationType.APPROVE || operation.getType() == OperationType.ALL)) {
                 continue;
             }
-            ValidateResult vr = validator.validate(data, operation.getTargets(), configPair.getRight());
+            ValidateResult vr = validator.validate(data, operation.getTargets(), configuration);
             if(!vr.getResult()) {
                 return new ImmutablePair<>(
                         OperationResponse.build(vr),
@@ -129,11 +145,11 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
 
         // Do cascade
-        for(Operation operation : configPair.getRight().getCascade()) {
+        for(Operation operation : configuration.getCascade()) {
             if(!(operation.getType() == OperationType.APPROVE || operation.getType() == OperationType.ALL)) {
                 continue;
             }
-            if(!cascader.cascade(CascadeInstruction.build(OperationType.APPROVE, info), data, operation.getTargets(), configPair.getRight())) {
+            if(!cascader.cascade(CascadeInstruction.build(OperationType.APPROVE, info), data, operation.getTargets(), configuration)) {
                 result = ReturnResult.CASCADE_FAILURE;
             }
         }
@@ -152,7 +168,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         // that has changed in this revision).
         // If revision has no changed content for given language then that language doesn't need updated approval information.
         if(result == ReturnResult.OPERATION_SUCCESSFUL) {
-            Set<Language> changesIn = hasChanges(data, configPair.getRight());
+            Set<Language> changesIn = hasChanges(data, configuration);
 
             // No changes in this revision, remove it instead
             if(changesIn.isEmpty()) {
@@ -165,7 +181,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             }
 
             // Do final operations before saving data to database
-            result = finalizeApproval(data, info);
+            result = finalizeApproval(data, configuration, info);
             if(result != ReturnResult.OPERATION_SUCCESSFUL) {
                 return new ImmutablePair<>(OperationResponse.build(result), transferData);
             }
@@ -296,10 +312,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      * These operations should be such that they can not fail and that they can not affect any other data.
      * @param revision    RevisionData to be finalized
      */
-    private ReturnResult finalizeApproval(RevisionData revision, DateTimeUserPair info) {
+    private ReturnResult finalizeApproval(RevisionData revision, Configuration configuration, DateTimeUserPair info) {
         switch(revision.getConfiguration().getType()) {
             case STUDY:
                 return finalizeStudyApproval(revision, info);
+            case STUDY_ERROR:
+                finalizeStudyErrorApproval(revision, configuration);
+                return ReturnResult.OPERATION_SUCCESSFUL;
             default:
                 return ReturnResult.OPERATION_SUCCESSFUL;
         }
@@ -319,6 +338,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             if(revision.isApprovedFor(language)) {
                 // We have approved value for this language, check if it's missing from aipcomplete
                 if(aipcompletePair.getLeft() != StatusCode.FIELD_FOUND || !aipcompletePair.getRight().hasValueFor(language)) {
+                    messenger.sendAmqpMessage(MetkaMessageType.FB_AIP, new AipCompletePayload(revision, language, "", info.getTime().toString()));
                     aipcompletePair = revision.dataField(ValueDataFieldCall
                             .set("aipcomplete", new Value(new LocalDate(revision.approveInfoFor(language).getApproved().getTime()).toString()), language)
                             .setInfo(info)
@@ -327,6 +347,74 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             }
         }
         return ReturnResult.OPERATION_SUCCESSFUL;
+    }
+
+    /**
+     * Special case check for study errors.
+     * Checks that if stidy related to study error has combined error score of >= 10
+     * then sends a AMQP-message about that
+     * @param revision StudyError revision data
+     * @return Always returns OPERATION_SUCCESSFUL
+     */
+    private void finalizeStudyErrorApproval(RevisionData revision, Configuration configuration) {
+        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get(Fields.STUDY));
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            // No linked study, can't send message
+            return;
+        }
+
+        Long study = fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger();
+
+        int score = 0;
+        fieldPair = revision.dataField(ValueDataFieldCall.get(Fields.ERRORSCORE));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            score += fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger();
+        }
+
+        ResultList<RevisionResult> results;
+        try {
+            results =
+                    searcher.executeSearch(ExpertRevisionSearchCommand.build("+key.configuration.type:STUDY_ERROR +state.removed:false +study.value:"+study, configuration));
+            if(results.getResults().isEmpty()) {
+                return;
+            }
+        } catch(QueryNodeException e) {
+            Logger.error(getClass(), "Exception while checking STUDY_ERROR scores for study "+study, e);
+            return;
+        }
+
+        Set<Long> ids = new HashSet<>();
+
+        for(RevisionResult result : results.getResults()) {
+            ids.add(result.getId());
+        }
+
+        for(Long id : ids) {
+            if(id == revision.getKey().getId()) {
+                continue;
+            }
+            Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(id, false, ConfigurationType.STUDY_ERROR);
+            if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+                continue;
+            }
+            fieldPair = pair.getRight().dataField(ValueDataFieldCall.get(Fields.ERRORSCORE));
+            if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+                score += fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger();
+            }
+            if(score >= 10) {
+                break;
+            }
+        }
+
+        // Message sending will require getting the affected study revision data and giving it to the payload for use in message forming
+        if(score < 10) {
+            return;
+        }
+        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(study, false, ConfigurationType.STUDY);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            return;
+        }
+        messenger.sendAmqpMessage(MetkaMessageType.FB_ERROR_SCORE, new StudyPayload(pair.getRight()));
     }
 
     /**

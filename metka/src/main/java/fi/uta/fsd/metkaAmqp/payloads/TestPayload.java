@@ -26,27 +26,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.transfer.study;
+package fi.uta.fsd.metkaAmqp.payloads;
 
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+public class TestPayload extends PayloadObject {
+    private final String message = "Tämä on testiviesti, aika on {time}";
 
-public class StudyErrorResponse {
-    private ReturnResult result;
-    private StudyError error;
-
-    public void setResult(ReturnResult result) {
-        this.result = result;
-    }
-
-    public ReturnResult getResult() {
-        return result;
-    }
-
-    public void setError(StudyError error) {
-        this.error = error;
-    }
-
-    public StudyError getError() {
-        return error;
+    public String getMessage() {
+        return message;
     }
 }

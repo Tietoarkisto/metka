@@ -26,25 +26,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.transfer.study;
+package fi.uta.fsd.metkaAmqp.factories;
 
-public class StudyVariablesStudyPair {
-    private Long id;
-    private String title;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import fi.uta.fsd.metkaAmqp.payloads.TestPayload;
+import org.joda.time.LocalDateTime;
 
-    public Long getId() {
-        return id;
-    }
+public class TestFactory extends PayloadFactoryBase<TestPayload> {
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    @Override
+    public JsonNode build(String resource, String event, TestPayload payload) {
+        ObjectNode base = (ObjectNode)super.build(resource, event, payload);
+        base.set("message", new TextNode(payload.getMessage().replace("{time}", (new LocalDateTime()).toString())));
+        return base;
     }
 }

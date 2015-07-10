@@ -73,7 +73,7 @@ public class SearcherComponent {
      * @param command
      * @return
      */
-    public <T extends SearchResult> Searcher<T> build(SearchCommand<T> command) throws IOException, UnsupportedOperationException {
+    private <T extends SearchResult> Searcher<T> build(SearchCommand<T> command) throws IOException, UnsupportedOperationException {
         Searcher<T> searcher = null;
         switch(command.getPath().getType()) {
             case REVISION:

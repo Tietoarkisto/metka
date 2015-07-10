@@ -26,26 +26,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.transfer.study;
+package fi.uta.fsd.metkaAmqp.factories;
 
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import fi.uta.fsd.metkaAmqp.payloads.AipCompletePayload;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class StudyVariablesStudiesResponse {
-    private ReturnResult result;
-    private final List<StudyVariablesStudyPair> studies = new ArrayList<>();
-
-    public ReturnResult getResult() {
-        return result;
-    }
-
-    public void setResult(ReturnResult result) {
-        this.result = result;
-    }
-
-    public List<StudyVariablesStudyPair> getStudies() {
-        return studies;
+public class AipCompleteMessageFactory extends StudyMessageFactory<AipCompletePayload> {
+    @Override
+    public JsonNode build(String resource, String event, AipCompletePayload payload) {
+        ObjectNode base = (ObjectNode)super.build(resource, event, payload);
+        base.set("aipcomplete_old", new TextNode(payload.getAip_old()));
+        base.set("aipcomplete_new", new TextNode(payload.getAip_new()));
+        base.set("language", new TextNode(payload.getLanguage().toValue()));
+        return base;
     }
 }

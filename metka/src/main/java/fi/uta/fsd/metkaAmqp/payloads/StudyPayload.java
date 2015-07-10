@@ -26,19 +26,31 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaAmqp.messages.family0;
+package fi.uta.fsd.metkaAmqp.payloads;
 
-import fi.uta.fsd.metka.mvc.services.ReferenceService;
-import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
-import fi.uta.fsd.metka.transfer.reference.ReferencePath;
-import fi.uta.fsd.metkaAmqp.MetkaMessage;
-import fi.uta.fsd.metkaAmqp.PayloadFactory;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.names.Fields;
 
-import java.util.List;
+public class StudyPayload extends PayloadObject {
+    private final RevisionData revision;
 
-public abstract class MetkaMessage0 extends MetkaMessage {
+    public StudyPayload(RevisionData revision) {
+        this.revision = revision;
+    }
 
-    public MetkaMessage0(PayloadFactory payload, String messageKey) {
-        super(payload, "0", messageKey);
+    public long getId() {
+        return revision.getKey().getId();
+    }
+
+    public int getNo() {
+        return revision.getKey().getNo();
+    }
+
+    public String getStudyId() {
+        ValueDataField field = revision.dataField(ValueDataFieldCall.get(Fields.STUDYID)).getRight();
+        return field == null || !field.hasValueFor(Language.DEFAULT) ? "" : field.getActualValueFor(Language.DEFAULT);
     }
 }

@@ -26,29 +26,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.transfer.study;
+package fi.uta.fsd.metkaAmqp.factories;
 
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.*;
+import fi.uta.fsd.metkaAmqp.PayloadFactory;
+import fi.uta.fsd.metkaAmqp.payloads.PayloadObject;
+import org.joda.time.LocalDateTime;
 
-import java.util.List;
+public abstract class PayloadFactoryBase<T extends PayloadObject> implements PayloadFactory<T> {
 
-public class StudyErrorListResponse {
-    private ReturnResult result;
-    private List<StudyError> errors;
-
-    public ReturnResult getResult() {
-        return result;
+    @Override
+    public String buildRoutingKey(String resource, String event) {
+        return resource+"."+event;
     }
 
-    public void setResult(ReturnResult result) {
-        this.result = result;
-    }
-
-    public List<StudyError> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(List<StudyError> errors) {
-        this.errors = errors;
+    @Override
+    public JsonNode build(String resource, String event, T payload) {
+        ObjectNode base = new ObjectNode(JsonNodeFactory.instance);
+        base.set("timestamp", new TextNode(new LocalDateTime().toString()));
+        base.set("resource", new TextNode(resource));
+        base.set("event", new TextNode(event));
+        return base;
     }
 }

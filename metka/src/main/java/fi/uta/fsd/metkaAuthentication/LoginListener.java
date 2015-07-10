@@ -73,7 +73,7 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
         MetkaAuthenticationDetails details = AuthenticationUtil.getAuthenticationDetails();
 
         JsonNode userNode = null;
-        for(JsonNode node : ((ArrayNode)userList.get("data"))) {
+        for(JsonNode node : (userList.get("data"))) {
             JsonNode user = node.get("userName");
             if(user != null && user.textValue().equals(details.getUserName()) ) {
                 userNode = node;

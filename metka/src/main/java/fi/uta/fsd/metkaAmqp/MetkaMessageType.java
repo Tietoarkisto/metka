@@ -26,26 +26,35 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.transfer.series;
+package fi.uta.fsd.metkaAmqp;
 
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metkaAmqp.factories.*;
+import fi.uta.fsd.metkaAmqp.payloads.*;
 
-import java.util.ArrayList;
-import java.util.List;
+public class MetkaMessageType<T extends PayloadObject> {
+    public static final MetkaMessageType<TestPayload> F0_TEST = new MetkaMessageType<>("0", "TEST", new TestFactory());
+    public static final MetkaMessageType<StudyPayload> FB_ERROR_SCORE = new MetkaMessageType<>("B", "ERROR_SCORE", new StudyMessageFactory<>());
+    public static final MetkaMessageType<AipCompletePayload> FB_AIP = new MetkaMessageType<>("B", "AIP", new AipCompleteMessageFactory());
 
-public class SeriesAbbreviationsResponse {
-    private ReturnResult result;
-    private final List<String> abbreviations = new ArrayList<>();
+    private final String family;
+    private final String message;
+    private final PayloadFactory<T> factory;
 
-    public ReturnResult getResult() {
-        return result;
+    private MetkaMessageType(String family, String message, PayloadFactory<T> factory) {
+        this.family = family;
+        this.message = message;
+        this.factory = factory;
     }
 
-    public void setResult(ReturnResult result) {
-        this.result = result;
+    public String getFamily() {
+        return family;
     }
 
-    public List<String> getAbbreviations() {
-        return abbreviations;
+    public String getMessage() {
+        return message;
+    }
+
+    public PayloadFactory<T> getFactory() {
+        return factory;
     }
 }

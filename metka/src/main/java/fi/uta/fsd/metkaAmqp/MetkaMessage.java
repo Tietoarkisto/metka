@@ -32,13 +32,16 @@ import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.ReferenceType;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.reference.*;
+import fi.uta.fsd.metkaAmqp.payloads.PayloadObject;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
-public abstract class MetkaMessage {
+public class MetkaMessage<T extends PayloadObject> {
 
-    private final Reference familyRef;
     protected final Reference familyExchangeRef;
     protected final Reference familyResourceRef;
     protected final Reference eventRef;
@@ -46,46 +49,53 @@ public abstract class MetkaMessage {
 
     protected final ReferencePathRequest request;
 
-    protected final PayloadFactory payload;
+    protected final PayloadFactory<T> factory;
 
     protected final String messageKey;
+    protected final T payload;
 
-    public MetkaMessage(PayloadFactory payload, String family, String messageKey) {
+    MetkaMessage(MetkaMessageType<T> type, T payload) {
+        this.factory = type.getFactory();
         this.payload = payload;
 
-        familyRef = new Reference("family_ref", ReferenceType.JSON, "amqp_messages", "family", null);
         familyExchangeRef = new Reference("family_exchange_ref", ReferenceType.DEPENDENCY, "amqp_messages", "exchange", null);
         familyResourceRef = new Reference("resource_ref", ReferenceType.DEPENDENCY, "amqp_messages", "resource", null);
         eventRef = new Reference("message_event_ref", ReferenceType.DEPENDENCY, "amqp_messages", "events.key", "event");
         eventExchangeRef = new Reference("message_exchange_ref", ReferenceType.DEPENDENCY, "amqp_messages", "events.key", "exchange");
 
-        this.messageKey = messageKey;
+        this.messageKey = type.getMessage();
 
         request = new ReferencePathRequest();
         request.setLanguage(Language.DEFAULT);
         request.setReturnFirst(true);
-        request.setRoot(new ReferencePath(familyRef, family));
+        request.setRoot(new ReferencePath(new Reference("family_ref", ReferenceType.JSON, "amqp_messages", "family", null), type.getFamily()));
     }
 
-    public void send(ReferenceService references, Messenger.AmqpMessenger messenger) {
+    public void send(ReferenceService references, JSONUtil json, Messenger.AmqpMessenger messenger) {
         String exchange = getExchange(references);
-        String routingKey = buildRoutingKey(references);
+        String resource = getResource(references);
+        String event = getEvent(references);
+        String routingKey = factory.buildRoutingKey(resource, event);
 
-        messenger.write(exchange, routingKey, payload.build(this));
+        Pair<SerializationResults, String> payloadPair = json.serialize(factory.build(resource, event, payload));
+        if(payloadPair.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
+            return;
+        }
+
+        messenger.write(exchange, routingKey, payloadPair.getRight().getBytes());
+        messenger.clean();
     }
 
-    public abstract String buildRoutingKey(ReferenceService references);
-
-    protected String getExchange(ReferenceService references) {
+    private String getExchange(ReferenceService references) {
         String exchange = getTitle(references, new ReferencePath(eventExchangeRef, messageKey));
         return (exchange != null ? exchange : getValue(references, familyExchangeRef));
     }
 
-    public String getResource(ReferenceService references) {
+    private String getResource(ReferenceService references) {
         return getValue(references, familyResourceRef);
     }
 
-    public String getEvent(ReferenceService references) {
+    private String getEvent(ReferenceService references) {
         return getTitle(references, new ReferencePath(eventRef, messageKey));
     }
 

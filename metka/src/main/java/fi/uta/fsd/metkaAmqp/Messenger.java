@@ -31,14 +31,13 @@ package fi.uta.fsd.metkaAmqp;
 import com.rabbitmq.client.*;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
+import fi.uta.fsd.metkaAmqp.payloads.PayloadObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Spring singleton for sending status messages to different
@@ -61,10 +60,12 @@ public class Messenger {
     @Autowired
     private ReferenceService references;
 
-    public void sendAmqpMessage(MetkaMessage message) {
-        AmqpMessenger messenger = getAmqpMessenger();
-        message.send(references, messenger);
-        messenger.clean();
+    @Autowired
+    private JSONUtil json;
+
+    public <T extends PayloadObject> void sendAmqpMessage(MetkaMessageType<T> type, T payload) {
+        MetkaMessage<T> message = new MetkaMessage<>(type, payload);
+        message.send(references, json, getAmqpMessenger());
     }
 
     private AmqpMessenger getAmqpMessenger() {
