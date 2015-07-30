@@ -79,7 +79,7 @@ define(function (require) {
                 $pane.parent().parent().prev('.nav-tabs').find('a[data-target="#' + $pane.attr('id') + '"]')
                     .on('hide.bs.tab', function () {
                         if (hasChanges) {
-                            onDataChange();
+                            options.$events.trigger('variableChange');
                         }
                     });
 
@@ -134,7 +134,7 @@ define(function (require) {
                                         }
                                     }
                                     $elem.empty().append(require('./../../treeView')((require('./../../data')(options)('vargroups').getByLang(options.defaultLang) || []).filter(function (row) {
-                                        return row.fields && row.fields.vargrouptitle;
+                                        return !row.removed && row.fields && row.fields.vargrouptitle;
                                     }).map(function (transferRow) {
                                         return require('./../../treeViewVariableGroup')(
                                             require('./../../data').latestValue(transferRow.fields.vargrouptitle, options.defaultLang),
@@ -172,6 +172,7 @@ define(function (require) {
                     })();
                 }
                 onDataChange();
+                options.$events.on('variableChange', onDataChange);
             }
         };
     };

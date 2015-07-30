@@ -34,7 +34,18 @@ define(function (require) {
             function setButtonStates() {
                 $moveToGroup.prop('disabled', !transferFromVariables || !transferToGroups);
                 $moveToVariables.prop('disabled', !transferFromGroups || !transferToVariables);
+                $moveVariableUp.prop('disabled', !arrangeInGroups || arrangeInVariables);
+                $moveVariableDown.prop('disabled', !arrangeInGroups || arrangeInVariables);
             }
+
+            var $pane = this.closest('.tab-pane');
+            $pane.parent().parent().prev('.nav-tabs').find('a[data-target="#' + $pane.attr('id') + '"]')
+                .on('hide.bs.tab', function () {
+                    if(hasChanges) {
+                        options.$events.trigger('variableChange');
+                    }
+
+                });
 
             var $variables = $('<div class="col-xs-5 well well-sm">');
             var $variableView;
@@ -116,8 +127,9 @@ define(function (require) {
                                     })) {
                                         transferFromGroups = false;
                                         transferToGroups = true;
+                                        arrangeInGroups = false;
                                     } else {
-                                        transferToGroups = transferFromGroups = !!activeItems.length;
+                                        transferToGroups = transferFromGroups = arrangeInGroups = !!activeItems.length;
                                     }
                                     setButtonStates();
                                 },
@@ -155,7 +167,7 @@ define(function (require) {
                                     return 'toggle';
                                 },
                                 onChange: function (activeItems) {
-                                    transferFromVariables = !!activeItems.length;
+                                    transferFromVariables = arrangeInVariables = !!activeItems.length;
                                     setButtonStates();
                                 },
                                 refresh: function() {
@@ -172,17 +184,22 @@ define(function (require) {
                             transferToVariables = true;
                             transferFromGroups = false;
                             transferToGroups = false;
+                            arrangeInGroups = false;
+                            arrangeInVariables = false;
                             setButtonStates();
                         }
                     });
                 }
             }
             onDataChange();
+            options.$events.on('variableChange', onDataChange);
 
             var transferFromVariables;
             var transferToVariables;
             var transferFromGroups;
             var transferToGroups;
+            var arrangeInGroups;
+            var arrangeInVariables;
 
             var $moveToGroup = require('./../../button')()({
                 create: function () {
@@ -202,6 +219,24 @@ define(function (require) {
                         });
                 }
             });
+            var $moveVariableUp = require('./../../button')()({
+                create: function() {
+                    this
+                        .html('<span class="glyphicon glyphicon-chevron-up"></span>')
+                        .click(function () {
+                            $groupView.data('moveDir')(-1);
+                        });
+                }
+            });
+            var $moveVariableDown = require('./../../button')()({
+                create: function() {
+                    this
+                        .html('<span class="glyphicon glyphicon-chevron-down"></span>')
+                        .click(function () {
+                            $groupView.data('moveDir')(1);
+                        });
+                }
+            });
             this
                 .append($('<div class="row">')
                     .append($variables)
@@ -211,15 +246,17 @@ define(function (require) {
                         })
                         .append($('<div class="btn-group-vertical">')
                             .append($moveToGroup)
-                            .append($moveToVariables)))
+                            .append($moveToVariables)
+                            .append($moveVariableUp)
+                            .append($moveVariableDown)))
                     .append($groups));
-            var $pane = this.closest('.tab-pane');
+            /*var $pane = this.closest('.tab-pane');
             $pane.parent().parent().prev('.nav-tabs').find('a[data-target="#' + $pane.attr('id') + '"]')
                 .on('hide.bs.tab', function () {
                     if (hasChanges) {
                         onDataChange();
                     }
-                });
+                });*/
             if (!isFieldDisabled) {
                 this
                     .append($('<div class="row">')
@@ -299,6 +336,7 @@ define(function (require) {
                                                             transferToGroups = true;
                                                             hasChanges = true;
                                                             setButtonStates();
+                                                            options.$events.trigger('refresh.metka');
                                                         });
                                                 }
                                             }, {

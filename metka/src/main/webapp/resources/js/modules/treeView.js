@@ -54,6 +54,17 @@ define(function (require) {
             });
         }
 
+        function activateNodes(node) {
+            var nodes = [].concat( node );
+            nodes.forEach(function(_node) {
+                _node.active = true;
+                $div.children().filter(function () {
+                    return _node === $(this).data('node');
+                }).addClass('active');
+            })
+
+        }
+
         function deactivateAll() {
             recursiveForEach(function (node) {
                 node.active = false;
@@ -268,6 +279,43 @@ define(function (require) {
                 },
                 move: function move(to) {
                     to.data('add')($div.data('remove')());
+                },
+                moveDir: function (dir) {
+                    var movedVars = activeNodes();
+                    deactivateAll();
+                    if(dir == 1) {
+                        movedVars.reverse();
+                    }
+                    movedVars.forEach(function (moved) {
+                        root.forEach(function (node) {
+                            var movedIndex = node.children.indexOf(moved);
+                            if (node.children && movedIndex > -1 && node.children[movedIndex + dir] != undefined &&
+                                    movedVars.indexOf(node.children[movedIndex + dir] ) == -1) {
+                                var finalVariables = [];
+
+                                activateNodes(node.children[movedIndex]);
+                                var movingVariable = ($div.data('remove')())[0];
+
+                                activateNodes(node.children);
+                                var otherVariables = ($div.data('remove')());
+
+                                movedIndex += dir;
+                                for (var i = 0; i < movedIndex; i++) {
+                                    finalVariables.push(otherVariables.shift());
+                                }
+                                finalVariables[movedIndex] = movingVariable;
+                                otherVariables.forEach(function (variable) {
+                                    finalVariables.push(variable);
+                                });
+                                activateNodes(node);
+                                $div.data('add')(finalVariables);
+                                deactivateAll();
+                            }
+                        });
+                    });
+
+                    activateNodes(movedVars);
+                    $div.trigger('change');
                 },
                 activeNodes: activeNodes
             });
