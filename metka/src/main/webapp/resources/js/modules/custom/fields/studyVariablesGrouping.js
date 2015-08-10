@@ -250,13 +250,6 @@ define(function (require) {
                             .append($moveVariableUp)
                             .append($moveVariableDown)))
                     .append($groups));
-            /*var $pane = this.closest('.tab-pane');
-            $pane.parent().parent().prev('.nav-tabs').find('a[data-target="#' + $pane.attr('id') + '"]')
-                .on('hide.bs.tab', function () {
-                    if (hasChanges) {
-                        onDataChange();
-                    }
-                });*/
             if (!isFieldDisabled) {
                 this
                     .append($('<div class="row">')
