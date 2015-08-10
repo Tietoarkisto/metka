@@ -79,6 +79,7 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
         return key;
     }
 
+    @Override
     public ConfigurationKey getConfiguration() {
         return configuration;
     }
@@ -191,12 +192,9 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
         return this;
     }
 
-    @JsonIgnore public RevisionKey getRevisionKey() {
+    @Override
+    @JsonIgnore public RevisionKey getRevision() {
         return getKey();
-    }
-
-    @JsonIgnore public ConfigurationKey getConfigurationKey() {
-        return getConfiguration();
     }
 
     // *************************

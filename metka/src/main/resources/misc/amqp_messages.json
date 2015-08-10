@@ -26,6 +26,14 @@
             "exchange": "",
             "event": "aipcomplete_updated"
         }, {
+            "key": "FILES_MISSING",
+            "exchange": "",
+            "event": "files_missing"
+        }, {
+            "key": "VERSION_CHANGES",
+            "exchange": "",
+            "event": "version_change_approved"
+        }, {
             "key": "",
             "exchange": "",
             "event": ""

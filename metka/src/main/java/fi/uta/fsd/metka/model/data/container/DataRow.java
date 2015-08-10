@@ -116,13 +116,13 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
     }
 
     @JsonIgnore
-    public RevisionKey getRevisionKey() {
-        return parent.getRevisionKey();
+    public RevisionKey getRevision() {
+        return parent.getRevision();
     }
 
     @JsonIgnore
-    public ConfigurationKey getConfigurationKey() {
-        return parent.getConfigurationKey();
+    public ConfigurationKey getConfiguration() {
+        return parent.getConfiguration();
     }
 
     public void normalize() {

@@ -30,9 +30,7 @@ package fi.uta.fsd.metka.storage.restrictions;
 
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
-import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
@@ -44,12 +42,9 @@ import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchComma
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
-import org.apache.lucene.queryparser.flexible.standard.parser.ParseException;
 import org.springframework.util.StringUtils;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import java.util.regex.*;
 
 class FieldTargetHandler {
     static ValidateResult handle(Target target, DataFieldContainer context, DataFieldValidator validator,
@@ -189,7 +184,7 @@ class FieldTargetHandler {
                     try {
                         ExpertRevisionSearchCommand command =
                                 ExpertRevisionSearchCommand.build(
-                                        configuration.getKey().getType().toValue()+" lang:"+l.toValue()+" -key.id:" + context.getRevisionKey().getId() + " +" + d.getKey() + ":\"" + d.getActualValueFor(l) + "\""
+                                        configuration.getKey().getType().toValue()+" lang:"+l.toValue()+" -key.id:" + context.getRevision().getId() + " +" + d.getKey() + ":\"" + d.getActualValueFor(l) + "\""
                                         , configuration);
                         ResultList<RevisionResult> result = searcher.executeSearch(command);
                         if (!result.getResults().isEmpty()) {

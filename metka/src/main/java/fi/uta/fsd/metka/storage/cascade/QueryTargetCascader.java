@@ -81,8 +81,8 @@ class QueryTargetCascader {
     }
 
     private static ResultList<RevisionResult> performQuery(String query, SearcherComponent searcher, DataFieldContainer context, Configuration configuration) {
-        query = query.replace("{id}", context.getRevisionKey().getId().toString());
-        query = query.replace("{key}", context.getRevisionKey().getId().toString()+"-"+context.getRevisionKey().getNo().toString());
+        query = query.replace("{id}", context.getRevision().getId().toString());
+        query = query.replace("{key}", context.getRevision().getId().toString()+"-"+context.getRevision().getNo().toString());
         try {
             return searcher.executeSearch(ExpertRevisionSearchCommand.build(query, configuration));
         } catch (QueryNodeException qne) {

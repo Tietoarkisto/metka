@@ -26,31 +26,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaAmqp.payloads;
+package fi.uta.fsd.metkaAmqp.factories;
 
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
-import fi.uta.fsd.metka.names.Fields;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import fi.uta.fsd.metka.model.data.change.Change;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
+import fi.uta.fsd.metkaAmqp.payloads.VersionChangePayload;
+import org.apache.commons.lang3.tuple.Pair;
 
-public class StudyPayload extends PayloadObject {
-    protected final RevisionData study;
+import java.util.Map;
 
-    public StudyPayload(RevisionData study) {
-        this.study = study;
+public class VersionChangeFactory extends StudyMessageFactory<VersionChangePayload> {
+    private JSONUtil json;
+    public VersionChangeFactory(JSONUtil json) {
+        this.json = json;
     }
 
-    public long getId() {
-        return study.getKey().getId();
-    }
+    @Override
+    public JsonNode build(String resource, String event, VersionChangePayload payload) {
+        ObjectNode base = (ObjectNode)super.build(resource, event, payload);
+        Map<String, Change> changesMap = payload.getChanges();
+        ObjectNode changes = new ObjectNode(JsonNodeFactory.instance);
+        for(String key : changesMap.keySet()) {
+            Change change = changesMap.get(key);
+            Pair<SerializationResults, String> res = json.serialize(change);
+            Pair<SerializationResults, JsonNode> nod = json.deserializeToJsonTree(res.getRight());
+            changes.set(key, nod.getRight());
+        }
+        base.set("changes", changes);
 
-    public int getNo() {
-        return study.getKey().getNo();
-    }
-
-    public String getStudyId() {
-        ValueDataField field = study.dataField(ValueDataFieldCall.get(Fields.STUDYID)).getRight();
-        return field == null || !field.hasValueFor(Language.DEFAULT) ? "" : field.getActualValueFor(Language.DEFAULT);
+        return base;
     }
 }

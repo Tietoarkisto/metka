@@ -29,6 +29,7 @@
 package fi.uta.fsd.metka.storage.repository;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -133,4 +134,6 @@ public interface RevisionRepository {
     void indexRevision(fi.uta.fsd.metka.model.general.RevisionKey key);
     void removeRevision(RevisionKey key);
     void removeRevision(fi.uta.fsd.metka.model.general.RevisionKey key);
+
+    void sendStudyErrorMessageIfNeeded(RevisionData revision, Configuration configuration);
 }

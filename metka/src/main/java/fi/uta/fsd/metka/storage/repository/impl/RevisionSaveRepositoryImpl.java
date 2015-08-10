@@ -31,9 +31,7 @@ package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
-import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -45,25 +43,20 @@ import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.model.interfaces.TransferFieldContainer;
-import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.model.transfer.TransferField;
-import fi.uta.fsd.metka.model.transfer.TransferRow;
-import fi.uta.fsd.metka.model.transfer.TransferValue;
+import fi.uta.fsd.metka.model.transfer.*;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionSaveRepository;
+import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
+import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.payloads.FileMissingPayload;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.*;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -94,6 +87,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
     @Autowired
     private Cascader cascader;
+
+    @Autowired
+    private Messenger messenger;
 
     @Override
     public Pair<ReturnResult, TransferData> saveRevision(TransferData transferData, DateTimeUserPair info) {
@@ -314,6 +310,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             TransferField tfFile = transfer.getField(Fields.FILE);
 
             if(notFile(fieldPair.getRight().getActualValueFor(Language.DEFAULT), tfFile, changesAndErrors)) {
+                // TODO: Send AMQP file missing message
+                messenger.sendAmqpMessage(messenger.FB_FILES_MISSING, new FileMissingPayload(study, revision));
+
                 Logger.error(getClass(), "Path in file-field is not a valid file");
                 // Lets set fileUpdate to false since no matter the case we can't perform the parse check
                 fileUpdate = false;

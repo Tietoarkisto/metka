@@ -26,31 +26,24 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaAmqp.payloads;
+package fi.uta.fsd.metkaAmqp.factories;
 
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
-import fi.uta.fsd.metka.names.Fields;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.*;
+import fi.uta.fsd.metkaAmqp.payloads.FileMissingPayload;
 
-public class StudyPayload extends PayloadObject {
-    protected final RevisionData study;
+public class FileMissingFactory extends StudyMessageFactory<FileMissingPayload> {
+    @Override
+    public JsonNode build(String resource, String event, FileMissingPayload payload) {
+        ObjectNode base = (ObjectNode)super.build(resource, event, payload);
+        ArrayNode files = new ArrayNode(JsonNodeFactory.instance);
+        ObjectNode file = new ObjectNode(JsonNodeFactory.instance);
+        file.set("revisionable_id", new LongNode(payload.getAttachmentId()));
+        file.set("revisionable_no", new IntNode(payload.getAttachmentNo()));
+        file.set("path", new TextNode(payload.getPath()));
+        files.add(file);
+        base.set("files", files);
 
-    public StudyPayload(RevisionData study) {
-        this.study = study;
-    }
-
-    public long getId() {
-        return study.getKey().getId();
-    }
-
-    public int getNo() {
-        return study.getKey().getNo();
-    }
-
-    public String getStudyId() {
-        ValueDataField field = study.dataField(ValueDataFieldCall.get(Fields.STUDYID)).getRight();
-        return field == null || !field.hasValueFor(Language.DEFAULT) ? "" : field.getActualValueFor(Language.DEFAULT);
+        return base;
     }
 }

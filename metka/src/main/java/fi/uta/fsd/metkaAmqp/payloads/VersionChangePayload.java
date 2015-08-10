@@ -28,29 +28,27 @@
 
 package fi.uta.fsd.metkaAmqp.payloads;
 
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.names.Fields;
 
-public class StudyPayload extends PayloadObject {
-    protected final RevisionData study;
+import java.util.HashMap;
+import java.util.Map;
 
-    public StudyPayload(RevisionData study) {
-        this.study = study;
+public class VersionChangePayload extends StudyPayload {
+    public VersionChangePayload(RevisionData study) {
+        super(study);
     }
 
-    public long getId() {
-        return study.getKey().getId();
-    }
+    public Map<String, Change> getChanges() {
+        Map<String, Change> changes = new HashMap<>();
+        if(study.getChanges().containsKey(Fields.DESCVERSIONS)) {
+            changes.put(Fields.DESCVERSIONS, study.getChange(Fields.DESCVERSIONS));
+        }
+        if(study.getChanges().containsKey(Fields.DATAVERSIONS)) {
+            changes.put(Fields.DATAVERSIONS, study.getChange(Fields.DATAVERSIONS));
+        }
 
-    public int getNo() {
-        return study.getKey().getNo();
-    }
-
-    public String getStudyId() {
-        ValueDataField field = study.dataField(ValueDataFieldCall.get(Fields.STUDYID)).getRight();
-        return field == null || !field.hasValueFor(Language.DEFAULT) ? "" : field.getActualValueFor(Language.DEFAULT);
+        return changes;
     }
 }

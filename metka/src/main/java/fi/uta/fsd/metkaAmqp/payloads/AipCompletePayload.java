@@ -36,8 +36,8 @@ public class AipCompletePayload extends StudyPayload {
     private final String aip_old;
     private final String aip_new;
 
-    public AipCompletePayload(RevisionData revision, Language language, String aip_old, String aip_new) {
-        super(revision);
+    public AipCompletePayload(RevisionData study, Language language, String aip_old, String aip_new) {
+        super(study);
         this.language = language;
         this.aip_old = aip_old;
         this.aip_new = aip_new;

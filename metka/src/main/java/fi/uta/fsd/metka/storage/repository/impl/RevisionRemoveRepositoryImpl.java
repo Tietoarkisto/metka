@@ -295,7 +295,9 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         // and enabling cascade effects.
 
         switch(data.getConfiguration().getType()) {
-
+            case STUDY_ERROR: {
+                revisions.sendStudyErrorMessageIfNeeded(data, configurations.findConfiguration(data.getConfiguration()).getRight());
+            }
             case STUDY_VARIABLES: {
                 Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
                 if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {

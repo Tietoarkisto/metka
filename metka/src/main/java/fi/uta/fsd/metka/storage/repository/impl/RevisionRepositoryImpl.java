@@ -29,9 +29,13 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.RevisionState;
+import fi.uta.fsd.metka.enums.*;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
@@ -43,12 +47,19 @@ import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.AdjacentRevisionRequest;
+import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.payloads.StudyPayload;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
+import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
+import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
+import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -56,8 +67,7 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class RevisionRepositoryImpl implements RevisionRepository {
@@ -76,6 +86,12 @@ public class RevisionRepositoryImpl implements RevisionRepository {
 
     @Autowired
     private IndexerComponent indexer;
+
+    @Autowired
+    private SearcherComponent searcher;
+
+    @Autowired
+    private Messenger messenger;
 
     @Override
     public Pair<ReturnResult, RevisionableInfo> getRevisionableInfo(Long id) {
@@ -318,5 +334,71 @@ public class RevisionRepositoryImpl implements RevisionRepository {
         IndexerCommand command = RevisionIndexerCommand.remove(key);
         commandRepository.addIndexerCommand(command);
         indexer.commandAdded(command);
+    }
+
+    @Override
+    public void sendStudyErrorMessageIfNeeded(RevisionData revision, Configuration configuration) {
+        // Sanity check
+        if(revision.getConfiguration().getType() != ConfigurationType.STUDY_ERROR) {
+            return;
+        }
+        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get(Fields.STUDY));
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            // No linked study, can't send message
+            return;
+        }
+
+        Long study = fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger();
+
+        int score = 0;
+        fieldPair = revision.dataField(ValueDataFieldCall.get(Fields.ERRORSCORE));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            score += fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger();
+        }
+
+        ResultList<RevisionResult> results;
+        try {
+            results =
+                    searcher.executeSearch(ExpertRevisionSearchCommand.build("+key.configuration.type:STUDY_ERROR +state.removed:false +study.value:" + study, configuration));
+            if(results.getResults().isEmpty()) {
+                return;
+            }
+        } catch(QueryNodeException e) {
+            Logger.error(getClass(), "Exception while checking STUDY_ERROR scores for study "+study, e);
+            return;
+        }
+
+        Set<Long> ids = new HashSet<>();
+
+        for(RevisionResult result : results.getResults()) {
+            ids.add(result.getId());
+        }
+
+        for(Long id : ids) {
+            if(id == revision.getKey().getId()) {
+                continue;
+            }
+            Pair<ReturnResult, RevisionData> pair = getLatestRevisionForIdAndType(id, false, ConfigurationType.STUDY_ERROR);
+            if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+                continue;
+            }
+            fieldPair = pair.getRight().dataField(ValueDataFieldCall.get(Fields.ERRORSCORE));
+            if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+                score += fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger();
+            }
+            if(score >= 10) {
+                break;
+            }
+        }
+
+        // Message sending will require getting the affected study revision data and giving it to the payload for use in message forming
+        if(score < 10) {
+            return;
+        }
+        Pair<ReturnResult, RevisionData> pair = getLatestRevisionForIdAndType(study, false, ConfigurationType.STUDY);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            return;
+        }
+        messenger.sendAmqpMessage(messenger.FB_ERROR_SCORE, new StudyPayload(pair.getRight()));
     }
 }

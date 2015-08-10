@@ -32,7 +32,8 @@ import com.rabbitmq.client.*;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
-import fi.uta.fsd.metkaAmqp.payloads.PayloadObject;
+import fi.uta.fsd.metkaAmqp.factories.*;
+import fi.uta.fsd.metkaAmqp.payloads.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -62,6 +63,20 @@ public class Messenger {
 
     @Autowired
     private JSONUtil json;
+
+    public final MetkaMessageType<TestPayload> F0_TEST;
+    public final MetkaMessageType<StudyPayload> FB_ERROR_SCORE;
+    public final MetkaMessageType<AipCompletePayload> FB_AIP;
+    public final MetkaMessageType<FileMissingPayload> FB_FILES_MISSING;
+    public final MetkaMessageType<VersionChangePayload> FB_VERSION_CHANGES;
+
+    public Messenger() {
+        F0_TEST = new MetkaMessageType<>("0", "TEST", new TestFactory());
+        FB_ERROR_SCORE = new MetkaMessageType<>("B", "ERROR_SCORE", new StudyMessageFactory<>());
+        FB_AIP = new MetkaMessageType<>("B", "AIP", new AipCompleteMessageFactory());
+        FB_FILES_MISSING = new MetkaMessageType<>("B", "FILES_MISSING", new FileMissingFactory());
+        FB_VERSION_CHANGES = new MetkaMessageType<>("B", "VERSION_CHANGES", new VersionChangeFactory(json));
+    }
 
     public <T extends PayloadObject> void sendAmqpMessage(MetkaMessageType<T> type, T payload) {
         MetkaMessage<T> message = new MetkaMessage<>(type, payload);

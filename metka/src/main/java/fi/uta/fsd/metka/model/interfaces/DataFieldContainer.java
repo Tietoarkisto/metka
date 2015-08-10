@@ -45,6 +45,6 @@ public interface DataFieldContainer {
     void initParents();
     void initParents(DataFieldContainer parent);
     RevisionData getContainingRevision();
-    RevisionKey getRevisionKey();
-    ConfigurationKey getConfigurationKey();
+    RevisionKey getRevision();
+    ConfigurationKey getConfiguration();
 }

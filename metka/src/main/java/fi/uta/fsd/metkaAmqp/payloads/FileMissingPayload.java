@@ -34,23 +34,24 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.names.Fields;
 
-public class StudyPayload extends PayloadObject {
-    protected final RevisionData study;
+public class FileMissingPayload extends StudyPayload {
+    private final RevisionData attachment;
 
-    public StudyPayload(RevisionData study) {
-        this.study = study;
+    public FileMissingPayload(RevisionData study, RevisionData attachment) {
+        super(study);
+        this.attachment = attachment;
     }
 
-    public long getId() {
-        return study.getKey().getId();
+    public long getAttachmentId() {
+        return attachment.getKey().getId();
     }
 
-    public int getNo() {
-        return study.getKey().getNo();
+    public int getAttachmentNo() {
+        return attachment.getKey().getNo();
     }
 
-    public String getStudyId() {
-        ValueDataField field = study.dataField(ValueDataFieldCall.get(Fields.STUDYID)).getRight();
-        return field == null || !field.hasValueFor(Language.DEFAULT) ? "" : field.getActualValueFor(Language.DEFAULT);
+    public String getPath() {
+        ValueDataField field = attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
+        return field != null && field.hasValueFor(Language.DEFAULT) ? field.getActualValueFor(Language.DEFAULT) : "";
     }
 }

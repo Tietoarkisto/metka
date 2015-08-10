@@ -30,7 +30,7 @@ package fi.uta.fsd.metka.model.data.change;
 
 import com.fasterxml.jackson.annotation.*;
 import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.data.container.DataField;
+import fi.uta.fsd.metka.model.interfaces.ModelBase;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -47,7 +47,7 @@ import java.util.Set;
         @JsonSubTypes.Type(value = ValueChange.class, name = Change.ChangeType.Types.VALUE),
         @JsonSubTypes.Type(value = ContainerChange.class, name = Change.ChangeType.Types.CONTAINER)
 })
-public abstract class Change {
+public abstract class Change implements ModelBase {
     private final String key;
 
     @JsonIgnore private final ChangeType type;

@@ -28,19 +28,15 @@
 
 package fi.uta.fsd.metkaAmqp;
 
-import fi.uta.fsd.metkaAmqp.factories.*;
-import fi.uta.fsd.metkaAmqp.payloads.*;
+import fi.uta.fsd.metkaAmqp.payloads.PayloadObject;
 
 public class MetkaMessageType<T extends PayloadObject> {
-    public static final MetkaMessageType<TestPayload> F0_TEST = new MetkaMessageType<>("0", "TEST", new TestFactory());
-    public static final MetkaMessageType<StudyPayload> FB_ERROR_SCORE = new MetkaMessageType<>("B", "ERROR_SCORE", new StudyMessageFactory<>());
-    public static final MetkaMessageType<AipCompletePayload> FB_AIP = new MetkaMessageType<>("B", "AIP", new AipCompleteMessageFactory());
 
     private final String family;
     private final String message;
     private final PayloadFactory<T> factory;
 
-    private MetkaMessageType(String family, String message, PayloadFactory<T> factory) {
+    public MetkaMessageType(String family, String message, PayloadFactory<T> factory) {
         this.family = family;
         this.message = message;
         this.factory = factory;
