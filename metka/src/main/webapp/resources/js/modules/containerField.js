@@ -510,6 +510,9 @@ define(function (require) {
                                     if(options.field.showReferenceValue) {
                                         return [th(MetkaJS.L10N.get('general.referenceValue'))];
                                     }
+                                }
+                            }).append(function () {
+                                if (options.fieldOptions.type === 'REFERENCECONTAINER') {
                                     if(options.field.showReferenceType) {
                                         return [th(MetkaJS.L10N.get('general.referenceType'))];
                                     }
