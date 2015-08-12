@@ -316,7 +316,7 @@ define(function (require) {
                                     "title": MetkaJS.L10N.get('general.buttons.search'),
                                     "create": function() {
                                         this.click(function() {
-                                            require('./../searchRequestSearch')(options, variablesSearchOptions, 'variableslist', 'variables');
+                                            require('./../searchRequestSearch')(options, variablesSearchOptions, 'variableslist', 'variables').search();
                                         });
                                     }
                                 }
@@ -415,7 +415,7 @@ define(function (require) {
                                     "title": MetkaJS.L10N.get('general.buttons.search'),
                                     "create": function() {
                                         this.click(function() {
-                                            require('./../searchRequestSearch')(options, variableSearchOptions, 'variablelist', 'variable');
+                                            require('./../searchRequestSearch')(options, variableSearchOptions, 'variablelist', 'variable').search();
                                         });
                                     }
                                 }
