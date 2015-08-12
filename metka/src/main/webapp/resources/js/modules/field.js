@@ -152,7 +152,7 @@ define(function (require) {
 
             createInput(options.defaultLang);
             if (options.fieldOptions.translatable && (options.translatable !== false)) {
-                ['DEFAULT', 'EN', 'SV'].filter(function (lang) {
+                MetkaJS.Languages.filter(function (lang) {
                     return lang !== options.defaultLang;
                 }).forEach(createInput);
             }

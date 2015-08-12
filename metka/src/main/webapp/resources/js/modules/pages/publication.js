@@ -360,7 +360,7 @@ define(function (require) {
                                                 "showReferenceState": true,
                                                 "columnFields": [
                                                     "publicationresultspublicationid",
-                                                    "publicationresultspublicationtitle",
+                                                    "publicationresultspublicationtitle"
                                                 ],
                                                 onClick: function (transferRow) {
                                                     require('./../assignUrl')('view', {

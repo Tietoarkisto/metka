@@ -55,41 +55,51 @@ public class RevisionFactory extends PayloadFactoryBase<RevisionPayload> {
     }
 
     private JsonNode getResourceId(RevisionPayload payload) {
-        ValueDataField field = null;
+        ValueDataField field;
         switch(payload.getRevision().getConfiguration().getType()) {
             case STUDY: {
                 field = payload.getRevision().dataField(ValueDataFieldCall.get(Fields.STUDYID)).getRight();
 
                 if(field != null && field.hasValueFor(Language.DEFAULT)) {
                     return new TextNode(field.getActualValueFor(Language.DEFAULT));
+                } else {
+                    return null;
                 }
             } case SERIES: {
                 field = payload.getRevision().dataField(ValueDataFieldCall.get(Fields.SERIESABBR)).getRight();
 
                 if(field != null && field.hasValueFor(Language.DEFAULT)) {
                     return new TextNode(field.getActualValueFor(Language.DEFAULT));
+                } else {
+                    return null;
                 }
             } case PUBLICATION: {
                 field = payload.getRevision().dataField(ValueDataFieldCall.get(Fields.PUBLICATIONID)).getRight();
 
                 if(field != null && field.hasValueFor(Language.DEFAULT)) {
                     return new LongNode(field.getValueFor(Language.DEFAULT).valueAsInteger());
+                } else {
+                    return null;
                 }
             } case STUDY_VARIABLES: {
                 field = payload.getRevision().dataField(ValueDataFieldCall.get(Fields.VARFILEID)).getRight();
 
                 if(field != null && field.hasValueFor(Language.DEFAULT)) {
                     return new TextNode(field.getActualValueFor(Language.DEFAULT));
+                } else {
+                    return null;
                 }
             } case STUDY_VARIABLE: {
                 field = payload.getRevision().dataField(ValueDataFieldCall.get(Fields.VARID)).getRight();
 
                 if(field != null && field.hasValueFor(Language.DEFAULT)) {
                     return new TextNode(field.getActualValueFor(Language.DEFAULT));
+                } else {
+                    return null;
                 }
             }
+            default:
+                return null;
         }
-
-        return null;
     }
 }

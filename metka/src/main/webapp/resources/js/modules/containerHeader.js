@@ -43,17 +43,73 @@ define(function (require) {
             rows: []
         };
 
-        function tr(transferRow, resultFields, columns) {
+        function tr(transferRow, columns) {
+            function addInfoObject(key, value) {
+                resultFields.push({
+                    key: key,
+                    value: !!value ? value : EMPTY
+                })
+            }
+
+            var resultFields = [];
+
+            if (options.field.showSaveInfo) {
+                addInfoObject("saveinfo-user", transferRow.saved.user);
+                addInfoObject("saveinfo-time", transferRow.saved.time);
+            }
 
             if (options.fieldOptions.type === 'REFERENCECONTAINER') {
-                if (options.field.showReferenceValue) {
+                if (options.field.showReferenceKey) {
+                    addInfoObject("reference", transferRow.value);
                 }
 
-                if (options.field.showReferenceType) {
+                if (options.field.showReferenceType
+                    || options.field.showReferenceSaveInfo
+                    || (options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0)
+                    || options.field.showReferenceState) {
+
+                    asyncRequestsMade++;
+
+                    require('./server')('/references/referenceStatus/{value}', transferRow, {
+                        method: 'GET',
+                        success: function (response) {
+                            if (resultParser(response.result).getResult() !== 'REVISION_FOUND') {
+                                asyncRequestsReceived++;
+                                require('./resultViewer')(response.result);
+                                return false;
+                            }
+
+                            if (options.field.showReferenceType) {
+                                addInfoObject("ref-type", response.type);
+                            }
+
+                            if (options.field.showReferenceSaveInfo) {
+                                addInfoObject("ref-saved-user", !!response.saved ? response.saved.user : EMPTY);
+                                addInfoObject("ref-saved-time", !!response.saved ? response.saved.time : EMPTY);
+                            }
+
+                            if (options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0) {
+                                $.each(response.approved, function (key, value) {
+                                    addInfoObject("ref-approved-user"+(key !== 'DEFAULT' ? "["+key+"]" : ""), value.approved.user);
+                                    addInfoObject("ref-approved-time"+(key !== 'DEFAULT' ? "["+key+"]" : ""), value.approved.time);
+
+                                });
+                            }
+
+                            if (options.field.showReferenceState) {
+                                addInfoObject("ref-state", response.state);
+                            }
+
+                            asyncRequestsReceived++;
+                        }
+                    });
                 }
             }
 
             (columns.map(function (columnWithLang) {
+                function addColumnObject(value) {
+                    addInfoObject(column+(columnLang !== 'DEFAULT' ? "["+columnLang+"]" : ""), value);
+                }
                 var columnLang = columnWithLang.lang;
                 var column = columnWithLang.key;
 
@@ -62,32 +118,11 @@ define(function (require) {
                     asyncRequestsMade++;
 
                     require('./reference').optionByPath(column, options, options.defaultLang, function (option) {
-                        var columnOptions = $.extend(
-                            true
-                            , {}
-                            , getPropertyNS(options, 'dataConf.fields', column)
-                            , options.subfieldConfiguration && options.subfieldConfiguration[column] ? options.subfieldConfiguration[column].field : {});
+                        var value = require('./selectInputOptionText')(option);
 
-                        if (columnOptions && columnOptions.displayType === 'LINK') {
-                            require('./inherit')(function (options) {
-                                require('./linkField')($td, options, "DEFAULT");
-                            })(options)({
-                                fieldOptions: getPropertyNS(options, 'dataConf.fields', column),
-                                field: columnOptions,
-                                data: $.extend({}, options.data, {fields: transferRow.fields})
-                            });
-                        } else {
-                            var value = require('./selectInputOptionText')(option);
+                        addInfoObject(column, value);
 
-                            var tmpResult = {};
-
-                            tmpResult.key = column;
-                            tmpResult.value = (!!value && value.length ? value : EMPTY);
-                            resultFields.push(tmpResult);
-
-                            asyncRequestsReceived++;
-
-                        }
+                        asyncRequestsReceived++;
                     })(null, null, transferRow.value);
 
                     return;
@@ -96,8 +131,6 @@ define(function (require) {
                 // This fetches the correct display text for each table cell. It would make sense to split and generalize this better but the amount of work makes it
                 // not a priority at the moment.
                 (function () {
-
-                    var tmpResult = {};
 
                     var columnOptions = $.extend(
                         true
@@ -119,28 +152,12 @@ define(function (require) {
                     var type = columnOptions && columnOptions.displayType ? columnOptions.displayType : columnOptions.type;
 
                     if (!type) {
-                        log('not implemented', column);
                         return;
                     }
 
                     var transferField = getPropertyNS(transferRow, 'fields', column);
                     var value = (function () {
-                        if (!transferField) {
-                            return;
-                        }
-
-                        if (!transferField.type) {
-                            log('transferField type not set (column: {column})'.supplant({
-                                column: column
-                            }));
-                            return;
-                        }
-
-                        if (transferField.type !== 'VALUE') {
-                            log('not implemented (type: {type}, column: {column})'.supplant({
-                                type: transferField.type,
-                                column: column
-                            }));
+                        if (!transferField || !transferField.type || transferField.type !== 'VALUE') {
                             return;
                         }
 
@@ -148,21 +165,11 @@ define(function (require) {
                     })();
 
                     if (!value && type !== 'REFERENCE') {
-
-                        tmpResult = {};
-                        if (columnLang === "DEFAULT") {
-                            tmpResult.key = column;
-                        } else {
-                            tmpResult.key = column + "[" + columnLang + "]";
-                        }
-                        tmpResult.value = (!!value && value.length ? value : EMPTY);
-                        resultFields.push(tmpResult);
-
+                        addColumnObject(EMPTY);
                         return;
                     }
                     switch (type) {
-                        case 'REFERENCE':
-                        {
+                        case 'REFERENCE': {
                             var refKey = getPropertyNS(options, 'dataConf.fields', column, 'reference');
                             var reference = getPropertyNS(options, 'dataConf.references', refKey);
 
@@ -170,17 +177,7 @@ define(function (require) {
                             require('./reference').optionByPath(column, options, columnLang, function (option) {
                                 asyncRequestsReceived++;
 
-                                value = setText(option);
-
-                                var tmpResult = {};
-                                if (columnLang === "DEFAULT") {
-                                    tmpResult.key = column;
-                                } else {
-                                    tmpResult.key = column + "[" + columnLang + "]";
-                                }
-                                tmpResult.value = (!!value && value.length ? value : EMPTY);
-                                resultFields.push(tmpResult);
-
+                                addColumnObject(setText(option));
                             })(transferRow.fields, reference);
 
                             return;
@@ -196,149 +193,25 @@ define(function (require) {
                                 require('./reference').optionsByPath(column, options, lang, function (listOptions) {
                                     asyncRequestsReceived++;
 
-                                    value = setOptionText(listOptions);
-
-                                    var tmpResult = {};
-
-                                    if (columnLang === "DEFAULT") {
-                                        tmpResult.key = column;
-                                    } else {
-                                        tmpResult.key = column + "[" + columnLang + "]";
-                                    }
-
-                                    tmpResult.value = (!!value && value.length ? value : EMPTY);
-                                    resultFields.push(tmpResult);
+                                    addColumnObject(setOptionText(listOptions));
 
                                 })(transferRow.fields, getPropertyNS(options, 'dataConf.references', list.reference));
 
                                 return;
 
                             } else {
-
-                                value = setOptionText(list.options);
+                                addColumnObject(setOptionText(list.options));
+                                return;
                             }
-                            break;
                         }
                     }
 
-                    tmpResult = {};
-                    if (columnLang === "DEFAULT") {
-                        tmpResult.key = column;
-                    } else {
-                        tmpResult.key = column + "[" + columnLang + "]";
-                    }
-                    tmpResult.value = (!!value && value.length ? value : EMPTY);
-                    resultFields.push(tmpResult);
+                    addColumnObject(value);
 
                 })();
             }));
 
-            if (options.field.showSaveInfo) {
-            }
-
-            if (options.fieldOptions.type === 'REFERENCECONTAINER') {
-
-                if (options.field.showReferenceSaveInfo) {
-                }
-                if (options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0) {
-                    $.each(options.field.showReferenceApproveInfo, function (index, lang) {
-                    });
-                }
-                if (options.field.showReferenceState) {
-                }
-                if (options.field.showReferenceType
-                    || options.field.showReferenceSaveInfo
-                    || (options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0)
-                    || options.field.showReferenceState) {
-
-                    asyncRequestsMade++;
-
-                    require('./server')('/references/referenceStatus/{value}', transferRow, {
-                        method: 'GET',
-                        success: function (response) {
-
-                            var tmpResult = {};
-
-                            if (resultParser(response.result).getResult() !== 'REVISION_FOUND') {
-                                require('./resultViewer')(response.result);
-                                return false;
-                            }
-
-                            if (response.type && options.field.showReferenceType) {
-                                tmpResult = {};
-                                tmpResult.key = "ref-type";
-                                tmpResult.value = (!!response.type && response.type.length ? response.type : EMPTY);
-                                resultFields.push(tmpResult);
-                            }
-
-                            if (response.saved && options.field.showReferenceSaveInfo) {
-                                tmpResult = {};
-                                tmpResult.key = "ref-saved-user";
-                                tmpResult.value = (!!response.saved.user && response.saved.user.length ? response.saved.user : EMPTY);
-                                resultFields.push(tmpResult);
-
-                                tmpResult = {};
-                                tmpResult.key = "ref-saved-time";
-                                tmpResult.value = (!!response.saved.time && response.saved.time.length ? response.saved.time : EMPTY);
-                                resultFields.push(tmpResult);
-
-                            }
-
-                            if (options.field.showReferenceApproveInfo.length > 0) {
-                                $.each(response.approved, function (key, value) {
-                                    console.log(key);
-                                    console.log(value);
-                                    console.log(value.approved);
-
-                                    tmpResult = {};
-                                    if (key === "DEFAULT") {
-                                        tmpResult.key = "ref-approved-user";
-                                    } else {
-                                        tmpResult.key = "ref-approved-user[" + key + "]";
-                                    }
-                                    tmpResult.value = (!!value.approved.user && value.approved.user.length ? value.approved.user : EMPTY);
-                                    resultFields.push(tmpResult);
-
-                                    tmpResult = {};
-                                    if (key === "DEFAULT") {
-                                        tmpResult.key = "ref-approved-time";
-                                    } else {
-                                        tmpResult.key = "ref-approved-time[" + key + "]";
-                                    }
-                                    tmpResult.value = (!!value.approved.time && value.approved.time.length ? value.approved.time : EMPTY);
-                                    resultFields.push(tmpResult);
-
-                                });
-                            }
-
-                            tmpResult = {};
-                            tmpResult.key = "ref-state";
-
-                            if (response.state) {
-                                tmpResult.value = response.state;
-                                resultFields.push(tmpResult);
-
-                            } else {
-                                tmpResult.value = EMPTY;
-                                resultFields.push(tmpResult);
-                            }
-
-                            asyncRequestsReceived++;
-                        }
-                    });
-                }
-            }
-        }
-
-        function appendRow(resultFields, transferRow, columns) {
-            function append() {
-                tr(transferRow, resultFields, columns);
-            }
-
-            if (!transferRow.removed) {
-                return append();
-            } else {
-            }
+            return resultFields;
         }
 
         function doDownload() {
@@ -358,7 +231,7 @@ define(function (require) {
                 .forEach(function (fieldKey) {
                     // if container is not translatable && subfield is translatable, add columns
                     if (!options.fieldOptions.translatable && getPropertyNS(options, 'dataConf.fields', fieldKey, 'translatable')) {
-                        ['DEFAULT', 'EN', 'SV'].forEach(function (lang) {
+                        MetkaJS.Languages.forEach(function (lang) {
                             columns.push({
                                 key: fieldKey,
                                 lang: lang
@@ -373,38 +246,18 @@ define(function (require) {
                 });
 
             for (var i = 0; i < rows.length; i++) {
-
-                var resultFields = [];
+                var row = rows[i];
+                if(row.removed) {
+                    continue;
+                }
                 var resultRow = {};
 
-                if (options.fieldOptions.type === 'REFERENCECONTAINER' && options.field.showReferenceType) {
-                    //add reference to our row
-                    var resultFieldReference = {};
-                    resultFieldReference.key = "reference";
-                    resultFieldReference.value = rows[i].value;
-                    resultFields.push(resultFieldReference);
-                }
-
-                if (options.field.showSaveInfo) {
-                    var saveInfo = {};
-                    saveInfo.key = "saveinfo-user";
-                    saveInfo.value = rows[i].saved.user;
-                    resultFields.push(saveInfo);
-
-                    saveInfo = {};
-                    saveInfo.key = "saveinfo-time";
-                    saveInfo.value = rows[i].saved.time;
-                    resultFields.push(saveInfo);
-                }
-
-                //get other values by references
-                appendRow(resultFields, rows[i], columns);
-
-                resultRow.fields = resultFields;
+                resultRow.fields = tr(row, columns);
 
                 //push completed row to results
                 result.rows.push(resultRow);
             }
+
             waitAsync();
         }
 
@@ -443,15 +296,14 @@ define(function (require) {
                 $pullRight.empty();
 
                 if (options.field.showRowAmount) {
-                    /*var $tmp = $('<div>');
-                     $tmp.text(MetkaJS.L10N.get('general.result.amount').supplant(rows));
-
-                     $pullRight.append($tmp);*/
-
-                    $pullRight.text(MetkaJS.L10N.get('general.result.amount').supplant(rows))
-                        .append('&nbsp;');
+                    $pullRight.text(MetkaJS.L10N.get('general.result.amount').supplant({
+                        length: require('./data')(options).validRows(lang)
+                    }));
                 }
                 if (options.field.allowDownload) {
+                    if(options.field.showRowAmount) {
+                        $pullRight.append('&nbsp;');
+                    }
                     $pullRight
                         .append($('<div class="btn-group btn-group-xs pull-right">')
                             .append(require('./button')()({

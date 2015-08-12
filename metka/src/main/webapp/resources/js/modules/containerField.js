@@ -351,14 +351,15 @@ define(function (require) {
             return $tr;
         }
 
+        function redrawHeader() {
+            containerHeader.redraw();
+        }
+
         function redraw(event, page) {
             $tbody.empty();
             var rows = require('./data')(options).getByLang(lang);
+            redrawHeader();
             if (rows) {
-
-                //redraw header. this is kinda noop if showRowAmount is disabled
-                containerHeader.redraw();
-
                 //only if paging is enabled change current behavior
                 if (options.field.rowsPerPage != null) {
 
@@ -367,7 +368,7 @@ define(function (require) {
                     var redrawPaging = 'redraw-{key}-paging'.supplant({
                         key: options.field.key
                     });
-                    options.$events.trigger(redrawPaging, [options.field.rowsPerPage, rows.length]);
+                    options.$events.trigger(redrawPaging, [options.field.rowsPerPage, require('./data')(options).validRows(lang)]);
 
                     //if there is "paging-info" on $tbody.data and new page to draw is not provided
                     //we get current page from .data and just redraw that
@@ -417,18 +418,18 @@ define(function (require) {
         function addRow($container, transferRow, columnList) {
             require('./data')(options).appendByLang(lang, transferRow);
 
-            //if paging is enabled and we add a new row just redraw current page
+            //if paging is enabled and we add a new row just redraw current container page
             if(options.field.rowsPerPage) {
                 var redrawKey = 'redraw-{key}'.supplant({
                     key: options.field.key
                 });
                 options.$events.trigger(redrawKey);
             } else {
+                //otherwise we can just append new row without redrawing whole page
+                var $tr = appendRow($container, transferRow, columnList);
                 //redraw header because if showRowAmount is enabled we need to update that
                 containerHeader.redraw();
-
-                //otherwise we can just append new row without redrawing whole page
-                return appendRow($container, transferRow, columnList);
+                return $tr;
             }
         }
 
@@ -524,7 +525,7 @@ define(function (require) {
                                     .forEach(function (fieldKey) {
                                         // if container is not translatable && subfield is translatable, add columns
                                         if (!options.fieldOptions.translatable && getPropertyNS(options, 'dataConf.fields', fieldKey, 'translatable')) {
-                                            ['DEFAULT', 'EN', 'SV'].forEach(function (lang) {
+                                            MetkaJS.Languages.forEach(function (lang) {
                                                 columns.push(fieldKey);
                                                 response.push((require('./langLabel')(th(getTitle(fieldKey)).data('lang', lang), lang)));
                                             });
@@ -598,6 +599,9 @@ define(function (require) {
                                             $tr.data('transferRow').removed = true;
                                             $tr.remove();
                                         }
+                                        options.$events.trigger('redraw-header-{key}'.supplant({
+                                            key: options.field.key
+                                        }));
                                         return false;
                                     }, options.field.removeFilter);
                                 }
@@ -658,7 +662,11 @@ define(function (require) {
         var redrawKey = 'redraw-{key}'.supplant({
             key: options.field.key
         });
+        var redrawHeaderKey = 'redraw-header-{key}'.supplant({
+            key: options.field.key
+        });
         options.$events.on(redrawKey, redraw);
+        options.$events.on(redrawHeaderKey, redrawHeader);
         options.$events.trigger(redrawKey);
     };
 });

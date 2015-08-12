@@ -31,7 +31,7 @@ define(function (require) {
 
     if (location.pathname.split('/').indexOf('search') !== -1) {
         var resultParser = require('./../resultParser');
-        var commonSearchBooleans = require('./../commonSearchBooleans')();
+        var studySearchBooleans = require('./../commonSearchBooleans')();
         var studyErrorSearchBooleans = require('./../commonSearchBooleans')('error');
 
         return function (options, onLoad) {
@@ -54,45 +54,6 @@ define(function (require) {
             function viewError(requestOptions) {
                 require('./../revisionModal')(options, requestOptions, 'STUDY_ERROR', errorSearch.search, 'studyerrors');
             }
-
-            var studySearch = require('./../searchRequestSearch')(options, [
-                {
-                    key: 'key.configuration.type',
-                    value: "STUDY",
-                    addParens: false
-                },
-                'studyid',
-                {
-                    key: 'author',
-                    rename: 'authors.author'
-                }, {
-                    key: 'authororganization',
-                    rename: 'authors.organisation'
-                }, {
-                    key: 'producername',
-                    rename: 'producers.organisation'
-                }, {
-                    key: 'series',
-                    exactValue: true
-                }, {
-                    key: 'publication',
-                    useSelectionText: false,
-                    rename: 'publications.value',
-                    exactValue: true
-                },
-                'aipcomplete',
-                'termsofusechangedate',
-                {
-                    key: 'timeperiod',
-                    rename: 'timeperiods.timeperiod'
-                }, {
-                    key: 'colltime',
-                    rename: 'colltime.colldate'
-                }, {
-                    key: 'collector',
-                    rename: 'collectors.author'
-                }
-            ], 'studyresults', 'error');
 
             require('./../server')('conf', {
                 method: 'GET',
@@ -159,6 +120,45 @@ define(function (require) {
                             exactValue: true
                         }
                     ];
+
+                    var studySearch = require('./../searchRequestSearch')(options, [
+                        {
+                            key: 'key.configuration.type',
+                            value: "STUDY",
+                            addParens: false
+                        },
+                        'studyid',
+                        {
+                            key: 'author',
+                            rename: 'authors.author'
+                        }, {
+                            key: 'authororganization',
+                            rename: 'authors.organisation'
+                        }, {
+                            key: 'producername',
+                            rename: 'producers.organisation'
+                        }, {
+                            key: 'series',
+                            exactValue: true
+                        }, {
+                            key: 'publication',
+                            useSelectionText: false,
+                            rename: 'publications.value',
+                            exactValue: true
+                        },
+                        'aipcomplete',
+                        'termsofusechangedate',
+                        {
+                            key: 'timeperiod',
+                            rename: 'timeperiods.timeperiod'
+                        }, {
+                            key: 'colltime',
+                            rename: 'colltime.colldate'
+                        }, {
+                            key: 'collector',
+                            rename: 'collectors.author'
+                        }
+                    ].concat(importFromConfiguration), 'studyresults');
 
                     if (resultParser(response.result).getResult() === 'CONFIGURATION_FOUND') {
                         $.extend(true, options, {
@@ -256,7 +256,7 @@ define(function (require) {
                                                 }]
                                             }]
                                         },
-                                        commonSearchBooleans.column,
+                                        studySearchBooleans.column,
                                         {
                                             "type": "COLUMN",
                                             "columns": 2,
@@ -750,7 +750,7 @@ define(function (require) {
                                         }]
                                 }
                             ],
-                            data: commonSearchBooleans.initialData(studyErrorSearchBooleans.initialData({})),
+                            data: studySearchBooleans.initialData(studyErrorSearchBooleans.initialData({})),
                             dataConf: {
                                 key: response.configuration.key,
                                 references: $.extend(true, response.configuration.references, {

@@ -38,6 +38,7 @@
             role: null
         },
         L10N: null,
+        Languages: ['DEFAULT', 'EN', 'SV'],
         // Globals-object contains global variables and sequences
 
         /**

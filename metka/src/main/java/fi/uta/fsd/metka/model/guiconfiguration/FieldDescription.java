@@ -164,23 +164,6 @@ public class FieldDescription {
         this.showReferenceState = (showReferenceState == null ? false : showReferenceState);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        FieldDescription that = (FieldDescription) o;
-
-        if (!key.equals(that.key)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return key.hashCode();
-    }
-
     public Integer getRowsPerPage() {
         return rowsPerPage;
     }
@@ -203,5 +186,22 @@ public class FieldDescription {
 
     public void setAllowDownload(Boolean allowDownload) {
         this.allowDownload = (allowDownload == null ? false : allowDownload);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FieldDescription that = (FieldDescription) o;
+
+        if (!key.equals(that.key)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
     }
 }

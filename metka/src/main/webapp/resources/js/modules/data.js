@@ -124,7 +124,23 @@ define(function (require) {
                     transferField.rows[lang] = [];
                 }
             };
-            
+
+            byFieldKey.validRows = function(lang) {
+                var transferField = getTransferField(false);
+                if(!transferField || !transferField.rows || !transferField.rows[lang] || transferField.rows[lang].length < 1 ) {
+                    return 0;
+                }
+
+                var amnt = 0;
+                transferField.rows[lang].forEach(function(row) {
+                   if(!row.removed) {
+                       amnt++;
+                   }
+                });
+
+                return amnt;
+            };
+
             byFieldKey.appendByLang = function (lang, trasferRow) {
                 var transferField = getTransferField(true);
 

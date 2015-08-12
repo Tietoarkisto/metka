@@ -38,7 +38,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class MetkaAuthenticationDetails implements GrantedAuthoritiesContainer {
-    public static final int serialVersionUID = 1;
+    public static final long serialVersionUID = 1;
 
     private final String sessionId;
     private final String userName;
