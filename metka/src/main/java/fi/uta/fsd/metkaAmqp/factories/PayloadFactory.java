@@ -26,12 +26,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaAmqp;
+package fi.uta.fsd.metkaAmqp.factories;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metkaAmqp.payloads.PayloadObject;
 
 public interface PayloadFactory<T extends PayloadObject> {
-    String buildRoutingKey(String resource, String event);
+    String buildRoutingKey(String resource, String event, T payload);
     JsonNode build(String resource, String event, T payload);
 }

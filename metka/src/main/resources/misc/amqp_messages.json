@@ -14,6 +14,19 @@
             "event": ""
         }]
     }, {
+        "family": "A",
+        "exchange": "metka.topic",
+        "resource": "log",
+        "events": [{
+            "key": "AUDIT",
+            "exchange": "",
+            "event": "audit"
+        }, {
+            "key": "",
+            "exchange": "",
+            "event": ""
+        }]
+    }, {
         "family": "B",
         "exchange": "metka.topic",
         "resource": "study",
@@ -34,9 +47,63 @@
             "exchange": "",
             "event": "version_change_approved"
         }, {
+            "key": "FILE_REMOVAL",
+            "exchange": "",
+            "event": "file_removals_approved"
+        }, {
             "key": "",
             "exchange": "",
             "event": ""
+        }]
+    }, {
+        "family": "D",
+        "exchange": "metka.topic",
+        "resource": "",
+        "events": [{
+            "key": "CREATE",
+            "exchange": "",
+            "event": "create"
+        }, {
+            "key": "UPDATE",
+            "exchange": "",
+            "event": "update"
+        }, {
+            "key": "REMOVE",
+            "exchange": "",
+            "event": "remove"
+        }, {
+            "key": "DRAFT",
+            "exchange": "",
+            "event": "draft"
+        }, {
+            "key": "APPROVE",
+            "exchange": "",
+            "event": "approve"
+        }, {
+            "key": "CLAIM",
+            "exchange": "",
+            "event": "claim"
+        }, {
+            "key": "RELEASE",
+            "exchange": "",
+            "event": "release"
+        }, {
+            "key": "RESTORE",
+            "exchange": "",
+            "event": "restore"
+        }]
+    }, {
+        "family": "E",
+        "exchange": "metka.topic",
+        "resource": "process",
+        "events": [{
+            "key": "PROCESS_START",
+            "exchange": "",
+            "event": "start"
+        }, {
+            "key": "PROCESS_STOP",
+            "exchange": "",
+            "event": "stop"
         }]
     }, {
         "family": "",

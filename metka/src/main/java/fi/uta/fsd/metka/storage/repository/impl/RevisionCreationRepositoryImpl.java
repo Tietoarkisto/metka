@@ -36,9 +36,7 @@ import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
-import fi.uta.fsd.metka.model.data.container.ReferenceRow;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.factories.*;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
@@ -47,14 +45,13 @@ import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.*;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.SequenceRepository;
+import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
+import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
@@ -63,7 +60,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.xml.crypto.Data;
 
 @Repository
 public class RevisionCreationRepositoryImpl implements RevisionCreationRepository {
@@ -83,6 +79,9 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
     @Autowired
     private SequenceRepository sequences;
 
+    @Autowired
+    private Messenger messenger;
+
     @Override
     public Pair<ReturnResult, RevisionData> create(RevisionCreateRequest request) {
         if(request.getType() == null) {
@@ -91,21 +90,6 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         }
 
         Pair<ReturnResult, Configuration> configPair = configurations.findLatestConfiguration(request.getType());
-        /*switch(request.getType()) {
-            case SERIES:
-            case STUDY:
-            case PUBLICATION:
-            case STUDY_ATTACHMENT:
-            case STUDY_VARIABLES:
-            case STUDY_VARIABLE:
-            case STUDY_ERROR:
-            case BINDER_PAGE:
-                configPair = configurations.findLatestConfiguration(request.getType());
-                break;
-            default:
-                Logger.warning(getClass(), "Tried to create revisionable " + request.getType() + " which is not handled here but is instead created through some other means");
-                return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
-        }*/
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             Logger.error(getClass(), "No configuration found for "+request.getType()+", halting new revisionable creation.");
             return new ImmutablePair<>(configPair.getLeft(), null);
@@ -129,9 +113,11 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             return new ImmutablePair<>(dataPair.getLeft(), null);
         }
 
-        Pair<SerializationResults, String> string = json.serialize(dataPair.getRight());
+        RevisionData data = dataPair.getRight();
+
+        Pair<SerializationResults, String> string = json.serialize(data);
         if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
-            Logger.error(getClass(), "Couldn't serialize revision "+dataPair.getRight().toString());
+            Logger.error(getClass(), "Couldn't serialize revision " + data.toString());
             Logger.error(getClass(), "Removing revisionable "+revisionable.toString());
             em.remove(revisionable);
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_CREATE, null);
@@ -140,14 +126,16 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         revision.setData(string.getRight());
         em.merge(revision);
 
-        finalizeRevisionable(request, revisionable, dataPair.getRight());
+        finalizeRevisionable(request, revisionable, data);
 
         revisionable.setLatestRevisionNo(revision.getKey().getRevisionNo());
         em.merge(revisionable);
 
         revisions.indexRevision(revision.getKey());
 
-        return new ImmutablePair<>(ReturnResult.REVISION_CREATED, dataPair.getRight());
+        messenger.sendAmqpMessage(messenger.FD_CREATE, new RevisionPayload(data));
+
+        return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }
 
     private ReturnResult checkRequestParameters(RevisionCreateRequest request) {

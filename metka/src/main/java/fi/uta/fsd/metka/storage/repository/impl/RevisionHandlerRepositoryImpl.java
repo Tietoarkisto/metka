@@ -28,16 +28,13 @@
 
 package fi.uta.fsd.metka.storage.repository.impl;
 
-import com.ctc.wstx.util.StringUtil;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
-import fi.uta.fsd.metka.model.data.container.ReferenceRow;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
@@ -45,6 +42,8 @@ import fi.uta.fsd.metka.storage.repository.RevisionHandlerRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
+import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -57,6 +56,9 @@ public class RevisionHandlerRepositoryImpl implements RevisionHandlerRepository 
 
     @Autowired
     private RevisionRepository revisions;
+
+    @Autowired
+    private Messenger messenger;
 
     @Override
     public Pair<ReturnResult, TransferData> beginEditing(RevisionKey key) {
@@ -84,6 +86,7 @@ public class RevisionHandlerRepositoryImpl implements RevisionHandlerRepository 
             return new ImmutablePair<>(info.getLeft(), null);
         }
 
+        messenger.sendAmqpMessage(messenger.FD_CLAIM, new RevisionPayload(data));
         revisions.indexRevision(data.getKey());
 
         return new ImmutablePair<>(ReturnResult.REVISION_UPDATE_SUCCESSFUL, TransferData.buildFromRevisionData(data, info.getRight()));
@@ -126,6 +129,7 @@ public class RevisionHandlerRepositoryImpl implements RevisionHandlerRepository 
             return new ImmutablePair<>(info.getLeft(), null);
         }
 
+        messenger.sendAmqpMessage(StringUtils.hasText(data.getHandler()) ? messenger.FD_CLAIM : messenger.FD_RELEASE, new RevisionPayload(data));
         revisions.indexRevision(data.getKey());
 
         return new ImmutablePair<>(ReturnResult.REVISION_UPDATE_SUCCESSFUL, TransferData.buildFromRevisionData(data, info.getRight()));

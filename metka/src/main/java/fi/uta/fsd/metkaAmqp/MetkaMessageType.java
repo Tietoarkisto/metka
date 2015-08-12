@@ -28,6 +28,7 @@
 
 package fi.uta.fsd.metkaAmqp;
 
+import fi.uta.fsd.metkaAmqp.factories.PayloadFactory;
 import fi.uta.fsd.metkaAmqp.payloads.PayloadObject;
 
 public class MetkaMessageType<T extends PayloadObject> {

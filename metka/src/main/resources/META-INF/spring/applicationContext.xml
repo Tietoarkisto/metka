@@ -3,15 +3,21 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
-		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <context:component-scan base-package="fi.uta.fsd.metka, fi.uta.fsd.metkaSearch, fi.uta.fsd.metkaAmqp">
         <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation" />
     </context:component-scan>
 
     <task:annotation-driven />
+
+    <aop:aspectj-autoproxy />
+
+    <bean id="permissionAuditAOP" class="fi.uta.fsd.metka.aop.PermissionAuditAOP" />
 
     <bean id="propertySource" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
         <property name="locations">

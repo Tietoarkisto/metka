@@ -38,6 +38,8 @@ import fi.uta.fsd.metka.storage.repository.MiscJSONRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
+import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.payloads.ProcessPayload;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -47,7 +49,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.Collection;
+import java.util.List;
 
 public class StartupScanner {
     @Autowired
@@ -59,6 +64,25 @@ public class StartupScanner {
 
     @Value("${dir.autoload}")
     private String rootFolder;
+
+    @Autowired
+    private Messenger messenger;
+
+    /**
+     * Sends AMQP-message of Family E to notify that the server has started
+     */
+    @PostConstruct
+    private void sendAmqpProcessMessage() {
+        RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
+        List<String> arguments = runtime.getInputArguments();
+
+        StringBuilder sb = new StringBuilder();
+        for(String s : arguments) {
+            sb.append(s+" ");
+        }
+
+        messenger.sendAmqpMessage(messenger.FE_START, new ProcessPayload(sb.toString(), null, null));
+    }
 
     /**
      * Gathers data configurations from file and saves them to database

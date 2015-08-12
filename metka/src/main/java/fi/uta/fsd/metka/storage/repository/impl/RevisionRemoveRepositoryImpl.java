@@ -38,12 +38,12 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
-import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -51,6 +51,9 @@ import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
 import fi.uta.fsd.metka.storage.restrictions.ValidateResult;
+import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.payloads.FileRemovalPayload;
+import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +90,9 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
     @Autowired
     private Cascader cascader;
+
+    @Autowired
+    private Messenger messenger;
 
     @Override
     public OperationResponse remove(RevisionKey key, DateTimeUserPair info) {
@@ -160,6 +166,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             entity.setLatestRevisionNo(entity.getCurApprovedNo());
             result = RemoveResult.SUCCESS_DRAFT;
         }
+        messenger.sendAmqpMessage(messenger.FD_REMOVE, new RevisionPayload(data));
         addRemoveIndexCommand(data.getKey(), result);
         return OperationResponse.build(result);
     }
@@ -213,6 +220,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         finalizeLogicalRemoval(data, info);
 
         result = RemoveResult.SUCCESS_LOGICAL;
+        messenger.sendAmqpMessage(messenger.FD_REMOVE, new RevisionPayload(data));
         addRemoveIndexCommand(data.getKey(), result);
         return OperationResponse.build(result);
     }
@@ -295,10 +303,11 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         // and enabling cascade effects.
 
         switch(data.getConfiguration().getType()) {
-            case STUDY_ERROR: {
-                revisions.sendStudyErrorMessageIfNeeded(data, configurations.findConfiguration(data.getConfiguration()).getRight());
-            }
+            case STUDY_ERROR:
             case STUDY_VARIABLES: {
+                if(data.getConfiguration().getType() == ConfigurationType.STUDY_ERROR) {
+                    revisions.sendStudyErrorMessageIfNeeded(data, configurations.findConfiguration(data.getConfiguration()).getRight());
+                }
                 Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
                 if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
                     Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
@@ -320,6 +329,23 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                     }
                 }
                 break;
+            }
+            case STUDY_ATTACHMENT: {
+                ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
+                if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+                    break;
+                }
+                String value = field.getActualValueFor(Language.DEFAULT);
+                RevisionData study = null;
+                if(value.split("-").length > 1) {
+                    study = revisions.getRevisionData(Long.parseLong(value.split("-")[0]), Integer.parseInt(value.split("-")[1])).getRight();
+                } else {
+                    study = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, null).getRight();
+                }
+                if(study == null) {
+                    break;
+                }
+                messenger.sendAmqpMessage(messenger.FB_FILE_REMOVAL, new FileRemovalPayload(data, study));
             }
             default: {
                 break;

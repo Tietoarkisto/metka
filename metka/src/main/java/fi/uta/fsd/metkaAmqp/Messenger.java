@@ -30,7 +30,7 @@ package fi.uta.fsd.metkaAmqp;
 
 import com.rabbitmq.client.*;
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.storage.collecting.ReferenceCollector;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metkaAmqp.factories.*;
 import fi.uta.fsd.metkaAmqp.payloads.*;
@@ -59,23 +59,45 @@ public class Messenger {
     private String RABBIT_PASSWORD;
 
     @Autowired
-    private ReferenceService references;
+    private ReferenceCollector references;
 
     @Autowired
     private JSONUtil json;
 
     public final MetkaMessageType<TestPayload> F0_TEST;
+    public final MetkaMessageType<AuditPayload> FA_AUDIT;
     public final MetkaMessageType<StudyPayload> FB_ERROR_SCORE;
     public final MetkaMessageType<AipCompletePayload> FB_AIP;
     public final MetkaMessageType<FileMissingPayload> FB_FILES_MISSING;
     public final MetkaMessageType<VersionChangePayload> FB_VERSION_CHANGES;
+    public final MetkaMessageType<FileRemovalPayload> FB_FILE_REMOVAL;
+    public final MetkaMessageType<RevisionPayload> FD_CREATE;
+    public final MetkaMessageType<RevisionPayload> FD_UPDATE;
+    public final MetkaMessageType<RevisionPayload> FD_REMOVE;
+    public final MetkaMessageType<RevisionPayload> FD_DRAFT;
+    public final MetkaMessageType<RevisionPayload> FD_APPROVE;
+    public final MetkaMessageType<RevisionPayload> FD_CLAIM;
+    public final MetkaMessageType<RevisionPayload> FD_RELEASE;
+    public final MetkaMessageType<RevisionPayload> FD_RESTORE;
+    public final MetkaMessageType<ProcessPayload> FE_START;
 
     public Messenger() {
         F0_TEST = new MetkaMessageType<>("0", "TEST", new TestFactory());
+        FA_AUDIT = new MetkaMessageType<>("A", "AUDIT", new AuditFactory());
         FB_ERROR_SCORE = new MetkaMessageType<>("B", "ERROR_SCORE", new StudyMessageFactory<>());
         FB_AIP = new MetkaMessageType<>("B", "AIP", new AipCompleteMessageFactory());
         FB_FILES_MISSING = new MetkaMessageType<>("B", "FILES_MISSING", new FileMissingFactory());
         FB_VERSION_CHANGES = new MetkaMessageType<>("B", "VERSION_CHANGES", new VersionChangeFactory(json));
+        FB_FILE_REMOVAL = new MetkaMessageType<>("B", "FILE_REMOVAL", new FileRemovalFactory());
+        FD_CREATE = new MetkaMessageType<>("D", "CREATE", new RevisionFactory());
+        FD_UPDATE = new MetkaMessageType<>("D", "UPDATE", new RevisionFactory());
+        FD_REMOVE = new MetkaMessageType<>("D", "REMOVE", new RevisionFactory());
+        FD_DRAFT = new MetkaMessageType<>("D", "DRAFT", new RevisionFactory());
+        FD_APPROVE = new MetkaMessageType<>("D", "APPROVE", new RevisionFactory());
+        FD_CLAIM = new MetkaMessageType<>("D", "CLAIM", new RevisionFactory());
+        FD_RELEASE = new MetkaMessageType<>("D", "RELEASE", new RevisionFactory());
+        FD_RESTORE = new MetkaMessageType<>("D", "RESTORE", new RevisionFactory());
+        FE_START = new MetkaMessageType<>("E", "START", new ProcessFactory());
     }
 
     public <T extends PayloadObject> void sendAmqpMessage(MetkaMessageType<T> type, T payload) {

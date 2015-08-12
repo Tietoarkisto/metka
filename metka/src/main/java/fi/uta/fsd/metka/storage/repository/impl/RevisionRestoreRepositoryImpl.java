@@ -44,6 +44,8 @@ import fi.uta.fsd.metka.storage.repository.RevisionRestoreRepository;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
+import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -64,6 +66,9 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
 
     @Autowired
     private RevisionRepository revisions;
+
+    @Autowired
+    private Messenger messenger;
 
     @Override
     public RemoveResult restore(Long id) {
@@ -91,6 +96,11 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
             if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
                 revisions.indexRevision(revPair.getRight().getKey());
             }
+        }
+
+        RevisionData data = revisions.getLatestRevisionForIdAndType(id, false, null).getRight();
+        if(data != null) {
+            messenger.sendAmqpMessage(messenger.FD_RESTORE, new RevisionPayload(data));
         }
 
         return RemoveResult.SUCCESS_RESTORE;

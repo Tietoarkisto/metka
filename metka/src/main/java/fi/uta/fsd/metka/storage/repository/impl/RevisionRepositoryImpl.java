@@ -213,6 +213,9 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     @Override
     public ReturnResult updateRevisionData(RevisionData revision) {
         RevisionableEntity revisionableEntity = em.find(RevisionableEntity.class, revision.getKey().getId());
+        if(revisionableEntity == null) {
+            return ReturnResult.REVISIONABLE_NOT_FOUND;
+        }
 
         Pair<SerializationResults, String> string = json.serialize(revision);
         if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {

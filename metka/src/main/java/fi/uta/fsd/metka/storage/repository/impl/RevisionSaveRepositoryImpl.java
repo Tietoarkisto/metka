@@ -54,6 +54,7 @@ import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metkaAmqp.Messenger;
 import fi.uta.fsd.metkaAmqp.payloads.FileMissingPayload;
+import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.*;
@@ -167,6 +168,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             if(result != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 return new ImmutablePair<>(result, transferData);
             } else {
+                messenger.sendAmqpMessage(messenger.FD_UPDATE, new RevisionPayload(revision));
                 // Set transfer object save info since database values have changed
                 transferData.getState().setSaved(info);
                 revisions.indexRevision(revision.getKey());

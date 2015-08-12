@@ -226,6 +226,7 @@ public final class Fields {
     public static final String VARIABLESLANGUAGE = "variableslanguage";
     public static final String VARIABLESFILE = "variablesfile";
     public static final String ERRORSCORE = "errorscore";
+    public static final String PUBLICATIONID = "publicationid";
 
 
     private Fields() {}

@@ -46,6 +46,8 @@ import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
 import fi.uta.fsd.metka.storage.restrictions.ValidateResult;
+import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -70,6 +72,9 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
 
     @Autowired
     private Cascader cascader;
+
+    @Autowired
+    private Messenger messenger;
 
     @Override
     public Pair<OperationResponse, RevisionData> edit(fi.uta.fsd.metka.model.general.RevisionKey key, DateTimeUserPair info) {
@@ -169,6 +174,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
         }*/
 
         if(result == ReturnResult.REVISION_CREATED) {
+            messenger.sendAmqpMessage(messenger.FD_DRAFT, new RevisionPayload(data));
             revisions.indexRevision(data.getKey());
         }
 

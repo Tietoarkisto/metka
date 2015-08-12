@@ -51,8 +51,7 @@ import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
 import fi.uta.fsd.metka.storage.restrictions.ValidateResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metkaAmqp.Messenger;
-import fi.uta.fsd.metkaAmqp.payloads.AipCompletePayload;
-import fi.uta.fsd.metkaAmqp.payloads.VersionChangePayload;
+import fi.uta.fsd.metkaAmqp.payloads.*;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -205,6 +204,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 return new ImmutablePair<>(OperationResponse.build(updateResult), transferData);
             }
 
+            messenger.sendAmqpMessage(messenger.FD_APPROVE, new RevisionPayload(data));
             revisions.indexRevision(data.getKey());
             return new ImmutablePair<>(OperationResponse.build(ReturnResult.OPERATION_SUCCESSFUL), TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE));
         } else {

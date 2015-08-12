@@ -31,10 +31,11 @@ package fi.uta.fsd.metkaAmqp;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.ReferenceType;
 import fi.uta.fsd.metka.model.configuration.Reference;
-import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.storage.collecting.ReferenceCollector;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.reference.*;
+import fi.uta.fsd.metkaAmqp.factories.PayloadFactory;
 import fi.uta.fsd.metkaAmqp.payloads.PayloadObject;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -71,11 +72,11 @@ public class MetkaMessage<T extends PayloadObject> {
         request.setRoot(new ReferencePath(new Reference("family_ref", ReferenceType.JSON, "amqp_messages", "family", null), type.getFamily()));
     }
 
-    public void send(ReferenceService references, JSONUtil json, Messenger.AmqpMessenger messenger) {
+    public void send(ReferenceCollector references, JSONUtil json, Messenger.AmqpMessenger messenger) {
         String exchange = getExchange(references);
         String resource = getResource(references);
         String event = getEvent(references);
-        String routingKey = factory.buildRoutingKey(resource, event);
+        String routingKey = factory.buildRoutingKey(resource, event, payload);
 
         Pair<SerializationResults, String> payloadPair = json.serialize(factory.build(resource, event, payload));
         if(payloadPair.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
@@ -86,31 +87,31 @@ public class MetkaMessage<T extends PayloadObject> {
         messenger.clean();
     }
 
-    private String getExchange(ReferenceService references) {
+    private String getExchange(ReferenceCollector references) {
         String exchange = getTitle(references, new ReferencePath(eventExchangeRef, messageKey));
         return (exchange != null ? exchange : getValue(references, familyExchangeRef));
     }
 
-    private String getResource(ReferenceService references) {
+    private String getResource(ReferenceCollector references) {
         return getValue(references, familyResourceRef);
     }
 
-    private String getEvent(ReferenceService references) {
+    private String getEvent(ReferenceCollector references) {
         return getTitle(references, new ReferencePath(eventRef, messageKey));
     }
 
-    private String getValue(ReferenceService references, Reference reference) {
+    private String getValue(ReferenceCollector references, Reference reference) {
         request.getRoot().setNext(new ReferencePath(reference, null));
-        List<ReferenceOption> options = references.collectReferenceOptions(request);
+        List<ReferenceOption> options = references.handleReferenceRequest(request).getRight();
         if(options.isEmpty()) {
             return null;
         }
         return options.get(0).getValue();
     }
 
-    private String getTitle(ReferenceService references, ReferencePath path) {
+    private String getTitle(ReferenceCollector references, ReferencePath path) {
         request.getRoot().setNext(path);
-        List<ReferenceOption> options = references.collectReferenceOptions(request);
+        List<ReferenceOption> options = references.handleReferenceRequest(request).getRight();
         if(options.isEmpty()) {
             return null;
         }

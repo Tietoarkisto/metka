@@ -37,6 +37,8 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryResponse;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.revision.*;
+import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.payloads.AuditPayload;
 import fi.uta.fsd.metkaExternal.requests.*;
 import fi.uta.fsd.metkaExternal.responses.*;
 import org.apache.commons.lang3.StringUtils;
@@ -67,6 +69,9 @@ public class APIController {
 
     @Autowired
     private RevisionService revisions;
+
+    @Autowired
+    private Messenger messenger;
 
     @RequestMapping(value = "performQuery", method = RequestMethod.POST)
     public @ResponseBody APIPerformQueryResponse performQuery(@RequestBody APIPerformQueryRequest request) {
@@ -266,6 +271,7 @@ public class APIController {
     public @ResponseBody APIRevisionOperationResponse saveRevision(@RequestBody APITransferDataRequest request) {
         // Authenticate using API key mechanism
         if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            messenger.sendAmqpMessage(messenger.FA_AUDIT, AuditPayload.deny("API-käyttäjä ["+request.getAuthentication()+"] yritti tallentaa revision ["+request.getTransferData().getKey().getId()+"-"+request.getTransferData().getKey().getNo()+"] ilman tarvittavia oikeuksia"));
             return APIRevisionOperationResponse.authFail();
         }
 
@@ -274,6 +280,7 @@ public class APIController {
         }
         RevisionDataResponse response = revisions.save(request.getTransferData());
 
+        messenger.sendAmqpMessage(messenger.FA_AUDIT, AuditPayload.allow("API-käyttäjä ["+request.getAuthentication()+"] tallensi revision ["+request.getTransferData().getKey().getId()+"-"+request.getTransferData().getKey().getNo()+"]"));
         return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
 

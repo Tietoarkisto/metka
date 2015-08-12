@@ -9,10 +9,9 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
 		<java-version>1.7</java-version>
-		<org.springframework-version>3.2.2.RELEASE</org.springframework-version>
-		<org.aspectj-version>1.6.10</org.aspectj-version>
+		<org.springframework-version>3.2.14.RELEASE</org.springframework-version>
+		<org.aspectj-version>1.7.4</org.aspectj-version>
 		<org.slf4j-version>1.7.7</org.slf4j-version>
-        <hibernate-version>4.2.7.Final</hibernate-version>
         <jackson.version>2.2.3</jackson.version>
         <joda-time-version>2.3</joda-time-version>
         <rabbit-version>3.2.2</rabbit-version>
@@ -55,28 +54,34 @@
             <artifactId>spring-tx</artifactId>
             <version>${org.springframework-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
-            <version>3.2.4.RELEASE</version>
+            <version>3.2.8.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
-            <version>3.2.4.RELEASE</version>
+            <version>3.2.8.RELEASE</version>
         </dependency>
 
         <!-- Hibernate -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>${hibernate-version}</version>
+            <version>4.2.0.Final</version>
         </dependency>
 	    <dependency>
 		  <groupId>org.hibernate</groupId>
 		  <artifactId>hibernate-validator-annotation-processor</artifactId>
-		  <version>4.1.0.Final</version>
+		  <version>4.2.0.Final</version>
 		</dependency>
         <!--<dependency>
             <groupId>org.hibernate</groupId>
@@ -85,11 +90,16 @@
         </dependency>-->
 
 		<!-- AspectJ -->
-		<!--<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-			<version>${org.aspectj-version}</version>
-		</dependency>-->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${org.aspectj-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${org.aspectj-version}</version>
+        </dependency>
 
 		<!-- Logging -->
 		<dependency>
@@ -177,12 +187,12 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>1.0.0.GA</version>
+            <version>1.1.0.Final</version>
         </dependency>
         <dependency>
             <groupId>javax.persistence</groupId>
             <artifactId>persistence-api</artifactId>
-            <version>1.0-rev-1</version>
+            <version>1.0.2</version>
         </dependency>
 
         <!-- Test -->

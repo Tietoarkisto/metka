@@ -30,14 +30,13 @@ package fi.uta.fsd.metkaAmqp.factories;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
-import fi.uta.fsd.metkaAmqp.PayloadFactory;
 import fi.uta.fsd.metkaAmqp.payloads.PayloadObject;
 import org.joda.time.LocalDateTime;
 
 public abstract class PayloadFactoryBase<T extends PayloadObject> implements PayloadFactory<T> {
 
     @Override
-    public String buildRoutingKey(String resource, String event) {
+    public String buildRoutingKey(String resource, String event, T payload) {
         return resource+"."+event;
     }
 

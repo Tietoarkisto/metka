@@ -96,6 +96,7 @@ define(function (require) {
                                             });
                                         },
                                         removeFilter: function(transferRow) {
+                                            // NOTE: Change to return true to test denied audit message
                                             return require('./../hasEveryPermission')(['canRemoveNotOwnedExpertSearch']) || MetkaJS.User.userName===transferRow.saved.user;
                                         },
                                         onClick: function () {

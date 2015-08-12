@@ -26,62 +26,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metkaAuthentication;
+package fi.uta.fsd.metka.aop;
 
-import org.springframework.web.filter.OncePerRequestFilter;
+import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.payloads.AuditPayload;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Random;
+import java.nio.file.AccessDeniedException;
 
-public class TestCredentialsFilter extends OncePerRequestFilter {
-    private static final Random RANDOM = new Random();
+@Aspect
+public class PermissionAuditAOP {
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    @Autowired
+    private Messenger messenger;
 
-        //setReaderAttributes(request);
-        //setUserAttributes(request);
-        //setTranslatorAttributes(request);
-        setDataAdminAttributes(request);
-        //setAdminAttributes(request);
 
-        filterChain.doFilter(request, response);
+
+    // Audit message for user trying to remove a saved search that they don't have right to remove,
+    // This is an example since it shouldn't be possible from the client without disabling row filtering on the saved searches container.
+    // Search for "NOTE: Change to return true to test denied audit message" to find the place where change needs to be done to test this.
+    @AfterThrowing(pointcut = "execution(* fi.uta.fsd.metka.mvc.controller.ExpertSearchController.removeExpertSearch(..)) && args(id)",
+        throwing = "ex")
+    public void removeExpertSearchDenied(JoinPoint jp, AccessDeniedException ex, Long id) {
+        messenger.sendAmqpMessage(messenger.FA_AUDIT, AuditPayload.deny("Käyttäjä [" + AuthenticationUtil.getUserName()+ "] yritti poistaa eksperttihaun: "+id));
     }
 
-    private void setUnknownAttributes(HttpServletRequest request) {
-        setRequestAttributes(request, "unknown", "Tuntematon", "metka:unk");
-    }
-
-    private void setReaderAttributes(HttpServletRequest request) {
-        setRequestAttributes(request, "reader", "Luku Pena", "metka:reader");
-    }
-
-    private void setUserAttributes(HttpServletRequest request) {
-        setRequestAttributes(request, "user", "Perus Pena", "metka:basic-user");
-    }
-
-    private void setTranslatorAttributes(HttpServletRequest request) {
-        setRequestAttributes(request, "translator", "Käännös Pena", "metka:translator");
-    }
-
-    private void setDataAdminAttributes(HttpServletRequest request) {
-        setRequestAttributes(request, "data-admin", "Data Pena", "metka:data-administrator");
-    }
-
-    private void setAdminAttributes(HttpServletRequest request) {
-        setRequestAttributes(request, "admin", "Admin Pena", "metka:administrator");
-    }
-
-    private void setRequestAttributes(HttpServletRequest request, String user, String name, String role) {
-        request.setAttribute("Shib-Session-ID", "Metka-session-"+RANDOM.nextInt(Integer.MAX_VALUE));
-
-        request.setAttribute("Shib-UserName", user);
-        request.setAttribute("Shib-DisplayName", name);
-
-        request.setAttribute("Shib-Roles", role);
+    // Audit message for user having successfully removed a saved search
+    @AfterReturning(pointcut = "execution(* fi.uta.fsd.metka.mvc.services.ExpertSearchService.removeExpertSearch(..)) && args(id)")
+    public void removeExpertSearchAllowed(Long id) {
+        messenger.sendAmqpMessage(messenger.FA_AUDIT, AuditPayload.allow("Käyttäjä [" + AuthenticationUtil.getUserName() + "] poisti eksperttihaun: " + id));
     }
 }
