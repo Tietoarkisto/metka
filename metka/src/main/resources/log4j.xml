@@ -24,9 +24,9 @@
 
 	<!-- 3rdparty Loggers -->
 	<!-- Aspect logger -->
-	<logger name="org.springframework.aop">
+	<!--<logger name="org.springframework.aop">
 		<level value="debug" />
-	</logger>
+	</logger>-->
 
 	<!--<logger name="org.springframework.core">
 		<level value="info" />
