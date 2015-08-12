@@ -30,6 +30,7 @@ package fi.uta.fsd.metka.storage.cascade;
 
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.transfer.TransferData;
+import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
@@ -38,7 +39,7 @@ import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 class OperationCascader {
     static boolean cascade(RevisionData data, CascadeInstruction instruction, Cascader.RepositoryHolder repositories) {
         TransferData transferData = TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE);
-        // TODO: Restore, Claim, Release
+        // TODO: Restore, Removedraft, Removelogical
         switch(instruction.getOperation()) {
             case SAVE: {
                 // Cascading save doesn't really make any sense at the moment since the user can only edit one form at a time
@@ -73,6 +74,15 @@ class OperationCascader {
                 OperationResponse result = repositories.getEdit().edit(transferData.getKey(), instruction.getInfo()).getLeft();
                 ReturnResult rr = ReturnResult.valueOf(result.getResult());
                 return rr == ReturnResult.REVISION_FOUND || rr == ReturnResult.REVISION_CREATED;
+            } case BEGIN_EDIT: {
+                ReturnResult rr = repositories.getHandler().beginEditing(RevisionKey.fromModelKey(transferData.getKey())).getLeft();
+                return rr == ReturnResult.REVISION_UPDATE_SUCCESSFUL;
+            } case CLAIM:{
+                ReturnResult rr = repositories.getHandler().changeHandler(RevisionKey.fromModelKey(transferData.getKey()), false).getLeft();
+                return rr == ReturnResult.REVISION_UPDATE_SUCCESSFUL;
+            } case RELEASE: {
+                ReturnResult rr = repositories.getHandler().changeHandler(RevisionKey.fromModelKey(transferData.getKey()), true).getLeft();
+                return rr == ReturnResult.REVISION_UPDATE_SUCCESSFUL;
             }
         }
 
