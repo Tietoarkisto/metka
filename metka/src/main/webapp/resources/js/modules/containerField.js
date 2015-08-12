@@ -355,6 +355,10 @@ define(function (require) {
             $tbody.empty();
             var rows = require('./data')(options).getByLang(lang);
             if (rows) {
+
+                //redraw header. this is kinda noop if showRowAmount is disabled
+                containerHeader.redraw();
+
                 //only if paging is enabled change current behavior
                 if (options.field.rowsPerPage != null) {
 
@@ -420,6 +424,9 @@ define(function (require) {
                 });
                 options.$events.trigger(redrawKey);
             } else {
+                //redraw header because if showRowAmount is enabled we need to update that
+                containerHeader.redraw();
+
                 //otherwise we can just append new row without redrawing whole page
                 return appendRow($container, transferRow, columnList);
             }
@@ -488,18 +495,11 @@ define(function (require) {
         var rowCommands = [];
         // TODO: Add clear container function
 
-        /*var $panelHeading = $('<div class="panel-heading">')
-            .text(MetkaJS.L10N.localize(options, 'title'));*/
-        var $panelHeading = $('<div class="panel-heading">')
-            .append(require('./label')(options, lang, 'panel-title'));
-
-        if (options.fieldOptions.translatable) {
-            require('./langLabel')($panelHeading, lang);
-        }
+        var containerHeader = require('./containerHeader')(options, lang);
 
         this.append($('<div class="panel">')
             .addClass('panel-' + (options.style || 'default'))
-            .append($panelHeading)
+            .append(containerHeader.create())
             .append(require('./pagination')(options))
             .append($('<table class="table table-condensed table-hover">')
                 .me(function () {

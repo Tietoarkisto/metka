@@ -35,6 +35,63 @@ define(function (require) {
         var commonSearchBooleans = require('./../commonSearchBooleans')();
 
         return function (options, onLoad) {
+
+            var publicationSearch = require('./../searchRequestSearch')(options, [
+                {
+                    key: 'key.configuration.type',
+                    value: "PUBLICATION",
+                    addParens: false
+                },
+                'publicationid',
+                {
+                    key: 'studies',
+                    rename: 'studies.studyid'
+                },
+                {
+                    key: 'publicationfirstsaved',
+                    exactValue: true
+                },
+                {
+                    key: 'savedAt',
+                    rename: 'state.saved.time',
+                    exactValue: true,
+                    addWildcard: true
+                },
+                'publicationyear',
+                {
+                    key: 'studyname',
+                    rename: 'studies.studytitle'
+                },
+                {
+                    key: 'seriesname',
+                    rename: 'series.seriesname',
+                    exactValue: true
+                },
+                {
+                    key: 'lastname',
+                    rename: 'publicationauthors.lastname'
+                },
+                {
+                    key: 'firstname',
+                    rename: 'publicationauthors.firstname'
+                },
+                'publicationtitle',
+                'publicationrelpubl',
+                {
+                    key: 'publicationlanguage',
+                    exactValue: true
+                },
+                {
+                    key: 'publicationpublic',
+                    exactValue: true
+                },
+                {
+                    key: 'savedBy',
+                    rename: 'state.saved.user'
+                }
+            ], 'publicationresults');
+
+
             require('./../server')('conf', {
                 method: 'GET',
                 success: function (response) {
@@ -42,17 +99,53 @@ define(function (require) {
                         $.extend(options, {
                             header: MetkaJS.L10N.get('type.PUBLICATION.search'),
                             fieldTitles: {
-                                "publicationid": {
-                                    "title" : "Numero"
+                                "publicationresultspublicationid": {
+                                    "title": "Numero"
                                 },
-                                "publicationtitle": {
-                                    "title" : "Otsikko"
+                                "publicationresultspublicationtitle": {
+                                    "title": "Otsikko"
                                 },
                                 "state": {
-                                    "title" : "Tila"
+                                    "title": "Tila"
                                 }
                             },
                             content: [
+                                {
+                                    "type": "COLUMN",
+                                    "rows": [{
+                                        "type": "ROW",
+                                        "cells": [{
+                                            "type": "CELL",
+                                            "contentType": "BUTTON",
+                                            "button": {
+                                                "&title": {
+                                                    "default": "Lisää uusi"
+                                                },
+                                                permissions: [
+                                                    "canCreateRevision"
+                                                ],
+                                                create: function () {
+                                                    this
+                                                        .click(function () {
+                                                            require('./../server')('create', {
+                                                                data: JSON.stringify({
+                                                                    type: 'PUBLICATION'
+                                                                }),
+                                                                success: function (response) {
+                                                                    if (resultParser(response.result).getResult() === 'REVISION_CREATED') {
+                                                                        require('./../assignUrl')('view', {
+                                                                            id: response.data.key.id,
+                                                                            no: response.data.key.no
+                                                                        });
+                                                                    }
+                                                                }
+                                                            });
+                                                        });
+                                                }
+                                            }
+                                        }]
+                                    }]
+                                },
                                 commonSearchBooleans.column,
                                 {
                                     "type": "COLUMN",
@@ -231,116 +324,54 @@ define(function (require) {
                                                     }
                                                 }
                                             ]
-                                        }
-                                    ]
-                                }
-                            ],
-                            buttons: [
-                                require('./../searchButton')('searchAjax', [
-                                        {
-                                            key: 'key.configuration.type',
-                                            value: "PUBLICATION",
-                                            addParens: false
-                                        },
-                                        'publicationid',
-                                        {
-                                            key: 'studies',
-                                            rename: 'studies.studyid'
                                         },
                                         {
-                                            key: 'publicationfirstsaved',
-                                            exactValue: true
-                                        },
-                                        {
-                                            key:'savedAt',
-                                            rename: 'state.saved.time',
-                                            exactValue: true,
-                                            addWildcard: true
-                                        },
-                                        'publicationyear',
-                                        {
-                                            key: 'studyname',
-                                            rename: 'studies.studytitle'
-                                        },
-                                        {
-                                            key: 'seriesname',
-                                            rename: 'series.seriesname',
-                                            exactValue: true
-                                        },
-                                        {
-                                            key: 'lastname',
-                                            rename: 'publicationauthors.lastname'
-                                        },
-                                        {
-                                            key: 'firstname',
-                                            rename: 'publicationauthors.firstname'
-                                        },
-                                        'publicationtitle',
-                                        'publicationrelpubl',
-                                        {
-                                            key: 'publicationlanguage',
-                                            exactValue: true
-                                        },
-                                        {
-                                            key: 'publicationpublic',
-                                            exactValue: true
-                                        },
-                                        {
-                                            key:'savedBy',
-                                            rename: 'state.saved.user'
-                                        }
-                                    ], function (data) {
-                                        return data.rows;
-                                    }, function (result) {
-                                        return {
-                                            id: result.id,
-                                            no: result.no,
-                                            TYPE: result.type,
-                                            publicationid: result.values.publicationid,
-                                            publicationtitle: result.values.publicationtitle,
-                                            state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
-                                        };
-                                    }, {
-                                        publicationid: {
-                                            type: 'STRING'
-                                        },
-                                        publicationtitle: {
-                                            type: 'STRING'
-                                        },
-                                        state: {
-                                            type: 'STRING'
-                                        }
-                                    }, [
-                                        "publicationid",
-                                        "publicationtitle",
-                                        "state"
-                                    ],
-                                    options),
-                                {
-                                    "&title": {
-                                        "default": "Lisää uusi"
-                                    },
-                                    permissions: [
-                                        "canCreateRevision"
-                                    ],
-                                    create: function () {
-                                        this
-                                            .click(function () {
-                                                require('./../server')('create', {
-                                                    data: JSON.stringify({
-                                                        type: 'PUBLICATION'
-                                                    }),
-                                                    success: function (response) {
-                                                        if (resultParser(response.result).getResult() === 'REVISION_CREATED') {
-                                                            require('./../assignUrl')('view', {
-                                                                id: response.data.key.id,
-                                                                no: response.data.key.no
-                                                            });
+                                            "type": "ROW",
+                                            "cells": [
+                                                {
+                                                    "type": "CELL",
+                                                    "contentType": "BUTTON",
+                                                    "button": {
+                                                        "title": MetkaJS.L10N.get('general.buttons.search'),
+                                                        "create": function () {
+                                                            this.click(publicationSearch.search);
                                                         }
                                                     }
-                                                });
-                                            });
-                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "COLUMN",
+                                    "columns": 1,
+                                    "rows": [{
+                                        "type": "ROW",
+                                        "cells": [{
+                                            "type": "CELL",
+                                            "title": "Julkaisuhaun tulokset",
+                                            "colspan": 1,
+                                            "field": {
+                                                "key": "publicationresults",
+                                                "showRowAmount": true,
+                                                "allowDownload": true,
+                                                "disableRemoval": true,
+                                                //"showReferenceValue": true,
+                                                "showReferenceState": true,
+                                                "columnFields": [
+                                                    "publicationresultspublicationid",
+                                                    "publicationresultspublicationtitle",
+                                                ],
+                                                onClick: function (transferRow) {
+                                                    require('./../assignUrl')('view', {
+                                                            id: transferRow.value.split('-')[0],
+                                                            no: transferRow.value.split('-')[1]
+                                                        }
+                                                    );
+                                                }
+                                            }
+                                        }]
+                                    }]
                                 }
                             ],
                             data: commonSearchBooleans.initialData({}),
@@ -354,6 +385,25 @@ define(function (require) {
                                     }
                                 }),
                                 references: {
+                                    publicationresults_ref: {
+                                        type: "REVISION",
+                                        target: "PUBLICATION"
+                                    },
+                                    publicationresultspublicationid_ref: {
+                                        type: "DEPENDENCY",
+                                        target: "publicationresults",
+                                        valuePath: "publicationid"
+                                    },
+                                    publicationresultspublicationtitle_ref: {
+                                        type: "DEPENDENCY",
+                                        target: "publicationresults",
+                                        valuePath: "publicationtitle"
+                                    },
+                                    publicationresultsstate_ref: {
+                                        type: "DEPENDENCY",
+                                        target: "publicationresults",
+                                        valuePath: "state"
+                                    },
                                     seriesname_ref: {
                                         key: 'seriesname_ref',
                                         type: 'REVISIONABLE',
@@ -363,6 +413,35 @@ define(function (require) {
                                     }
                                 },
                                 fields: {
+
+                                    publicationresults: {
+                                        type: "REFERENCECONTAINER",
+                                        reference: "publicationresults_ref",
+                                        subfields: [
+                                            "publicationresultspublicationid",
+                                            "publicationresultspublicationtitle",
+                                            "publicationresultsstate"
+                                        ]
+                                    },
+                                    publicationresultspublicationid: {
+                                        key: "publicationresultspublicationid",
+                                        subfield: true,
+                                        type: "REFERENCE",
+                                        reference: "publicationresultspublicationid_ref"
+                                    },
+                                    publicationresultspublicationtitle: {
+                                        key: "publicationresultspublicationtitle",
+                                        subfield: true,
+                                        type: "REFERENCE",
+                                        reference: "publicationresultspublicationtitle_ref"
+                                    },
+                                    publicationresultsstate: {
+                                        key: "publicationresultsstate",
+                                        subfield: true,
+                                        type: "REFERENCE",
+                                        reference: "publicationresultsstate_ref"
+                                    },
+
                                     publicationid: {
                                         type: 'STRING'
                                     },

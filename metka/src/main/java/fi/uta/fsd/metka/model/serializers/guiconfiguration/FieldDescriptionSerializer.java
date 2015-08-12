@@ -70,5 +70,8 @@ public class FieldDescriptionSerializer extends ObjectSerializer<FieldDescriptio
         }
         jgen.writeEndArray();
         jgen.writeBooleanField("showReferenceState", value.getShowReferenceState());
+
+        jgen.writeBooleanField("showRowAmount", value.getShowRowAmount());
+        jgen.writeBooleanField("allowDownload", value.getAllowDownload());
     }
 }

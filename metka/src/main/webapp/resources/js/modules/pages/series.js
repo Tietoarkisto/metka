@@ -34,6 +34,21 @@ define(function (require) {
     if (location.pathname.split('/').indexOf('search') !== -1) {
         var commonSearchBooleans = require('./../commonSearchBooleans')();
         return function (options, onLoad) {
+
+            var seriesSearch = require('./../searchRequestSearch')(options, [
+                {
+                    key: 'key.configuration.type',
+                    value: "SERIES",
+                    addParens: false
+                },
+                'key.id',
+                {
+                    key: 'seriesabbr',
+                    exactValue: true
+                },
+                'seriesname'
+            ], 'seriesresults');
+
             $.extend(options, {
                 header: MetkaJS.L10N.get('type.SERIES.search'),
                 dataConf: {
@@ -56,70 +71,103 @@ define(function (require) {
                             target: 'SERIES',
                             valuePath: 'seriesabbr',
                             titlePath: 'seriesabbr'
-                        }/*,
-                        result_ref: {
-                            key: "result_ref",
+                        },
+                        seriesresults_ref: {
+                            key: "seriesresults_ref",
                             type: "REVISION",
                             target: "SERIES"
                         },
-                        result_abbr_ref: {
-                            key: "result_abbr_ref",
+                        seriesresults_abbr_ref: {
+                            key: "seriesresults_abbr_ref",
                             type: "DEPENDENCY",
-                            target: "searchresults",
+                            target: "seriesresults",
                             valuePath: "seriesabbr"
                         },
-                        result_name_ref: {
+                        seriesresults_name_ref: {
                             key: "result_name_ref",
                             type: "DEPENDENCY",
-                            target: "searchresults",
+                            target: "seriesresults",
                             valuePath: "seriesname"
-                        }*/
+                        }
                     },
                     fields: {
                         seriesabbr: {
                             key: 'seriesabbr',
                             type: 'SELECTION',
                             selectionList: 'seriesabbr_list'
-                        }/*,
-                        searchresults: {
-                            key: 'searchresults',
+                        },
+                        seriesresults: {
+                            key: 'seriesresults',
                             type: "REFERENCECONTAINER",
-                            reference: "result_ref",
+                            reference: "seriesresults_ref",
                             fixedOrder: true,
                             subfields: [
-                                "resultabbr",
-                                "resultname"
+                                "seriesresultsabbr",
+                                "seriesresultsname"
                             ]
                         },
-                        resultabbr: {
-                            key: "resultabbr",
+                        seriesresultsabbr: {
+                            key: "seriesresultsabbr",
                             type: "REFERENCE",
-                            reference: "result_abbr_ref",
+                            reference: "seriesresults_abbr_ref",
                             subfield: true
                         },
-                        resultname: {
-                            key: "resultname",
+                        seriesresultsname: {
+                            key: "seriesresultsname",
                             type: "REFERENCE",
-                            reference: "result_name_ref",
+                            reference: "seriesresults_name_ref",
                             subfield: true
-                        }*/
+                        }
                     }
                 },
                 fieldTitles: {
-                    "id": {
-                        "title" : "ID"
+                    "seriesresultsabbr": {
+                        "title": "Lyhenne"
                     },
-                    "seriesabbr": {
-                        "title" : "Lyhenne"
-                    },
-                    "seriesname": {
-                        "title" : "Nimi"
+                    "seriesresultsname": {
+                        "title": "Nimi"
                     },
                     "state": {
-                        "title" : "Tila"
+                        "title": "Tila"
                     }
                 },
                 content: [
+                    {
+                        "type": "COLUMN",
+                        "rows": [{
+                            "type": "ROW",
+                            "cells": [{
+                                "type": "CELL",
+                                "contentType": "BUTTON",
+                                "button": {
+                                    "&title": {
+                                        "default": "Lisää uusi"
+                                    },
+                                    "permissions": [
+                                        "canCreateRevision"
+                                    ],
+                                    create: function () {
+                                        this
+                                            .click(function () {
+                                                require('./../server')('create', {
+                                                    data: JSON.stringify({
+                                                        type: 'SERIES'
+                                                    }),
+                                                    success: function (response) {
+                                                        if (resultParser(response.result).getResult() === 'REVISION_CREATED') {
+                                                            require('./../assignUrl')('view', {
+                                                                id: response.data.key.id,
+                                                                no: response.data.key.no
+                                                            });
+                                                        }
+                                                    }
+                                                });
+                                            });
+                                    }
+                                }
+                            }]
+                        }]
+                    },
                     {
                         "type": "COLUMN",
                         "columns": 3,
@@ -167,120 +215,54 @@ define(function (require) {
                                     },
                                     commonSearchBooleans.cells.removed
                                 ]
-                            }/*,
+                            },
                             {
                                 "type": "ROW",
                                 "cells": [
                                     {
                                         "type": "CELL",
-                                        "title": "Sarjat",
-                                        "colspan": 3,
-                                        "readOnly": true,
-                                        "field": {
-                                            "displayType": "REFERENCECONTAINER",
-                                            "key": "searchresults",
-                                            "disableRemoval": true,
-                                            //"displayType": "CONTAINER",
-                                            "showReferenceValue": true,
-                                            "showReferenceState": true,
-                                            "columnFields": [
-                                                "resultabbr",
-                                                "resultname"
-                                            ]
+                                        "contentType": "BUTTON",
+                                        "button": {
+                                            "title": MetkaJS.L10N.get('general.buttons.search'),
+                                            "create": function () {
+                                                this.click(seriesSearch.search);
+                                            }
                                         }
                                     }
                                 ]
-                            }*/
+                            }
                         ]
-                    }
-                ],
-                buttons: [ /*{
-                    title: "Hae",
-                    create: function(options) {
-                        this.click(function() {
-                            require('./../searchRequestSearch')(options, [
-                                {
-                                    key: 'key.configuration.type',
-                                    value: "SERIES",
-                                    addParens: false
-                                },
-                                'key.id',
-                                {
-                                    key: 'seriesabbr',
-                                    exactValue: true
-                                },
-                                'seriesname'
-                            ], 'searchresults').search();
-                        });
-                    }
-                },*/
-                    require('./../searchButton')('searchAjax', [
-                        {
-                            key: 'key.configuration.type',
-                            value: "SERIES",
-                            addParens: false
-                        },
-                        'key.id',
-                        {
-                            key: 'seriesabbr',
-                            exactValue: true
-                        },
-                        'seriesname'
-                    ], function (data) {
-                        return data.rows;
-                    }, function (result) {
-                        return {
-                            id: result.id,
-                            no: result.no,
-                            TYPE: result.type,
-                            seriesabbr: result.values.seriesabbr,
-                            seriesname: result.values.seriesname,
-                            state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
-                        };
-                    }, {
-                        id: {
-                            type: 'INTEGER'
-                        },
-                        seriesabbr: {
-                            type: 'STRING'
-                        },
-                        seriesname: {
-                            type: 'STRING'
-                        },
-                        state: {
-                            type: 'STRING'
-                        }
-                    }, [
-                        "id",
-                        "seriesabbr",
-                        "seriesname",
-                        "state"
-                    ], options),
+                    },
                     {
-                        "&title": {
-                            "default": "Lisää uusi"
-                        },
-                        "permissions": [
-                            "canCreateRevision"
-                        ],
-                        create: function () {
-                            this
-                                .click(function () {
-                                    require('./../server')('create', {
-                                        data: JSON.stringify({
-                                            type: 'SERIES'
-                                        }),
-                                        success: function (response) {
-                                            if (resultParser(response.result).getResult() === 'REVISION_CREATED') {
-                                                require('./../assignUrl')('view', {
-                                                    id: response.data.key.id,
-                                                    no: response.data.key.no
-                                                });
+                        "type": "COLUMN",
+                        "columns": 1,
+                        "rows": [{
+                            "type": "ROW",
+                            "cells": [{
+                                "type": "CELL",
+                                "title": "Julkaisuhaun tulokset",
+                                "colspan": 1,
+                                "field": {
+                                    "key": "seriesresults",
+                                    "showRowAmount": true,
+                                    "allowDownload": true,
+                                    "disableRemoval": true,
+                                    //"showReferenceValue": true,
+                                    "showReferenceState": true,
+                                    "columnFields": [
+                                        "seriesresultsabbr",
+                                        "seriesresultsname"
+                                    ],
+                                    onClick: function (transferRow) {
+                                        require('./../assignUrl')('view', {
+                                                id: transferRow.value.split('-')[0],
+                                                no: transferRow.value.split('-')[1]
                                             }
-                                        }
-                                    });
-                                });
-                        }
+                                        );
+                                    }
+                                }
+                            }]
+                        }]
                     }
                 ],
                 data: commonSearchBooleans.initialData({})

@@ -138,6 +138,18 @@ public class FieldDescriptionDeserializer extends ObjectDeserializer<FieldDescri
             fd.setRowsPerPage(rowsPerPage.intValue());
         }
 
+        // Set showRowAmount
+        JsonNode showRowAmount = node.get("showRowAmount");
+        if (showRowAmount != null && showRowAmount.getNodeType() == JsonNodeType.BOOLEAN) {
+            fd.setShowRowAmount(showRowAmount.booleanValue());
+        }
+
+        // Set allowDownload
+        JsonNode allowDownload = node.get("allowDownload");
+        if (allowDownload != null && allowDownload.getNodeType() == JsonNodeType.BOOLEAN) {
+            fd.setAllowDownload(allowDownload.booleanValue());
+        }
+
         return fd;
     }
 }

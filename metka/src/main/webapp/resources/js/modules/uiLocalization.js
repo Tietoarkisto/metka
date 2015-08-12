@@ -177,6 +177,18 @@ define(function (require) {
         },
 
         "general": {
+            "result": {
+                "&amount": {
+                    "default": "Rivejä: {length}"
+                }
+            },
+
+            "downloadInfo": {
+                "&currentlyDownloading": {
+                    "default": "Lataus on jo käynnissä. Odota latauksen valmistumista ladataksesi uudelleen."
+                }
+            },
+
             "buttons": {
                 "&add": {
                     "default": "Lisää"

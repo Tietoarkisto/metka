@@ -42,10 +42,11 @@ import java.util.List;
 @JsonIgnoreProperties("_comment")
 public class FieldDescription {
     private final String key;
+    private final List<String> columnFields = new ArrayList<>();
+    private final List<Language> showReferenceApproveInfo = new ArrayList<>();
     private DisplayType displayType; // Can be ignored for now, only defined here for completeness
     private Boolean multiline;
     private Boolean multichoice; // Can be ignored for now, only defined here for completeness
-    private final List<String> columnFields = new ArrayList<>();
     private Boolean disableRemoval = false;
     private Boolean showSaveInfo;
     private Boolean showReferenceValue;
@@ -53,9 +54,10 @@ public class FieldDescription {
     private Boolean displayHeader = true;
     private DialogTitle dialogTitle;
     private Boolean showReferenceSaveInfo = false;
-    private final List<Language> showReferenceApproveInfo = new ArrayList<>();
     private Boolean showReferenceState = false;
     private Integer rowsPerPage;
+    private Boolean showRowAmount = false;
+    private Boolean allowDownload = false;
 
     @JsonCreator
     public FieldDescription(@JsonProperty("key")String key) {
@@ -185,5 +187,21 @@ public class FieldDescription {
 
     public void setRowsPerPage(Integer rowsPerPage) {
         this.rowsPerPage = (rowsPerPage == null || rowsPerPage < 1 ? null : rowsPerPage);
+    }
+
+    public Boolean getShowRowAmount() {
+        return showRowAmount == null ? false : showRowAmount;
+    }
+
+    public void setShowRowAmount(Boolean showRowAmount) {
+        this.showRowAmount = (showRowAmount == null ? false : showRowAmount);
+    }
+
+    public Boolean getAllowDownload() {
+        return allowDownload == null ? false : allowDownload;
+    }
+
+    public void setAllowDownload(Boolean allowDownload) {
+        this.allowDownload = (allowDownload == null ? false : allowDownload);
     }
 }

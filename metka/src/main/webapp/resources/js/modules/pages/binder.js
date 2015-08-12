@@ -236,6 +236,8 @@ define(function (require) {
                         "colspan": 1,
                         "readOnly": true,
                         "field": {
+                            "allowDownload": true,
+                            "showRowAmount": true,
                             "key": "pages",
                             "disableRemoval": true,
                             //"displayType": "CONTAINER",

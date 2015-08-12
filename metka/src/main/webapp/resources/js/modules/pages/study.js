@@ -35,23 +35,64 @@ define(function (require) {
         var studyErrorSearchBooleans = require('./../commonSearchBooleans')('error');
 
         return function (options, onLoad) {
-            var errorSearch = require('./../searchRequestSearch')(options, [{
-                key: 'key.configuration.type',
-                value: "STUDY_ERROR",
-                addParens: false
-            }, {
-                key: 'findBinderId',
-                rename: 'binderid',
-                exactValue: false
-            }, {
-                key: 'findstudyid',
-                rename: 'studyid',
-                exactValue: true
-            }], 'studyerrors', 'error');
+            var errorSearch = require('./../searchRequestSearch')(options, [
+                {
+                    key: 'key.configuration.type',
+                    value: "STUDY_ERROR",
+                    addParens: false
+                }, {
+                    key: 'findBinderId',
+                    rename: 'binderid',
+                    exactValue: false
+                }, {
+                    key: 'findstudyid',
+                    rename: 'studyid',
+                    exactValue: true
+                }
+            ], 'studyerrors', 'error');
 
             function viewError(requestOptions) {
                 require('./../revisionModal')(options, requestOptions, 'STUDY_ERROR', errorSearch.search, 'studyerrors');
             }
+
+            var studySearch = require('./../searchRequestSearch')(options, [
+                {
+                    key: 'key.configuration.type',
+                    value: "STUDY",
+                    addParens: false
+                },
+                'studyid',
+                {
+                    key: 'author',
+                    rename: 'authors.author'
+                }, {
+                    key: 'authororganization',
+                    rename: 'authors.organisation'
+                }, {
+                    key: 'producername',
+                    rename: 'producers.organisation'
+                }, {
+                    key: 'series',
+                    exactValue: true
+                }, {
+                    key: 'publication',
+                    useSelectionText: false,
+                    rename: 'publications.value',
+                    exactValue: true
+                },
+                'aipcomplete',
+                'termsofusechangedate',
+                {
+                    key: 'timeperiod',
+                    rename: 'timeperiods.timeperiod'
+                }, {
+                    key: 'colltime',
+                    rename: 'colltime.colldate'
+                }, {
+                    key: 'collector',
+                    rename: 'collectors.author'
+                }
+            ], 'studyresults', 'error');
 
             require('./../server')('conf', {
                 method: 'GET',
@@ -64,7 +105,7 @@ define(function (require) {
                             rename: 'producers.producerrole',
                             exactValue: true
                         }, {
-                            key:'datakind',
+                            key: 'datakind',
                             exactValue: true
                         }, {
                             key: 'anonymization',
@@ -148,6 +189,21 @@ define(function (require) {
                                 studyerrorsstudyid: {
                                     title: "Aineistonumero"
                                 },
+                                studyresultsid: {
+                                    title: "Aineistonumero"
+                                },
+                                studyresultsdatakind: {
+                                    title: "Laatu"
+                                },
+                                studyresultstermsofuse: {
+                                    title: "Käyttöoikeus"
+                                },
+                                studyresultsseries: {
+                                    title: "Sarja"
+                                },
+                                studyresultstitle: {
+                                    title: "Aineiston nimi"
+                                },
                                 studyerrorsstudytitle: {
                                     title: "Aineiston nimi"
                                 },
@@ -155,572 +211,545 @@ define(function (require) {
                                     title: "Virhepisteet"
                                 }
                             },
-                            content: [{
-                                "type": "TAB",
-                                "title": "Aineistohaku",
-                                "content": [{
-                                    "type": "COLUMN",
-                                    "rows": [{
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "contentType": "BUTTON",
-                                            "button": {
-                                                "&title": {
-                                                    "default": "Lisää uusi"
-                                                },
-                                                permissions: [
-                                                    "canCreateRevision"
-                                                ],
-                                                create: function () {
-                                                    this.click(function () {
-                                                        require('./../server')('create', {
-                                                            data: JSON.stringify({
-                                                                type: 'STUDY',
-                                                                parameters: {
-                                                                    submissionid: Date.now() % 1000,
-                                                                    dataarrivaldate: moment(Date.now()).format('YYYY-MM-DD')
-                                                                }
-                                                            }),
-                                                            success: function (response) {
-                                                                if (resultParser(response.result).getResult() === 'REVISION_CREATED') {
-                                                                    require('./../assignUrl')('view', {
-                                                                        id: response.data.key.id,
-                                                                        no: response.data.key.no
-                                                                    });
-                                                                }
-                                                            }
-                                                        });
-                                                    });
-                                                }
-                                            }
-                                        }]
-                                    }]
-                                },
-                                commonSearchBooleans.column,
+                            content: [
                                 {
-                                    "type": "COLUMN",
-                                    "columns": 2,
-                                    "rows": [{
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Aineiston numero",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "studyid"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Hankinta-aineistonumero",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "submissionid"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Aineiston nimi",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "title"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Tekijän nimi",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "author"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Tekijän organisaatio",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "authororganization"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Tuottajan nimi",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "producername"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Tuottajan rooli",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "producerrole"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Sarjan nimi",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "series"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Aineiston laatu",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "datakind"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Anonymisointi",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "anonymization"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Tietosuoja",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "securityissues"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Julkaisu",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "publication"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Valmis-päivämäärä",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "aipcomplete"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Ehto 1: käyttöoikeus",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "termsofuse"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Käyttöehto muutospvm jälkeen",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "newtermsofuse"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Käyttöehdon muutospvm",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "termsofusechangedate"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Arkistointisopimuksen tapa",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "agreementtype"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Luovuttajan tyyppi",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "depositortype"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Käsittelijä",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "handler"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "URN-tunniste",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "packageurn"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Abstrakti",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "abstract"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Pääala",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "topictop"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Tieteenala",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "topic"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Ajallinen kattavuus",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "timeperiod"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Aineistonkeruun ajankohta",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "colltime"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Maa",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "country"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Aineiston kerääjän nimi",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "collector"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Havainto/aineistoyksikkö",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "analysisunit"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Aikaulottuvuus",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "timemethod"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Otantamenetelmä",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "sampproc"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Keruumenetelmä",
-                                            "horizontal": true,
-                                            "colspan": 2,
-                                            "field": {
-                                                "key": "collmode"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "readOnly": true,
-                                            "contentType": "BUTTON",
-                                            "button": require('./../searchButton')('searchAjax', [
-                                                    {
-                                                        key: 'key.configuration.type',
-                                                        value: "STUDY",
-                                                        addParens: false
-                                                    },
-                                                    'studyid',
-                                                    {
-                                                        key: 'author',
-                                                        rename: 'authors.author'
-                                                    }, {
-                                                        key: 'authororganization',
-                                                        rename: 'authors.organisation'
-                                                    }, {
-                                                        key: 'producername',
-                                                        rename: 'producers.organisation'
-                                                    }, {
-                                                        key: 'series',
-                                                        exactValue: true
-                                                    }, {
-                                                        key: 'publication',
-                                                        useSelectionText: false,
-                                                        rename: 'publications.value',
-                                                        exactValue: true
-                                                    },
-                                                    'aipcomplete',
-                                                    'termsofusechangedate',
-                                                    {
-                                                        key: 'timeperiod',
-                                                        rename: 'timeperiods.timeperiod'
-                                                    }, {
-                                                        key: 'colltime',
-                                                        rename: 'colltime.colldate'
-                                                    }, {
-                                                        key: 'collector',
-                                                        rename: 'collectors.author'
-                                                    }].concat(importFromConfiguration)
-                                                , function (data) {
-                                                    return data.rows;
-                                                }, function (result) {
-                                                    return {
-                                                        id: result.id,
-                                                        no: result.no,
-                                                        TYPE: result.type,
-                                                        studyid: result.values.studyid,
-                                                        studyname: result.values.title,
-                                                        authors: result.values.authors,
-                                                        series: result.values.series,
-                                                        datakind: result.values.datakind,
-                                                        termsofuse: result.values.termsofuse,
-                                                        state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
-                                                    };
-                                                }, {
-                                                    studyid: {
-                                                        type: 'STRING'
-                                                    },
-                                                    studyname: {
-                                                        type: 'STRING'
-                                                    },
-                                                    authors: {
-                                                        type: 'STRING'
-                                                    },
-                                                    series : response.configuration.fields.series,
-                                                    datakind : response.configuration.fields.datakind,
-                                                    termsofuse : response.configuration.fields.termsofuse,
-                                                    state: {
-                                                        type: 'STRING'
+                                    "type": "TAB",
+                                    "title": "Aineistohaku",
+                                    "hidePageButtons": true,
+                                    "content": [
+                                        {
+                                            "type": "COLUMN",
+                                            "rows": [{
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "contentType": "BUTTON",
+                                                    "button": {
+                                                        "&title": {
+                                                            "default": "Lisää uusi"
+                                                        },
+                                                        permissions: [
+                                                            "canCreateRevision"
+                                                        ],
+                                                        create: function () {
+                                                            this.click(function () {
+                                                                require('./../server')('create', {
+                                                                    data: JSON.stringify({
+                                                                        type: 'STUDY',
+                                                                        parameters: {
+                                                                            submissionid: Date.now() % 1000,
+                                                                            dataarrivaldate: moment(Date.now()).format('YYYY-MM-DD')
+                                                                        }
+                                                                    }),
+                                                                    success: function (response) {
+                                                                        if (resultParser(response.result).getResult() === 'REVISION_CREATED') {
+                                                                            require('./../assignUrl')('view', {
+                                                                                id: response.data.key.id,
+                                                                                no: response.data.key.no
+                                                                            });
+                                                                        }
+                                                                    }
+                                                                });
+                                                            });
+                                                        }
                                                     }
-                                                }, [
-                                                    "studyid",
-                                                    "studyname",
-                                                    "authors",
-                                                    "series",
-                                                    "datakind",
-                                                    "termsofuse",
-                                                    "state"
-                                                ], $.extend(options, {resultContainer: "searchResult"}))
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "id": "searchResult",
-                                            "type": "CELL",
-                                            "readOnly": true,
-                                            "colspan": 2
-                                        }]
-                                    }]
-                                }]
-                            }, {
-                                "type": "TAB",
-                                "title": "Virheelliset",
-                                "hidePageButtons": true,
-                                "content": [
-                                    studyErrorSearchBooleans.column,
-                                {
-                                    "type": "COLUMN",
-                                    "columns": 2,
-                                    "rows": [{
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Aineistonro",
-                                            "horizontal": true,
-                                            "field": {
-                                                "key": "findstudyid"
-                                            }
-                                        }]
-                                    }, {
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Pisteet",
-                                            "horizontal": true,
-                                            "field": {
-                                                "key": "finderrorscore"
-                                            }
-                                        }, {
-                                            "type": "CELL",
-                                            "contentType": "BUTTON",
-                                            "button": {
-                                                "title": MetkaJS.L10N.get('general.buttons.search'),
-                                                "create": function() {
-                                                    this.click(errorSearch.search);
-                                                }
-                                            }
-                                        }]
-                                    }]
-                                }, {
-                                    "type": "COLUMN",
-                                    "columns": 1,
-                                    "rows": [{
-                                        "type": "ROW",
-                                        "cells": [{
-                                            "type": "CELL",
-                                            "title": "Virheet",
-                                            "colspan": 1,
-                                            "field": {
-                                                "key": "studyerrors",
-                                                "disableRemoval": true,
-                                                "showReferenceValue": true,
-                                                "showReferenceState": true,
-                                                "columnFields": [
-                                                    "studyerrorsstudyid",
-                                                    "studyerrorsstudytitle",
-                                                    "studyerrorsscore"
-                                                ],
-                                                onClick: function(transferRow) {
-                                                    viewError({
-                                                        id: transferRow.value.split('-')[0],
-                                                        no: transferRow.value.split('-')[1]});
-                                                },
-                                                onAdd: function () {
-                                                    require('./../server')('create', {
-                                                        data: JSON.stringify({
-                                                            type: 'STUDY_ERROR'
-                                                        }),
-                                                        success: function(response) {
-                                                            if(resultParser(response.result).getResult() === 'REVISION_CREATED') {
-                                                                viewError({
-                                                                    type: 'STUDY_ERROR',
-                                                                    id: response.data.key.id,
-                                                                    no: response.data.key.no});
-                                                            } else {
-                                                                require('./../resultViewer')(response.result);
+                                                }]
+                                            }]
+                                        },
+                                        commonSearchBooleans.column,
+                                        {
+                                            "type": "COLUMN",
+                                            "columns": 2,
+                                            "rows": [{
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Aineiston numero",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "studyid"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Hankinta-aineistonumero",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "submissionid"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Aineiston nimi",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "title"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Tekijän nimi",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "author"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Tekijän organisaatio",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "authororganization"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Tuottajan nimi",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "producername"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Tuottajan rooli",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "producerrole"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Sarjan nimi",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "series"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Aineiston laatu",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "datakind"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Anonymisointi",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "anonymization"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Tietosuoja",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "securityissues"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Julkaisu",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "publication"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Valmis-päivämäärä",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "aipcomplete"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Ehto 1: käyttöoikeus",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "termsofuse"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Käyttöehto muutospvm jälkeen",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "newtermsofuse"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Käyttöehdon muutospvm",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "termsofusechangedate"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Arkistointisopimuksen tapa",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "agreementtype"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Luovuttajan tyyppi",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "depositortype"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Käsittelijä",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "handler"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "URN-tunniste",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "packageurn"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Abstrakti",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "abstract"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Pääala",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "topictop"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Tieteenala",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "topic"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Ajallinen kattavuus",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "timeperiod"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Aineistonkeruun ajankohta",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "colltime"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Maa",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "country"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Aineiston kerääjän nimi",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "collector"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Havainto/aineistoyksikkö",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "analysisunit"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Aikaulottuvuus",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "timemethod"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Otantamenetelmä",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "sampproc"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Keruumenetelmä",
+                                                    "horizontal": true,
+                                                    "colspan": 2,
+                                                    "field": {
+                                                        "key": "collmode"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [
+                                                    {
+                                                        "type": "CELL",
+                                                        "contentType": "BUTTON",
+                                                        "button": {
+                                                            "title": MetkaJS.L10N.get('general.buttons.search'),
+                                                            "create": function () {
+                                                                this.click(studySearch.search);
                                                             }
                                                         }
-                                                    });
-                                                }
+                                                    }
+                                                ]
                                             }
+                                            ]
+                                        },
+                                        {
+                                            "type": "COLUMN",
+                                            "columns": 1,
+                                            "rows": [{
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Aineistohaun tulokset",
+                                                    "colspan": 1,
+                                                    "field": {
+                                                        "key": "studyresults",
+                                                        "showRowAmount": true,
+                                                        "allowDownload": true,
+                                                        "disableRemoval": true,
+
+                                                        "showReferenceState": true,
+
+                                                        // "showReferenceValue": true,
+                                                        // "showReferenceType": true,
+                                                        // "showSaveInfo": true,
+                                                        // "showReferenceSaveInfo": true,
+                                                        // "showReferenceApproveInfo": ["DEFAULT"],
+
+                                                        "columnFields": [
+                                                            "studyresultsid",
+                                                            "studyresultstitle",
+                                                            "studyresultsseries",
+                                                            "studyresultsdatakind",
+                                                            "studyresultstermsofuse"
+                                                        ],
+                                                        onClick: function (transferRow) {
+                                                            require('./../assignUrl')('view', {
+                                                                    id: transferRow.value.split('-')[0],
+                                                                    no: transferRow.value.split('-')[1]
+                                                                }
+                                                            );
+                                                        }
+                                                    }
+                                                }]
+                                            }]
                                         }]
-                                    }]
-                                }]
-                            }],
+                                },
+                                {
+                                    "type": "TAB",
+                                    "title": "Virheelliset",
+                                    "hidePageButtons": true,
+                                    "content": [
+                                        studyErrorSearchBooleans.column,
+                                        {
+                                            "type": "COLUMN",
+                                            "columns": 2,
+                                            "rows": [{
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Aineistonro",
+                                                    "horizontal": true,
+                                                    "field": {
+                                                        "key": "findstudyid"
+                                                    }
+                                                }]
+                                            }, {
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Pisteet",
+                                                    "horizontal": true,
+                                                    "field": {
+                                                        "key": "finderrorscore"
+                                                    }
+                                                }, {
+                                                    "type": "CELL",
+                                                    "contentType": "BUTTON",
+                                                    "button": {
+                                                        "title": MetkaJS.L10N.get('general.buttons.search'),
+                                                        "create": function () {
+                                                            this.click(errorSearch.search);
+                                                        }
+                                                    }
+                                                }]
+                                            }]
+                                        }, {
+                                            "type": "COLUMN",
+                                            "columns": 1,
+                                            "rows": [{
+                                                "type": "ROW",
+                                                "cells": [{
+                                                    "type": "CELL",
+                                                    "title": "Virheet",
+                                                    "colspan": 1,
+                                                    "field": {
+                                                        "key": "studyerrors",
+                                                        "showRowAmount": true,
+                                                        "allowDownload": true,
+                                                        "disableRemoval": true,
+                                                        "showReferenceValue": true,
+                                                        "showReferenceState": true,
+                                                        "columnFields": [
+                                                            "studyerrorsstudyid",
+                                                            "studyerrorsstudytitle",
+                                                            "studyerrorsscore"
+                                                        ],
+                                                        onClick: function (transferRow) {
+                                                            viewError({
+                                                                id: transferRow.value.split('-')[0],
+                                                                no: transferRow.value.split('-')[1]
+                                                            });
+                                                        },
+                                                        onAdd: function () {
+                                                            require('./../server')('create', {
+                                                                data: JSON.stringify({
+                                                                    type: 'STUDY_ERROR'
+                                                                }),
+                                                                success: function (response) {
+                                                                    if (resultParser(response.result).getResult() === 'REVISION_CREATED') {
+                                                                        viewError({
+                                                                            type: 'STUDY_ERROR',
+                                                                            id: response.data.key.id,
+                                                                            no: response.data.key.no
+                                                                        });
+                                                                    } else {
+                                                                        require('./../resultViewer')(response.result);
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                }]
+                                            }]
+                                        }]
+                                }
+                            ],
                             data: commonSearchBooleans.initialData(studyErrorSearchBooleans.initialData({})),
                             dataConf: {
                                 key: response.configuration.key,
@@ -729,10 +758,39 @@ define(function (require) {
                                         type: "REVISION",
                                         target: "STUDY_ERROR"
                                     },
+                                    studyresults_ref: {
+                                        type: "REVISION",
+                                        target: "STUDY"
+                                    },
                                     studyerrorsstudyid_ref: {
                                         type: "DEPENDENCY",
                                         target: "studyerrors",
                                         valuePath: "study"
+                                    },
+                                    studyresultsid_ref: {
+                                        type: "DEPENDENCY",
+                                        target: "studyresults",
+                                        valuePath: "studyid"
+                                    },
+                                    studyresultsseries_ref: {
+                                        type: "DEPENDENCY",
+                                        target: "studyresults",
+                                        valuePath: "series"
+                                    },
+                                    studyresultsdatakind_ref: {
+                                        type: "DEPENDENCY",
+                                        target: "studyresults",
+                                        valuePath: "datakind"
+                                    },
+                                    studyresultstermsofuse_ref: {
+                                        type: "DEPENDENCY",
+                                        target: "studyresults",
+                                        valuePath: "termsofuse"
+                                    },
+                                    studyresultstitle_ref: {
+                                        type: "DEPENDENCY",
+                                        target: "studyresults",
+                                        valuePath: "title"
                                     },
                                     studyerrorsstudytitle_ref: {
                                         type: "DEPENDENCY",
@@ -759,12 +817,7 @@ define(function (require) {
                                     topictop_ref: {
                                         type: 'JSON',
                                         target: response.configuration.references.topicvocab_ref.target
-                                    },/*
-                                    topic_ref: {
-                                        type: 'JSON',
-                                        target: response.configuration.references.topicvocab_ref.target,
-                                        valuePath: 'terms.term_ll.id'
-                                    },*/
+                                    },
                                     analysisunit_ref: {
                                         type: 'JSON',
                                         target: response.configuration.references.analysisunitvocab_ref.target
@@ -894,11 +947,52 @@ define(function (require) {
                                                 "studyerrorsscore"
                                             ]
                                         },
+                                        studyresults: {
+                                            type: "REFERENCECONTAINER",
+                                            reference: "studyresults_ref",
+                                            subfields: [
+                                                "studyresultsid",
+                                                "studyresultstitle",
+                                                "studyresultsseries",
+                                                "studyresultsdatakind",
+                                                "studyresultstermsofuse"
+                                            ]
+                                        },
+                                        studyresultsid: {
+                                            key: "studyresultsid",
+                                            subfield: true,
+                                            type: "REFERENCE",
+                                            reference: "studyresultsid_ref"
+                                        },
+                                        studyresultsseries: {
+                                            key: "studyresultsseries",
+                                            subfield: true,
+                                            type: "REFERENCE",
+                                            reference: "studyresultsseries_ref"
+                                        },
+                                        studyresultsdatakind: {
+                                            key: "studyresultsdatakind",
+                                            subfield: true,
+                                            type: "REFERENCE",
+                                            reference: "studyresultsdatakind_ref"
+                                        },
+                                        studyresultstermsofuse: {
+                                            key: "studyresultstermsofuse",
+                                            subfield: true,
+                                            type: "REFERENCE",
+                                            reference: "studyresultstermsofuse_ref"
+                                        },
                                         studyerrorsstudyid: {
                                             key: "studyerrorsstudyid",
                                             subfield: true,
                                             type: "REFERENCE",
                                             reference: "studyerrorsstudyid_ref"
+                                        },
+                                        studyresultstitle: {
+                                            key: "studyresultstitle",
+                                            subfield: true,
+                                            type: "REFERENCE",
+                                            reference: "studyresultstitle_ref"
                                         },
                                         studyerrorsstudytitle: {
                                             key: "studyerrorsstudytitle",

@@ -332,6 +332,8 @@ define(function (require) {
                                 title: "Muuttujajoukot",
                                 readOnly: true,
                                 field: {
+                                    showRowAmount: true,
+                                    allowDownload: true,
                                     key: "variableslist",
                                     showReferenceState: true,
                                     columnFields: [
@@ -429,6 +431,8 @@ define(function (require) {
                                 title: "Muuttujat",
                                 readOnly: true,
                                 field: {
+                                    showRowAmount: true,
+                                    allowDownload: true,
                                     key: "variablelist",
                                     showReferenceState: true,
                                     columnFields: [
