@@ -36,7 +36,7 @@ define(function (require) {
             //it doesn't matter how many pages we show initially as we almost immediately
             //trigger redraw within containerField.js with correct rows and perPage values
             $paging.bootpag({
-                total: 5,
+                total: 1,
                 page: 1,
                 maxVisible: 5,
                 leaps: true,
