@@ -36,6 +36,7 @@ public enum OperationType {
     REMOVE_LOGICAL,
     REMOVE_REVISIONABLE,
     RESTORE,
+    BEGIN_EDIT,
     CLAIM,
     RELEASE,
     EDIT,
