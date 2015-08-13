@@ -65,9 +65,12 @@ public class Cascader {
     @Autowired
     private SearcherComponent searcher;
 
+    @Autowired
+    private RevisionRestoreRepository restore;
+
     public boolean cascade(CascadeInstruction instruction, RevisionData revision, List<Target> targets, Configuration configuration) {
         initParents(revision, targets);
-        return DataFieldCascader.cascade(instruction, targets, revision, configuration, new RepositoryHolder(configurations, revisions, save, approve, remove, edit, handler, searcher));
+        return DataFieldCascader.cascade(instruction, targets, revision, configuration, new RepositoryHolder(configurations, revisions, save, approve, remove, edit, handler, searcher, restore));
     }
 
     /**
@@ -91,10 +94,11 @@ public class Cascader {
         private final RevisionEditRepository edit;
         private final RevisionHandlerRepository handler;
         private final SearcherComponent searcher;
+        private final RevisionRestoreRepository restore;
 
         public RepositoryHolder(
                 ConfigurationRepository configurations, RevisionRepository revisions, RevisionSaveRepository save, RevisionApproveRepository approve,
-                RevisionRemoveRepository remove, RevisionEditRepository edit, RevisionHandlerRepository handler, SearcherComponent searcher) {
+                RevisionRemoveRepository remove, RevisionEditRepository edit, RevisionHandlerRepository handler, SearcherComponent searcher ,RevisionRestoreRepository restore) {
             this.configurations = configurations;
             this.revisions = revisions;
             this.save = save;
@@ -103,6 +107,7 @@ public class Cascader {
             this.edit = edit;
             this.handler = handler;
             this.searcher = searcher;
+            this.restore = restore;
         }
 
         public ConfigurationRepository getConfigurations() {
@@ -135,6 +140,10 @@ public class Cascader {
 
         public SearcherComponent getSearcher() {
             return searcher;
+        }
+
+        public RevisionRestoreRepository getRestore() {
+            return restore;
         }
     }
 }

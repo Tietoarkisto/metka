@@ -108,7 +108,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         } else if(dataPair.getRight().getState() == RevisionState.APPROVED) {
             RevisionableInfo revInfo = revisions.getRevisionableInfo(key.getId()).getRight();
             if(!revInfo.getRemoved()) {
-                return removeLogical(key, info);
+                return removeLogical(key, info, false);
             }
         }
 
@@ -172,7 +172,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     }
 
     @Override
-    public OperationResponse removeLogical(RevisionKey key, DateTimeUserPair info) {
+    public OperationResponse removeLogical(RevisionKey key, DateTimeUserPair info, boolean isCascadeRemove) {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
@@ -181,9 +181,12 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return OperationResponse.build(RemoveResult.NOT_FOUND);
         }
 
-        RemoveResult result = allowRemoval(pair.getRight());
-        if(result != RemoveResult.ALLOW_REMOVAL) {
-            return OperationResponse.build(result);
+        RemoveResult result;
+        if (!isCascadeRemove) {
+            result = allowRemoval(pair.getRight());
+            if(result != RemoveResult.ALLOW_REMOVAL) {
+                return OperationResponse.build(result);
+            }
         }
 
         pair = revisions.getLatestRevisionForIdAndType(key.getId(), false, pair.getRight().getConfiguration().getType());
@@ -205,6 +208,12 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         }
 
         RevisionableEntity entity = em.find(RevisionableEntity.class, data.getKey().getId());
+
+        //this needs to be checked so that restore-cascade can work appropriately.
+        if (entity.getRemoved()) {
+            return OperationResponse.build(RemoveResult.ALREADY_REMOVED);
+        }
+
         entity.setRemoved(true);
         entity.setRemovalDate(info.getTime());
         entity.setRemovedBy(info.getUser());

@@ -29,16 +29,15 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
-import fi.uta.fsd.metka.model.access.enums.StatusCode;
+import fi.uta.fsd.metka.enums.OperationType;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
-import fi.uta.fsd.metka.model.data.container.ReferenceRow;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
-import fi.uta.fsd.metka.names.Fields;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
+import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRestoreRepository;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
@@ -47,6 +46,7 @@ import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metkaAmqp.Messenger;
 import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -70,8 +70,18 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
     @Autowired
     private Messenger messenger;
 
+    @Autowired
+    private ConfigurationRepository configurations;
+
+    @Autowired
+    private Cascader cascader;
+
     @Override
     public RemoveResult restore(Long id) {
+        return restore(id,null);
+    }
+
+    public RemoveResult restore(Long id, LocalDateTime dt) {
         Pair<ReturnResult, RevisionableInfo> pair = revisions.getRevisionableInfo(id);
         if(pair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             return RemoveResult.NOT_FOUND;
@@ -80,14 +90,32 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
             return RemoveResult.NOT_REMOVED;
         }
         RevisionableEntity entity = em.find(RevisionableEntity.class, id);
+
+        if (dt != null) {
+            if (!dt.equals(entity.getRemovalDate())) {
+                return RemoveResult.NOT_REMOVED;
+            }
+        } else {
+            dt = entity.getRemovalDate();
+        }
+
         entity.setRemoved(false);
         entity.setRemovedBy(null);
         entity.setRemovalDate(null);
 
-        if(entity.getType().equals(ConfigurationType.STUDY.toValue())) {
-            propagateStudyRestore(entity);
-        } else if(entity.getType().equals(ConfigurationType.STUDY_VARIABLES.toValue())) {
-            propagateStudyVariablesRestore(entity);
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(entity.getId(), false, ConfigurationType.fromValue(entity.getType()));
+        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+            return RemoveResult.NOT_FOUND;
+        }
+
+        RevisionData data = dataPair.getRight();
+
+        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
+        for(Operation operation : configPair.getRight().getCascade()) {
+            if(!(operation.getType() == OperationType.RESTORE || operation.getType() == OperationType.ALL)) {
+                continue;
+            }
+            cascader.cascade(CascadeInstruction.build(OperationType.RESTORE, DateTimeUserPair.build(dt)), data, operation.getTargets(), configPair.getRight());
         }
 
         List<Integer> nos = revisions.getAllRevisionNumbers(id);
@@ -98,59 +126,8 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
             }
         }
 
-        RevisionData data = revisions.getLatestRevisionForIdAndType(id, false, null).getRight();
-        if(data != null) {
-            messenger.sendAmqpMessage(messenger.FD_RESTORE, new RevisionPayload(data));
-        }
+        messenger.sendAmqpMessage(messenger.FD_RESTORE, new RevisionPayload(data));
 
         return RemoveResult.SUCCESS_RESTORE;
-    }
-
-    private void propagateStudyRestore(RevisionableEntity entity) {
-        Pair<ReturnResult, RevisionData> study = revisions.getLatestRevisionForIdAndType(entity.getId(), false, ConfigurationType.STUDY);
-        if(study.getLeft() != ReturnResult.REVISION_FOUND) {
-            // Should never happen unless someone screws up the database manually
-            return;
-        }
-        RevisionData data = study.getRight();
-        // WARNING: This can't separate between removals done through study removal and earlier manual removal operations
-        Pair<StatusCode, ValueDataField> variablesPair = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
-        if(variablesPair.getLeft() == StatusCode.FIELD_FOUND && variablesPair.getRight().hasValueFor(Language.DEFAULT)) {
-            // Variables found
-            Pair<ReturnResult, RevisionData> variables = revisions.getLatestRevisionForIdAndType(variablesPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
-            if(variables.getLeft() == ReturnResult.REVISION_FOUND) {
-                restore(variables.getRight().getKey().getId());
-            }
-        }
-        Pair<StatusCode, ReferenceContainerDataField> attachmentsPair = data.dataField(ReferenceContainerDataFieldCall.get(Fields.FILES));
-        if(attachmentsPair.getLeft() == StatusCode.FIELD_FOUND && !attachmentsPair.getRight().getReferences().isEmpty()) {
-            // Attachments found
-            for(ReferenceRow row : attachmentsPair.getRight().getReferences()) {
-                Pair<ReturnResult, RevisionData> attachment = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.STUDY_ATTACHMENT);
-                if(attachment.getLeft() == ReturnResult.REVISION_FOUND) {
-                    restore(attachment.getRight().getKey().getId());
-                }
-            }
-
-        }
-    }
-
-    private void propagateStudyVariablesRestore(RevisionableEntity entity) {
-        Pair<ReturnResult, RevisionData> variables = revisions.getLatestRevisionForIdAndType(entity.getId(), false, ConfigurationType.STUDY_VARIABLES);
-        if(variables.getLeft() != ReturnResult.REVISION_FOUND) {
-            // Should never happen unless someone screws up the database manually
-            return;
-        }
-        RevisionData data = variables.getRight();
-        Pair<StatusCode, ReferenceContainerDataField> variablesPair = data.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES));
-        if(variablesPair.getLeft() == StatusCode.FIELD_FOUND && !variablesPair.getRight().getReferences().isEmpty()) {
-            // Attachments found
-            for(ReferenceRow row : variablesPair.getRight().getReferences()) {
-                Pair<ReturnResult, RevisionData> variable = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.STUDY_VARIABLE);
-                if(variable.getLeft() == ReturnResult.REVISION_FOUND) {
-                    restore(variable.getRight().getKey().getId());
-                }
-            }
-        }
     }
 }
