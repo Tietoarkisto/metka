@@ -37,5 +37,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface RevisionRemoveRepository {
     OperationResponse remove(RevisionKey key, DateTimeUserPair info);
     OperationResponse removeDraft(RevisionKey key, DateTimeUserPair info);
-    OperationResponse removeLogical(RevisionKey key, DateTimeUserPair info);
+    OperationResponse removeLogical(RevisionKey key, DateTimeUserPair info, boolean isCascadeRemove);
 }

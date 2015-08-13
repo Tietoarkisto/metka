@@ -39,7 +39,7 @@ import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 class OperationCascader {
     static boolean cascade(RevisionData data, CascadeInstruction instruction, Cascader.RepositoryHolder repositories) {
         TransferData transferData = TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE);
-        // TODO: Restore, Removedraft, Removelogical
+        // TODO: Removedraft, Removelogical
         switch(instruction.getOperation()) {
             case SAVE: {
                 // Cascading save doesn't really make any sense at the moment since the user can only edit one form at a time
@@ -55,7 +55,7 @@ class OperationCascader {
                 } else if(instruction.getDraft()) {
                     result = repositories.getRemove().removeDraft(transferData.getKey(), instruction.getInfo());
                 } else {
-                    result = repositories.getRemove().removeLogical(transferData.getKey(), instruction.getInfo());
+                    result = repositories.getRemove().removeLogical(transferData.getKey(), instruction.getInfo(), true);
                 }
                 RemoveResult rr = RemoveResult.valueOf(result.getResult());
                 return rr == RemoveResult.SUCCESS_LOGICAL
@@ -74,10 +74,13 @@ class OperationCascader {
                 OperationResponse result = repositories.getEdit().edit(transferData.getKey(), instruction.getInfo()).getLeft();
                 ReturnResult rr = ReturnResult.valueOf(result.getResult());
                 return rr == ReturnResult.REVISION_FOUND || rr == ReturnResult.REVISION_CREATED;
+            } case RESTORE: {
+               RemoveResult result = repositories.getRestore().restore(transferData.getKey().getId(), instruction.getInfo().getTime());
+                return result == RemoveResult.SUCCESS_RESTORE;
             } case BEGIN_EDIT: {
                 ReturnResult rr = repositories.getHandler().beginEditing(RevisionKey.fromModelKey(transferData.getKey())).getLeft();
                 return rr == ReturnResult.REVISION_UPDATE_SUCCESSFUL;
-            } case CLAIM:{
+            } case CLAIM: {
                 ReturnResult rr = repositories.getHandler().changeHandler(RevisionKey.fromModelKey(transferData.getKey()), false).getLeft();
                 return rr == ReturnResult.REVISION_UPDATE_SUCCESSFUL;
             } case RELEASE: {
