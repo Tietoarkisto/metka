@@ -28,6 +28,7 @@
 
 package fi.uta.fsd.metka.storage.cascade;
 
+import fi.uta.fsd.metka.enums.OperationType;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
@@ -39,7 +40,6 @@ import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 class OperationCascader {
     static boolean cascade(RevisionData data, CascadeInstruction instruction, Cascader.RepositoryHolder repositories) {
         TransferData transferData = TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE);
-        // TODO: Removedraft, Removelogical
         switch(instruction.getOperation()) {
             case SAVE: {
                 // Cascading save doesn't really make any sense at the moment since the user can only edit one form at a time
@@ -49,24 +49,24 @@ class OperationCascader {
                 ReturnResult rr = ReturnResult.valueOf(result.getResult());
                 return rr == ReturnResult.OPERATION_SUCCESSFUL || rr == ReturnResult.REVISION_NOT_A_DRAFT || rr == ReturnResult.NO_CHANGES;
             } case REMOVE: {
-                OperationResponse result;
-                if(instruction.getDraft() == null) {
-                    result = repositories.getRemove().remove(transferData.getKey(), instruction.getInfo());
-                } else if(instruction.getDraft()) {
-                    result = repositories.getRemove().removeDraft(transferData.getKey(), instruction.getInfo());
-                } else {
-                    result = repositories.getRemove().removeLogical(transferData.getKey(), instruction.getInfo(), true);
-                }
-                RemoveResult rr = RemoveResult.valueOf(result.getResult());
+                //just cascading with "REMOVE"-operation should never happen
+                RemoveResult rr = RemoveResult.valueOf(repositories.getRemove().remove(transferData.getKey(), instruction.getInfo()).getResult());
                 return rr == RemoveResult.SUCCESS_LOGICAL
                         || rr == RemoveResult.ALREADY_REMOVED
                         || rr == RemoveResult.SUCCESS_REVISIONABLE
                         || rr == RemoveResult.SUCCESS_DRAFT
                         || rr == RemoveResult.NOT_DRAFT;
-            } case REMOVE_REVISIONABLE: {
+            } case REMOVE_DRAFT: {
+                RemoveResult rr = RemoveResult.valueOf(repositories.getRemove().removeDraft(transferData.getKey(), instruction.getInfo()).getResult());
+                return rr == RemoveResult.ALREADY_REMOVED || rr == RemoveResult.SUCCESS_REVISIONABLE || rr == RemoveResult.SUCCESS_DRAFT || rr == RemoveResult.NOT_DRAFT;
+            } case REMOVE_LOGICAL: {
+                RemoveResult rr = RemoveResult.valueOf(repositories.getRemove().removeLogical(transferData.getKey(), instruction.getInfo(), true).getResult());
+                return rr  == RemoveResult.ALREADY_REMOVED || rr == RemoveResult.SUCCESS_LOGICAL ;
+            }
+            case REMOVE_REVISIONABLE: {
                 // Cascade results don't matter for REMOVE_REVISIONABLE so we can just return true no matter the result
                 RevisionableInfo revInfo = repositories.getRevisions().getRevisionableInfo(transferData.getKey().getId()).getRight();
-                if(instruction.getDraft() && revInfo != null && revInfo.getApproved() == null) {
+                if(instruction.getOperation() == OperationType.REMOVE_REVISIONABLE && revInfo != null && revInfo.getApproved() == null) {
                     repositories.getRemove().removeDraft(transferData.getKey(), instruction.getInfo());
                 }
                 return true;

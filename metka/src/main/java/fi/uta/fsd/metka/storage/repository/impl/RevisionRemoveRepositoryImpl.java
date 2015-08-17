@@ -143,7 +143,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         RevisionableInfo revInfo = revisions.getRevisionableInfo(data.getKey().getId()).getRight();
 
-        OperationResponse response = validateAndCascade(data, info, true, revInfo);
+        OperationResponse response = validateAndCascade(data, info, OperationType.REMOVE_DRAFT, revInfo);
         if(!response.getResult().equals(RemoveResult.ALLOW_REMOVAL.name())) {
             return response;
         }
@@ -202,7 +202,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         RevisionData data = pair.getRight();
 
-        OperationResponse response = validateAndCascade(data, info, false, null);
+        OperationResponse response = validateAndCascade(data, info, OperationType.REMOVE_LOGICAL, null);
         if(!response.getResult().equals(RemoveResult.ALLOW_REMOVAL.name())) {
             return response;
         }
@@ -362,7 +362,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         }
     }
 
-    private OperationResponse validateAndCascade(RevisionData data, DateTimeUserPair info, Boolean draft, RevisionableInfo revInfo) {
+    private OperationResponse validateAndCascade(RevisionData data, DateTimeUserPair info, OperationType opType, RevisionableInfo revInfo) {
         Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(data.getConfiguration());
         if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             Logger.error(getClass(), "Could not find configuration for data "+data.toString());
@@ -373,8 +373,8 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         ReturnResult rr = ReturnResult.OPERATION_SUCCESSFUL;
         for(Operation operation : confPair.getRight().getRestrictions()) {
             if(!(operation.getType() == OperationType.REMOVE
-                    || operation.getType() == (draft?OperationType.REMOVE_DRAFT:OperationType.REMOVE_LOGICAL)
-                    || (draft && revInfo != null && revInfo.getApproved() == null && operation.getType() == OperationType.REMOVE_REVISIONABLE)
+                    || operation.getType() == (opType)
+                    || (opType == OperationType.REMOVE_DRAFT && revInfo != null && revInfo.getApproved() == null && operation.getType() == OperationType.REMOVE_REVISIONABLE)
                     || operation.getType() == OperationType.ALL)) {
                 continue;
             }
@@ -387,22 +387,22 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         // Do cascade
         for(Operation operation : confPair.getRight().getCascade()) {
             if(!(operation.getType() == OperationType.REMOVE
-                    || operation.getType() == (draft?OperationType.REMOVE_DRAFT:OperationType.REMOVE_LOGICAL)
+                    || operation.getType() == (opType)
                     || operation.getType() == OperationType.ALL)) {
                 continue;
             }
-            if(!cascader.cascade(CascadeInstruction.build(OperationType.REMOVE, info, draft), data, operation.getTargets(), confPair.getRight())) {
+            if(!cascader.cascade(CascadeInstruction.build(opType, info), data, operation.getTargets(), confPair.getRight())) {
                 rr = ReturnResult.CASCADE_FAILURE;
             }
         }
 
         // Do REMOVE_REVISIONABLE cascade, results don't matter
-        if(draft && revInfo != null && revInfo.getApproved() == null) {
+        if(opType == OperationType.REMOVE_DRAFT && revInfo != null && revInfo.getApproved() == null) {
             for(Operation operation : confPair.getRight().getCascade()) {
                 if(operation.getType() != OperationType.REMOVE_REVISIONABLE) {
                     continue;
                 }
-                if(!cascader.cascade(CascadeInstruction.build(OperationType.REMOVE_REVISIONABLE, info, true), data, operation.getTargets(), confPair.getRight())) {
+                if(!cascader.cascade(CascadeInstruction.build(OperationType.REMOVE_REVISIONABLE, info), data, operation.getTargets(), confPair.getRight())) {
                     rr = ReturnResult.CASCADE_FAILURE;
                 }
             }

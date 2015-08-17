@@ -36,29 +36,21 @@ import fi.uta.fsd.metka.model.general.DateTimeUserPair;
  */
 public class CascadeInstruction {
     public static CascadeInstruction build(OperationType operation, DateTimeUserPair info) throws UnsupportedOperationException {
-        return CascadeInstruction.build(operation, info, null);
+        return new CascadeInstruction(operation, info);
     }
 
-    public static CascadeInstruction build(OperationType operation, DateTimeUserPair info, Boolean draft) {
-        return new CascadeInstruction(operation, info, draft);
-    }
 
     private final OperationType operation;
-    private final Boolean draft;
     private final DateTimeUserPair info;
 
-    private CascadeInstruction(OperationType operation, DateTimeUserPair info, Boolean draft) {
+    private CascadeInstruction(OperationType operation, DateTimeUserPair info) {
         this.operation = operation;
         this.info = info;
-        this.draft = draft;
+
     }
 
     public OperationType getOperation() {
         return operation;
-    }
-
-    public Boolean getDraft() {
-        return draft;
     }
 
     public DateTimeUserPair getInfo() {
