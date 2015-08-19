@@ -195,7 +195,7 @@ public class RevisionServiceImpl implements RevisionService {
         } else if(draft) {
             result = remove.removeDraft(key, null);
         } else {
-            result = remove.removeLogical(key, null);
+            result = remove.removeLogical(key, null, false);
         }
         response.setResult(result);
 
