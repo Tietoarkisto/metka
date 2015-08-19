@@ -626,52 +626,38 @@ define(function (require) {
                     $thead.toggleClass("containerHidden", !(!options.field.hasOwnProperty('displayHeader') || options.field.displayHeader));
                 }).append($tbody))
             .append(function () {
-                if(!options.buttons) {
-                    options.buttons = [];
-                }
-                var buttons = options.buttons;
-                if (!require('./isFieldDisabled')(options, lang) && !buttons.some(function(button) {
-                        if(button.buttonId) {
-                            return button.buttonId === options.field.key+"_add";
-                        }
-                        return false;
-                    })) {
+                var buttons = (options.buttons || []);
+                if (options.field.onAdd || !require('./isFieldDisabled')(options, lang)) {
                     buttons.push({
-                        buttonId: options.field.key+"_add",
-                        createButton: function() {
-                            return {
-                                create: function() {
-                                    this
-                                        .text(MetkaJS.L10N.get('general.table.add'))
-                                        .click(function() {
-                                            (options.field.onAdd || rowDialog('ADD', 'add'))
-                                                .call(this, {
-                                                    removed: false,
-                                                    unapproved: true
-                                                }, function(transferRow) {
-                                                    var $tr = addRow($tbody, transferRow, columns);
-                                                    if(options.field.onRowChange) {
-                                                        options.field.onRowChange(options, $tr, transferRow);
-                                                    }
-                                                });
+                        create: function () {
+                            this
+                                .text(MetkaJS.L10N.get('general.table.add'))
+                                .click(function () {
+                                    (options.field.onAdd || rowDialog('ADD', 'add'))
+                                        .call(this, {
+                                            removed: false,
+                                            unapproved: true
+                                        }, function (transferRow) {
+                                            var $tr = addRow($tbody, transferRow, columns);
+                                            if (options.field.onRowChange) {
+                                                options.field.onRowChange(options, $tr, transferRow);
+                                            }
                                         });
-                                }
-                            }
+                                });
                         }
                     });
                 }
 
                 buttons = buttons.map(function (button) {
-                    var conf = button.createButton();
-                    conf.style = 'default';
-                    return conf;
+                    button.style = 'default';
+                    return button;
                 }).map(require('./button')(options));
 
                 buttons.forEach(function ($button) {
                     $button.addClass('btn-sm');
                 });
 
-                if (buttons.length && !require('./isFieldDisabled')(options, lang)) {
+                if (buttons.length) {
                     return $('<div class="panel-footer clearfix">')
                         .append($('<div class="pull-right">')
                             .append(buttons));

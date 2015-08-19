@@ -32,234 +32,279 @@ define(function(require) {
     var data = require('./data');
     var lang = 'DEFAULT';
 
-    function insertValue(fields, key, value) {
-        fields[key] = getNewField(key, 'VALUE');
-        fields[key].values.DEFAULT.current = value;
-        return fields[key];
-    }
+    function jsonParser() {
+        function getNewField(key, type) {
+            return {
+                key: key,
+                type: type,
+                values: {
+                    DEFAULT: type==='VALUE' ? getNewValue(null) : null
+                },
+                rows: {
+                    DEFAULT: type !== 'VALUE' ? [] : null
+                }
+            }
+        }
 
-    function insertContainer(fields, key) {
-        fields[key] = getNewField(key, 'CONTAINER');
-        return fields[key];
-    }
+        function insertValue(fields, key, value) {
+            fields[key] = getNewField(key, 'VALUE');
+            fields[key].values.DEFAULT.current = value;
+            return fields[key];
+        }
 
-    function insertReferenceContainer(fields, key) {
-        fields[key] = getNewField(key, 'REFERENCECONTAINER');
-        return fields[key];
-    }
+        function insertContainer(fields, key) {
+            fields[key] = getNewField(key, 'CONTAINER');
+            return fields[key];
+        }
 
-    function appendRow(field) {
-        var row = getNewRow(field.key);
-        field.rows.DEFAULT.push(row);
-        return row;
-    }
+        function insertReferenceContainer(fields, key) {
+            fields[key] = getNewField(key, 'REFERENCECONTAINER');
+            return fields[key];
+        }
 
-    function getNewField(key, type) {
+        function appendRow(field) {
+            var row = getNewRow(field.key);
+            field.rows.DEFAULT.push(row);
+            return row;
+        }
+
+        function getNewValue(value) {
+            return {
+                current: value
+            }
+        }
+
+        function getNewRow(key) {
+            return {
+                key: key,
+                fields: {}
+            }
+        }
+
         return {
-            key: key,
-            type: type,
-            values: {
-                DEFAULT: type==='VALUE' ? getNewValue(null) : null
-            },
-            rows: {
-                DEFAULT: type !== 'VALUE' ? [] : null
+            setJsonProperty: function(json, fields, configuration) {
+                if(!fields || !configuration || !json || (configuration.property && !json[configuration.property])) {
+                    return;
+                }
+                var container = configuration.container ? insertContainer(fields, configuration.container) : null;
+                Object.keys(configuration.property ? json[configuration.property] : json).map(function(key) {
+                    var row = container ? appendRow(container) : null;
+
+                    var value = configuration.property ? json[configuration.property][key] : json[key];
+                    if(row && configuration.propertyKey) {
+                        insertValue(row.fields, configuration.propertyKey, key);
+                    }
+                    if(row && configuration.valueMapping) {
+                        if(typeof configuration.valueMapping === "string") {
+                            insertValue(row.fields, configuration.valueMapping, value);
+                        } else if(typeof configuration.valueMapping === "function") {
+                            configuration.valueMapping(value, row.fields);
+                        }
+                    } else if(!configuration.valueMapping && configuration.mapping) {
+                        if(row) {
+                            Object.keys(configuration.mapping).map(function(property) {
+                                if(typeof configuration.mapping[property] === "string") {
+                                    insertValue(row.fields, configuration.mapping[property], value[property]);
+                                } else if(typeof configuration.mapping[property] === "function") {
+                                    configuration.mapping[property](value, row.fields);
+                                }
+                            });
+                        } else if(configuration.mapping[key]) {
+                            if(typeof configuration.mapping[key] === "string") {
+                                insertValue(fields, configuration.mapping[key], value);
+                            } else if(typeof configuration.mapping[key] === "function") {
+                                configuration.mapping[key](json, fields);
+                            }
+                        }
+                    }
+                });
             }
         }
     }
 
-    function getNewValue(value) {
-        return {
-            current: value
-        }
-    }
+    var parser = jsonParser();
 
-    function getNewRow(key) {
-        return {
-            key: key,
-            fields: {}
-        }
-    }
+    function setSelectionLists(json, fields) {
+        var conf = {
+            property: "selectionLists",
+            container: "selectionLists",
+            mapping: {
+                key: "selectionLists_key",
+                type: "selectionLists_type",
+                freeTextKey: "selectionLists_freeTextKey",
+                sublistKey: "selectionLists_sublistKey",
+                includeEmpty: "selectionLists_includeEmpty",
+                freeText: function(json, fields) {
+                    var conf = {
+                        property: "freeText",
+                        container: "selectionLists_freeText_values",
+                        valueMapping: "selectionLists_freeText"
+                    };
 
-    function setSelectionLists(configuration, data) {
-        if(!configuration.selectionLists) {
-            return;
-        }
-        var selectionLists = insertContainer(data, "selectionLists");
-        Object.keys(configuration.selectionLists).map(function(key) {
-            var list = configuration.selectionLists[key];
-            var row = appendRow(selectionLists);
-            insertValue(row.fields, "list_key", list.key);
-            insertValue(row.fields, "list_type", list.type);
-            //insertValue(row.fields, "list_default", list.default); // Default value doesn't seem to be implemented
-            insertValue(row.fields, "list_freeTextKey", list.freeTextKey);
-            insertValue(row.fields, "list_sublistKey", list.sublistKey);
-            insertValue(row.fields, "list_includeEmpty", list.includeEmpty);
-            if(list.freeText) setFreeTextValues(list, row);
-            if(list.options) setOptions(list, row);
-        });
-    }
-
-    function setFreeTextValues(selectionList, row) {
-        var values = insertContainer(row.fields, "list_freeText_values");
-        Object.keys(selectionList.freeText).forEach(function(key) {
-            var value = selectionList.freeText[key];
-            var row = appendRow(values);
-            insertValue(row.fields, "list_freeText", value);
-        });
-    }
-
-    function setOptions(selectionList, row) {
-        var options = insertContainer(row.fields, "list_options");
-        Object.keys(selectionList.options).forEach(function(key) {
-            var option = selectionList.options[key];
-            var row = appendRow(options);
-            insertValue(row.fields, "list_option_value", option.value);
-            if(MetkaJS.L10N.hasTranslation(option, 'title')) {
-                insertValue(row.fields, "list_option_title_default", option['&title'].default);
-                insertValue(row.fields, "list_option_title_en", option['&title'].en);
-                insertValue(row.fields, "list_option_title_sv", option['&title'].sv);
-            } else {
-                insertValue(row.fields, "list_option_title_default", option.title);
+                    setJsonProperty(json, fields, conf);
+                },
+                options: setOptions
             }
-        });
+        };
+
+        parser.setJsonProperty(json, fields, conf);
     }
 
-    function setReferences(configuration, data) {
-        if(!configuration.references) {
-            return;
-        }
-        var references = insertContainer(data, "references");
-        Object.keys(configuration.references).map(function(key) {
-            var reference = configuration.references[key];
-            var row = appendRow(references);
-            insertValue(row.fields, "reference_key", reference.key);
-            insertValue(row.fields, "reference_type", reference.type);
-            insertValue(row.fields, "reference_target", reference.target);
-            insertValue(row.fields, "reference_valuePath", reference.valuePath);
-            insertValue(row.fields, "reference_titlePath", reference.titlePath);
-            insertValue(row.fields, "reference_approveOnly", reference.approvedOnly);
-            insertValue(row.fields, "reference_ignoreRemoved", reference.ignoreRemoved);
-        });
-    }
-
-    function setFields(configuration, data) {
-        if(!configuration.fields) {
-            return;
-        }
-        var fields = insertContainer(data, "fields");
-        Object.keys(configuration.fields).map(function(key) {
-            var field = configuration.fields[key];
-            var row = appendRow(fields);
-            insertValue(row.fields, "field_key", field.key);
-            insertValue(row.fields, "field_type", field.type);
-            insertValue(row.fields, "field_translatable", field.translatable);
-            insertValue(row.fields, "field_immutable", field.immutable);
-            insertValue(row.fields, "field_selectionList", field.selectionList);
-            insertValue(row.fields, "field_subfield", field.subfield);
-            insertValue(row.fields, "field_reference", field.reference);
-            insertValue(row.fields, "field_editable", field.editable);
-            insertValue(row.fields, "field_writable", field.writable);
-            insertValue(row.fields, "field_indexed", field.indexed);
-            insertValue(row.fields, "field_generalSearch", field.generalSearch);
-            insertValue(row.fields, "field_exact", field.exact);
-            insertValue(row.fields, "field_bidirectional", field.bidirectional);
-            insertValue(row.fields, "field_indexName", field.indexName);
-            insertValue(row.fields, "field_fixedOrder", field.fixedOrder);
-
-            if(field.subfields) setFieldSubfields(field, row);
-            if(field.removePermissions) setFieldRemovePermissions(field, row);
-        });
-    }
-
-    function setFieldSubfields(field, row) {
-        var subfields = insertContainer(row.fields, "field_subfields");
-        Object.keys(field.subfields).forEach(function(key) {
-            var subfield = field.subfields[key];
-            var row = appendRow(subfields);
-            insertValue(row.fields, "field_subfield_key", subfield);
-        });
-    }
-
-    function setFieldRemovePermissions(field, row) {
-        var permissions = insertContainer(row.fields, "field_removePermissions");
-        Object.keys(field.removePermissions).forEach(function(key) {
-            var permission = field.removePermissions[key];
-            var row = appendRow(permissions);
-            insertValue(row.fields, "field_removePermissions_permission", permission);
-        });
-    }
-
-    function setNamedTargets(configuration, data) {
-        if(!configuration.namedTargets) {
-            return;
-        }
-        var namedTargets = insertContainer(data, "namedTargets");
-        Object.keys(configuration.namedTargets).map(function(key) {
-            var target = configuration.namedTargets[key];
-            var row = appendRow(namedTargets);
-            insertValue(row.fields, "namedTarget_key", key);
-            setTargetValues(row.fields, target);
-        });
-    }
-
-    function setRestrictions(configuration, data) {
-        if(!configuration.restrictions) {
-            return;
-        }
-        var restrictions = insertContainer(data, "restrictions");
-        Object.keys(configuration.restrictions).forEach(function(key) {
-            var operation = configuration.restrictions[key];
-            var row = appendRow(restrictions);
-            insertValue(row.fields, "operation_type", operation.type);
-            if(operation.targets && operation.targets.length > 0) setTargets(operation.targets, row.fields);
-        });
-    }
-
-    function setCascade(configuration, data) {
-        if(!configuration.cascade) {
-            return;
-        }
-        var cascade = insertContainer(data, "cascade");
-        Object.keys(configuration.cascade).forEach(function(key) {
-            var operation = configuration.cascade[key];
-            var row = appendRow(cascade);
-            insertValue(row.fields, "operation_type", operation.type);
-            if(operation.targets && operation.targets.length > 0) setTargets(operation.targets, row.fields);
-        });
-    }
-
-    function setTargetValues(fields, target) {
-        insertValue(fields, "target_type", target.type);
-        insertValue(fields, "target_content", target.content);
-        if(target.targets && target.targets.length > 0) setTargets(target.targets, fields);
-        if(target.checks && target.checks.length > 0) setChecks(target.checks, fields);
-    }
-
-    function setCheckValues(fields, check) {
-        if(check.condition) {
-            insertValue(fields, "target_check_condition_type", check.condition.type);
-            if(check.condition.target) {
-                insertValue(fields, "target_check_condition_target_type", check.condition.target.type);
-                insertValue(fields, "target_check_condition_target_content", check.condition.target.content);
+    function setOptions(json, fields) {
+        var conf = {
+            property: "options",
+            container: "selectionLists_options",
+            valueMapping: function(json, fields) {
+                insertValue(fields, "selectionLists_option_value", json.value);
+                if(MetkaJS.L10N.hasTranslation(json, 'title')) {
+                    insertValue(fields, "selectionLists_option_title_default", json['&title'].default);
+                    insertValue(fields, "selectionLists_option_title_en", json['&title'].en);
+                    insertValue(fields, "selectionLists_option_title_sv", json['&title'].sv);
+                } else {
+                    insertValue(fields, "selectionLists_option_title_default", json.title);
+                }
             }
-        }
-        if(check.restrictors && check.restrictors.length > 0) setTargets(check.restrictors, fields);
+        };
+
+        parser.setJsonProperty(json, fields, conf);
     }
 
-    function setTargets(list, fields) {
-        var targets = insertContainer(fields, "targets");
-        list.forEach(function(target) {
-            var row = appendRow(targets);
-            setTargetValues(row.fields, target);
-        });
+    function setReferences(json, fields) {
+        var conf = {
+            property: "references",
+            container: "references",
+            mapping: {
+                key: "reference_key",
+                type: "reference_type",
+                target: "reference_target",
+                valuePath: "reference_valuePath",
+                titlePath: "reference_titlePath",
+                approveOnly: "reference_approveOnly",
+                ignoreRemoved: "reference_ignoreRemoved"
+            }
+        };
+
+        parser.setJsonProperty(json, fields, conf);
     }
 
-    function setChecks(list, fields) {
-        var checks = insertContainer(fields, "checks");
-        list.forEach(function(check) {
-            var row = appendRow(checks);
-            setCheckValues(row.fields, check);
-        });
+    function setFields(json, fields) {
+        var conf = {
+            property: "fields",
+            container: "fields",
+            mapping: {
+                key: "field_key",
+                type: "field_type",
+                translatable: "field_translatable",
+                immutable: "field_immutable",
+                selectionList: "field_selectionList",
+                subfield: "field_subfield",
+                reference: "field_reference",
+                editable: "field_editable",
+                writable: "field_writable",
+                indexed: "field_indexed",
+                generalSearch: "field_generalSearch",
+                exact: "field_exact",
+                bidirectional: "field_bidirectional",
+                indexName: "field_indexName",
+                fixedOrder: "field_fixedOrder",
+                subfields: function(json, fields) {
+                    var conf = {
+                        property: "subfields",
+                        container: "field_subfields",
+                        valueMapping: "field_subfield_key"
+                    };
+
+                    setJsonProperty(json, fields, conf);
+                },
+                removePermissions: function(json, fields) {
+                    var conf = {
+                        property: "removePermissions",
+                        container: "field_removePermissions",
+                        valueMapping: "field_removePermissions_permission"
+                    };
+
+                    setJsonProperty(json, fields, conf);
+                }
+            }
+        };
+
+        parser.setJsonProperty(json, fields, conf);
+    }
+
+    function setNamedTargets(json, fields) {
+        var conf = {
+            property: "namedTargets",
+            container: "namedTargets",
+            propertyKey: "namedTarget_key",
+            mapping: {
+                type: "target_type",
+                content: "target_content",
+                targets: setTargets,
+                checks: setChecks
+            }
+        };
+
+        parser.setJsonProperty(json, fields, conf);
+    }
+
+    function setRestrictions(json, fields) {
+        var conf = {
+            property: "restrictions",
+            container: "restrictions",
+            mapping: {
+                type: "operation_type",
+                targets: setTargets
+            }
+        };
+
+        parser.setJsonProperty(json, fields, conf);
+    }
+
+    function setCascade(json, fields) {
+        var conf = {
+            property: "cascade",
+            container: "cascade",
+            mapping: {
+                type: "operation_type",
+                targets: setTargets
+            }
+        };
+
+        parser.setJsonProperty(json, fields, conf);
+    }
+
+    function setTargets(json, fields) {
+        var conf = {
+            property: "targets",
+            container: "targets",
+            mapping: {
+                type: "target_type",
+                content: "target_content",
+                targets: setTargets,
+                checks: setChecks
+            }
+        };
+
+        parser.setJsonProperty(json, fields, conf);
+    }
+
+    function setChecks(json, fields) {
+        var conf = {
+            property: "checks",
+            container: "checks",
+            mapping: {
+                condition: function(json, fields) {
+                    insertValue(fields, "target_check_condition_type", json.condition.type);
+                    if(json.condition.target) {
+                        insertValue(fields, "target_check_condition_target_type", json.condition.target.type);
+                        insertValue(fields, "target_check_condition_target_content", json.condition.target.content);
+                    }
+                },
+                restrictions: setTargets
+            }
+        };
+
+        parser.setJsonProperty(json, fields, conf);
     }
 
 
@@ -302,15 +347,15 @@ define(function(require) {
         }
         selectionLists.rows.DEFAULT.map(function(row) {
             var list = {};
-            ret[getValue(row.fields, "list_key")] = list;
-            list.key = getValue(row.fields, "list_key");
-            list.type = getValue(row.fields, "list_type");
-            //list.default = getValue(row.fields, "list_default");
-            list.freeTextKey = getValue(row.fields, "list_freeTextKey");
-            list.sublistKey = getValue(row.fields, "list_sublistKey");
-            list.includeEmpty = getValue(row.fields, "list_includeEmpty");
-            list.freeText = formListFreeTextValues(getContainer(row.fields, "list_freeText_values"));
-            list.options = formListOptions(getContainer(row.fields, "list_options"));
+            ret[getValue(row.fields, "selectionLists_key")] = list;
+            list.key = getValue(row.fields, "selectionLists_key");
+            list.type = getValue(row.fields, "selectionLists_type");
+            //list.default = getValue(row.fields, "selectionLists_default");
+            list.freeTextKey = getValue(row.fields, "selectionLists_freeTextKey");
+            list.sublistKey = getValue(row.fields, "selectionLists_sublistKey");
+            list.includeEmpty = getValue(row.fields, "selectionLists_includeEmpty");
+            list.freeText = formListFreeTextValues(getContainer(row.fields, "selectionLists_freeText_values"));
+            list.options = formListOptions(getContainer(row.fields, "selectionLists_options"));
         });
 
         return ret;
@@ -323,7 +368,7 @@ define(function(require) {
         }
 
         values.rows.DEFAULT.forEach(function(row) {
-            var value = getValue(row.fields, "list_freeText");
+            var value = getValue(row.fields, "selectionLists_freeText");
             if(value) {
                 ret.push(value);
             }
@@ -340,11 +385,11 @@ define(function(require) {
 
         options.rows.DEFAULT.forEach(function(row) {
             var option = {};
-            option.value = getValue(row.fields, "list_option_value");
+            option.value = getValue(row.fields, "selectionLists_option_value");
             var title = {};
-            title.default = getValue(row.fields, "list_option_title_default");
-            title.en = getValue(row.fields, "list_option_title_en");
-            title.sv = getValue(row.fields, "list_option_title_sv");
+            title.default = getValue(row.fields, "selectionLists_option_title_default");
+            title.en = getValue(row.fields, "selectionLists_option_title_en");
+            title.sv = getValue(row.fields, "selectionLists_option_title_sv");
             option['&title'] = title;
             ret.push(option);
         });
@@ -523,22 +568,91 @@ define(function(require) {
         return check;
     }
 
-    return {
-        toEditor: function(configuration, options) {
-            var data = {};
-            if(configuration.key) {
-                insertValue(data, "key_type", configuration.key.type);
-                insertValue(data, "key_version", configuration.key.version);
+
+    // Generalised read of json
+    /*function readJsonToData(json, options) {
+        var fields = {};
+        Object.keys(json).map(function(property) {
+            var value = json[property];
+            readJsonPropertyToData(fields, value, property);
+        });
+    }
+
+    function readJsonPropertyToData(fields, value, property) {
+        if(typeof value === 'object') {
+            if(Array.isArray(value)) {
+                readJsonArrayToData(fields, value, property);
+            } else {
+                readJsonObjectToData(fields, value, property);
             }
-            insertValue(data, "displayId", configuration.displayId);
-            setSelectionLists(configuration, data);
-            setReferences(configuration, data);
-            setFields(configuration, data);
-            setNamedTargets(configuration, data);
-            setRestrictions(configuration, data);
-            setCascade(configuration, data);
+        } else {
+            insertValue(fields, property, value);
+        }
+    }
+
+    function readJsonObjectToData(fields, object, property) {
+        if(!object) {
+            return;
+        }
+        var containerKey = property;
+        var container = insertContainer(fields, containerKey);
+        Object.keys(object).map(function(property) {
+            var propertyKey = containerKey+"_"+property;
+            var value = object[property];
+            var row = appendRow(container);
+            readJsonPropertyToData(row.fields, value, propertyKey);
+        });
+    }
+
+    function readJsonArrayToData(fields, array, property) {
+        var containerKey = property+"_values";
+        var valueKey = containerKey+"_value";
+        var container = insertContainer(fields, containerKey);
+        array.forEach(function(value) {
+            var row = appendRow(container);
+            readJsonPropertyToData(row.fields, valueKey, value);
+        });
+    }*/
+
+    return {
+        toEditor: function(json, options) {
+            //readJsonToData(json, options); // The generalisation is not really suitable for this as is, some other way needs to be deviced
+            var conf = {
+                property: null,
+                container: null,
+                mapping: {
+                    key: function(json, fields) {
+                        insertValue(fields, "key_type", json.key.type);
+                        insertValue(fields, "key_version", json.key.version);
+                    },
+                    displayId: "displayId",
+                    selectionLists: setSelectionLists,
+                    references: setReferences,
+                    fields: setFields,
+                    namedTargets: setNamedTargets,
+                    restrictions: setRestrictions,
+                    cascade: setCascade
+                }
+            };
+
+            var fields = {};
+            setJsonProperty(json, fields, conf);
+
+            /*
+            if(json.key) {
+                insertValue(fields, "key_type", json.key.type);
+                insertValue(fields, "key_version", json.key.version);
+            }
+            insertValue(fields, "displayId", json.displayId);
+            setSelectionLists(json, fields);
+            setReferences(json, fields);
+            setFields(json, fields);
+            setNamedTargets(json, fields);
+            setRestrictions(json, fields);
+            setCascade(json, fields);*/
+
             options.data = {
-                fields: data
+                fields: fields
             }
         },
         toConfiguration: function(options) {

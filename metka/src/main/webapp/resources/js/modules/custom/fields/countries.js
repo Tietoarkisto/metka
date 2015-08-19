@@ -65,7 +65,7 @@ define(function (require) {
 
         return {
             preCreate: function (options) {
-                var $elem = this;
+                /*var $elem = this;
                 if(!options.buttons) {
                     options.buttons = [];
                 }
@@ -90,7 +90,7 @@ define(function (require) {
                         }
 
                     })
-                }
+                }*/
             },
             postCreate: function(options) {
                 $container = $(this).children();

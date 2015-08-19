@@ -60,8 +60,8 @@ define(function(require) {
                     title: "Mapitus"
                 }]
             },
-            list_type_list: {
-                key: "list_type_list",
+            selectionLists_type_list: {
+                key: "selectionLists_type_list",
                 type: "LITERAL",
                 options: [{
                     value: "VALUE"
@@ -200,8 +200,8 @@ define(function(require) {
                 type: "LITERAL",
                 options: []
             },
-            list_reference_list: { // This is built and updated dynamically
-                key: "list_reference_list",
+            selectionLists_reference_list: { // This is built and updated dynamically
+                key: "selectionLists_reference_list",
                 includeEmpty: true,
                 type: "LITERAL",
                 options: []
@@ -254,98 +254,98 @@ define(function(require) {
                 type: "CONTAINER",
                 fixedOrder: true,
                 subfields: [
-                    "list_key",
-                    "list_type",
-                    "list_default",
-                    "list_includeEmpty",
-                    "list_options",
-                    "list_freeText_values",
-                    "list_freeTextKey",
-                    "list_sublistKey",
-                    "list_reference"
+                    "selectionLists_key",
+                    "selectionLists_type",
+                    //"selectionLists_default", // Default seems not to be implemented
+                    "selectionLists_includeEmpty",
+                    "selectionLists_options",
+                    "selectionLists_freeText_values",
+                    "selectionLists_freeTextKey",
+                    "selectionLists_sublistKey",
+                    "selectionLists_reference"
                 ]
             },
-            list_key: {
-                key: "list_key",
+            selectionLists_key: {
+                key: "selectionLists_key",
                 type: "STRING",
                 subfield: true
             },
-            list_type: {
-                key: "list_type",
+            selectionLists_type: {
+                key: "selectionLists_type",
                 type: "SELECTION",
-                selectionList: "list_type_list",
+                selectionList: "selectionLists_type_list",
                 subfield: true
             },
-            list_default: {
-                key: "list_default",
+            selectionLists_default: {
+                key: "selectionLists_default",
                 type: "STRING",
                 subfield: true
             },
-            list_includeEmpty: {
-                key: "list_includeEmpty",
+            selectionLists_includeEmpty: {
+                key: "selectionLists_includeEmpty",
                 type: "BOOLEAN",
                 subfield: true
             },
-            list_freeText_values: {
-                key: "list_freeText_values",
+            selectionLists_freeText_values: {
+                key: "selectionLists_freeText_values",
                 type: "CONTAINER",
                 fixedOrder: true,
                 subfields: [
-                    "list_freeText"
+                    "selectionLists_freeText"
                 ],
                 subfield: true
             },
-            list_freeText: {
-                key: "list_freeText",
+            selectionLists_freeText: {
+                key: "selectionLists_freeText",
                 type: "STRING",
                 subfield: true
             },
-            list_freeTextKey: {
-                key: "list_freeTextKey",
+            selectionLists_freeTextKey: {
+                key: "selectionLists_freeTextKey",
                 type: "SELECTION",
                 selectionList: "freeTextKey_list",
                 subfield: true
             },
-            list_sublistKey: {
-                key: "list_sublistKey",
+            selectionLists_sublistKey: {
+                key: "selectionLists_sublistKey",
                 type: "SELECTION",
                 selectionList: "sublistKey_list",
                 subfield: true
             },
-            list_reference: {
-                key: "list_reference",
+            selectionLists_reference: {
+                key: "selectionLists_reference",
                 type: "SELECTION",
-                selectionList: "list_reference_list",
+                selectionList: "selectionLists_reference_list",
                 subfield: true
             },
-            list_options: {
-                key: "list_options",
+            selectionLists_options: {
+                key: "selectionLists_options",
                 type: "CONTAINER",
                 subfield: true,
                 subfields: [
-                    "list_option_value",
-                    "list_option_title_default",
-                    "list_option_title_en",
-                    "list_option_title_sv"
+                    "selectionLists_option_value",
+                    "selectionLists_option_title_default",
+                    "selectionLists_option_title_en",
+                    "selectionLists_option_title_sv"
                 ]
             },
-            list_option_value: {
-                key: "list_option_value",
+            selectionLists_option_value: {
+                key: "selectionLists_option_value",
                 type: "STRING",
                 subfield: true
             },
-            list_option_title_default: {
-                key: "list_option_title_default",
+            selectionLists_option_title_default: {
+                key: "selectionLists_option_title_default",
                 type: "STRING",
                 subfield: true
             },
-            list_option_title_en: {
-                key: "list_option_title_en",
+            selectionLists_option_title_en: {
+                key: "selectionLists_option_title_en",
                 type: "STRING",
                 subfield: true
             },
-            list_option_title_sv: {
-                key: "list_option_title_sv",
+            selectionLists_option_title_sv: {
+                key: "selectionLists_option_title_sv",
                 type: "STRING",
                 subfield: true
             },
@@ -596,6 +596,7 @@ define(function(require) {
             namedTargets: {
                 key: "namedTargets",
                 type: "CONTAINER",
+                fixedOrder: true,
                 subfields: [
                     "namedTarget_key",
                     "target_type",

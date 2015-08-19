@@ -30,46 +30,46 @@ define(function(require) {
     'use strict';
 
     var fieldTitles = {
-        list_key: {
+        selectionLists_key: {
             title: "Avain"
         },
-        list_type: {
+        selectionLists_type: {
             title: "Tyyppi"
         },
-        list_default: {
+        selectionLists_default: {
             title: "Vakioarvo"
         },
-        list_includeEmpty: {
+        selectionLists_includeEmpty: {
             title: "Lisää tyhjä valinta"
         },
-        list_freeText_values: {
+        selectionLists_freeText_values: {
             title: "Vapaatekstivalinnat"
         },
-        list_freeText: {
+        selectionLists_freeText: {
             title: "Vapaatekstiarvo"
         },
-        list_freeTextKey: {
+        selectionLists_freeTextKey: {
             title: "Vapaatekstikenttä"
         },
-        list_sublistKey: {
+        selectionLists_sublistKey: {
             title: "Alilistan avain"
         },
-        list_reference: {
+        selectionLists_reference: {
             title: "Viittaus"
         },
-        list_options: {
+        selectionLists_options: {
             title: "Arvot"
         },
-        list_option_value: {
+        selectionLists_option_value: {
             title: "Arvo"
         },
-        list_option_title_default: {
+        selectionLists_option_title_default: {
             title: "Teksti, Suomi"
         },
-        list_option_title_en: {
+        selectionLists_option_title_en: {
             title: "Teksti, Englanti"
         },
-        list_option_title_sv: {
+        selectionLists_option_title_sv: {
             title: "Teksti, Ruotsi"
         },
 
@@ -329,30 +329,30 @@ define(function(require) {
                         field: {
                             key: "selectionLists",
                             columnFields: [
-                                "list_key",
-                                "list_type"
+                                "selectionLists_key",
+                                "selectionLists_type"
                             ]
                         },
                         subfieldConfiguration: {
-                            list_freeText_values: {
+                            selectionLists_freeText_values: {
                                 field: {
                                     columnFields: [
-                                        "list_freeText"
+                                        "selectionLists_freeText"
                                     ]
                                 }
                             },
-                            list_freeTextKey: {
+                            selectionLists_freeTextKey: {
                                 preCreate: function(options) {
                                     function update() {
-                                        var amnt = data(options)("list_freeText_values").validRows(lang);
+                                        var amnt = data(options)("selectionLists_freeText_values").validRows(lang);
                                         $elem.toggle(amnt > 0);
                                         if(amnt < 1) {
-                                            empty(options, 'list_freeTextKey');
+                                            empty(options, 'selectionLists_freeTextKey');
                                         }
                                     }
                                     var $elem = this;
-
-                                    onChange(options, update, "list_freeText_values");
+                                    update();
+                                    onChange(options, update, "selectionLists_freeText_values");
 
                                     var list = [];
                                     var fields = require('./root')(options).data.fields.fields;
@@ -369,19 +369,19 @@ define(function(require) {
                                     options.dataConf.selectionLists.freeTextKey_list.options = list;
                                 }
                             },
-                            list_sublistKey: {
+                            selectionLists_sublistKey: {
                                 preCreate: function(options) {
                                     function update(value) {
                                         $elem.toggle(value && value === 'SUBLIST');
                                         if(value && value !== 'SUBLIST') {
-                                            empty(options, 'list_sublistKey');
+                                            empty(options, 'selectionLists_sublistKey');
                                         }
                                     }
                                     var $elem = this;
 
-                                    update(data(options)("list_type").getByLang("DEFAULT"));
+                                    update(data(options)("selectionLists_type").getByLang("DEFAULT"));
 
-                                    onChange(options, update, "list_type");
+                                    onChange(options, update, "selectionLists_type");
 
                                     var list = [];
                                     var lists = require('./root')(options).data.fields.selectionLists;
@@ -389,8 +389,8 @@ define(function(require) {
                                         return;
                                     }
                                     lists.rows.DEFAULT.forEach(function(row) {
-                                        var key = getValue(row.fields, "list_key");
-                                        if(key != getValue(options.data.fields, "list_key")) {
+                                        var key = getValue(row.fields, "selectionLists_key");
+                                        if(key != getValue(options.data.fields, "selectionLists_key")) {
                                             list.push({value: key});
                                         }
                                     });
@@ -398,19 +398,19 @@ define(function(require) {
                                     options.dataConf.selectionLists.sublistKey_list.options = list;
                                 }
                             },
-                            list_reference: {
+                            selectionLists_reference: {
                                 preCreate: function(options) {
                                     function update(value) {
                                         $elem.toggle(value && value === 'REFERENCE');
                                         if(value && value !== 'REFERENCE') {
-                                            empty(options, 'list_sublistKey');
+                                            empty(options, 'selectionLists_sublistKey');
                                         }
                                     }
                                     var $elem = this;
 
-                                    update(data(options)("list_type").getByLang("DEFAULT"));
+                                    update(data(options)("selectionLists_type").getByLang("DEFAULT"));
 
-                                    onChange(options, update, "list_type");
+                                    onChange(options, update, "selectionLists_type");
 
                                     var list = [];
                                     var references = require('./root')(options).data.fields.references;
@@ -421,14 +421,14 @@ define(function(require) {
                                         list.push({value: getValue(row.fields, "reference_key")});
                                     });
 
-                                    options.dataConf.selectionLists.list_reference_list.options = list;
+                                    options.dataConf.selectionLists.selectionLists_reference_list.options = list;
                                 }
                             },
-                            list_options: {
+                            selectionLists_options: {
                                 field: {
                                     columnFields: [
-                                        "list_option_value",
-                                        "list_option_title_default"
+                                        "selectionLists_option_value",
+                                        "selectionLists_option_title_default"
                                     ]
                                 },
                                 preCreate: function(options) {
@@ -441,9 +441,9 @@ define(function(require) {
                                     }
                                     var $elem = this;
 
-                                    update(data(options)("list_type").getByLang("DEFAULT"));
+                                    update(data(options)("selectionLists_type").getByLang("DEFAULT"));
 
-                                    onChange(options, update, "list_type")
+                                    onChange(options, update, "selectionLists_type")
                                 }
                             }
                         }
@@ -481,7 +481,6 @@ define(function(require) {
                                                     type: "GET",
                                                     async: false,
                                                     success: function (response) {
-                                                        var list = [];
                                                         var types = {};
                                                         response.map(function(entry) {
                                                             types[entry.title.split(".")[0]] = null;
@@ -498,7 +497,6 @@ define(function(require) {
                                                     type: "GET",
                                                     async: false,
                                                     success: function (response) {
-                                                        var list = [];
                                                         response.map(function(entry) {
                                                             list.push({value: entry.title});
                                                         });
@@ -647,7 +645,7 @@ define(function(require) {
                                         return;
                                     }
                                     lists.rows.DEFAULT.forEach(function(row) {
-                                        list.push({value: getValue(row.fields, "list_key")});
+                                        list.push({value: getValue(row.fields, "selectionLists_key")});
                                     });
 
                                     options.dataConf.selectionLists.field_selectionList_list.options = list;
@@ -734,7 +732,9 @@ define(function(require) {
                             field: {
                                 key: "namedTargets",
                                 columnFields: [
-                                    "namedTarget_key"
+                                    "namedTarget_key",
+                                    "target_type",
+                                    "target_content"
                                 ]
                             }
                         }]
@@ -801,37 +801,37 @@ define(function(require) {
                 }
             },
 
-            list_key: {
+            selectionLists_key: {
                 horizontal: true
             },
-            list_type: {
+            selectionLists_type: {
                 horizontal: true
             },
-            list_default: {
+            selectionLists_default: {
                 horizontal: true
             },
-            list_includeEmpty: {
+            selectionLists_includeEmpty: {
                 horizontal: true
             },
-            list_freeTextKey: {
+            selectionLists_freeTextKey: {
                 horizontal: true
             },
-            list_sublistKey: {
+            selectionLists_sublistKey: {
                 horizontal: true
             },
-            list_reference: {
+            selectionLists_reference: {
                 horizontal: true
             },
-            list_option_value: {
+            selectionLists_option_value: {
                 horizontal: true
             },
-            list_option_title_default: {
+            selectionLists_option_title_default: {
                 horizontal: true
             },
-            list_option_title_en: {
+            selectionLists_option_title_en: {
                 horizontal: true
             },
-            list_option_title_sv: {
+            selectionLists_option_title_sv: {
                 horizontal: true
             },
             reference_key: {
