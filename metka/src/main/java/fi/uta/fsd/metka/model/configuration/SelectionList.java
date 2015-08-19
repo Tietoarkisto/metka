@@ -41,7 +41,7 @@ import java.util.List;
 @JsonIgnoreProperties("_comment")
 public class SelectionList {
     private final String key;
-    @JsonProperty("default") private String def = "0";
+    @JsonProperty("default") private String def = null;
     private final List<Option> options = new ArrayList<>();
     private SelectionListType type;
     private String reference;

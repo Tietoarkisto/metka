@@ -32,7 +32,7 @@ define(function (require) {
     return function (options) {
         return (require('./utils/getPropertyNS')(options, 'dataConf.fields', options.field.key, 'subfields') || []).some(function (field) {
             var conf = options.dataConf.fields[field];
-            return conf.translatable;
+            return !!conf && !!conf.translatable;
         });
     };
 });

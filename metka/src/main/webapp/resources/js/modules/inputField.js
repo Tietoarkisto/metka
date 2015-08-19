@@ -118,7 +118,7 @@ define(function (require) {
                     return 'textarea';
                 }
 
-                // STRING, INTEGER, CONCAT
+                // STRING, INTEGER, ...
 
                 elemOptions.type = 'text';
 
@@ -187,13 +187,6 @@ define(function (require) {
                                 $input.val(require('./selectInputOptionText')(option));
                             })(options.data.fields, reference);
                         });
-                    } else if(type === 'CONCAT') {
-
-                        options.$events.on(changeTriggerKey, function() {
-                            $input.val(options.fieldOptions.concatenate.map(function (key) {
-                                return require('./data')(options)(key).getByLang(lang);
-                            }).join(''));
-                        });
                     } else {
                         options.$events.on(changeTriggerKey, function() {
                             $input.val(require('./data')(options).getByLang(lang) || '');
@@ -203,7 +196,6 @@ define(function (require) {
                 }
             }
         }
-
 
         return this;
     };

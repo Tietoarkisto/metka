@@ -45,6 +45,8 @@ define(function (require) {
                 options.fieldTitles = (parentOptions.fieldTitles || {});
                 options.dialogTitles = (parentOptions.dialogTitles || {});
                 options.ignoreTranslate = parentOptions.ignoreTranslate;
+                options.subfieldConfiguration = (options.subfieldConfiguration || {}); // Make sure there's something
+                options.subfieldConfiguration = (parentOptions.subfieldConfiguration ? $.extend(true, parentOptions.subfieldConfiguration, options.subfieldConfiguration) : options.subfieldConfiguration);
 
                 return childConstructor.call(this, options);
             };

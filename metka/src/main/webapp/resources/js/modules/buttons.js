@@ -310,6 +310,9 @@ define(function (require) {
         },
         YES: function (options) {
             options.title = MetkaJS.L10N.get('general.buttons.yes');
+        },
+        OK: function(options) {
+            options.title = MetkaJS.L10N.get('general.buttons.ok');
         }
     };
 });

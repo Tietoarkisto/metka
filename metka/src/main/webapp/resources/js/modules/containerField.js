@@ -431,6 +431,11 @@ define(function (require) {
                 containerHeader.redraw();
                 return $tr;
             }
+
+            options.$events.trigger('data-changed-{key}-{lang}'.supplant({
+                key: transferRow.key,
+                lang: lang
+            }));
         }
 
         function addRowFromDataObject($container, data, columnList) {
@@ -476,10 +481,14 @@ define(function (require) {
                     .call(this, $tr.data('transferRow'), function (transferRow) {
                         var $trNew = tr(transferRow);
                         $tr.replaceWith($trNew);
+                        options.$events.trigger('data-changed-{key}-{lang}'.supplant({
+                            key: transferRow.key,
+                            lang: lang
+                        }));
+                            log("Triggering "+transferRow.key+" + "+lang);
                         if (options.field.onRowChange) {
                             options.field.onRowChange(options, $trNew, transferRow);
                         }
-                        $tbody.trigger('rowChanged', [$trNew, columns]);
                     });
                 }
             });
@@ -599,6 +608,10 @@ define(function (require) {
                                             $tr.data('transferRow').removed = true;
                                             $tr.remove();
                                         }
+                                        options.$events.trigger('data-changed-{key}-{lang}'.supplant({
+                                            key: options.field.key,
+                                            lang: lang
+                                        }));
                                         options.$events.trigger('redraw-header-{key}'.supplant({
                                             key: options.field.key
                                         }));
@@ -625,28 +638,33 @@ define(function (require) {
                     })) {
                     buttons.push({
                         buttonId: options.field.key+"_add",
-                        create: function () {
-                            this
-                                .text(MetkaJS.L10N.get('general.table.add'))
-                                .click(function () {
-                                    (options.field.onAdd || rowDialog('ADD', 'add'))
-                                        .call(this, {
-                                            removed: false,
-                                            unapproved: true
-                                        }, function (transferRow) {
-                                            var $tr = addRow($tbody, transferRow, columns);
-                                            if (options.field.onRowChange) {
-                                                options.field.onRowChange(options, $tr, transferRow);
-                                            }
+                        createButton: function() {
+                            return {
+                                create: function() {
+                                    this
+                                        .text(MetkaJS.L10N.get('general.table.add'))
+                                        .click(function() {
+                                            (options.field.onAdd || rowDialog('ADD', 'add'))
+                                                .call(this, {
+                                                    removed: false,
+                                                    unapproved: true
+                                                }, function(transferRow) {
+                                                    var $tr = addRow($tbody, transferRow, columns);
+                                                    if(options.field.onRowChange) {
+                                                        options.field.onRowChange(options, $tr, transferRow);
+                                                    }
+                                                });
                                         });
-                                });
+                                }
+                            }
                         }
                     });
                 }
 
                 buttons = buttons.map(function (button) {
-                    button.style = 'default';
-                    return button;
+                    var conf = button.createButton();
+                    conf.style = 'default';
+                    return conf;
                 }).map(require('./button')(options));
 
                 buttons.forEach(function ($button) {

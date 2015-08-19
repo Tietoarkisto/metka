@@ -46,6 +46,7 @@ public class GUIConfiguration implements ModelBase {
     private final List<Button> buttons = new ArrayList<>();
     private final Map<String, FieldTitle> fieldTitles = new HashMap<>();
     private final Map<String, DialogTitle> dialogTitles = new HashMap<>();
+    private final Map<String, Container> subfieldConfiguration = new HashMap<>();
 
     public ConfigurationKey getKey() {
         return key;
@@ -69,6 +70,10 @@ public class GUIConfiguration implements ModelBase {
 
     public Map<String, DialogTitle> getDialogTitles() {
         return dialogTitles;
+    }
+
+    public Map<String, Container> getSubfieldConfiguration() {
+        return subfieldConfiguration;
     }
 
     @Override

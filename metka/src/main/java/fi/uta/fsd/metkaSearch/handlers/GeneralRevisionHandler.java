@@ -394,10 +394,6 @@ class GeneralRevisionHandler implements RevisionHandler {
                 // Index boolean field as a string with 'true' or 'false' as value. Boolean field should not be analyzer or tokenized
                 document.indexKeywordField(root + field.getIndexAs(), saved.getActualValueFor(inputLang), field.getGeneralSearch());
                 break;
-            case CONCAT:
-                // Index concat field as a text field which should be analyzed and tokenized unless marked as exact field in config
-                document.indexText(inputLang, field, root, saved, field.getGeneralSearch());
-                break;
             case STRING:
                 // Index string field as a text field which should be analyzed and tokenized unless marked as exact field in config
                 document.indexText(inputLang, field, root, saved, field.getGeneralSearch());

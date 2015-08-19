@@ -1260,10 +1260,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
          * @return Boolean|Boolean changesAndErrors pair. Left value indicates that changes have taken place, right value indicates that errors were marked somewhere within the TransferFields
          */
         private Pair<StatusCode, Boolean> saveValue(Field field, Configuration configuration, TransferFieldContainer transferFields, DataFieldContainer dataFields, Map<String, Change> changeMap) {
-            if (field.getType() == FieldType.CONCAT) {
-                // Concat type fields are not saved here but instead must be handled separately after all other fields have been saved
-                return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, false);
-            }
             TransferField tf = transferFields.getField(field.getKey());
 
             if (tf != null && tf.getType() != TransferFieldType.VALUE) {

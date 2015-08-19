@@ -141,16 +141,19 @@ define(function (require) {
                 return amnt;
             };
 
-            byFieldKey.appendByLang = function (lang, trasferRow) {
+            byFieldKey.appendByLang = function (lang, transferRow) {
                 var transferField = getTransferField(true);
 
                 transferField.rows = transferField.rows || {};
                 transferField.rows[lang] = transferField.rows[lang] || [];
-                trasferRow.key = trasferRow.key || key;
+                transferRow.key = transferRow.key || key;
 
-                transferField.rows[lang].push(trasferRow);
+                transferField.rows[lang].push(transferRow);
 
-                //onModified();
+                options.$events.trigger('data-changed-{key}-{lang}'.supplant({
+                    key: key,
+                    lang: lang
+                }), [transferRow]);
             };
 
             return byFieldKey;

@@ -10,9 +10,9 @@
         </layout>
     </appender>
     <!-- Application Loggers -->
-    <logger name="org.springframework.aop">
+    <!--<logger name="org.springframework.aop">
         <level value="debug" />
-    </logger>
+    </logger>-->
 
     <!-- 3rdparty Loggers -->
     <!--<logger name="org.springframework.core">

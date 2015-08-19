@@ -67,6 +67,13 @@ public class GUIConfigurationSerializer extends ObjectSerializer<GUIConfiguratio
             jgen.writeObjectField(dialogTitle.getKey(), dialogTitle.getValue());
         }
         jgen.writeEndObject();
+
+        jgen.writeObjectFieldStart("subfieldConfiguration");
+        for(Map.Entry<String, Container> containerEntry : value.getSubfieldConfiguration().entrySet()) {
+            if(containerEntry.getValue() != null && (containerEntry.getValue().getType() == null || containerEntry.getValue().getType() == ContainerType.CELL))
+                jgen.writeObjectField(containerEntry.getKey(), containerEntry.getValue());
+        }
+        jgen.writeEndObject();
     }
 
     private boolean checkValidContainer(ContainerType type) {

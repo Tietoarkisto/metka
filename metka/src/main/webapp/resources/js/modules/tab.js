@@ -33,23 +33,21 @@ define(function (require) {
         create: require('./inherit')(function (options) {
             var togglable = require('./togglable');
             var id = require('./autoId')();
+            var $body = $(this);
 
             return {
-                title: togglable.call($('<li>')
-                    .data('hidePageButtons', !!options.hidePageButtons), options)
-                    .append($('<a data-target="#' + id + '" href="javascript:void 0;" data-toggle="tab">')
+                title: togglable.call(
+                    $('<li>').data('hidePageButtons', !!options.hidePageButtons)
+                    , options
+                ).append(
+                    $('<a data-target="#' + id + '" href="javascript:void 0;" data-toggle="tab">')
                         .text(MetkaJS.L10N.localize(options, 'title'))
 
                         // set tab content on first open
-                        .one('shown.bs.tab', function (e) {
-
-                            // allow browser to activate and display tab, before starting to set content
-                            setTimeout(function () {
-
-                                // set content
-                                require('./container').call($($(this).data('target')), options);
-                            }.bind(this), 0);
-                        })),
+                        .one('show.bs.tab', function (e) {
+                            require('./container').call($body.find($(this).data('target')), options);
+                        })
+                    ),
                 content: togglable.call($('<div class="tab-pane">'), options)
                     .attr('id', id)
             };
@@ -58,6 +56,7 @@ define(function (require) {
             function activate($li) {
                 if (!$li.hasClass('containerHidden')) {
                     $li.children('a').tab('show');
+                    $tabContent.find($li.children('a').data('target')).addClass('active');
                     return true;
                 }
                 return false;
@@ -86,32 +85,30 @@ define(function (require) {
                 });
 
             $tabContent.append(tabs.content);
+
             this
                 .append($navTabs)
                 .append($('<div class="panel-body">')
                     .append($tabContent));
 
-            setTimeout(function () {
-                // try to activate last tab from session
-                var currentTab = sessionStorage.getItem('currentTab');
-                if (currentTab) {
-                    var $li = $navTabs.children().eq(currentTab);
-                    if ($li.length) {
-                        if (activate($li)) {
-                            // tab found, break
-                            return;
-                        }
+            // try to activate last tab from session
+            var currentTab = sessionStorage.getItem('currentTab');
+            if (currentTab) {
+                var $li = $navTabs.children().eq(currentTab);
+                if ($li.length) {
+                    if (activate($li)) {
+                        // tab found, break
+                        return;
                     }
                 }
+            }
 
-                // activate first visible tab
-                $navTabs.find('li').each(function () {
-                    var $li = $(this);
-                    if (activate($li)) {
-                        return false; // break (note: jQuery each loop)
-                    }
-                });
-            }, 0);
+            // activate first visible tab
+            $navTabs.find('li').each(function () {
+                if (activate($(this))) {
+                    return false; // break (note: jQuery each loop)
+                }
+            });
         }
     };
 });

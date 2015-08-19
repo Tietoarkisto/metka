@@ -80,13 +80,6 @@ public class FieldSerializer extends ObjectSerializer<Field> {
             case REFERENCE:
                 jgen.writeStringField("reference", value.getReference());
                 break;
-            case CONCAT:
-                jgen.writeArrayFieldStart("concatenate");
-                for(String str : value.getConcatenate()) {
-                    jgen.writeString(str);
-                }
-                jgen.writeEndArray();
-                break;
             case REFERENCECONTAINER:
                 jgen.writeStringField("reference", value.getReference());
                 if(StringUtils.hasText(value.getBidirectional())) {

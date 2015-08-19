@@ -77,13 +77,18 @@ define(function (require) {
                     })) {
                     options.buttons.push({
                         buttonId: options.field.key+"_addFinland",
-                        create: function () {
-                            this
-                                .text(MetkaJS.L10N.get('general.table.countries.addFinland'))
-                                .click(function () {
-                                    appendRow();
-                                });
+                        createButton: function() {
+                            return {
+                                create: function () {
+                                    this
+                                        .text(MetkaJS.L10N.get('general.table.countries.addFinland'))
+                                        .click(function () {
+                                            appendRow();
+                                        });
+                                }
+                            }
                         }
+
                     })
                 }
             },

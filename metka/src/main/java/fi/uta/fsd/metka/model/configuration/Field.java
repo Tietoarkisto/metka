@@ -51,7 +51,6 @@ public class Field {
     private Boolean immutable = false;
     private Integer maxValues = null;
     private String selectionList = null;
-    private final List<String> concatenate = new ArrayList<>();
     private Boolean subfield = false;
     private final List<String> subfields = new ArrayList<>();
     private String reference = null;
@@ -125,10 +124,6 @@ public class Field {
 
     public List<String> getSubfields() {
         return subfields;
-    }
-
-    public List<String> getConcatenate() {
-        return concatenate;
     }
 
     public String getReference() {

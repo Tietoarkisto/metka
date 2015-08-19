@@ -44,7 +44,6 @@ public enum FieldType {
     CONTAINER(Values.CONTAINER, false, true),
     REFERENCECONTAINER(Values.REFERENCECONTAINER, false, true),
     SELECTION(Values.SELECTION),
-    CONCAT(Values.CONCAT),
     DATE(Values.DATE, true),
     DATETIME(Values.DATETIME, true),
     TIME(Values.TIME, true),
@@ -123,7 +122,6 @@ public enum FieldType {
         public static final String CONTAINER = "CONTAINER";
         public static final String REFERENCECONTAINER = "REFERENCECONTAINER";
         public static final String SELECTION = "SELECTION";
-        public static final String CONCAT = "CONCAT";
         public static final String DATE = "DATE";
         public static final String DATETIME = "DATETIME";
         public static final String TIME = "TIME";

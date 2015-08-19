@@ -111,7 +111,11 @@ define(function (require) {
         options.$events.on('refresh.metka', refreshMetka);
         var $modal = $('<div class="modal fade" tabindex="-1" role="dialog" id="'+options.modalTarget+'">');
         content = $('<div class="modal-dialog">');
+        refreshMetka();
         $modal.append(content);
+        /*$modal.on('show.bs.modal', function() {
+            options.$events.trigger('refresh.metka');
+        });*/
         $modal.modal({
             backdrop: 'static'
         }).on('hidden.bs.modal', function () {
@@ -132,8 +136,6 @@ define(function (require) {
                 bsModal.setScrollbar();
             }
         });
-
-        options.$events.trigger('refresh.metka');
 
         return $modal;
     };

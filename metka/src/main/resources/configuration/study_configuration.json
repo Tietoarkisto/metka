@@ -12,7 +12,7 @@
 				{
                     "title": "Kvantitatiivinen",
 					"value": "1"
-				},{
+				}, {
                     "title": "Kvalitatiivinen",
 					"value": "2"
 				}
@@ -165,7 +165,7 @@
 			"freeTextKey": "versiontext"
 		},
 		"versionlabeldesc_list": {
-			"key": "versionlabeldata_list",
+			"key": "versionlabeldesc_list",
 			"type": "VALUE",
 			"options": [
 				{
@@ -561,7 +561,7 @@
 			]
 		},
 		"otherauthortype_list": {
-			"key": "authortype_list",
+			"key": "otherauthortype_list",
 			"type": "VALUE",
 			"options": [
 				{
@@ -1503,7 +1503,7 @@
 		"countries": {
 			"_comment": "TODO: Dialog should have an additional button that adds Finland as container row automatically",
 			"key": "countries",
-			"translatable": false,
+			"translatable": true,
 			"type": "CONTAINER",
 			"subfields": [
 				"country",
@@ -2470,25 +2470,23 @@
 		"targets": [{
 			"type": "FIELD",
 			"content": "title",
-			"checks": [
-				{
-					"condition": {
-						"type": "NOT_EMPTY",
-						"target": {
-							"type": "LANGUAGE",
-							"content": "fi"
-						}
-					}
-				}, {
-					"condition": {
-						"type": "NOT_EMPTY",
-						"target": {
-							"type": "LANGUAGE",
-							"content": "en"
-						}
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY",
+					"target": {
+						"type": "LANGUAGE",
+						"content": "fi"
 					}
 				}
-			]
+			}, {
+				"condition": {
+					"type": "NOT_EMPTY",
+					"target": {
+						"type": "LANGUAGE",
+						"content": "en"
+					}
+				}
+			}]
 		}, {
 			"type": "FIELD",
 			"content": "agreementtype",
@@ -3653,15 +3651,8 @@
 	}, {
 		"type": "ALL",
 		"targets": [{
-			"type": "FIELD",
-			"content": "studyvariables",
-			"targets": [{
-				"type": "CHILDREN",
-				"targets": [{
-					"type": "FIELD",
-					"content": "variables"
-				}]
-			}]
+			"type": "QUERY",
+			"content": "+key.configuration.type:STUDY_VARIABLES +study.value:{id}"
 		}, {
 			"type": "FIELD",
 			"content": "files"

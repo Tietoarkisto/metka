@@ -32,6 +32,47 @@ define(function (require) {
     var getPropertyNS = require('./utils/getPropertyNS');
 
     return function ($input, options, lang, $field) {
+        function fillOptions(list) {
+            if (list.type === 'REFERENCE') {
+                var reference = getPropertyNS(options, 'dataConf.references', list.reference);
+                if (!reference) {
+                    return;
+                }
+                var getOptions = require('./reference').optionsByPath(key, options, lang, setOptions);
+                if (reference.type === 'DEPENDENCY') {
+                    options.$events.on('data-changed-{key}-{lang}'.supplant({
+                        key: reference.target,
+                        lang: lang
+                    }), function (e) {
+                        getOptions(options.data.fields, reference);
+                    });
+                } else {
+                    getOptions();
+                }
+            } else {
+                // You can only empty the selection through trigger if it has a valid empty value
+                if(list.includeEmpty) {
+                    options.$events.on('data-empty-{key}-{lang}'.supplant({
+                        key: options.field.key,
+                        lang: lang
+                    }), function() {
+                        require('./data')(options).setByLang(lang, "");
+                    });
+                    options.$events.on('data-empty-{key}'.supplant({
+                        key: options.field.key
+                    }), function() {
+                        require('./data')(options).setByLang(lang, "");
+                    });
+                }
+                options.$events.on('data-changed-{key}-{lang}'.supplant({
+                    key: options.field.key,
+                    lang: lang
+                }), setValue);
+
+                setOptions(list.options);
+            }
+        }
+
         function setOptions(selectOptions) {
             $input.empty();
             if (list.includeEmpty === null || list.includeEmpty) {
@@ -70,44 +111,26 @@ define(function (require) {
             return;
         }
 
-        if (list.type === 'REFERENCE') {
-            var reference = getPropertyNS(options, 'dataConf.references', list.reference);
-            if (!reference) {
-                return;
-            }
-            var getOptions = require('./reference').optionsByPath(key, options, lang, setOptions);
-            if (reference.type === 'DEPENDENCY') {
-                options.$events.on('data-changed-{key}-{lang}'.supplant({
-                    key: reference.target,
-                    lang: lang
-                }), function (e) {
+        fillOptions(list);
+        options.$events.on('redraw-{key}'.supplant({
+            key: options.field.key
+        }), function() {
+            list = require('./selectionList')(options, key);
+            if(list.type === 'REFERENCE') {
+                var reference = getPropertyNS(options, 'dataConf.references', list.reference);
+                if (!reference) {
+                    return;
+                }
+                var getOptions = require('./reference').optionsByPath(key, options, lang, setOptions);
+                if(reference.type === 'DEPENDENCY') {
                     getOptions(options.data.fields, reference);
-                });
+                } else {
+                    getOptions();
+                }
             } else {
-                getOptions();
+                setOptions(list.options);
             }
-        } else {
-            // You can only empty the selection through trigger if it has a valid empty value
-            if(list.includeEmpty) {
-                options.$events.on('data-empty-{key}-{lang}'.supplant({
-                    key: options.field.key,
-                    lang: lang
-                }), function() {
-                    require('./data')(options).setByLang(lang, "");
-                })
-                options.$events.on('data-empty-{key}'.supplant({
-                    key: options.field.key
-                }), function() {
-                    require('./data')(options).setByLang(lang, "");
-                })
-            }
-            options.$events.on('data-changed-{key}-{lang}'.supplant({
-                key: options.field.key,
-                lang: lang
-            }), setValue);
-
-            setOptions(list.options);
-        }
+        });
 
         if (list.freeTextKey) {
             var $freeText = $('<div>');

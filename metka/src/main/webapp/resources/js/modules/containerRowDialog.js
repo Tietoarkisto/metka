@@ -65,6 +65,7 @@ define(function (require) {
                     fieldTitles: options.fieldTitles,
                     dialogTitle: options.field.dialogTitle,
                     dialogTitles: options.dialogTitles,
+                    subfieldConfiguration: options.subfieldConfiguration,
                     content: [
                         {
                             type: 'COLUMN',

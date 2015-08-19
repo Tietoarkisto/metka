@@ -38,9 +38,8 @@ define(function (require) {
                 $column.append($('<h4>')
                     .text(MetkaJS.L10N.localize(options, 'title')));
             }
-            setTimeout(function() {
-                $column.append(options.rows.map(require('./row')(options)));
-            }, 0)
+
+            $column.append(options.rows.map(require('./row')(options)));
             return $column;
         }),
         add: function ($columns) {
