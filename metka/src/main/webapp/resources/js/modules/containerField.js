@@ -485,10 +485,6 @@ define(function (require) {
                             key: transferRow.key,
                             lang: lang
                         }));
-                            log("Triggering "+transferRow.key+" + "+lang);
-                        if (options.field.onRowChange) {
-                            options.field.onRowChange(options, $trNew, transferRow);
-                        }
                     });
                 }
             });
@@ -646,9 +642,6 @@ define(function (require) {
                                     unapproved: true
                                 }, function (transferRow) {
                                     var $tr = addRow($tbody, transferRow, columns);
-                                    if (options.field.onRowChange) {
-                                        options.field.onRowChange(options, $tr, transferRow);
-                                    }
                                 });
                         }
                     });

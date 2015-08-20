@@ -68,53 +68,46 @@ define(function(require) {
             return fields[key];
         }
 
-        function setJsonProperty(json, fields, configuration) {
-            if(!fields || !configuration || !json || (configuration.property && !json[configuration.property])) {
+        function handleMapping(value, fields, mapping) {
+            if(typeof mapping === "string") {
+                setFieldWithValue(fields, mapping, value);
+            } else if(typeof mapping === "function") {
+                mapping(value, fields);
+            } else if(typeof mapping === "object" && !Array.isArray(mapping)) {
+                jsonToData(value, fields, mapping);
+            }
+        }
+
+        function jsonToData(json, fields, configuration) {
+            if(!fields || !configuration || !json) {
                 return;
             }
-            var container = configuration.container ? insertContainer(fields, configuration.container) : null;
-            Object.keys(configuration.property ? json[configuration.property] : json).map(function(key) {
-                var row = container ? appendRow(container) : null;
 
-                var value = configuration.property ? json[configuration.property][key] : json[key];
-                if(row && configuration.propertyKey) {
-                    setFieldWithValue(row.fields, configuration.propertyKey, key);
-                }
-                if(row && configuration.valueMapping) {
-                    if(typeof configuration.valueMapping === "string") {
-                        setFieldWithValue(row.fields, configuration.valueMapping, value);
-                    } else if(typeof configuration.valueMapping === "function") {
-                        configuration.valueMapping(value, row.fields);
-                    } else if(typeof configuration.valueMapping === "object" && !Array.isArray(configuration.valueMapping)) {
-                        setJsonProperty(value, row.fields, configuration.valueMapping);
-                    }
-                } else if(!configuration.valueMapping && configuration.mapping) {
-                    if(row) {
-                        Object.keys(configuration.mapping).map(function(property) {
-                            if(typeof configuration.mapping[property] === "string") {
-                                setFieldWithValue(row.fields, configuration.mapping[property], value[property]);
-                            } else if(typeof configuration.mapping[property] === "function") {
-                                configuration.mapping[property](value[property], row.fields);
-                            } else if(typeof configuration.mapping[property] === "object" && !Array.isArray(configuration.mapping[property])) {
-                                setJsonProperty(value[property], row.fields, configuration.mapping[property]);
-                            }
-                        });
-                    } else if(configuration.mapping[key]) {
-                        if(typeof configuration.mapping[key] === "string") {
-                            setFieldWithValue(fields, configuration.mapping[key], value);
-                        } else if(typeof configuration.mapping[key] === "function") {
-                            configuration.mapping[key](value, fields);
-                        } else if(typeof configuration.mapping[key] === "object" && !Array.isArray(configuration.mapping[key])) {
-                            setJsonProperty(value, fields, configuration.mapping[key]);
+            if(!configuration.container) {
+                if(configuration.valueKey) {
+                    setFieldWithValue(fields, configuration.valueKey, json);
+                } else if(configuration.mapping) {
+                    Object.keys(json).map(function(property) {
+                        if(configuration.mapping && configuration.mapping[property]) {
+                            handleMapping(json[property], fields, configuration.mapping[property]);
                         }
-                    }
+                    });
                 }
-            });
+            } else if(configuration.configuration) {
+                var container = insertContainer(fields, configuration.container);
+                Object.keys(json).map(function(property) {
+                    var row = appendRow(container);
+                    if(configuration.propertyKey) {
+                        setFieldWithValue(row.fields, configuration.propertyKey, property);
+                    }
+                    jsonToData(json[property], row.fields, configuration.configuration);
+                });
+            }
         }
 
         return {
             jsonToData: function(json, fields, configuration) {
-                setJsonProperty(json, fields, configuration);
+                jsonToData(json, fields, configuration);
             },
             setFieldWithValue: function(fields, key, value) {
                 setFieldWithValue(fields, key, value);
@@ -242,6 +235,68 @@ define(function(require) {
             list.options = formListOptions(getContainer(row.fields, "selectionLists_options"));
         });
 
+        return ret;
+    }
+
+    function parse(fields, json, configuration) {
+        if(!getField(fields, configuration.key) || !configuration.property) {
+            return;
+        }
+        var ret;
+        if(configuration.propertyKey) {
+            ret = {};
+        } else {
+            ret = [];
+        }
+        var container = getContainer(fields, configuration.key);
+        container.rows.DEFAULT.map(function(row) {
+            if(configuration.propertyKey) {
+                // We have an objet
+                var object = {};
+                ret[getValue(row.fields, configuration.propertyKey)] = object;
+            } else {
+                // We have an array
+                if(configuration.valueKey) {
+                    // We have a single value array
+                    ret.push(getValue(row.fields, configuration.valueKey));
+                } else {
+                    // We have an object array
+                    var object = {};
+
+                }
+            }
+
+            Object.keys(configuration.mapping).forEach(function(property) {
+                var mapping = configuration.mapping[property];
+                if(typeof mapping === "string") {
+                    object[mapping] = getValue(row.fields, property);
+                }
+            });
+            ret[getValue(row.fields, "selectionLists_key")] = list;
+
+            list.freeText = formListFreeTextValues(getContainer(row.fields, "selectionLists_freeText_values"));
+            list.options = formListOptions(getContainer(row.fields, "selectionLists_options"));
+        });
+
+        return ret;
+    }
+
+    function genformListOptions(options) {
+        var ret = [];
+        if(!options) {
+            return ret;
+        }
+
+        options.rows.DEFAULT.forEach(function(row) {
+            var option = {};
+            option.value = getValue(row.fields, "selectionLists_option_value");
+            var title = {};
+            title.default = getValue(row.fields, "selectionLists_option_title_default");
+            title.en = getValue(row.fields, "selectionLists_option_title_en");
+            title.sv = getValue(row.fields, "selectionLists_option_title_sv");
+            option['&title'] = title;
+            ret.push(option);
+        });
         return ret;
     }
 
@@ -457,27 +512,32 @@ define(function(require) {
             function setSelectionLists() {
                 return {
                     container: "selectionLists",
-                    mapping: {
-                        key: "selectionLists_key",
-                        type: "selectionLists_type",
-                        freeTextKey: "selectionLists_freeTextKey",
-                        sublistKey: "selectionLists_sublistKey",
-                        includeEmpty: "selectionLists_includeEmpty",
-                        freeText: {
-                            container: "selectionLists_freeText_values",
-                            valueMapping: "selectionLists_freeText"
-                        },
-                        options: {
-                            container: "selectionLists_options",
-                            valueMapping: {
-                                mapping: {
-                                    value: "selectionLists_option_value",
-                                    title: "selectionLists_option_title_default",
-                                    "&title": {
-                                        mapping: {
-                                            default: "selectionLists_option_title_default",
-                                            en: "selectionLists_option_title_en",
-                                            sv: "selectionLists_option_title_sv"
+                    configuration: {
+                        mapping: {
+                            key: "selectionLists_key",
+                            type: "selectionLists_type",
+                            freeTextKey: "selectionLists_freeTextKey",
+                            sublistKey: "selectionLists_sublistKey",
+                            includeEmpty: "selectionLists_includeEmpty",
+                            reference: "selectionLists_reference",
+                            freeText: {
+                                container: "selectionLists_freeText_values",
+                                configuration: {
+                                    valueKey: "selectionLists_freeText"
+                                }
+                            },
+                            options: {
+                                container: "selectionLists_options",
+                                configuration: {
+                                    mapping: {
+                                        value: "selectionLists_option_value",
+                                        title: "selectionLists_option_title_default",
+                                        "&title": {
+                                            mapping: {
+                                                default: "selectionLists_option_title_default",
+                                                en: "selectionLists_option_title_en",
+                                                sv: "selectionLists_option_title_sv"
+                                            }
                                         }
                                     }
                                 }
@@ -490,14 +550,16 @@ define(function(require) {
             function setReferences() {
                 return {
                     container: "references",
-                    mapping: {
-                        key: "reference_key",
-                        type: "reference_type",
-                        target: "reference_target",
-                        valuePath: "reference_valuePath",
-                        titlePath: "reference_titlePath",
-                        approveOnly: "reference_approveOnly",
-                        ignoreRemoved: "reference_ignoreRemoved"
+                    configuration: {
+                        mapping: {
+                            key: "reference_key",
+                            type: "reference_type",
+                            target: "reference_target",
+                            valuePath: "reference_valuePath",
+                            titlePath: "reference_titlePath",
+                            approveOnly: "reference_approveOnly",
+                            ignoreRemoved: "reference_ignoreRemoved"
+                        }
                     }
                 }
             }
@@ -505,29 +567,35 @@ define(function(require) {
             function setFields() {
                 return {
                     container: "fields",
-                    mapping: {
-                        key: "field_key",
-                        type: "field_type",
-                        translatable: "field_translatable",
-                        immutable: "field_immutable",
-                        selectionList: "field_selectionList",
-                        subfield: "field_subfield",
-                        reference: "field_reference",
-                        editable: "field_editable",
-                        writable: "field_writable",
-                        indexed: "field_indexed",
-                        generalSearch: "field_generalSearch",
-                        exact: "field_exact",
-                        bidirectional: "field_bidirectional",
-                        indexName: "field_indexName",
-                        fixedOrder: "field_fixedOrder",
-                        subfields: {
-                            container: "field_subfields",
-                            valueMapping: "field_subfield_key"
-                        },
-                        removePermissions: {
-                            container: "field_removePermissions",
-                            valueMapping: "field_removePermissions_permission"
+                    configuration: {
+                        mapping: {
+                            key: "field_key",
+                            type: "field_type",
+                            translatable: "field_translatable",
+                            immutable: "field_immutable",
+                            selectionList: "field_selectionList",
+                            subfield: "field_subfield",
+                            reference: "field_reference",
+                            editable: "field_editable",
+                            writable: "field_writable",
+                            indexed: "field_indexed",
+                            generalSearch: "field_generalSearch",
+                            exact: "field_exact",
+                            bidirectional: "field_bidirectional",
+                            indexName: "field_indexName",
+                            fixedOrder: "field_fixedOrder",
+                            subfields: {
+                                container: "field_subfields",
+                                configuration: {
+                                    valueKey: "field_subfield_key"
+                                }
+                            },
+                            removePermissions: {
+                                container: "field_removePermissions",
+                                configuration: {
+                                    valueKey: "field_removePermissions_permission"
+                                }
+                            }
                         }
                     }
                 }
@@ -537,11 +605,13 @@ define(function(require) {
                 return {
                     container: "namedTargets",
                     propertyKey: "namedTarget_key",
-                    mapping: {
-                        type: "target_type",
-                        content: "target_content",
-                        targets: setTargets,
-                        checks: setChecks
+                    configuration: {
+                        mapping: {
+                            type: "target_type",
+                            content: "target_content",
+                            targets: setTargets,
+                            checks: setChecks
+                        }
                     }
                 }
             }
@@ -549,9 +619,11 @@ define(function(require) {
             function setRestrictions() {
                 return {
                     container: "restrictions",
-                    mapping: {
-                        type: "operation_type",
-                        targets: setTargets
+                    configuration: {
+                        mapping: {
+                            type: "operation_type",
+                            targets: setTargets
+                        }
                     }
                 }
             }
@@ -559,9 +631,11 @@ define(function(require) {
             function setCascade() {
                 return {
                     container: "cascade",
-                    mapping: {
-                        type: "operation_type",
-                        targets: setTargets
+                    configuration: {
+                        mapping: {
+                            type: "operation_type",
+                            targets: setTargets
+                        }
                     }
                 }
             }
@@ -569,28 +643,32 @@ define(function(require) {
             function setTargets(json, fields) {
                 parser.jsonToData(json, fields, {
                     container: "targets",
-                    mapping: {
-                        type: "target_type",
-                        content: "target_content",
-                        targets: setTargets,
-                        checks: setChecks
+                    configuration: {
+                        mapping: {
+                            type: "target_type",
+                            content: "target_content",
+                            targets: setTargets,
+                            checks: setChecks
+                        }
                     }
                 });
             }
 
             function setChecks(json, fields) {
+                // NOTE: This is an example of manual insertion and function type mapping, LEAVE AS IS
                 parser.jsonToData(json, fields, {
                     container: "checks",
-                    mapping: {
-                        condition: function(json, fields) {
-                            // NOTE: This is an example of manual insertion and function type mapping, LEAVE AS IS
-                            parser.setFieldWithValue(fields, "target_check_condition_type", json.type);
-                            if(json.target) {
-                                parser.setFieldWithValue(fields, "target_check_condition_target_type", json.target.type);
-                                parser.setFieldWithValue(fields, "target_check_condition_target_content", json.target.content);
-                            }
-                        },
-                        restrictors: setTargets
+                    configuration: {
+                        mapping: {
+                            condition: function(json, fields) {
+                                parser.setFieldWithValue(fields, "target_check_condition_type", json.type);
+                                if(json.target) {
+                                    parser.setFieldWithValue(fields, "target_check_condition_target_type", json.target.type);
+                                    parser.setFieldWithValue(fields, "target_check_condition_target_content", json.target.content);
+                                }
+                            },
+                            restrictors: setTargets
+                        }
                     }
                 });
             }

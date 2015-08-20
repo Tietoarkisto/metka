@@ -306,7 +306,7 @@ define(function(require) {
                                     list.push({value: getValue(row.fields, "field_key")});
                                 });
 
-                                options.dataConf.selectionLists.displayId_list.options = list;
+                                options.dataConf.selectionLists[options.fieldOptions.selectionList].options = list;
                                 redraw(options);
                             }
 
@@ -347,7 +347,7 @@ define(function(require) {
                                         var amnt = data(options)("selectionLists_freeText_values").validRows(lang);
                                         $elem.toggle(amnt > 0);
                                         if(amnt < 1) {
-                                            empty(options, 'selectionLists_freeTextKey');
+                                            empty(options);
                                         }
                                     }
                                     var $elem = this;
@@ -366,7 +366,7 @@ define(function(require) {
                                         }
                                     });
 
-                                    options.dataConf.selectionLists.freeTextKey_list.options = list;
+                                    options.dataConf.selectionLists[options.fieldOptions.selectionList].options = list;
                                 }
                             },
                             selectionLists_sublistKey: {
@@ -374,7 +374,7 @@ define(function(require) {
                                     function update(value) {
                                         $elem.toggle(value && value === 'SUBLIST');
                                         if(value && value !== 'SUBLIST') {
-                                            empty(options, 'selectionLists_sublistKey');
+                                            empty(options);
                                         }
                                     }
                                     var $elem = this;
@@ -395,7 +395,7 @@ define(function(require) {
                                         }
                                     });
 
-                                    options.dataConf.selectionLists.sublistKey_list.options = list;
+                                    options.dataConf.selectionLists[options.fieldOptions.selectionList].options = list;
                                 }
                             },
                             selectionLists_reference: {
@@ -403,7 +403,7 @@ define(function(require) {
                                     function update(value) {
                                         $elem.toggle(value && value === 'REFERENCE');
                                         if(value && value !== 'REFERENCE') {
-                                            empty(options, 'selectionLists_sublistKey');
+                                            empty(options);
                                         }
                                     }
                                     var $elem = this;
@@ -421,7 +421,7 @@ define(function(require) {
                                         list.push({value: getValue(row.fields, "reference_key")});
                                     });
 
-                                    options.dataConf.selectionLists.selectionLists_reference_list.options = list;
+                                    options.dataConf.selectionLists[options.fieldOptions.selectionList].options = list;
                                 }
                             },
                             selectionLists_options: {
@@ -459,7 +459,7 @@ define(function(require) {
                     type: "ROW",
                     cells: [{
                         type: "CELL",
-                        title: "Viittaikset",
+                        title: "Viittaukset",
                         field: {
                             key: "references",
                             columnFields: [
@@ -519,9 +519,9 @@ define(function(require) {
                                             }
                                         }
 
-                                        options.dataConf.selectionLists.reference_target_list.options = list;
+                                        options.dataConf.selectionLists[options.fieldOptions.selectionList].options = list;
 
-                                        empty(options, lang);
+                                        empty(options);
                                         redraw(options);
                                     }
                                     var $elem = this;
@@ -544,11 +544,6 @@ define(function(require) {
                                     update(data(options)("reference_type").getByLang("DEFAULT"));
 
                                     onChange(options, update, "reference_type");
-                                }
-                            },
-                            reference_titlePath: {
-                                preCreate: function(options) {
-                                    log("TODO: Possibly clear if valuePath is visible but is empty")
                                 }
                             },
                             reference_approveOnly: {
@@ -648,7 +643,7 @@ define(function(require) {
                                         list.push({value: getValue(row.fields, "selectionLists_key")});
                                     });
 
-                                    options.dataConf.selectionLists.field_selectionList_list.options = list;
+                                    options.dataConf.selectionLists[options.fieldOptions.selectionList].options = list;
                                 }
                             },
                             field_subfields: {
@@ -708,7 +703,7 @@ define(function(require) {
                                         list.push({value: getValue(row.fields, "reference_key")});
                                     });
 
-                                    options.dataConf.selectionLists.field_reference_list.options = list;
+                                    options.dataConf.selectionLists[options.fieldOptions.selectionList].options = list;
                                 }
                             }
                         }
