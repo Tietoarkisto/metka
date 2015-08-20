@@ -491,6 +491,7 @@ define(function (require) {
         this.data('addRow', function(transferRow) {
             return addRow($tbody, transferRow, columns);
         });
+        this.data('lang', lang);
 
         var EMPTY = '-';
         var rowCommands = [];
@@ -613,50 +614,53 @@ define(function (require) {
                     $thead.toggleClass("containerHidden", !(!options.field.hasOwnProperty('displayHeader') || options.field.displayHeader));
                 }).append($tbody))
             .append(function () {
-                if(!options.buttons) {
-                    options.buttons = [];
-                }
-                var buttons = options.buttons;
-                if (!require('./isFieldDisabled')(options, lang) && !buttons.some(function(button) {
-                        if(button.buttonId) {
-                            return button.buttonId === options.field.key+"_add";
+
+                var buttons = (options.buttons || []).map(function(button) {
+                        if(!(!!button.buttonId && button.buttonId === options.field.key+"_add")) {
+                            return button;
                         }
-                        return false;
-                    })) {
+                    });
+
+                if (!require('./isFieldDisabled')(options, lang)) {
                     buttons.push({
                         buttonId: options.field.key+"_add",
-                        create: function () {
-                            this
-                                .text(MetkaJS.L10N.get('general.table.add'))
-                                .click(function () {
-                                    (options.field.onAdd || rowDialog('ADD', 'add'))
-                                        .call(this, {
-                                            removed: false,
-                                            unapproved: true
-                                        }, function (transferRow) {
-                                            var $tr = addRow($tbody, transferRow, columns);
-                                            if (options.field.onRowChange) {
-                                                options.field.onRowChange(options, $tr, transferRow);
-                                            }
-                                        });
+                        title: function() {
+                            return MetkaJS.L10N.get('general.table.add');
+                        },
+                        onClick: function () {
+                            (options.field.onAdd || rowDialog('ADD', 'add'))
+                                .call(this, {
+                                    removed: false,
+                                    unapproved: true
+                                }, function (transferRow) {
+                                    var $tr = addRow($tbody, transferRow, columns);
+                                    if (options.field.onRowChange) {
+                                        options.field.onRowChange(options, $tr, transferRow);
+                                    }
                                 });
                         }
                     });
                 }
 
-                buttons = buttons.map(function (button) {
-                    button.style = 'default';
-                    return button;
-                }).map(require('./button')(options));
-
-                buttons.forEach(function ($button) {
-                    $button.addClass('btn-sm');
-                });
-
                 if (buttons.length && !require('./isFieldDisabled')(options, lang)) {
                     return $('<div class="panel-footer clearfix">')
                         .append($('<div class="pull-right">')
-                            .append(buttons));
+                            .append(buttons.map(function (button) {
+                                var $button = {
+                                    style: 'default',
+                                    lang: lang,
+                                    create: function (options) {
+                                        this
+                                            .text(button.title)
+                                            .click(function () {
+                                                button.onClick(options)
+                                            });
+                                    }
+                                };
+                                $button = require('./button')(options)($button);
+                                $button.addClass('btn-sm');
+                                return $button;
+                            })));
                 }
             }));
         var redrawKey = 'redraw-{key}'.supplant({
