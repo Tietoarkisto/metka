@@ -173,13 +173,13 @@ define(function(require) {
         },
 
         target_check_condition_type: {
-            title: "Tarkistuksen vaatimuksen tyyppi"
+            title: "Vaatimuksen tyyppi"
         },
         target_check_condition_target_type: {
-            title: "Tarkistuksen vaatimuksen kohteen tyyppi"
+            title: "Vaatimuksen kohteen tyyppi"
         },
         target_check_condition_target_content: {
-            title: "Tarkistuksen vaatimuksen kohteen sisältö"
+            title: "Vaatimuksen kohteen sisältö"
         }
     };
 
@@ -798,6 +798,11 @@ define(function(require) {
                         "target_check_condition_target_type",
                         "target_check_condition_target_content"
                     ]
+                },
+                subfieldConfiguration: {
+                    targets: {
+                        title: "Vaatimusta rajoittavat kohteet"
+                    }
                 }
             },
 
@@ -927,7 +932,7 @@ define(function(require) {
             },
             operation_type: {
                 horizontal: true
-            }
+            },
             /*reference_key: {
                 horizontal: true
             }*/

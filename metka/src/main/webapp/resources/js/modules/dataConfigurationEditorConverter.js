@@ -37,19 +37,15 @@ define(function(require) {
             return {
                 key: key,
                 type: type,
-                values: {
-                    DEFAULT: type==='VALUE' ? getNewValue(null) : null
-                },
-                rows: {
-                    DEFAULT: type !== 'VALUE' ? [] : null
-                }
+                values: type === 'VALUE' ? {
+                    DEFAULT: {
+                        current: null
+                    }
+                } : null,
+                rows: type !== 'VALUE' ? {
+                    DEFAULT: []
+                } : null
             }
-        }
-
-        function insertValue(fields, key, value) {
-            fields[key] = getNewField(key, 'VALUE');
-            fields[key].values.DEFAULT.current = value;
-            return fields[key];
         }
 
         function insertContainer(fields, key) {
@@ -57,256 +53,144 @@ define(function(require) {
             return fields[key];
         }
 
-        function insertReferenceContainer(fields, key) {
-            fields[key] = getNewField(key, 'REFERENCECONTAINER');
-            return fields[key];
-        }
-
         function appendRow(field) {
-            var row = getNewRow(field.key);
+            var row = {
+                key: field.key,
+                fields: {}
+            };
             field.rows.DEFAULT.push(row);
             return row;
         }
 
-        function getNewValue(value) {
-            return {
-                current: value
-            }
+        function setFieldWithValue(fields, key, value) {
+            fields[key] = getNewField(key, 'VALUE');
+            fields[key].values.DEFAULT.current = value;
+            return fields[key];
         }
 
-        function getNewRow(key) {
-            return {
-                key: key,
-                fields: {}
+        function setJsonProperty(json, fields, configuration) {
+            if(!fields || !configuration || !json || (configuration.property && !json[configuration.property])) {
+                return;
             }
+            var container = configuration.container ? insertContainer(fields, configuration.container) : null;
+            Object.keys(configuration.property ? json[configuration.property] : json).map(function(key) {
+                var row = container ? appendRow(container) : null;
+
+                var value = configuration.property ? json[configuration.property][key] : json[key];
+                if(row && configuration.propertyKey) {
+                    setFieldWithValue(row.fields, configuration.propertyKey, key);
+                }
+                if(row && configuration.valueMapping) {
+                    if(typeof configuration.valueMapping === "string") {
+                        setFieldWithValue(row.fields, configuration.valueMapping, value);
+                    } else if(typeof configuration.valueMapping === "function") {
+                        configuration.valueMapping(value, row.fields);
+                    } else if(typeof configuration.valueMapping === "object" && !Array.isArray(configuration.valueMapping)) {
+                        setJsonProperty(value, row.fields, configuration.valueMapping);
+                    }
+                } else if(!configuration.valueMapping && configuration.mapping) {
+                    if(row) {
+                        Object.keys(configuration.mapping).map(function(property) {
+                            if(typeof configuration.mapping[property] === "string") {
+                                setFieldWithValue(row.fields, configuration.mapping[property], value[property]);
+                            } else if(typeof configuration.mapping[property] === "function") {
+                                configuration.mapping[property](value[property], row.fields);
+                            } else if(typeof configuration.mapping[property] === "object" && !Array.isArray(configuration.mapping[property])) {
+                                setJsonProperty(value[property], row.fields, configuration.mapping[property]);
+                            }
+                        });
+                    } else if(configuration.mapping[key]) {
+                        if(typeof configuration.mapping[key] === "string") {
+                            setFieldWithValue(fields, configuration.mapping[key], value);
+                        } else if(typeof configuration.mapping[key] === "function") {
+                            configuration.mapping[key](value, fields);
+                        } else if(typeof configuration.mapping[key] === "object" && !Array.isArray(configuration.mapping[key])) {
+                            setJsonProperty(value, fields, configuration.mapping[key]);
+                        }
+                    }
+                }
+            });
         }
 
         return {
-            setJsonProperty: function(json, fields, configuration) {
-                if(!fields || !configuration || !json || (configuration.property && !json[configuration.property])) {
+            jsonToData: function(json, fields, configuration) {
+                setJsonProperty(json, fields, configuration);
+            },
+            setFieldWithValue: function(fields, key, value) {
+                setFieldWithValue(fields, key, value);
+            },
+            dataToJson: function(fields, json, configuration) {
+                /*if(!transferField || !configuration || !json /!*|| (configuration.property && !json[configuration.property])*!/) {
                     return;
                 }
-                var container = configuration.container ? insertContainer(fields, configuration.container) : null;
+
+                if(configuration.valueMapping) {
+
+                }
+
                 Object.keys(configuration.property ? json[configuration.property] : json).map(function(key) {
                     var row = container ? appendRow(container) : null;
 
                     var value = configuration.property ? json[configuration.property][key] : json[key];
                     if(row && configuration.propertyKey) {
-                        insertValue(row.fields, configuration.propertyKey, key);
+                        setFieldWithValue(row.fields, configuration.propertyKey, key);
                     }
                     if(row && configuration.valueMapping) {
                         if(typeof configuration.valueMapping === "string") {
-                            insertValue(row.fields, configuration.valueMapping, value);
+                            setFieldWithValue(row.fields, configuration.valueMapping, value);
                         } else if(typeof configuration.valueMapping === "function") {
                             configuration.valueMapping(value, row.fields);
+                        } else if(typeof configuration.valueMapping === "object" && !Array.isArray(configuration.valueMapping)) {
+                            setJsonProperty(value, row.fields, configuration.valueMapping);
                         }
                     } else if(!configuration.valueMapping && configuration.mapping) {
                         if(row) {
                             Object.keys(configuration.mapping).map(function(property) {
                                 if(typeof configuration.mapping[property] === "string") {
-                                    insertValue(row.fields, configuration.mapping[property], value[property]);
+                                    setFieldWithValue(row.fields, configuration.mapping[property], value[property]);
                                 } else if(typeof configuration.mapping[property] === "function") {
-                                    configuration.mapping[property](value, row.fields);
+                                    configuration.mapping[property](value[property], row.fields);
+                                } else if(typeof configuration.mapping[property] === "object" && !Array.isArray(configuration.mapping[property])) {
+                                    setJsonProperty(value[property], row.fields, configuration.mapping[property]);
                                 }
                             });
                         } else if(configuration.mapping[key]) {
                             if(typeof configuration.mapping[key] === "string") {
-                                insertValue(fields, configuration.mapping[key], value);
+                                setFieldWithValue(fields, configuration.mapping[key], value);
                             } else if(typeof configuration.mapping[key] === "function") {
-                                configuration.mapping[key](json, fields);
+                                configuration.mapping[key](value, fields);
+                            } else if(typeof configuration.mapping[key] === "object" && !Array.isArray(configuration.mapping[key])) {
+                                setJsonProperty(value, fields, configuration.mapping[key]);
                             }
                         }
                     }
                 });
+
+
+
+
+
+
+
+                selectionLists.rows.DEFAULT.map(function(row) {
+                    var list = {};
+                    ret[getValue(row.fields, "selectionLists_key")] = list;
+                    list.key = getValue(row.fields, "selectionLists_key");
+                    list.type = getValue(row.fields, "selectionLists_type");
+                    //list.default = getValue(row.fields, "selectionLists_default");
+                    list.freeTextKey = getValue(row.fields, "selectionLists_freeTextKey");
+                    list.sublistKey = getValue(row.fields, "selectionLists_sublistKey");
+                    list.includeEmpty = getValue(row.fields, "selectionLists_includeEmpty");
+                    list.freeText = formListFreeTextValues(getContainer(row.fields, "selectionLists_freeText_values"));
+                    list.options = formListOptions(getContainer(row.fields, "selectionLists_options"));
+                });
+
+                return ret;*/
             }
         }
     }
 
     var parser = jsonParser();
-
-    function setSelectionLists(json, fields) {
-        var conf = {
-            property: "selectionLists",
-            container: "selectionLists",
-            mapping: {
-                key: "selectionLists_key",
-                type: "selectionLists_type",
-                freeTextKey: "selectionLists_freeTextKey",
-                sublistKey: "selectionLists_sublistKey",
-                includeEmpty: "selectionLists_includeEmpty",
-                freeText: function(json, fields) {
-                    var conf = {
-                        property: "freeText",
-                        container: "selectionLists_freeText_values",
-                        valueMapping: "selectionLists_freeText"
-                    };
-
-                    setJsonProperty(json, fields, conf);
-                },
-                options: setOptions
-            }
-        };
-
-        parser.setJsonProperty(json, fields, conf);
-    }
-
-    function setOptions(json, fields) {
-        var conf = {
-            property: "options",
-            container: "selectionLists_options",
-            valueMapping: function(json, fields) {
-                insertValue(fields, "selectionLists_option_value", json.value);
-                if(MetkaJS.L10N.hasTranslation(json, 'title')) {
-                    insertValue(fields, "selectionLists_option_title_default", json['&title'].default);
-                    insertValue(fields, "selectionLists_option_title_en", json['&title'].en);
-                    insertValue(fields, "selectionLists_option_title_sv", json['&title'].sv);
-                } else {
-                    insertValue(fields, "selectionLists_option_title_default", json.title);
-                }
-            }
-        };
-
-        parser.setJsonProperty(json, fields, conf);
-    }
-
-    function setReferences(json, fields) {
-        var conf = {
-            property: "references",
-            container: "references",
-            mapping: {
-                key: "reference_key",
-                type: "reference_type",
-                target: "reference_target",
-                valuePath: "reference_valuePath",
-                titlePath: "reference_titlePath",
-                approveOnly: "reference_approveOnly",
-                ignoreRemoved: "reference_ignoreRemoved"
-            }
-        };
-
-        parser.setJsonProperty(json, fields, conf);
-    }
-
-    function setFields(json, fields) {
-        var conf = {
-            property: "fields",
-            container: "fields",
-            mapping: {
-                key: "field_key",
-                type: "field_type",
-                translatable: "field_translatable",
-                immutable: "field_immutable",
-                selectionList: "field_selectionList",
-                subfield: "field_subfield",
-                reference: "field_reference",
-                editable: "field_editable",
-                writable: "field_writable",
-                indexed: "field_indexed",
-                generalSearch: "field_generalSearch",
-                exact: "field_exact",
-                bidirectional: "field_bidirectional",
-                indexName: "field_indexName",
-                fixedOrder: "field_fixedOrder",
-                subfields: function(json, fields) {
-                    var conf = {
-                        property: "subfields",
-                        container: "field_subfields",
-                        valueMapping: "field_subfield_key"
-                    };
-
-                    setJsonProperty(json, fields, conf);
-                },
-                removePermissions: function(json, fields) {
-                    var conf = {
-                        property: "removePermissions",
-                        container: "field_removePermissions",
-                        valueMapping: "field_removePermissions_permission"
-                    };
-
-                    setJsonProperty(json, fields, conf);
-                }
-            }
-        };
-
-        parser.setJsonProperty(json, fields, conf);
-    }
-
-    function setNamedTargets(json, fields) {
-        var conf = {
-            property: "namedTargets",
-            container: "namedTargets",
-            propertyKey: "namedTarget_key",
-            mapping: {
-                type: "target_type",
-                content: "target_content",
-                targets: setTargets,
-                checks: setChecks
-            }
-        };
-
-        parser.setJsonProperty(json, fields, conf);
-    }
-
-    function setRestrictions(json, fields) {
-        var conf = {
-            property: "restrictions",
-            container: "restrictions",
-            mapping: {
-                type: "operation_type",
-                targets: setTargets
-            }
-        };
-
-        parser.setJsonProperty(json, fields, conf);
-    }
-
-    function setCascade(json, fields) {
-        var conf = {
-            property: "cascade",
-            container: "cascade",
-            mapping: {
-                type: "operation_type",
-                targets: setTargets
-            }
-        };
-
-        parser.setJsonProperty(json, fields, conf);
-    }
-
-    function setTargets(json, fields) {
-        var conf = {
-            property: "targets",
-            container: "targets",
-            mapping: {
-                type: "target_type",
-                content: "target_content",
-                targets: setTargets,
-                checks: setChecks
-            }
-        };
-
-        parser.setJsonProperty(json, fields, conf);
-    }
-
-    function setChecks(json, fields) {
-        var conf = {
-            property: "checks",
-            container: "checks",
-            mapping: {
-                condition: function(json, fields) {
-                    insertValue(fields, "target_check_condition_type", json.condition.type);
-                    if(json.condition.target) {
-                        insertValue(fields, "target_check_condition_target_type", json.condition.target.type);
-                        insertValue(fields, "target_check_condition_target_content", json.condition.target.content);
-                    }
-                },
-                restrictions: setTargets
-            }
-        };
-
-        parser.setJsonProperty(json, fields, conf);
-    }
-
 
     // Configuration construction
     function getValue(fields, key) {
@@ -568,92 +452,169 @@ define(function(require) {
         return check;
     }
 
-
-    // Generalised read of json
-    /*function readJsonToData(json, options) {
-        var fields = {};
-        Object.keys(json).map(function(property) {
-            var value = json[property];
-            readJsonPropertyToData(fields, value, property);
-        });
-    }
-
-    function readJsonPropertyToData(fields, value, property) {
-        if(typeof value === 'object') {
-            if(Array.isArray(value)) {
-                readJsonArrayToData(fields, value, property);
-            } else {
-                readJsonObjectToData(fields, value, property);
-            }
-        } else {
-            insertValue(fields, property, value);
-        }
-    }
-
-    function readJsonObjectToData(fields, object, property) {
-        if(!object) {
-            return;
-        }
-        var containerKey = property;
-        var container = insertContainer(fields, containerKey);
-        Object.keys(object).map(function(property) {
-            var propertyKey = containerKey+"_"+property;
-            var value = object[property];
-            var row = appendRow(container);
-            readJsonPropertyToData(row.fields, value, propertyKey);
-        });
-    }
-
-    function readJsonArrayToData(fields, array, property) {
-        var containerKey = property+"_values";
-        var valueKey = containerKey+"_value";
-        var container = insertContainer(fields, containerKey);
-        array.forEach(function(value) {
-            var row = appendRow(container);
-            readJsonPropertyToData(row.fields, valueKey, value);
-        });
-    }*/
-
     return {
         toEditor: function(json, options) {
-            //readJsonToData(json, options); // The generalisation is not really suitable for this as is, some other way needs to be deviced
-            var conf = {
-                property: null,
-                container: null,
-                mapping: {
-                    key: function(json, fields) {
-                        insertValue(fields, "key_type", json.key.type);
-                        insertValue(fields, "key_version", json.key.version);
-                    },
-                    displayId: "displayId",
-                    selectionLists: setSelectionLists,
-                    references: setReferences,
-                    fields: setFields,
-                    namedTargets: setNamedTargets,
-                    restrictions: setRestrictions,
-                    cascade: setCascade
+            function setSelectionLists() {
+                return {
+                    container: "selectionLists",
+                    mapping: {
+                        key: "selectionLists_key",
+                        type: "selectionLists_type",
+                        freeTextKey: "selectionLists_freeTextKey",
+                        sublistKey: "selectionLists_sublistKey",
+                        includeEmpty: "selectionLists_includeEmpty",
+                        freeText: {
+                            container: "selectionLists_freeText_values",
+                            valueMapping: "selectionLists_freeText"
+                        },
+                        options: {
+                            container: "selectionLists_options",
+                            valueMapping: {
+                                mapping: {
+                                    value: "selectionLists_option_value",
+                                    title: "selectionLists_option_title_default",
+                                    "&title": {
+                                        mapping: {
+                                            default: "selectionLists_option_title_default",
+                                            en: "selectionLists_option_title_en",
+                                            sv: "selectionLists_option_title_sv"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-            };
-
-            var fields = {};
-            setJsonProperty(json, fields, conf);
-
-            /*
-            if(json.key) {
-                insertValue(fields, "key_type", json.key.type);
-                insertValue(fields, "key_version", json.key.version);
             }
-            insertValue(fields, "displayId", json.displayId);
-            setSelectionLists(json, fields);
-            setReferences(json, fields);
-            setFields(json, fields);
-            setNamedTargets(json, fields);
-            setRestrictions(json, fields);
-            setCascade(json, fields);*/
+
+            function setReferences() {
+                return {
+                    container: "references",
+                    mapping: {
+                        key: "reference_key",
+                        type: "reference_type",
+                        target: "reference_target",
+                        valuePath: "reference_valuePath",
+                        titlePath: "reference_titlePath",
+                        approveOnly: "reference_approveOnly",
+                        ignoreRemoved: "reference_ignoreRemoved"
+                    }
+                }
+            }
+
+            function setFields() {
+                return {
+                    container: "fields",
+                    mapping: {
+                        key: "field_key",
+                        type: "field_type",
+                        translatable: "field_translatable",
+                        immutable: "field_immutable",
+                        selectionList: "field_selectionList",
+                        subfield: "field_subfield",
+                        reference: "field_reference",
+                        editable: "field_editable",
+                        writable: "field_writable",
+                        indexed: "field_indexed",
+                        generalSearch: "field_generalSearch",
+                        exact: "field_exact",
+                        bidirectional: "field_bidirectional",
+                        indexName: "field_indexName",
+                        fixedOrder: "field_fixedOrder",
+                        subfields: {
+                            container: "field_subfields",
+                            valueMapping: "field_subfield_key"
+                        },
+                        removePermissions: {
+                            container: "field_removePermissions",
+                            valueMapping: "field_removePermissions_permission"
+                        }
+                    }
+                }
+            }
+
+            function setNamedTargets() {
+                return {
+                    container: "namedTargets",
+                    propertyKey: "namedTarget_key",
+                    mapping: {
+                        type: "target_type",
+                        content: "target_content",
+                        targets: setTargets,
+                        checks: setChecks
+                    }
+                }
+            }
+
+            function setRestrictions() {
+                return {
+                    container: "restrictions",
+                    mapping: {
+                        type: "operation_type",
+                        targets: setTargets
+                    }
+                }
+            }
+
+            function setCascade() {
+                return {
+                    container: "cascade",
+                    mapping: {
+                        type: "operation_type",
+                        targets: setTargets
+                    }
+                }
+            }
+
+            function setTargets(json, fields) {
+                parser.jsonToData(json, fields, {
+                    container: "targets",
+                    mapping: {
+                        type: "target_type",
+                        content: "target_content",
+                        targets: setTargets,
+                        checks: setChecks
+                    }
+                });
+            }
+
+            function setChecks(json, fields) {
+                parser.jsonToData(json, fields, {
+                    container: "checks",
+                    mapping: {
+                        condition: function(json, fields) {
+                            // NOTE: This is an example of manual insertion and function type mapping, LEAVE AS IS
+                            parser.setFieldWithValue(fields, "target_check_condition_type", json.type);
+                            if(json.target) {
+                                parser.setFieldWithValue(fields, "target_check_condition_target_type", json.target.type);
+                                parser.setFieldWithValue(fields, "target_check_condition_target_content", json.target.content);
+                            }
+                        },
+                        restrictors: setTargets
+                    }
+                });
+            }
 
             options.data = {
-                fields: fields
-            }
+                fields: {}
+            };
+            parser.jsonToData(json, options.data.fields, {
+                mapping: {
+                    key: {
+                        mapping: {
+                            type: "key_type",
+                            version: "key_version"
+                        }
+                    },
+                    displayId: "displayId",
+                    selectionLists: setSelectionLists(),
+                    references: setReferences(),
+                    fields: setFields(),
+                    namedTargets: setNamedTargets(),
+                    restrictions: setRestrictions(),
+                    cascade: setCascade()
+                }
+            });
         },
         toConfiguration: function(options) {
             if(!options.data || !options.data.fields) {
