@@ -32,8 +32,8 @@ define(function (require) {
     return function (options) {
         delete options.field.displayType;
 
-        var $container = null;
-        function appendRow() {
+        var $containers = null;
+        function appendRow(lang) {
             var transferRow = {
                 key: options.field.key,
                 removed: false,
@@ -42,30 +42,34 @@ define(function (require) {
                     "country": {
                         key: "country",
                         type: "VALUE",
-                        values: {
-                            "DEFAULT": {
-                                current: "Suomi"
-                            }
-                        }
+                        values: {}
                     },
                     "countryabbr": {
                         key: "countryabbr",
                         type: "VALUE",
-                        values: {
-                            "DEFAULT": {
-                                current: "FI"
-                            }
-                        }
+                        values: {}
                     }
                 }
             };
 
-            $container.data('addRow')(transferRow);
+            transferRow.fields.country.values[lang] = {
+                current: "Suomi"
+            };
+            transferRow.fields.countryabbr.values[lang] = {
+                current: "FI"
+            };
+
+            $containers.filter(function(i, contnr) {
+                var $container = $(contnr);
+                if ($container.data('lang') === lang) {
+                    $container.data('addRow')(transferRow);
+                }
+            });
         }
 
         return {
             preCreate: function (options) {
-                /*var $elem = this;
+                var $elem = this;
                 if(!options.buttons) {
                     options.buttons = [];
                 }
@@ -77,23 +81,17 @@ define(function (require) {
                     })) {
                     options.buttons.push({
                         buttonId: options.field.key+"_addFinland",
-                        createButton: function() {
-                            return {
-                                create: function () {
-                                    this
-                                        .text(MetkaJS.L10N.get('general.table.countries.addFinland'))
-                                        .click(function () {
-                                            appendRow();
-                                        });
-                                }
-                            }
+                        onClick: function(options) {
+                            return appendRow(options.lang);
+                        },
+                        title: function() {
+                            return MetkaJS.L10N.get('general.table.countries.addFinland')
                         }
-
-                    })
-                }*/
+                    });
+                }
             },
             postCreate: function(options) {
-                $container = $(this).children();
+                $containers = $(this).children();
             }
         }
     };
