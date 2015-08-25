@@ -154,7 +154,7 @@
 		},
 		"variables_ref": {
 			"key": "variables_ref",
-			"type": "REVISIONABLE",
+			"type": "REVISION",
 			"target": "STUDY_VARIABLES"
 		},
 		"studyid_ref": {
