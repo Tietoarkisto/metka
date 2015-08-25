@@ -126,9 +126,9 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         revision.setData(string.getRight());
         em.merge(revision);
 
+        revisionable.setLatestRevisionNo(revision.getKey().getRevisionNo());
         finalizeRevisionable(request, revisionable, data);
 
-        revisionable.setLatestRevisionNo(revision.getKey().getRevisionNo());
         em.merge(revisionable);
 
         revisions.indexRevision(revision.getKey());
@@ -379,7 +379,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         ReferenceContainerDataField files = filesPair.getRight();
 
         // There shouldn't be a study attachment reference in the files container at this point but you never know, so let's get or create the reference
-        Pair<StatusCode, ReferenceRow> referencePair = files.getOrCreateReferenceWithValue(revisionable.getId().toString(), studyRevision.getChanges(), DateTimeUserPair.build());
+        Pair<StatusCode, ReferenceRow> referencePair = files.getOrCreateReferenceWithValue(revisionable.getId().toString()+"-"+revisionable.getLatestRevisionNo(), studyRevision.getChanges(), DateTimeUserPair.build());
 
         // If new row was inserted then we now have a change in study revision, update revision to database
         if(referencePair.getLeft() == StatusCode.ROW_INSERT) {

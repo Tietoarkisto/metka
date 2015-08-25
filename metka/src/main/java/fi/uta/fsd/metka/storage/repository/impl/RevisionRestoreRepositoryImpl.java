@@ -28,18 +28,21 @@
 
 package fi.uta.fsd.metka.storage.repository.impl;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.OperationType;
+import fi.uta.fsd.Logger;
+import fi.uta.fsd.metka.enums.*;
+import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ContainerDataField;
+import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionRestoreRepository;
+import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
@@ -118,6 +121,13 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
             cascader.cascade(CascadeInstruction.build(OperationType.RESTORE, DateTimeUserPair.build(dt)), data, operation.getTargets(), configPair.getRight());
         }
 
+        // Finalize restore
+        /*
+            If the restored revisionable is STUDY_VARIABLES then check that the latest study revision found from 'study' field has a non removed row
+            in its 'studyvariables' container for the restored STUDY_VARIABLES
+         */
+        finalizeRestore(data);
+
         List<Integer> nos = revisions.getAllRevisionNumbers(id);
         for(Integer no : nos) {
             Pair<ReturnResult, RevisionData> revPair = revisions.getRevisionData(id, no);
@@ -129,5 +139,35 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
         messenger.sendAmqpMessage(messenger.FD_RESTORE, new RevisionPayload(data));
 
         return RemoveResult.SUCCESS_RESTORE;
+    }
+
+    private void finalizeRestore(RevisionData data) {
+        switch(data.getConfiguration().getType()) {
+            case STUDY_VARIABLES:
+                finalizeStudyVariablesRestore(data);
+                break;
+        }
+    }
+
+    private void finalizeStudyVariablesRestore(RevisionData data) {
+        RevisionData study = revisions.getLatestRevisionForIdAndType(data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight().getValueFor(Language.DEFAULT).valueAsInteger(),
+                false, ConfigurationType.STUDY).getRight();
+        if(study == null) {
+            Logger.error(getClass(), "Tried to finalize study variables restore but could not find study for study variables "+data.toString());
+            return;
+        }
+
+        String language = data.dataField(ValueDataFieldCall.get(Fields.LANGUAGE)).getRight().getActualValueFor(Language.DEFAULT);
+
+        ContainerDataField variables = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES)).getRight();
+        for(DataRow row : variables.getRowsFor(Language.DEFAULT)) {
+            if(language.equals(row.dataField(ValueDataFieldCall.get(Fields.VARIABLESLANGUAGE)).getRight().getActualValueFor(Language.DEFAULT))) {
+                if(row.getRemoved()) {
+                    row.setRemoved(false);
+                    revisions.updateRevisionData(study);
+                }
+                break;
+            }
+        }
     }
 }

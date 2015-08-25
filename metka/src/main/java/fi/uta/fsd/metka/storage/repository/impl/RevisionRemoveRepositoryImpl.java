@@ -155,8 +155,6 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             em.remove(revision);
         }
 
-
-
         if(revInfo != null && revInfo.getApproved() == null) {
             em.remove(em.find(RevisionableEntity.class, data.getKey().getId()));
             finalizeFinalRevisionRemoval(data, info);
@@ -164,6 +162,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         } else {
             RevisionableEntity entity = em.find(RevisionableEntity.class, data.getKey().getId());
             entity.setLatestRevisionNo(entity.getCurApprovedNo());
+            finalizeDraftRemoval(data, info);
             result = RemoveResult.SUCCESS_DRAFT;
         }
         messenger.sendAmqpMessage(messenger.FD_REMOVE, new RevisionPayload(data));
@@ -235,68 +234,17 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     }
 
     private void finalizeFinalRevisionRemoval(RevisionData data, DateTimeUserPair info) {
-        // TODO: Generalize this with configuration analysis
-        // Since we don't have a mapping object for references we need to do this by type for now.
-        // It might be handy to do some processing of data configurations when they are saved and to form a reference web from them.
-        // This would allow for automatic clean operations at certain key points like this. Basically collecting the foreign keys
-        // and enabling cascade effects.
-
         switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT: {
-                Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
-                if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-                    Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
-                            ConfigurationType.STUDY);
-                    if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
-                        RevisionData study = revPair.getRight();
-                        Pair<StatusCode, ReferenceContainerDataField> conPair = study.dataField(ReferenceContainerDataFieldCall.get(Fields.FILES));
-                        if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
-                            Pair<StatusCode, ReferenceRow> rowPair = conPair.getRight().getReferenceWithValue(data.getKey().getId() + "");
-                            if(rowPair.getLeft() == StatusCode.ROW_FOUND && !rowPair.getRight().getRemoved()) {
-                                conPair.getRight().removeReference(rowPair.getRight().getRowId(), study.getChanges(), info);
-                                revisions.updateRevisionData(study);
-                            }
-                        }
-                    }
-                }
+                finalizeFinalStudyAttachmentRevisionRemoval(data, info);
                 break;
             }
             case STUDY_VARIABLES: {
-                Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
-                if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-                    Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
-                            ConfigurationType.STUDY);
-                    if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
-                        RevisionData study = revPair.getRight();
-                        Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES));
-                        if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
-                            fieldPair = data.dataField(ValueDataFieldCall.get(Fields.LANGUAGE));
-                            if(fieldPair.getLeft() == StatusCode.FIELD_FOUND) {
-                                String varLang = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
-                                Pair<StatusCode, DataRow> rowPair = conPair.getRight().getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(varLang));
-                                if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
-                                    conPair.getRight().removeRow(rowPair.getRight().getRowId(), study.getChanges(), info);
-                                    revisions.updateRevisionData(study);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                fieldPair = data.dataField(ValueDataFieldCall.get(Fields.FILE));
-                if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-                    Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
-                            ConfigurationType.STUDY_ATTACHMENT);
-                    if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
-                        RevisionData attachment = revPair.getRight();
-                        fieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
-                        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-                            attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(""), Language.DEFAULT).setInfo(info));
-                            revisions.updateRevisionData(attachment);
-                        }
-                    }
-                }
+                finalizeFinalStudyVariablesRevisionRemoval(data, info);
                 break;
+            }
+            case STUDY_VARIABLE: {
+                finalizeFinalStudyVariableRevisionRemoval(data, info);
             }
             default: {
                 break;
@@ -304,19 +252,123 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         }
     }
 
+    private void finalizeFinalStudyVariablesRevisionRemoval(RevisionData data, DateTimeUserPair info) {
+        // The latest revision for study should always be a draft in this case since we can't create new variables draft without study being a draft
+        // and if we're performing the final revision removal then there has not been an approve operation between the events
+        Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
+                    ConfigurationType.STUDY);
+            if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
+                RevisionData study = revPair.getRight();
+                Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES));
+                if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
+                    fieldPair = data.dataField(ValueDataFieldCall.get(Fields.LANGUAGE));
+                    if(fieldPair.getLeft() == StatusCode.FIELD_FOUND) {
+                        String varLang = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
+                        Pair<StatusCode, DataRow> rowPair = conPair.getRight().getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(varLang));
+                        if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
+                            conPair.getRight().removeRow(rowPair.getRight().getRowId(), study.getChanges(), info);
+                            revisions.updateRevisionData(study);
+                        }
+                    }
+                }
+            }
+        }
+
+        fieldPair = data.dataField(ValueDataFieldCall.get(Fields.FILE));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
+                    ConfigurationType.STUDY_ATTACHMENT);
+            if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
+                RevisionData attachment = revPair.getRight();
+                fieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+                if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+                    attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(""), Language.DEFAULT).setInfo(info));
+                    revisions.updateRevisionData(attachment);
+                }
+            }
+        }
+    }
+
+    private void finalizeFinalStudyVariableRevisionRemoval(RevisionData data, DateTimeUserPair info) {
+        // The latest revision for study should always be a draft in this case since we can't create new variable draft without study variables being a draft
+        // and if we're performing the final revision removal then there has not been an approve operation between the events
+        Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
+                    ConfigurationType.STUDY_VARIABLES);
+            if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
+                RevisionData variables = revPair.getRight();
+                Pair<StatusCode, ReferenceContainerDataField> conPair = variables.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES));
+                if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
+                    Pair<StatusCode, ReferenceRow> rowPair = conPair.getRight().getReferenceIncludingValue(data.getKey().getId() + "-");
+                    if(rowPair.getLeft() == StatusCode.ROW_FOUND && !rowPair.getRight().getRemoved()) {
+                        conPair.getRight().removeReference(rowPair.getRight().getRowId(), variables.getChanges(), info);
+                        revisions.updateRevisionData(variables);
+                    }
+                }
+            }
+        }
+    }
+
+    private void finalizeFinalStudyAttachmentRevisionRemoval(RevisionData data, DateTimeUserPair info) {
+        // The latest revision for study should always be a draft in this case since we can't create new attachment draft without study being a draft
+        // and if we're performing the final revision removal then there has not been an approve operation between the events
+        Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
+                    ConfigurationType.STUDY);
+            if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
+                RevisionData study = revPair.getRight();
+                Pair<StatusCode, ReferenceContainerDataField> conPair = study.dataField(ReferenceContainerDataFieldCall.get(Fields.FILES));
+                if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
+                    Pair<StatusCode, ReferenceRow> rowPair = conPair.getRight().getReferenceIncludingValue(data.getKey().getId() + "-");
+                    if(rowPair.getLeft() == StatusCode.ROW_FOUND && !rowPair.getRight().getRemoved()) {
+                        conPair.getRight().removeReference(rowPair.getRight().getRowId(), study.getChanges(), info);
+                        revisions.updateRevisionData(study);
+                    }
+                }
+            }
+        }
+    }
+
+    private void finalizeDraftRemoval(RevisionData data, DateTimeUserPair info) {
+        switch(data.getConfiguration().getType()) {
+            case STUDY_ATTACHMENT: {
+                finalizeStudyAttachmentDraftRemoval(data, info);
+                break;
+            }
+            case STUDY_VARIABLES: {
+                //finalizeStudyVariablesDraftRemoval(data, info);
+                break;
+            }
+            case STUDY_VARIABLE: {
+                //finalizeStudyVariableDraftRemoval(data, info);
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    private void finalizeStudyAttachmentDraftRemoval(RevisionData data, DateTimeUserPair info) {
+
+    }
+
     private void finalizeLogicalRemoval(RevisionData data, DateTimeUserPair info) {
-        // TODO: Generalize this with configuration analysis
+        // TODO: Generalize this and other respective cases with configuration analysis
         // Since we don't have a mapping object for references we need to do this by type for now.
         // It might be handy to do some processing of data configurations when they are saved and to form a reference web from them.
         // This would allow for automatic clean operations at certain key points like this. Basically collecting the foreign keys
         // and enabling cascade effects.
 
         switch(data.getConfiguration().getType()) {
-            case STUDY_ERROR:
+            case STUDY_ERROR: {
+                revisions.sendStudyErrorMessageIfNeeded(data, configurations.findConfiguration(data.getConfiguration()).getRight());
+                break;
+            }
             case STUDY_VARIABLES: {
-                if(data.getConfiguration().getType() == ConfigurationType.STUDY_ERROR) {
-                    revisions.sendStudyErrorMessageIfNeeded(data, configurations.findConfiguration(data.getConfiguration()).getRight());
-                }
                 Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
                 if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
                     Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,

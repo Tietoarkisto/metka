@@ -61,8 +61,7 @@ public class Messenger {
     @Autowired
     private ReferenceCollector references;
 
-    @Autowired
-    private JSONUtil json;
+    private JSONUtil json; // Set during constructor
 
     public final MetkaMessageType<TestPayload> F0_TEST;
     public final MetkaMessageType<AuditPayload> FA_AUDIT;
@@ -81,7 +80,9 @@ public class Messenger {
     public final MetkaMessageType<RevisionPayload> FD_RESTORE;
     public final MetkaMessageType<ProcessPayload> FE_START;
 
-    public Messenger() {
+    @Autowired
+    public Messenger(JSONUtil json) {
+        this.json = json;
         F0_TEST = new MetkaMessageType<>("0", "TEST", new TestFactory());
         FA_AUDIT = new MetkaMessageType<>("A", "AUDIT", new AuditFactory());
         FB_ERROR_SCORE = new MetkaMessageType<>("B", "ERROR_SCORE", new StudyMessageFactory<>());

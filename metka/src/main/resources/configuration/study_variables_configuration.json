@@ -33,7 +33,7 @@
         },
         "variable_ref": {
             "key": "variable_ref",
-            "type": "REVISIONABLE",
+            "type": "REVISION",
             "target": "STUDY_VARIABLE",
             "titlePath": "varlabel"
         },

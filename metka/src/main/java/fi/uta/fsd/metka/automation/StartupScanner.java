@@ -68,10 +68,11 @@ public class StartupScanner {
     @Autowired
     private Messenger messenger;
 
+    private static int postConstructs = 0;
+
     /**
      * Sends AMQP-message of Family E to notify that the server has started
      */
-    @PostConstruct
     private void sendAmqpProcessMessage() {
         RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
         List<String> arguments = runtime.getInputArguments();
@@ -105,6 +106,11 @@ public class StartupScanner {
                 configRepo.insert(conf.getRight());
             }
         }
+
+        postConstructs++;
+        if(postConstructs == 3) {
+            sendAmqpProcessMessage();
+        }
     }
 
     /**
@@ -134,6 +140,11 @@ public class StartupScanner {
                 miscJsonRepo.insert(misc.getRight());
             }
         }
+
+        postConstructs++;
+        if(postConstructs == 3) {
+            sendAmqpProcessMessage();
+        }
     }
 
     /**
@@ -157,6 +168,11 @@ public class StartupScanner {
             if(existing.getLeft() != ReturnResult.CONFIGURATION_FOUND && existing.getLeft() != ReturnResult.DATABASE_DISCREPANCY) {
                 configRepo.insert(gui.getRight());
             }
+        }
+
+        postConstructs++;
+        if(postConstructs == 3) {
+            sendAmqpProcessMessage();
         }
     }
 }

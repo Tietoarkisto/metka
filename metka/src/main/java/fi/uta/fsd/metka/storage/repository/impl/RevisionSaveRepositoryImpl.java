@@ -158,6 +158,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         SaveHandler handler = new SaveHandler(info, revision.getKey());
         MutablePair<Boolean, Boolean> changesAndErrors = handler.saveFields(configuration, transferData, revision);
 
+        // Only finalize if there have been changes
         finalizeSave(revision, transferData, configuration, info, changesAndErrors);
 
         if(changesAndErrors.getLeft()) {
@@ -194,7 +195,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 finalizeStudy(revision, configuration, transferData, info, changesAndErrors);
                 break;
             case PUBLICATION:
-                finalizePublication(revision, transferData);
+                finalizePublication(revision, transferData, changesAndErrors);
                 break;
             default:
                 break;
@@ -231,16 +232,19 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
     }
 
-    private void finalizePublication(RevisionData data, TransferData transferData) {
-        Pair<StatusCode, ValueDataField> pair = data.dataField(ValueDataFieldCall.get(Fields.PUBLICATIONFIRSTSAVED));
-        if(pair.getLeft() == StatusCode.FIELD_FOUND && pair.getRight().hasValueFor(Language.DEFAULT)) {
-            return;
+    private void finalizePublication(RevisionData data, TransferData transferData, MutablePair<Boolean, Boolean> changesAndErrors) {
+        if(changesAndErrors.getLeft()) {
+            // Only do this if there has been changes to the data
+            Pair<StatusCode, ValueDataField> pair = data.dataField(ValueDataFieldCall.get(Fields.PUBLICATIONFIRSTSAVED));
+            if(pair.getLeft() == StatusCode.FIELD_FOUND && pair.getRight().hasValueFor(Language.DEFAULT)) {
+                return;
+            }
+            pair = data.dataField(ValueDataFieldCall.set(Fields.PUBLICATIONFIRSTSAVED, new Value((new LocalDate()).toString()), Language.DEFAULT).setChangeMap(data.getChanges()));
+            if(!(pair.getLeft() == StatusCode.FIELD_INSERT || pair.getLeft() == StatusCode.FIELD_CHANGED)) {
+                return;
+            }
+            transferData.addField(TransferField.buildFromDataField(pair.getRight()));
         }
-        pair = data.dataField(ValueDataFieldCall.set(Fields.PUBLICATIONFIRSTSAVED, new Value((new LocalDate()).toString()), Language.DEFAULT).setChangeMap(data.getChanges()));
-        if(!(pair.getLeft() == StatusCode.FIELD_INSERT || pair.getLeft() == StatusCode.FIELD_CHANGED)) {
-            return;
-        }
-        transferData.addField(TransferField.buildFromDataField(pair.getRight()));
     }
 
     /* Attachment save

@@ -629,7 +629,7 @@
 		},
 		"variables_ref": {
 			"key": "variables_ref",
-			"type": "REVISIONABLE",
+			"type": "REVISION",
 			"target": "STUDY_VARIABLES"
 		},
 		"variables_language_ref": {
@@ -641,13 +641,14 @@
 		},
 		"variables_file_ref": {
 			"key": "variables_file_ref",
-			"type": "REVISIONABLE",
-			"target": "STUDY_ATTACHMENT",
-			"titlePath": "file"
+			"type": "DEPENDENCY",
+			"target": "variables",
+			"valuePath": "file",
+			"titlePath": "path"
 		},
 		"attachment_ref": {
 			"key": "attachment_ref",
-			"type": "REVISIONABLE",
+			"type": "REVISION",
 			"target": "STUDY_ATTACHMENT",
 			"titlePath": "file"
 		},

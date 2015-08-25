@@ -46,39 +46,7 @@
 			}]
 		}, {
 			"type": "QUERY",
-			"content": "STUDY lang:en series.value:{id}",
-			"checks": [{
-				"condition": {
-					"type":	"IS_EMPTY"
-				}
-			}]
-		}, {
-			"type": "QUERY",
-			"content": "STUDY lang:sv series.value:{id}",
-			"checks": [{
-				"condition": {
-					"type":	"IS_EMPTY"
-				}
-			}]
-		}, {
-			"type": "QUERY",
 			"content": "PUBLICATION series.value:{id}",
-			"checks": [{
-				"condition": {
-					"type":	"IS_EMPTY"
-				}
-			}]
-		}, {
-			"type": "QUERY",
-			"content": "PUBLICATION lang:en series.value:{id}",
-			"checks": [{
-				"condition": {
-					"type":	"IS_EMPTY"
-				}
-			}]
-		}, {
-			"type": "QUERY",
-			"content": "PUBLICATION lang:sv series.value:{id}",
 			"checks": [{
 				"condition": {
 					"type":	"IS_EMPTY"

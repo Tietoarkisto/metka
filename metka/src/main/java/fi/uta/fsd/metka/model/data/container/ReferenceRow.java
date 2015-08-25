@@ -118,4 +118,12 @@ public class ReferenceRow extends ContainerRow {
         // There's nothing to normalize since changing a referenced value of a row doesn't really make sense
         // There either is a value or not and users have to remove a row and create new row to make 'change'
     }
+
+    @JsonIgnore
+    public boolean valueContaints(String value) {
+        if(hasValue()) {
+            // Assume saved value is SimpleValue, if there's some change to this later then adapt this method
+            return reference.getValue().contains(value);
+        } else return false;
+    }
 }

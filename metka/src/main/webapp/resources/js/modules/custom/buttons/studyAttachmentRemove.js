@@ -36,7 +36,8 @@ define(function (require) {
             options.$events.trigger('modal.refresh');
             $('#'+options.modalTarget).modal('hide');
         }
-        this.click(require('./../../remove')($.extend({
+        this.click(
+            require('./../../remove')($.extend({
             success: {
                 SUCCESS_LOGICAL: closeAndRefresh,
                 SUCCESS_DRAFT: closeAndRefresh,

@@ -95,6 +95,22 @@ public class ReferenceContainerDataField extends RowContainerDataField {
     }
 
     /**
+     * Searches through a list of references for a reference that contains given value in its own value.
+     * This is typically used to find rows based on revisionable id in reference containers with REVISION type reference.
+     * WARNING: This finds only the first instance, if all matching rows are needed then some other method has to be used.
+     * @param value Reference value that is searched for
+     * @return ReferenceRow matching given value or null if none found
+     */
+    @JsonIgnore public Pair<StatusCode, ReferenceRow> getReferenceIncludingValue(String value) {
+        for(ReferenceRow reference : references) {
+            if(reference.valueContaints(value)) {
+                return new ImmutablePair<>(StatusCode.ROW_FOUND, reference);
+            }
+        }
+        return new ImmutablePair<>(StatusCode.NO_ROW_WITH_VALUE, null);
+    }
+
+    /**
      * Uses getReferenceWithValue to search for existing reference with given value.
      * If reference is not found creates a new reference and inserts it to the list.
      * Since it can be assumed that it's desirable to find the reference with the given value from the references list

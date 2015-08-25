@@ -153,9 +153,6 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             return new ImmutablePair<>(OperationResponse.build(result), transferData);
         }
 
-        // Do approve
-        result = approveData(data, transferData);
-
         // TODO: Check that all SELECTION values are still valid (e.g. that they can be found and that the values are not marked deprecated
         // TODO: Check that other references like series are still valid (e.g. they point to existing revisionables
 
@@ -191,15 +188,6 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
             ReturnResult updateResult = revisions.updateRevisionData(data);
 
-            /*RevisionEntity revision = em.find(RevisionEntity.class, new RevisionKey(data.getKey().getId(), data.getKey().getNo()));
-            revision.setState(RevisionState.APPROVED);
-            revision.setData(string.getRight());*/
-
-            /*
-
-            RevisionableEntity revisionable = em.find(RevisionableEntity.class, data.getKey().getId());
-            revisionable.setCurApprovedNo(data.getKey().getNo());*/
-
             if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 return new ImmutablePair<>(OperationResponse.build(updateResult), transferData);
             }
@@ -211,97 +199,6 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             return new ImmutablePair<>(OperationResponse.build(result), transferData);
         }
     }
-
-    // There's no point in sending configuration to here since all of the checks are very much dependent on knowledge of the content.
-    // When restriction configuration is done then we can apply it here but even then it can be fetched at this method.
-    // Also TransferData is not needed in sub object approvals since it's never going to be returned to user.
-    private ReturnResult approveData(RevisionData revision, TransferData transferData) {
-        switch(revision.getConfiguration().getType()) {
-            /*case STUDY:
-                //return approveStudy(revision, transferData);
-            case STUDY_ATTACHMENT:
-                //return approveStudyAttachment(revision);
-            case STUDY_VARIABLES:
-                //return approveStudyVariables(revision);*/
-            default:
-                return ReturnResult.OPERATION_SUCCESSFUL;
-        }
-    }
-
-    /*private ReturnResult approveStudy(RevisionData revision, TransferData transferData) {
-        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;*/
-        // Try to approve sub revisions of study. Just get all relevant revisions and check if they are drafts, if so construct TransferData and call
-        // approve recursively
-
-        // Try to approve all study attachments linked to this study (this should move files from temporary location to their actual location)
-        /*ReturnResult studyAttachmentCheckResult = checkStudyAttachments(revision, transferData);
-        if(studyAttachmentCheckResult != ReturnResult.OPERATION_SUCCESSFUL) {
-            result = ReturnResult.OPERATION_FAIL;
-            // For study attachment approval to fail there has to be a field and content.
-            transferData.getField("files").addError(FieldError.APPROVE_FAILED);
-        }*/
-
-        // Try to approve study variables linked to this study, this should try to approve all study variables that are linked to it
-        // If there are errors in study variables (either the collection or individual variables then just mark an error to study variables field in transferData
-        /*ReturnResult variablesCheckResult = checkStudyVariables(revision, transferData);
-        if(variablesCheckResult != ReturnResult.OPERATION_SUCCESSFUL) {
-            result = ReturnResult.OPERATION_FAIL;
-            // We know that if study variables approval failed there has to be variables field in transfer data since it's added during checking
-            // if it was missing before
-            TransferField field = transferData.getField(Fields.VARIABLES);
-            field.addErrorFor(Language.DEFAULT, FieldError.APPROVE_FAILED);
-        }*/
-/*
-        return result;
-    }*/
-
-    /*private ReturnResult approveStudyAttachment(RevisionData revision) {
-        // File status has been checked during save, we don't need to do it again here.
-
-        return ReturnResult.OPERATION_SUCCESSFUL;
-    }*/
-
-/*
-    private ReturnResult approveStudyVariables(RevisionData revision) {
-        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
-*/
-
-        /*// Loop through all variables and check if they need approval.
-        // Try to approve every one but if even one fails then return APPROVE_FAILED since the process of study approval can't continue
-        Pair<StatusCode, ReferenceContainerDataField> fieldPair = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES));
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
-            // Nothing to loop through
-            return result;
-        }
-        ReferenceContainerDataField variables = fieldPair.getRight();
-        if(!variables.hasRows()) {
-            // Nothing to loop through
-            return result;
-        }
-
-        // TODO: Cascade these using operations
-        for(ReferenceRow reference : variables.getReferences()) {
-            // Just assume that each row is correctly formed
-            Pair<ReturnResult, RevisionData> variablePair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), false, ConfigurationType.STUDY_VARIABLE);
-            if(variablePair.getLeft() != ReturnResult.REVISION_FOUND) {
-                Logger.error(getClass(), "Didn't find revision for " + reference.getActualValue() + " while approving study variables. Continuin approval.");
-                continue;
-            }
-            RevisionData variable = variablePair.getRight();
-            if(variable.getState() != RevisionState.DRAFT) {
-                // Variable doesn't require approving
-                continue;
-            }
-            Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variable, RevisionableInfo.FALSE));
-            if(approveResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
-                Logger.error(getClass(), "Tried to approve "+variable.toString()+" and failed with result "+approveResult.getLeft());
-                result = ReturnResult.OPERATION_FAIL;
-                // Continue to approve variables since, no need to mark errors on transfer data since this data will never be sent to client from here
-            }
-        }*/
-/*
-        return result;
-    }*/
 
     /**
      * This does operations that have to be done just before revision can be saved to database.

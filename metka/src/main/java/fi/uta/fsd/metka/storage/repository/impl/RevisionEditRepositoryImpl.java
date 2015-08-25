@@ -178,6 +178,8 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             revisions.indexRevision(data.getKey());
         }
 
+        finalizeRevisionEdit(result, data);
+
         return new ImmutablePair<>(OperationResponse.build(result), data);
     }
 
@@ -227,5 +229,64 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
         for(Language lang : oldData.getApproved().keySet()) {
             newData.approveRevision(lang, oldData.approveInfoFor(lang));
         }
+    }
+
+    private void finalizeRevisionEdit(ReturnResult result, RevisionData data) {
+        switch(data.getConfiguration().getType()) {
+            case STUDY_ATTACHMENT: {
+                finalizeStudyAttachmentEdit(result, data);
+                break;
+            }
+            case STUDY_VARIABLES: {
+                finalizeStudyVariablesEdit(result, data);
+            }
+            case STUDY_VARIABLE: {
+                finalizeStudyVariableEdit(result, data);
+            }
+        }
+    }
+
+    private void finalizeStudyAttachmentEdit(ReturnResult result, RevisionData data) {
+        if(result != ReturnResult.REVISION_CREATED) {
+            return;
+        }
+
+        // TODO:
+        // * Get study revision
+        // * Check that revision is DRAFT (this should always be the case but if not for some reason then just stop the finalization)
+        // * Get files container
+        // * Find row that points to this revisionable (i.e. value starts with '{id}-')
+        // * If value is different from {key} then update to {key}
+    }
+
+    private void finalizeStudyVariablesEdit(ReturnResult result, RevisionData data) {
+        if(result != ReturnResult.REVISION_CREATED) {
+            return;
+        }
+
+        // TODO:
+        // * Get study revision
+        // * Check that revision is DRAFT (this should always be the case but if not for some reason then just stop the finalization)
+        // * Get studyvariables container
+        // * Find row with this revisionables language
+        // * If variables-value is different from {key} then update to {key}
+        //
+        // * Get attachment referenced in this study variables
+        // * QUESTION: What to do if the attachment is not DRAFT?
+        //   Should we just create a new draft and then trust that if the user makes no changes and the variables draft is removed then all changes caused by this are reverted automatically?
+        // * When we have a draft of attachment then check if the value in variables-field is equal to {key} and if not then update it to {key}
+    }
+
+    private void finalizeStudyVariableEdit(ReturnResult result, RevisionData data) {
+        if(result != ReturnResult.REVISION_CREATED) {
+            return;
+        }
+
+        // TODO:
+        // * Get variables
+        // * QUESTION: same as with study variables case with attachment, what to do if there is no DRAFT?
+        // * When we have draft get variables container
+        // * Find row that points to this revisionable (i.e. value starts with '{id}-')
+        // * If value is different from {key} then update to {key}
     }
 }
