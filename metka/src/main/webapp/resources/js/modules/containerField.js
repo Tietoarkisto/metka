@@ -31,8 +31,6 @@ define(function (require) {
 
     var resultParser = require('./resultParser');
 
-    var triggersSet = false;
-
     /**
      * Creates table (container field or reference container) field.
      *
@@ -676,11 +674,8 @@ define(function (require) {
         var redrawHeaderKey = 'redraw-header-{key}'.supplant({
             key: options.field.key
         });
-        if(!triggersSet) {
-            options.$events.on(redrawKey, redraw);
-            options.$events.on(redrawHeaderKey, redrawHeader);
-            triggersSet = true;
-        }
+        options.$events.on(redrawKey, redraw);
+        options.$events.on(redrawHeaderKey, redrawHeader);
         options.$events.trigger(redrawKey);
     };
 });
