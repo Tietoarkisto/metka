@@ -70,7 +70,7 @@ define(function (require) {
                     fieldTitles: options.fieldTitles,
                     dialogTitle: options.field.dialogTitle,
                     dialogTitles: options.dialogTitles,
-                    subfieldConfiguration: option.subfieldConfiguration,
+                    subfieldConfiguration: options.subfieldConfiguration,
                     content: [
                         {
                             type: 'COLUMN',
