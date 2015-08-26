@@ -151,6 +151,10 @@ define(function (require) {
                         var type = columnOptions && columnOptions.displayType ? columnOptions.displayType : columnOptions.type;
                         //var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
 
+                        if(type === 'CUSTOM_JS') {
+                            type = columnOptions.type;
+                        }
+
                         if (!type) {
                             log('not implemented', column);
                             $td.text(EMPTY);
