@@ -32,11 +32,13 @@ import codebook25.*;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -50,8 +52,16 @@ class DDIWriteFileDescription extends DDIWriteSectionBase {
     }
 
     void write() {
-        // TODO: This needs to be changed to STUDYVARIABLES container handling
-        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+        ContainerDataField variablesCon = revision.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES)).getRight();
+        if(variablesCon == null) {
+            return;
+        }
+
+        DataRow row = variablesCon.getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(language.toValue())).getRight();
+        if(row == null) {
+            return;
+        }
+        Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         // This operation is so large that it's cleaner just to return than to wrap everything inside this one IF
         if(!hasValue(valueFieldPair, Language.DEFAULT)) {
             return;

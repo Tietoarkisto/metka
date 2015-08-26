@@ -39,6 +39,7 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -55,7 +56,16 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
     }
 
     void write() {
-        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+        ContainerDataField variablesCon = revision.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES)).getRight();
+        if(variablesCon == null) {
+            return;
+        }
+
+        DataRow row = variablesCon.getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(language.toValue())).getRight();
+        if(row == null) {
+            return;
+        }
+        Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         // This operation is so large that it's cleaner just to return than to wrap everything inside this one IF
         if(valueFieldPair.getLeft() != StatusCode.FIELD_FOUND || !valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             return;
@@ -86,7 +96,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
                 }
                 revisionDataPair = revisions.getRevisionData(reference.getActualValue());
                 if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                    Logger.error(getClass(), "Referenced study variable with id: " + reference.getReference().asInteger() + " could not be found with result " + revisionDataPair.getLeft());
+                    Logger.error(getClass(), "Referenced study variable with {key}: " + reference.getReference().getValue() + " could not be found with result " + revisionDataPair.getLeft());
                     continue;
                 }
                 RevisionData variable = revisionDataPair.getRight();
