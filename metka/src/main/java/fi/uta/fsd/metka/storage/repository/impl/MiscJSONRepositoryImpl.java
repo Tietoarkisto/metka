@@ -92,12 +92,6 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
     }
 
     @Override
-    public void merge(JsonNode misc) {
-        // TODO: actual merge
-        insert(misc);
-    }
-
-    @Override
     public Pair<ReturnResult, JsonNode> findByKey(String key) {
         MiscJSONEntity entity = em.find(MiscJSONEntity.class, key);
         if(entity == null || !StringUtils.hasText(entity.getData())) {

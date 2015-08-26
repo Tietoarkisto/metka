@@ -32,13 +32,11 @@ import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.UIRevisionState;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
-import fi.uta.fsd.metka.model.data.container.ReferenceRow;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -123,9 +121,18 @@ public class ReportRepositoryImpl implements ReportRepository {
             }
 
             // Varquantity
-            field = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+            ContainerDataField variablesCon = revision.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES)).getRight();
+            if(variablesCon == null) {
+                continue;
+            }
+
+            DataRow row = variablesCon.getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(Language.DEFAULT.toValue())).getRight();
+            if(row == null) {
+                continue;
+            }
+            field = row.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
             if(field.getLeft() == StatusCode.FIELD_FOUND && field.getRight().hasValueFor(Language.DEFAULT)) {
-                dataPair = revisions.getLatestRevisionForIdAndType(field.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
+                dataPair = revisions.getRevisionData(field.getRight().getActualValueFor(Language.DEFAULT));
                 if(dataPair.getLeft() == ReturnResult.REVISION_FOUND) {
                     field = dataPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARQUANTITY));
                     if(field.getLeft() == StatusCode.FIELD_FOUND) {

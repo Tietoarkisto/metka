@@ -47,14 +47,6 @@ public interface MiscJSONRepository {
     @Transactional(readOnly = false) public ReturnResult insert(String text);
 
     /**
-     * If previous data exists for given Misc JSON tree the new content is merged to the old content
-     * replacing existing values with new values. If no content exist then insert as new.
-     * NOTICE: TODO:
-     * @param misc Misc JSON data to be merged
-     */
-    @Transactional(readOnly = false) public void merge(JsonNode misc);
-
-    /**
      * Find MiscJSON data with given key.
      * @param key Requested Misc JSON key
      * @return

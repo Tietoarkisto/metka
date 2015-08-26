@@ -33,7 +33,7 @@ define(function (require) {
 
     return function (list, callback) {
         var texts = new Array();
-        log(list);
+        //log(list);
         // TODO: Fetch error strings
         list.forEach(function(error) {
             require('./server')('optionsByPath', {

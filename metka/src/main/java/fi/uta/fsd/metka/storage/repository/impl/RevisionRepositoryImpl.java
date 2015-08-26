@@ -158,6 +158,14 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     }
 
     @Override
+    public Pair<ReturnResult, RevisionData> getRevisionData(String key) {
+        if(!key.contains("-")) {
+            return getLatestRevisionForIdAndType(Long.parseLong(key), false, null);
+        }
+        return getRevisionDataOfType(Long.parseLong(key.split("-")[0]), Integer.parseInt(key.split("-")[1]), null);
+    }
+
+    @Override
     public Pair<ReturnResult, RevisionData> getRevisionDataOfType(Long id, Integer no, ConfigurationType type) {
         return getRevisionDataOfType(new RevisionKey(id, no), type);
     }
@@ -207,6 +215,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
         for(RevisionEntity revision : revisions) {
             numbers.add(revision.getKey().getRevisionNo());
         }
+        Collections.sort(numbers);
         return numbers;
     }
 

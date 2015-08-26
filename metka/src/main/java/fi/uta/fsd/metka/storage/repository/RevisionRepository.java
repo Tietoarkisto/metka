@@ -64,6 +64,7 @@ public interface RevisionRepository {
      */
     public Pair<ReturnResult, RevisionData> getRevisionData(Long id, Integer no);
     public Pair<ReturnResult, RevisionData> getRevisionData(RevisionKey key);
+    Pair<ReturnResult, RevisionData> getRevisionData(String key);
 
     /**
      * Returns the revision data with given id and number and checks that it is of the requested type.

@@ -32,9 +32,10 @@ import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Operation;
+import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.change.ContainerChange;
+import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
@@ -340,11 +341,12 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 break;
             }
             case STUDY_VARIABLES: {
-                //finalizeStudyVariablesDraftRemoval(data, info);
+                finalizeStudyVariablesDraftRemoval(data, info);
                 break;
             }
             case STUDY_VARIABLE: {
-                //finalizeStudyVariableDraftRemoval(data, info);
+                finalizeStudyVariableDraftRemoval(data, info);
+                break;
             }
             default: {
                 break;
@@ -353,7 +355,128 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     }
 
     private void finalizeStudyAttachmentDraftRemoval(RevisionData data, DateTimeUserPair info) {
-        List<Integer> revisionNos = revisions.getAllRevisionNumbers(data.getKey().getId());
+        List<Integer> revisionNos = revisions.getAllRevisionNumbers(data.getKey().getId()); // Last number is the newest revision
+        if(revisionNos.isEmpty()) {
+            return;
+        }
+
+        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            return;
+        }
+
+        RevisionData study = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY).getRight();
+        if(study == null) {
+            return;
+        }
+
+        ReferenceContainerDataField container = study.dataField(ReferenceContainerDataFieldCall.get(Fields.FILES)).getRight();
+        if(container == null || !container.hasValidRows()) {
+            return;
+        }
+
+        ReferenceRow row = container.getReferenceWithValue(data.getKey().asCongregateKey()).getRight();
+        if(row == null) {
+            return;
+        }
+
+        container.replaceRow(row.getRowId(), ReferenceRow.build(container, new Value(data.getKey().getId()+"-"+revisionNos.get(revisionNos.size()-1)), info), study.getChanges());
+        revisions.updateRevisionData(study);
+    }
+
+    private void finalizeStudyVariableDraftRemoval(RevisionData data, DateTimeUserPair info) {
+        List<Integer> revisionNos = revisions.getAllRevisionNumbers(data.getKey().getId()); // Last number is the newest revision
+        if(revisionNos.isEmpty()) {
+            return;
+        }
+
+        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            return;
+        }
+
+        RevisionData variables = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES).getRight();
+        if(variables == null) {
+            return;
+        }
+
+        ReferenceContainerDataField container = variables.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(container == null || !container.hasValidRows()) {
+            return;
+        }
+
+        ReferenceRow row = container.getReferenceWithValue(data.getKey().asCongregateKey()).getRight();
+        if(row == null) {
+            return;
+        }
+
+        container.replaceRow(row.getRowId(), ReferenceRow.build(container, new Value(data.getKey().getId()+"-"+revisionNos.get(revisionNos.size()-1)), info), variables.getChanges());
+        revisions.updateRevisionData(variables);
+    }
+
+    private void finalizeStudyVariablesDraftRemoval(RevisionData data, DateTimeUserPair info) {
+        List<Integer> revisionNos = revisions.getAllRevisionNumbers(data.getKey().getId()); // Last number is the newest revision
+        if(revisionNos.isEmpty()) {
+            return;
+        }
+
+        checkStucyVariablesStudy(data, info, revisionNos);
+
+        checkStudyVariablesAttachment(data, info, revisionNos);
+    }
+
+    private void checkStucyVariablesStudy(RevisionData data, DateTimeUserPair info, List<Integer> revisionNos) {
+        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            // Something weird has happened but this is not the place to react to it, just return
+            return;
+        }
+
+        RevisionData study = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY).getRight();
+        if(study == null || study.getState() != RevisionState.DRAFT) {
+            return;
+        }
+
+        ContainerDataField variables = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES)).getRight();
+        if(variables == null || !variables.hasValidRows()) {
+            return;
+        }
+
+        DataRow row = variables.getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLES, new Value(data.getKey().asCongregateKey())).getRight();
+        if(row == null) {
+            return;
+        }
+
+        ContainerChange cc = (ContainerChange)study.getChange(Fields.STUDYVARIABLES);
+        if(cc == null) {
+            cc = new ContainerChange(Fields.STUDYVARIABLES);
+            study.putChange(cc);
+        }
+
+        RowChange rc = cc.get(row.getRowId());
+        if(rc == null) {
+            rc = new RowChange(row.getRowId());
+            cc.put(rc);
+        }
+
+        row.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(data.getKey().getId()+"-"+revisionNos.get(revisionNos.size()-1)), Language.DEFAULT).setInfo(info).setChangeMap(rc.getChanges()));
+        revisions.updateRevisionData(study);
+    }
+
+    private void checkStudyVariablesAttachment(RevisionData data, DateTimeUserPair info, List<Integer> revisionNos) {
+        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            // Something weird has happened but this is not the place to react to it, just return
+            return;
+        }
+
+        RevisionData attachment = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_ATTACHMENT).getRight();
+        if(attachment == null || attachment.getState() != RevisionState.DRAFT) {
+            return;
+        }
+
+        attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(data.getKey().getId()+"-"+revisionNos.get(revisionNos.size()-1)), Language.DEFAULT).setInfo(info).setChangeMap(attachment.getChanges()));
+        revisions.updateRevisionData(attachment);
     }
 
     private void finalizeLogicalRemoval(RevisionData data, DateTimeUserPair info) {

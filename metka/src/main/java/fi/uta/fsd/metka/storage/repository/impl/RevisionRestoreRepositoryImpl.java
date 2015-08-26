@@ -30,13 +30,12 @@ package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
-import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ContainerDataField;
-import fi.uta.fsd.metka.model.data.container.DataRow;
+import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
@@ -121,12 +120,7 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
             cascader.cascade(CascadeInstruction.build(OperationType.RESTORE, DateTimeUserPair.build(dt)), data, operation.getTargets(), configPair.getRight());
         }
 
-        // Finalize restore
-        /*
-            If the restored revisionable is STUDY_VARIABLES then check that the latest study revision found from 'study' field has a non removed row
-            in its 'studyvariables' container for the restored STUDY_VARIABLES
-         */
-        finalizeRestore(data);
+        finalizeRestore(data, DateTimeUserPair.build());
 
         List<Integer> nos = revisions.getAllRevisionNumbers(id);
         for(Integer no : nos) {
@@ -141,21 +135,51 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
         return RemoveResult.SUCCESS_RESTORE;
     }
 
-    private void finalizeRestore(RevisionData data) {
+    private void finalizeRestore(RevisionData data, DateTimeUserPair info) {
         switch(data.getConfiguration().getType()) {
             case STUDY_VARIABLES:
-                finalizeStudyVariablesRestore(data);
+                finalizeStudyVariablesRestore(data, info);
                 break;
             case STUDY_VARIABLE:
-                finalizeStudyVariableRestore(data);
+                finalizeStudyVariableRestore(data, info);
         }
     }
 
-    private void finalizeStudyVariablesRestore(RevisionData data) {
+    private void finalizeStudyVariablesRestore(RevisionData data, DateTimeUserPair info) {
+        checkStudyVariablesStudy(data);
+
+        checkStudyVariablesAttachment(data, info);
+    }
+
+    private void checkStudyVariablesAttachment(RevisionData data, DateTimeUserPair info) {
+        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            // Something weird has happened but this is not the place to react to it, just return
+            return;
+        }
+
+        RevisionData attachment = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_ATTACHMENT).getRight();
+        if(attachment == null || attachment.getState() != RevisionState.DRAFT) {
+            return;
+        }
+
+        field = attachment.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            // Something weird has happened but this is not the place to react to it, just return
+            return;
+        }
+
+        if(!field.valueForEquals(Language.DEFAULT, data.getKey().asCongregateKey())) {
+            attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(data.getKey().asCongregateKey()), Language.DEFAULT).setInfo(info).setChangeMap(attachment.getChanges()));
+            revisions.updateRevisionData(attachment);
+        }
+    }
+
+    private void checkStudyVariablesStudy(RevisionData data) {
         RevisionData study = revisions.getLatestRevisionForIdAndType(data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight().getValueFor(Language.DEFAULT).valueAsInteger(),
                 false, ConfigurationType.STUDY).getRight();
         if(study == null) {
-            Logger.error(getClass(), "Tried to finalize study variables restore but could not find study for study variables "+data.toString());
+            Logger.error(getClass(), "Tried to finalize study variables restore but could not find study for study variables " + data.toString());
             return;
         }
 
@@ -171,36 +195,30 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
                 break;
             }
         }
-
-        // TODO:
-        // * Get attachment
-        // * Make sure that the attachment points to this variables revision
     }
 
-    private void finalizeStudyVariableRestore(RevisionData data) {
-        // TODO:
-        // * Get variables
-        // * Get the variables container
-        // * Find the row pointing to this variable (i.e. the value begins with '{id}-')
-        // * Check that the row is not removed and if it is then mark it as not removed or if the row is missing then add it
-        /*RevisionData study = revisions.getLatestRevisionForIdAndType(data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight().getValueFor(Language.DEFAULT).valueAsInteger(),
-                false, ConfigurationType.STUDY).getRight();
-        if(study == null) {
-            Logger.error(getClass(), "Tried to finalize study variables restore but could not find study for study variables "+data.toString());
+    private void finalizeStudyVariableRestore(RevisionData data, DateTimeUserPair info) {
+        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            // Something weird has happened but this is not the place to react to it, just return
             return;
         }
 
-        String language = data.dataField(ValueDataFieldCall.get(Fields.LANGUAGE)).getRight().getActualValueFor(Language.DEFAULT);
+        RevisionData variablesData = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES).getRight();
+        if(variablesData == null || variablesData.getState() != RevisionState.DRAFT) {
+            return;
+        }
 
-        ContainerDataField variables = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES)).getRight();
-        for(DataRow row : variables.getRowsFor(Language.DEFAULT)) {
-            if(language.equals(row.dataField(ValueDataFieldCall.get(Fields.VARIABLESLANGUAGE)).getRight().getActualValueFor(Language.DEFAULT))) {
-                if(row.getRemoved()) {
-                    row.setRemoved(false);
-                    revisions.updateRevisionData(study);
-                }
-                break;
-            }
-        }*/
+        ReferenceContainerDataField variables = variablesData.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(variables == null || !variables.hasValidRows()) {
+            return;
+        }
+
+        ReferenceRow row = variables.getReferenceIncludingValue(data.getKey().asPartialKey()).getRight();
+        if(row == null || row.valueEquals(data.getKey().asCongregateKey())) {
+            return;
+        }
+
+        variables.replaceRow(row.getRowId(), ReferenceRow.build(variables, new Value(data.getKey().asCongregateKey()), info), variablesData.getChanges());
     }
 }

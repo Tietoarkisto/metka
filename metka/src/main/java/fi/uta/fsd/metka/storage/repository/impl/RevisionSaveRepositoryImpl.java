@@ -737,13 +737,13 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             }
 
             fieldPair = rowPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARIABLES));
-            String varsId = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
+            String varsKey = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
             // If this is missing then something else has gone really wrong
 
             // Let's first check if we need to update the value at all
             fieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
-            if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT) || !fieldPair.getRight().valueForEquals(Language.DEFAULT, varsId)) {
-                attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(varsId), Language.DEFAULT).setInfo(info));
+            if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT) || !fieldPair.getRight().valueForEquals(Language.DEFAULT, varsKey)) {
+                attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(varsKey), Language.DEFAULT).setInfo(info));
                 changesAndErrors.setLeft(true);
             }
         }

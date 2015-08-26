@@ -50,6 +50,7 @@ class DDIWriteFileDescription extends DDIWriteSectionBase {
     }
 
     void write() {
+        // TODO: This needs to be changed to STUDYVARIABLES container handling
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         // This operation is so large that it's cleaner just to return than to wrap everything inside this one IF
         if(!hasValue(valueFieldPair, Language.DEFAULT)) {

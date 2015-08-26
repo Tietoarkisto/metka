@@ -38,6 +38,7 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.*;
 import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.names.Fields;
@@ -78,7 +79,16 @@ class DDIReadDataDescription extends DDIReadSectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
-        Pair<StatusCode, ValueDataField> valuePair = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+        ContainerDataField variablesCon = revision.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES)).getRight();
+        if(variablesCon == null) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        DataRow row = variablesCon.getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(language.toValue())).getRight();
+        if(row == null) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+        Pair<StatusCode, ValueDataField> valuePair = row.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         // This operation is so large that it's cleaner just to return than to wrap everything inside this one IF
         if(valuePair.getLeft() != StatusCode.FIELD_FOUND || !valuePair.getRight().hasValueFor(language)) {
             return ReturnResult.OPERATION_SUCCESSFUL;

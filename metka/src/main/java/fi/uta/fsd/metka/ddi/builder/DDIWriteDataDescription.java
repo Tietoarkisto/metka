@@ -62,8 +62,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
         }
 
         // Get variables data for given language
-        Pair<ReturnResult, RevisionData> revisionDataPair = revisions.getLatestRevisionForIdAndType(
-                valueFieldPair.getRight().getValueFor(language).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
+        Pair<ReturnResult, RevisionData> revisionDataPair = revisions.getRevisionData(valueFieldPair.getRight().getActualValueFor(language));
         if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(),
                     "Couldn't find expected variables revision with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
@@ -85,7 +84,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
                 if(reference.getRemoved()) {
                      continue;
                 }
-                revisionDataPair = revisions.getLatestRevisionForIdAndType(reference.getReference().asInteger(), false, ConfigurationType.STUDY_VARIABLE);
+                revisionDataPair = revisions.getRevisionData(reference.getActualValue());
                 if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                     Logger.error(getClass(), "Referenced study variable with id: " + reference.getReference().asInteger() + " could not be found with result " + revisionDataPair.getLeft());
                     continue;

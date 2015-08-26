@@ -156,7 +156,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             variablesData = dataPair.getRight();
         } else {
             String key = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
-            Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(Long.parseLong(key.split("-")[0]), Integer.parseInt(key.split("-")[1]));
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(key);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 Logger.error(getClass(), "Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValueFor(Language.DEFAULT)
                         +" even though it's referenced from study "+study.toString());

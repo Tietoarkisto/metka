@@ -195,7 +195,7 @@ class PORVariablesParser implements VariablesParser {
             if(variablesContainer != null) {
                 // See that respective rows are removed from STUDY_VARIABLES
                 //    Remove from variables list
-                ReferenceRow reference = variablesContainer.getReferenceWithValue(variableRevision.getKey().getId().toString()).getRight();
+                ReferenceRow reference = variablesContainer.getReferenceIncludingValue(variableRevision.getKey().asPartialKey()).getRight();
                 if(reference != null) {
                     StatusCode status = variablesContainer.removeReference(reference.getRowId(), variablesData.getChanges(), info).getLeft();
                     if(status == StatusCode.ROW_CHANGE || status == StatusCode.ROW_REMOVED) {
@@ -300,7 +300,7 @@ class PORVariablesParser implements VariablesParser {
             }
 
             // Insert row back to variables container or create row if not there before
-            popOrCreateAndInsertRowTo(variablesContainer, varRows, variableData.getKey().getId()+"", variablesData.getChanges(), info);
+            popOrCreateAndInsertRowTo(variablesContainer, varRows, variableData.getKey().asCongregateKey(), variableData.getKey().asPartialKey(), variablesData.getChanges(), info);
 
             counter++;
             long end = System.currentTimeMillis()-start;
@@ -323,25 +323,32 @@ class PORVariablesParser implements VariablesParser {
 
     /**
      * Helper method for handling and organising container rows.
-     * Searches given collection for a row with given value in given field.
+     * Searches given collection for a row including given value in given field.
      * If row was not found then creates a new row and inserts it into provided container.
+     * If row was found but value does not equal given value then it is replaced with a new row.
      * No change handling is necessary since some set operation should follow always after
      * calling this method.
      *
      * @param target Target container where the row will be set
      * @param rows Collection of rows to search through for correct existing row
      * @param value Value to search for
+     * @param includes Value to search for
      * @param changeMap Map where this rows containers should reside
      * @return Either an existing or newly created ReferenceRow that has been inserted to the given container already
      */
-    private ReferenceRow popOrCreateAndInsertRowTo(ReferenceContainerDataField target, Collection<ReferenceRow> rows, String value, Map<String, Change> changeMap, DateTimeUserPair info) {
-        ReferenceRow row = popRowWithFieldValue(rows, value);
+    private ReferenceRow popOrCreateAndInsertRowTo(ReferenceContainerDataField target, Collection<ReferenceRow> rows, String value, String includes, Map<String, Change> changeMap, DateTimeUserPair info) {
+        ReferenceRow row = popRowWithFieldIncludingValue(rows, includes);
         if(row == null) {
             row = ReferenceRow.build(target, new Value(value), info);
             ChangeUtil.insertChange(changeMap, target, row);
+        } else if(!row.valueEquals(value)) {
+            ReferenceRow newRow = ReferenceRow.build(target, new Value(value), info);
+            target.getReferences().add(newRow);
+            ChangeUtil.insertChange(changeMap, target, newRow);
+        } else {
+            target.getReferences().add(row);
         }
 
-        target.getReferences().add(row);
         return row;
     }
 
@@ -356,10 +363,10 @@ class PORVariablesParser implements VariablesParser {
      * @param value Value to be searched for, should be non empty string
      * @return First ReferenceRow to match the given value, null if no row was found
      */
-    private ReferenceRow popRowWithFieldValue(Collection<ReferenceRow> rows, String value) {
+    private ReferenceRow popRowWithFieldIncludingValue(Collection<ReferenceRow> rows, String value) {
         for(Iterator<ReferenceRow> i = rows.iterator(); i.hasNext(); ) {
             ReferenceRow row = i.next();
-            if(row.valueEquals(value)) {
+            if(row.valueContaints(value)) {
                 i.remove();
                 return row;
             }
