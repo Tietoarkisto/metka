@@ -193,7 +193,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             }
 
             messenger.sendAmqpMessage(messenger.FD_APPROVE, new RevisionPayload(data));
-            revisions.indexRevision(data.getKey());
+            //revisions.indexRevision(data.getKey());
             return new ImmutablePair<>(OperationResponse.build(ReturnResult.OPERATION_SUCCESSFUL), TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE));
         } else {
             return new ImmutablePair<>(OperationResponse.build(result), transferData);

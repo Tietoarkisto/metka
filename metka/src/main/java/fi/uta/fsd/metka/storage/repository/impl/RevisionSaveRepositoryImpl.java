@@ -172,7 +172,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 messenger.sendAmqpMessage(messenger.FD_UPDATE, new RevisionPayload(revision));
                 // Set transfer object save info since database values have changed
                 transferData.getState().setSaved(info);
-                revisions.indexRevision(revision.getKey());
+                //revisions.indexRevision(revision.getKey());
                 return new ImmutablePair<>((changesAndErrors.getRight() ? ReturnResult.OPERATION_SUCCESSFUL_WITH_ERRORS : ReturnResult.OPERATION_SUCCESSFUL), transferData);
             }
         } else {

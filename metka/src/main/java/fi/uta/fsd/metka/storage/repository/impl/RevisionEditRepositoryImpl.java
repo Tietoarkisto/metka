@@ -175,7 +175,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
 
         if(result == ReturnResult.REVISION_CREATED) {
             messenger.sendAmqpMessage(messenger.FD_DRAFT, new RevisionPayload(data));
-            revisions.indexRevision(data.getKey());
+            //revisions.indexRevision(data.getKey());
         }
 
         finalizeRevisionEdit(result, data);

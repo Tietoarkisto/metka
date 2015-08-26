@@ -146,6 +146,8 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
             case STUDY_VARIABLES:
                 finalizeStudyVariablesRestore(data);
                 break;
+            case STUDY_VARIABLE:
+                finalizeStudyVariableRestore(data);
         }
     }
 
@@ -169,5 +171,36 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
                 break;
             }
         }
+
+        // TODO:
+        // * Get attachment
+        // * Make sure that the attachment points to this variables revision
+    }
+
+    private void finalizeStudyVariableRestore(RevisionData data) {
+        // TODO:
+        // * Get variables
+        // * Get the variables container
+        // * Find the row pointing to this variable (i.e. the value begins with '{id}-')
+        // * Check that the row is not removed and if it is then mark it as not removed or if the row is missing then add it
+        /*RevisionData study = revisions.getLatestRevisionForIdAndType(data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight().getValueFor(Language.DEFAULT).valueAsInteger(),
+                false, ConfigurationType.STUDY).getRight();
+        if(study == null) {
+            Logger.error(getClass(), "Tried to finalize study variables restore but could not find study for study variables "+data.toString());
+            return;
+        }
+
+        String language = data.dataField(ValueDataFieldCall.get(Fields.LANGUAGE)).getRight().getActualValueFor(Language.DEFAULT);
+
+        ContainerDataField variables = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES)).getRight();
+        for(DataRow row : variables.getRowsFor(Language.DEFAULT)) {
+            if(language.equals(row.dataField(ValueDataFieldCall.get(Fields.VARIABLESLANGUAGE)).getRight().getActualValueFor(Language.DEFAULT))) {
+                if(row.getRemoved()) {
+                    row.setRemoved(false);
+                    revisions.updateRevisionData(study);
+                }
+                break;
+            }
+        }*/
     }
 }

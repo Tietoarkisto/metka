@@ -76,4 +76,12 @@ public class OperationResponse {
     public String getMessage() {
         return message;
     }
+
+    public boolean equals(String result) {
+        return this.result.equals(result);
+    }
+
+    public boolean equals(ReturnResult result) {
+        return this.result.equals(result.name());
+    }
 }

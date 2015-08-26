@@ -135,7 +135,7 @@ public class RevisionHandlerRepositoryImpl implements RevisionHandlerRepository 
         }
 
         messenger.sendAmqpMessage(StringUtils.hasText(data.getHandler()) ? messenger.FD_CLAIM : messenger.FD_RELEASE, new RevisionPayload(data));
-        revisions.indexRevision(data.getKey());
+        //revisions.indexRevision(data.getKey());
 
         return new ImmutablePair<>(ReturnResult.REVISION_UPDATE_SUCCESSFUL, TransferData.buildFromRevisionData(data, info.getRight()));
     }

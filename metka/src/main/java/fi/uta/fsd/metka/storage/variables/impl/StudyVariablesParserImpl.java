@@ -151,11 +151,12 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             }
 
             rowPair.getRight().dataField(
-                    ValueDataFieldCall.set(Fields.VARIABLES, new Value(dataPair.getRight().getKey().getId().toString()), Language.DEFAULT).setInfo(info).setChangeMap(study.getChanges()));
+                    ValueDataFieldCall.set(Fields.VARIABLES, new Value(dataPair.getRight().getKey().getId()+"-"+dataPair.getRight().getKey().getNo()), Language.DEFAULT).setInfo(info).setChangeMap(study.getChanges()));
             result = ParseResult.REVISION_CHANGES;
             variablesData = dataPair.getRight();
         } else {
-            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(Long.parseLong(fieldPair.getRight().getActualValueFor(Language.DEFAULT)), false, ConfigurationType.STUDY_VARIABLES);
+            String key = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(Long.parseLong(key.split("-")[0]), Integer.parseInt(key.split("-")[1]));
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 Logger.error(getClass(), "Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValueFor(Language.DEFAULT)
                         +" even though it's referenced from study "+study.toString());
@@ -167,8 +168,8 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         if(variablesData.getState() != RevisionState.DRAFT) {
             //Pair<OperationResponse, RevisionData> dataPair = edit.edit(TransferData.buildFromRevisionData(variablesData, RevisionableInfo.FALSE), info);
             Pair<OperationResponse, RevisionData> dataPair = edit.edit(variablesData.getKey(), info);
-            if(!dataPair.getLeft().equals(ReturnResult.REVISION_CREATED.name())) {
-                Logger.error(getClass(), "Couldn't create new DRAFT revision for "+variablesData.getKey().toString());
+            if(!(dataPair.getLeft().equals(ReturnResult.REVISION_CREATED) || dataPair.getLeft().equals(ReturnResult.REVISION_FOUND))) {
+                Logger.error(getClass(), "Couldn't create new DRAFT or didn't find DRAFT revision for "+variablesData.getKey().toString());
                 return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES_DRAFT);
             }
             variablesData = dataPair.getRight();

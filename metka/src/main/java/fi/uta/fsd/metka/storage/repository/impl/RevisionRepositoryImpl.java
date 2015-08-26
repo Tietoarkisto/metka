@@ -238,6 +238,8 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             revisionableEntity.setCurApprovedNo(revision.getKey().getNo());
         }
 
+        indexRevision(revision.getKey());
+
         return ReturnResult.REVISION_UPDATE_SUCCESSFUL;
     }
 
