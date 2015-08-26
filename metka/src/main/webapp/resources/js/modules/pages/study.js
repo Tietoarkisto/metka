@@ -941,6 +941,7 @@ define(function (require) {
                                         studyerrors: {
                                             type: "REFERENCECONTAINER",
                                             reference: "studyerrors_ref",
+                                            fixedOrder: true,
                                             subfields: [
                                                 "studyerrorsstudyid",
                                                 "studyerrorsstudytitle",
@@ -950,6 +951,7 @@ define(function (require) {
                                         studyresults: {
                                             type: "REFERENCECONTAINER",
                                             reference: "studyresults_ref",
+                                            fixedOrder: true,
                                             subfields: [
                                                 "studyresultsid",
                                                 "studyresultstitle",
