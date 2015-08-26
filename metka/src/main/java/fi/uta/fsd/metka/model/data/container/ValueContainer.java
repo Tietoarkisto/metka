@@ -112,6 +112,10 @@ public class ValueContainer {
         return hasValue() && value.valueEquals(compare);
     }
 
+    @JsonIgnore public boolean valueIncludes(String compare) {
+        return hasValue() && value.valueIncludes(compare);
+    }
+
     public ValueContainer copy() {
         return new ValueContainer(saved.copy(), value.copy());
     }

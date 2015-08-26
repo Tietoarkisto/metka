@@ -146,6 +146,9 @@ public class TransferRow implements TransferFieldContainer {
     }
 
     public static TransferRow buildFromContainerRow(ContainerRow row) {
+        if(row == null) {
+            return null;
+        }
         // Add common info
         TransferRow transferRow = new TransferRow(row.getKey());
         transferRow.setRowId(row.getRowId());

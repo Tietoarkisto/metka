@@ -151,7 +151,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             }
 
             rowPair.getRight().dataField(
-                    ValueDataFieldCall.set(Fields.VARIABLES, new Value(dataPair.getRight().getKey().getId()+"-"+dataPair.getRight().getKey().getNo()), Language.DEFAULT).setInfo(info).setChangeMap(study.getChanges()));
+                    ValueDataFieldCall.set(Fields.VARIABLES, new Value(dataPair.getRight().getKey().asCongregateKey()), Language.DEFAULT).setInfo(info).setChangeMap(study.getChanges()));
             result = ParseResult.REVISION_CHANGES;
             variablesData = dataPair.getRight();
         } else {

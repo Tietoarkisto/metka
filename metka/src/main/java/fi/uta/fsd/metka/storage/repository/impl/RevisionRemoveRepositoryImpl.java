@@ -353,7 +353,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     }
 
     private void finalizeStudyAttachmentDraftRemoval(RevisionData data, DateTimeUserPair info) {
-
+        List<Integer> revisionNos = revisions.getAllRevisionNumbers(data.getKey().getId());
     }
 
     private void finalizeLogicalRemoval(RevisionData data, DateTimeUserPair info) {

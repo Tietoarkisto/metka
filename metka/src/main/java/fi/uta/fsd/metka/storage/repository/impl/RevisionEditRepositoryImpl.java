@@ -30,13 +30,17 @@ package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.change.ContainerChange;
+import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
@@ -178,7 +182,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             //revisions.indexRevision(data.getKey());
         }
 
-        finalizeRevisionEdit(result, data);
+        finalizeRevisionEdit(result, data, info);
 
         return new ImmutablePair<>(OperationResponse.build(result), data);
     }
@@ -231,62 +235,153 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
         }
     }
 
-    private void finalizeRevisionEdit(ReturnResult result, RevisionData data) {
+    private void finalizeRevisionEdit(ReturnResult result, RevisionData data, DateTimeUserPair info) {
         switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT: {
-                finalizeStudyAttachmentEdit(result, data);
+                finalizeStudyAttachmentEdit(result, data, info);
                 break;
             }
             case STUDY_VARIABLES: {
-                finalizeStudyVariablesEdit(result, data);
+                finalizeStudyVariablesEdit(result, data, info);
             }
             case STUDY_VARIABLE: {
-                finalizeStudyVariableEdit(result, data);
+                finalizeStudyVariableEdit(result, data, info);
             }
         }
     }
 
-    private void finalizeStudyAttachmentEdit(ReturnResult result, RevisionData data) {
+    private void finalizeStudyAttachmentEdit(ReturnResult result, RevisionData data, DateTimeUserPair info) {
         if(result != ReturnResult.REVISION_CREATED) {
             return;
         }
 
-        // TODO:
-        // * Get study revision
-        // * Check that revision is DRAFT (this should always be the case but if not for some reason then just stop the finalization)
-        // * Get files container
-        // * Find row that points to this revisionable (i.e. value starts with '{id}-')
-        // * If value is different from {key} then update to {key}
+        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            // Something weird has happened but this is not the place to react to it, just return
+            return;
+        }
+
+        RevisionData study = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY).getRight();
+        if(study == null || study.getState() != RevisionState.DRAFT) {
+            return;
+        }
+
+        ReferenceContainerDataField files = study.dataField(ReferenceContainerDataFieldCall.get(Fields.FILES)).getRight();
+        if(files == null || !files.hasValidRows()) {
+            return;
+        }
+
+        ReferenceRow row = files.getReferenceIncludingValue(data.getKey().asPartialKey()).getRight();
+        if(row == null) {
+            return;
+        }
+
+        files.replaceRow(row.getRowId(), ReferenceRow.build(files, new Value(data.getKey().asCongregateKey()), info), study.getChanges());
+        revisions.updateRevisionData(study);
     }
 
-    private void finalizeStudyVariablesEdit(ReturnResult result, RevisionData data) {
+    private void finalizeStudyVariablesEdit(ReturnResult result, RevisionData data, DateTimeUserPair info) {
         if(result != ReturnResult.REVISION_CREATED) {
             return;
         }
 
-        // TODO:
-        // * Get study revision
-        // * Check that revision is DRAFT (this should always be the case but if not for some reason then just stop the finalization)
-        // * Get studyvariables container
-        // * Find row with this revisionables language
-        // * If variables-value is different from {key} then update to {key}
-        //
-        // * Get attachment referenced in this study variables
-        // * QUESTION: What to do if the attachment is not DRAFT?
-        //   Should we just create a new draft and then trust that if the user makes no changes and the variables draft is removed then all changes caused by this are reverted automatically?
-        // * When we have a draft of attachment then check if the value in variables-field is equal to {key} and if not then update it to {key}
+        checkStucyVariablesStudy(data, info);
+
+        checkStudyVariablesAttachment(data, info);
     }
 
-    private void finalizeStudyVariableEdit(ReturnResult result, RevisionData data) {
+    private void checkStucyVariablesStudy(RevisionData data, DateTimeUserPair info) {ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            // Something weird has happened but this is not the place to react to it, just return
+            return;
+        }
+
+        RevisionData study = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY).getRight();
+        if(study == null || study.getState() != RevisionState.DRAFT) {
+            return;
+        }
+
+        ContainerDataField variables = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES)).getRight();
+        if(variables == null || !variables.hasValidRows()) {
+            return;
+        }
+
+        DataRow row = variables.getRowWithFieldIncludingValue(Language.DEFAULT, Fields.VARIABLES, new Value(data.getKey().asPartialKey())).getRight();
+        if(row == null) {
+            return;
+        }
+
+        field = row.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(field == null || field.valueForEquals(Language.DEFAULT, data.getKey().asCongregateKey())) {
+            return;
+        }
+
+        ContainerChange cc = (ContainerChange)study.getChange(Fields.STUDYVARIABLES);
+        if(cc == null) {
+            cc = new ContainerChange(Fields.STUDYVARIABLES);
+            study.putChange(cc);
+        }
+
+        RowChange rc = cc.get(row.getRowId());
+        if(rc == null) {
+            rc = new RowChange(row.getRowId());
+            cc.put(rc);
+        }
+
+        row.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(data.getKey().asCongregateKey()), Language.DEFAULT).setInfo(info).setChangeMap(rc.getChanges()));
+        revisions.updateRevisionData(study);
+    }
+
+    private void checkStudyVariablesAttachment(RevisionData data, DateTimeUserPair info) {
+        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            // Something weird has happened but this is not the place to react to it, just return
+            return;
+        }
+
+        RevisionData attachment = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_ATTACHMENT).getRight();
+        if(attachment == null || attachment.getState() != RevisionState.DRAFT) {
+            return;
+        }
+
+        field = attachment.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            // Something weird has happened but this is not the place to react to it, just return
+            return;
+        }
+
+        if(!field.valueForEquals(Language.DEFAULT, data.getKey().asCongregateKey())) {
+            attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(data.getKey().asCongregateKey()), Language.DEFAULT).setInfo(info).setChangeMap(attachment.getChanges()));
+            revisions.updateRevisionData(attachment);
+        }
+    }
+
+    private void finalizeStudyVariableEdit(ReturnResult result, RevisionData data, DateTimeUserPair info) {
         if(result != ReturnResult.REVISION_CREATED) {
             return;
         }
 
-        // TODO:
-        // * Get variables
-        // * QUESTION: same as with study variables case with attachment, what to do if there is no DRAFT?
-        // * When we have draft get variables container
-        // * Find row that points to this revisionable (i.e. value starts with '{id}-')
-        // * If value is different from {key} then update to {key}
+        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            // Something weird has happened but this is not the place to react to it, just return
+            return;
+        }
+
+        RevisionData variablesData = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES).getRight();
+        if(variablesData == null || variablesData.getState() != RevisionState.DRAFT) {
+            return;
+        }
+
+        ReferenceContainerDataField variables = variablesData.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(variables == null || !variables.hasValidRows()) {
+            return;
+        }
+
+        ReferenceRow row = variables.getReferenceIncludingValue(data.getKey().asPartialKey()).getRight();
+        if(row == null) {
+            return;
+        }
+
+        variables.replaceRow(row.getRowId(), ReferenceRow.build(variables, new Value(data.getKey().asCongregateKey()), info), variablesData.getChanges());
     }
 }

@@ -271,7 +271,7 @@ public class APIController {
     public @ResponseBody APIRevisionOperationResponse saveRevision(@RequestBody APITransferDataRequest request) {
         // Authenticate using API key mechanism
         if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
-            messenger.sendAmqpMessage(messenger.FA_AUDIT, AuditPayload.deny("API-käyttäjä ["+request.getAuthentication()+"] yritti tallentaa revision ["+request.getTransferData().getKey().getId()+"-"+request.getTransferData().getKey().getNo()+"] ilman tarvittavia oikeuksia"));
+            messenger.sendAmqpMessage(messenger.FA_AUDIT, AuditPayload.deny("API-käyttäjä ["+request.getAuthentication()+"] yritti tallentaa revision ["+request.getTransferData().getKey().asCongregateKey()+"] ilman tarvittavia oikeuksia"));
             return APIRevisionOperationResponse.authFail();
         }
 
@@ -280,7 +280,7 @@ public class APIController {
         }
         RevisionDataResponse response = revisions.save(request.getTransferData());
 
-        messenger.sendAmqpMessage(messenger.FA_AUDIT, AuditPayload.allow("API-käyttäjä ["+request.getAuthentication()+"] tallensi revision ["+request.getTransferData().getKey().getId()+"-"+request.getTransferData().getKey().getNo()+"]"));
+        messenger.sendAmqpMessage(messenger.FA_AUDIT, AuditPayload.allow("API-käyttäjä ["+request.getAuthentication()+"] tallensi revision ["+request.getTransferData().getKey().asCongregateKey()+"]"));
         return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
 

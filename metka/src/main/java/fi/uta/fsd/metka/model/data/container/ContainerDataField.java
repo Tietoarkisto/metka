@@ -189,6 +189,36 @@ public class ContainerDataField extends RowContainerDataField {
     }
 
     /**
+     * Searches through a list of rows for a row where the value in a field with given id contains the given value.
+     * Language needs to be defined since rows in different languages can have the same field value
+     * and only the first according to Language.getValues() would ever be found.
+     * NOTICE: null values are newer considered equal so you can't find rows with null field value
+     * @param language The language for which the search is performed
+     * @param key Field key of field where value should be found
+     * @param value Value that is searched for
+     * @return DataRow that contains given value in requested field, or null if not found.
+     */
+    public Pair<StatusCode, DataRow> getRowWithFieldIncludingValue(Language language, String key, Value value) {
+        if(!hasRowsFor(language)) {
+            return new ImmutablePair<>(StatusCode.NO_ROW_WITH_VALUE, null);
+        }
+        for(DataRow row : rows.get(language)) {
+            if(row.getRemoved()) {
+                continue;
+            }
+            Pair<StatusCode, ValueDataField> pair = row.dataField(ValueDataFieldCall.get(key));
+            if(pair.getLeft() != StatusCode.FIELD_FOUND) {
+                continue;
+            }
+            ValueDataField field = pair.getRight();
+            if(field.valueForIncludes(language, value.getValue())) {
+                return new ImmutablePair<>(StatusCode.ROW_FOUND, row);
+            }
+        }
+        return new ImmutablePair<>(StatusCode.NO_ROW_WITH_VALUE, null);
+    }
+
+    /**
      * Searches through a list of rows for a row containing given value in a field with given id.
      * Language needs to be defined since rows in different languages can have the same field value
      * and only the first according to Language.getValues() would ever be found.

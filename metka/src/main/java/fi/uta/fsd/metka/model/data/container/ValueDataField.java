@@ -174,6 +174,18 @@ public class ValueDataField extends DataField {
         return hasValueFor(language) && getValueFor(language).valueEquals(compare);
     }
 
+    /**
+     * Convenience method for checking if the most recent value on this ValueDataField equals the given value.
+     * NOTICE: Returns false if there is no value since null values should not be equal by default.
+     *
+     * @param compare - Value to compare
+     * @return True if the value in this ValueDataField equals the value given, false otherwise
+     */
+    @JsonIgnore
+    public boolean valueForIncludes(Language language, String compare) {
+        return hasValueFor(language) && getValueFor(language).valueIncludes(compare);
+    }
+
     @JsonIgnore
     public void initParents(DataFieldContainer parent) {
         setParent(parent);

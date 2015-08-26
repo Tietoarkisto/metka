@@ -204,6 +204,27 @@ public class ReferenceContainerDataField extends RowContainerDataField {
         return ids;
     }
 
+    /**
+     * Replaces the reference row with given rowId with the provided new reference row.
+     * In actuality the new row is inserted just after the found row and the found row is set to removed=true
+     * @param rowId
+     * @param newRow
+     * @param changeMap
+     */
+    @JsonIgnore
+    public void replaceRow(Integer rowId, ReferenceRow newRow, Map<String, Change> changeMap) {
+        for(ListIterator<ReferenceRow> i = references.listIterator(); i.hasNext();) {
+            ReferenceRow row = i.next();
+            if(row.getRowId() == rowId) {
+                removeReference(rowId, changeMap, DateTimeUserPair.build());
+                i.add(newRow);
+                ContainerChange cc = (ContainerChange)changeMap.get(getKey());
+                cc.put(new RowChange(newRow.getRowId()));
+                break;
+            }
+        }
+    }
+
     @Override
     public void initParents(DataFieldContainer parent) {
         setParent(parent);

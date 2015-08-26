@@ -67,6 +67,10 @@ public class Value {
         return hasValue() && value.equals(compare);
     }
 
+    @JsonIgnore public boolean valueIncludes(String compare) {
+        return hasValue() && value.contains(compare);
+    }
+
     @JsonIgnore public Long asInteger() {
         return stringToLong(value);
     }

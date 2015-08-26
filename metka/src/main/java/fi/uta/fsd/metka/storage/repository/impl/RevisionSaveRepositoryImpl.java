@@ -1165,6 +1165,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     // Adds the missing row to the index location it has on database version of the data
                     // Can mess with moving of rows since UI didn't know about the row before
                     TransferRow tr = TransferRow.buildFromContainerRow(reference);
+                    if(tr == null) {
+                        continue;
+                    }
                     tr.addError(FieldError.MISSING_ROWS);
                     tf.getRowsFor(Language.DEFAULT).add(i, tr);
                     returnPair.setRight(true);

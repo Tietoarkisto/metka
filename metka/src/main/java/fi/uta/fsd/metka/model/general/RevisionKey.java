@@ -28,8 +28,7 @@
 
 package fi.uta.fsd.metka.model.general;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 
 /**
  * Identifies a single Revision from a combination of id (id of the revisionable object) and revision (ordering
@@ -65,6 +64,16 @@ public class RevisionKey implements Comparable<RevisionKey> {
         if (!no.equals(that.no)) return false;
 
         return true;
+    }
+
+    @JsonIgnore
+    public String asCongregateKey() {
+        return id+"-"+no;
+    }
+
+    @JsonIgnore
+    public String asPartialKey() {
+        return id+"-";
     }
 
     @Override
