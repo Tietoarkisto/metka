@@ -185,6 +185,7 @@ define(function (require) {
                             key: "variableslist",
                             type: "REFERENCECONTAINER",
                             reference: "variables_ref",
+                            fixedOrder: true,
                             subfields: [
                                 "variablesstudyid",
                                 "variablesstudytitle",
@@ -226,6 +227,7 @@ define(function (require) {
                             key: "variablelist",
                             type: "REFERENCECONTAINER",
                             reference: "variable_ref",
+                            fixedOrder: true,
                             subfields: [
                                 "variablestudyid",
                                 "variablestudytitle",

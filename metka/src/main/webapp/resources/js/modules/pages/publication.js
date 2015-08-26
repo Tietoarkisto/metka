@@ -399,11 +399,6 @@ define(function (require) {
                                         target: "publicationresults",
                                         valuePath: "publicationtitle"
                                     },
-                                    publicationresultsstate_ref: {
-                                        type: "DEPENDENCY",
-                                        target: "publicationresults",
-                                        valuePath: "state"
-                                    },
                                     seriesname_ref: {
                                         key: 'seriesname_ref',
                                         type: 'REVISIONABLE',
@@ -413,14 +408,13 @@ define(function (require) {
                                     }
                                 },
                                 fields: {
-
                                     publicationresults: {
                                         type: "REFERENCECONTAINER",
                                         reference: "publicationresults_ref",
+                                        fixedOrder: true,
                                         subfields: [
                                             "publicationresultspublicationid",
-                                            "publicationresultspublicationtitle",
-                                            "publicationresultsstate"
+                                            "publicationresultspublicationtitle"
                                         ]
                                     },
                                     publicationresultspublicationid: {
@@ -435,13 +429,6 @@ define(function (require) {
                                         type: "REFERENCE",
                                         reference: "publicationresultspublicationtitle_ref"
                                     },
-                                    publicationresultsstate: {
-                                        key: "publicationresultsstate",
-                                        subfield: true,
-                                        type: "REFERENCE",
-                                        reference: "publicationresultsstate_ref"
-                                    },
-
                                     publicationid: {
                                         type: 'STRING'
                                     },
