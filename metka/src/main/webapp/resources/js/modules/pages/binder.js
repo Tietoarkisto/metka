@@ -53,7 +53,7 @@ define(function (require) {
                 key: 'findBinderDescription',
                 rename: 'description',
                 exactValue: true
-            }], 'pages');
+            }], 'pages', 'DEFAULT');
 
         function view(requestOptions) {
             require('./../revisionModal')(options, requestOptions, 'BINDER_PAGE', pagesSearch.search, 'pages');

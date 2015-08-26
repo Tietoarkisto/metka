@@ -89,7 +89,7 @@ define(function (require) {
                     key: 'savedBy',
                     rename: 'state.saved.user'
                 }
-            ], 'publicationresults');
+            ], 'publicationresults', 'DEFAULT');
 
 
             require('./../server')('conf', {
