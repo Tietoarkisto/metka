@@ -198,7 +198,9 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
             addSpanQuery((SpanQuery)query, nums, config);
         } else if(query instanceof BooleanQuery) {
             addBooleanQuery((BooleanQuery)query, nums, config);
-        }
+        }/* else if(query instanceof PhraseQuery) {
+            addPhraseQuery((PhraseQuery)query, nums, config);
+        }*/
         // TODO: Some query types might still be missed in which case they don't have correct numeric configurations etc.
     }
 

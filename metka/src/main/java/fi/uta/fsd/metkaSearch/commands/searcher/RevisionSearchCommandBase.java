@@ -32,21 +32,16 @@ import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
-import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveKeywordAnalyzer;
-import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
-import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
+import fi.uta.fsd.metkaSearch.analyzer.*;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.results.*;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -89,9 +84,9 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
         analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
     }
 
-    protected void addWhitespaceAnalyzer(String key) {
+    /*protected void addWhitespaceAnalyzer(String key) {
         analyzers.put(key, CaseInsensitiveWhitespaceAnalyzer.ANALYZER);
-    }
+    }*/
 
     protected void addTextAnalyzer(String key) {
         if(language == Language.DEFAULT) {
@@ -103,7 +98,7 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
     }
 
     protected Analyzer getAnalyzer() {
-        PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveWhitespaceAnalyzer.ANALYZER, analyzers);
+        PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveKeywordAnalyzer.ANALYZER, analyzers);
         return analyzer;
     }
 

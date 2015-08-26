@@ -29,7 +29,7 @@
 package fi.uta.fsd.metkaSearch;
 
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
+import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveKeywordAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
@@ -39,7 +39,7 @@ public class IndexWriterFactory {
 
     static {
         // Create the default writer config. Use whitespace analyser as default.
-        writerAppendConfig = new IndexWriterConfig(LuceneConfig.USED_VERSION, CaseInsensitiveWhitespaceAnalyzer.ANALYZER);
+        writerAppendConfig = new IndexWriterConfig(LuceneConfig.USED_VERSION, CaseInsensitiveKeywordAnalyzer.ANALYZER);
         // Set index open mode. Create index if missing, append if present
         writerAppendConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
     }

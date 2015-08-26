@@ -107,7 +107,7 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
                 Logger.warning(getClass(), "Revisionable was not found for id "+result.getId());
                 continue;
             }
-            Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(result.getId(), result.getNo().intValue());
+            Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(result.getId(), result.getNo());
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 Logger.warning(getClass(), "Couldn't find a revision for search result "+result.toString());
                 continue;
