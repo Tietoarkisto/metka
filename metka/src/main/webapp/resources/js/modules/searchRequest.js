@@ -29,7 +29,7 @@
 define(function(require) {
     'use strict';
 
-    return function(options, requestConf, prefix) {
+    return function(options, requestConf, lang, prefix) {
         var data = require('./data')(options);
         if (typeof requestConf === 'function') {
             return requestConf();
@@ -94,6 +94,9 @@ define(function(require) {
                     requestData.values[searchOptions.rename || key] = value;
                 }
             });
+            if(lang) {
+                requestData.values['key.language'] = lang;
+            }
             return requestData;
         }
         throw 'Illegal search request';

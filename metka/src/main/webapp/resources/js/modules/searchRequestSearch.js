@@ -29,11 +29,11 @@
 define(function(require) {
     'use strict';
 
-    return function(options, searchOptions, resultFieldKey, prefix) {
+    return function(options, searchOptions, resultFieldKey, lang, prefix) {
         return {
             search: function() {
                 require('./server')('searchAjax', {
-                    data: JSON.stringify(require('./searchRequest')(options, searchOptions, prefix)),
+                    data: JSON.stringify(require('./searchRequest')(options, searchOptions, lang, prefix)),
                     success: function(response) {
                         require('./updateSearchResultContainer')(options, response, resultFieldKey);
                     }

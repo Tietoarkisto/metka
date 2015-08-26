@@ -47,7 +47,7 @@ define(function (require) {
                     exactValue: true
                 },
                 'seriesname'
-            ], 'seriesresults');
+            ], 'seriesresults', 'DEFAULT');
 
             $.extend(options, {
                 header: MetkaJS.L10N.get('type.SERIES.search'),

@@ -49,7 +49,7 @@ define(function (require) {
                     rename: 'studyid',
                     exactValue: true
                 }
-            ], 'studyerrors', 'error');
+            ], 'studyerrors', 'DEFAULT', 'error');
 
             function viewError(requestOptions) {
                 require('./../revisionModal')(options, requestOptions, 'STUDY_ERROR', errorSearch.search, 'studyerrors');
@@ -158,7 +158,7 @@ define(function (require) {
                             key: 'collector',
                             rename: 'collectors.author'
                         }
-                    ].concat(importFromConfiguration), 'studyresults');
+                    ].concat(importFromConfiguration), 'studyresults', 'DEFAULT');
 
                     if (resultParser(response.result).getResult() === 'CONFIGURATION_FOUND') {
                         $.extend(true, options, {
