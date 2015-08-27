@@ -278,6 +278,8 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
 
         files.replaceRow(row.getRowId(), ReferenceRow.build(files, new Value(data.getKey().asCongregateKey()), info), study.getChanges());
         revisions.updateRevisionData(study);
+
+        // TODO: Find
     }
 
     private void finalizeStudyVariablesEdit(ReturnResult result, RevisionData data, DateTimeUserPair info) {

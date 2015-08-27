@@ -29,7 +29,352 @@
 define(function (require) {
     'use strict';
 
+    var getPropertyNS = require('./utils/getPropertyNS');
     var resultParser = require('./resultParser');
+
+    var EMPTY = '-';
+
+    function tableError(errors) {
+        if (errors && errors.length) {
+            this
+                .addClass('danger')
+                .tooltip({
+                    container: 'body',
+                    title: require('./dataValidationErrorText')(errors),
+                    html: true
+                });
+        }
+    }
+
+    function formTR(transferRow, options, $thead, lang) {
+        var $tr = $('<tr>');
+        var infoTDs = {
+            saved: {},
+            approved: {}
+        };
+
+        tableError.call($tr, transferRow.errors);
+
+        if(options.fieldOptions.type === 'REFERENCECONTAINER') {
+            if(options.field.showReferenceValue) {
+                infoTDs.value = $('<td>').text(EMPTY);
+                $tr.append(infoTDs.value);
+            }
+
+            if(options.field.showReferenceType) {
+                infoTDs.type = $('<td>').text(EMPTY);
+                $tr.append(infoTDs.type);
+            }
+        }
+
+        $tr.data('transferRow', transferRow).append(options.columns.map(function(column, i) {
+            return mapTransferRowColumn(options, transferRow, column,
+                $thead.children('tr').children().eq(i).hasClass('hiddenByTranslationState'), ($thead.children('tr').children().eq(i).data('lang') || lang));
+        }));
+
+        if (options.field.showSaveInfo) {
+            $tr.append(
+                $('<td>')
+                    .text(transferRow.saved ? moment(transferRow.saved.time).format(require('./dateFormats')['DATE']) : EMPTY),
+                $('<td>')
+                    .text(transferRow.saved ? transferRow.saved.user : EMPTY)
+            );
+        }
+
+        if(options.fieldOptions.type === 'REFERENCECONTAINER') {
+            if(infoTDs.value) {
+                infoTDs.value.text(transferRow.value);
+            }
+            if(options.field.showReferenceSaveInfo) {
+                infoTDs.saved.at = $('<td>').text(EMPTY);
+                infoTDs.saved.by = $('<td>').text(EMPTY);
+                $tr.append(infoTDs.saved.at, infoTDs.saved.by);
+            }
+            if(options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0) {
+                $.each(options.field.showReferenceApproveInfo, function(index, lang) {
+                    lang = lang.toUpperCase();
+                    infoTDs.approved[lang] = {};
+                    infoTDs.approved[lang].at = $('<td>').text(EMPTY);
+                    infoTDs.approved[lang].by = $('<td>').text(EMPTY);
+                    infoTDs.approved[lang].revision = $('<td>').text(EMPTY);
+                    $tr.append(infoTDs.approved[lang].at, infoTDs.approved[lang].by, infoTDs.approved[lang].revision);
+                });
+            }
+            if(options.field.showReferenceState) {
+                infoTDs.state = $('<td>').text(EMPTY);
+                $tr.append(infoTDs.state);
+            }
+            if(options.field.showReferenceType
+                || options.field.showReferenceSaveInfo
+                || (options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0)
+                || options.field.showReferenceState) {
+                require('./server')('/references/referenceStatus/{value}', transferRow, {
+                    method: 'GET',
+                    success: function (response) {
+                        if(resultParser(response.result).getResult() !== 'REVISION_FOUND') {
+                            require('./resultViewer')(response.result);
+                            return false;
+                        }
+                        if(infoTDs.type) {
+                            if(response.type) {
+                                infoTDs.type.text(MetkaJS.L10N.get('type.'+response.type+".title"))
+                            }
+                        }
+                        if(response.saved) {
+                            if(response.saved.time && infoTDs.saved.at) {
+                                infoTDs.saved.at.text(moment(response.saved.time).format(require('./dateFormats')['DATE']))
+                            }
+                            if(response.saved.user && infoTDs.saved.by) {
+                                infoTDs.saved.by.text(response.saved.user);
+                            }
+                        }
+                        $.each(response.approved, function(key, value) {
+                            key = key.toUpperCase();
+                            if(infoTDs.approved[key] && value) {
+                                if(infoTDs.approved[key].at && value.approved.time) {
+                                    infoTDs.approved[key].at.text(moment(value.approved.time).format(require('./dateFormats')['DATE']))
+                                }
+                                if(infoTDs.approved[key].by && value.approved.user) {
+                                    infoTDs.approved[key].by.text(value.approved.user);
+                                }
+                                if(infoTDs.approved[key].revision && value.revision) {
+                                    infoTDs.approved[key].revision.text(value.revision);
+                                }
+                            }
+                        });
+                        if(infoTDs.state) {
+                            if(response.state) {
+                                infoTDs.state.text(MetkaJS.L10N.get('state.'+response.state));
+                            } else {
+                                infoTDs.state.text(EMPTY);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        if (options.rowCommands.length) {
+            $tr.append($('<td>')
+                    .css('text-align', 'right')
+                    .append($('<div class="btn-group btn-group-xs">')
+                        .append(options.rowCommands.map(
+                            function (button) {
+                                if(button.rowFilter && !button.rowFilter(transferRow)) {
+                                    return false;
+                                }
+                                return $('<button type="button" class="btn btn-default">')
+                                    .addClass(button.className)
+                                    .html(button.html);
+                            })
+                    )
+                )
+            );
+        }
+
+        return $tr;
+    }
+
+    function mapTransferRowColumn(options, transferRow, column, hidden, columnLang) {
+        var $td = $('<td>').toggleClass('hiddenByTranslationState', hidden);
+
+        if (options.fieldOptions.type === 'REFERENCECONTAINER') {
+            require('./reference').optionByPath(column, options, options.defaultLang, function(option) {
+                var columnOptions = $.extend(
+                    true
+                    , {}
+                    , getPropertyNS(options, 'dataConf.fields', column)
+                    , options.subfieldConfiguration && options.subfieldConfiguration[column] ? options.subfieldConfiguration[column].field : {});
+
+                if(columnOptions && columnOptions.displayType === 'LINK') {
+                    require('./inherit')(function(options) {
+                        require('./linkField')($td, options, "DEFAULT");
+                    })(options)({
+                        fieldOptions: getPropertyNS(options, 'dataConf.fields', column),
+                        field: columnOptions,
+                        data: $.extend({}, options.data, {fields: transferRow.fields})
+                    });
+                } else {
+                    var value = require('./selectInputOptionText')(option);
+                    $td.text(!!value && value.length ? value : EMPTY);
+                }
+            })(null, null, transferRow.value);
+        } else if(options.fieldOptions.type === 'CONTAINER') {
+            // This fetches the correct display text for each table cell. It would make sense to split and generalize this better but the amount of work makes it
+            // not a priority at the moment.
+            formTD(options, column, $td, columnLang, transferRow, getPropertyNS(transferRow, 'fields', column));
+        } else {
+            log('Tried to handle TransferRow from unsupported container type: '+options.fieldOptions.type);
+        }
+        return $td;
+    }
+
+    function formTD(options, column, $td, columnLang, transferRow, transferField) {
+        var columnOptions = $.extend(
+            true
+            , {}
+            , getPropertyNS(options, 'dataConf.fields', column)
+            , options.subfieldConfiguration && options.subfieldConfiguration[column] ? options.subfieldConfiguration[column].field : {});
+
+        function setText(option) {
+            var text = require('./selectInputOptionText')(option);
+            $td.text(typeof text === 'undefined' ? EMPTY : text);
+        }
+
+        function setOptionText(listOptions) {
+            setText(listOptions.find(function (option) {
+                return option.value === value;
+            }));
+        }
+        var dataConf = getPropertyNS(options, 'dataConf.fields', column);
+        var type = columnOptions && columnOptions.displayType ? columnOptions.displayType : columnOptions.type;
+        //var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
+
+        if(type === 'CUSTOM_JS') {
+            type = columnOptions.type;
+        }
+
+        if (!type) {
+            log('not implemented', column);
+            $td.text(EMPTY);
+            return;
+        }
+
+        var value = (function () {
+            if (!transferField) {
+                return;
+            }
+
+            tableError.call($td, (transferField.errors || []).concat(getPropertyNS(transferField, 'values', columnLang, 'errors') || []));
+
+            if (!transferField.type) {
+                log('transferField type not set (column: {column})'.supplant({
+                    column: column
+                }));
+                return;
+            }
+
+            if (transferField.type !== 'VALUE') {
+                log('not implemented (type: {type}, column: {column})'.supplant({
+                    type: transferField.type,
+                    column: column
+                }));
+                return;
+            }
+
+            return require('./data').latestValue(transferField, columnLang);
+        })();
+
+        if(!value && type !== 'REFERENCE') {
+            $td.text(EMPTY);
+            return;
+        }
+
+        switch(type) {
+            case 'REFERENCE': {
+                var refKey = getPropertyNS(options, 'dataConf.fields', column, 'reference');
+                var reference = getPropertyNS(options, 'dataConf.references', refKey);
+
+                require('./reference').optionByPath(column, options, columnLang, setText)(transferRow.fields, reference);
+                return;
+            }
+            case 'SELECTION': {
+                var list = require('./selectionList')(options, column);
+                if (!list) {
+                    $td.text(EMPTY);
+                    break;
+                }
+                if (list.type === 'REFERENCE') {
+                    require('./reference').optionsByPath(column, options, lang, setOptionText)(transferRow.fields, getPropertyNS(options, 'dataConf.references', list.reference));
+                } else {
+                    setOptionText(list.options);
+                }
+                break;
+            }
+            case 'STRING': {
+                $td.text(value);
+                break;
+            }
+            case 'INTEGER':
+            case 'REAL': {
+                $td.text(value);
+                break;
+            }
+            case 'RICHTEXT': {
+                $td.html(value);
+                break;
+            }
+            case 'DATE':
+            case 'TIME':
+            case 'DATETIME': {
+                $td.text(moment(value).format(require('./dateFormats')[type]));
+                break;
+            }
+            case 'LINK': {
+                require('./inherit')(function(options) {
+                    require('./linkField')($td, options, "DEFAULT");
+                })(options)({
+                    fieldOptions: getPropertyNS(options, 'dataConf.fields', column),
+                    field: columnOptions,
+                    data: $.extend({}, options.data, {fields: transferRow.fields})
+                });
+                break;
+            }
+            default: {
+                log('not implemented', column, type);
+                $td.text(EMPTY);
+                break;
+            }
+        }
+    }
+
+    function appendRow(options, $container, transferRow, $thead, lang) {
+        function append() {
+            var $tr = formTR(transferRow, options, $thead, lang);
+            $container.append($tr);
+            $container.trigger('rowAppended', [$tr, options.columns]);
+            return $tr;
+        }
+
+        if (!transferRow.removed) {
+            return append();
+        }
+    }
+
+    function redraw($tbody, options, lang, page, $thead) {
+        $tbody.empty();
+        var rows = require('./data')(options).getByLang(lang);
+        options.$events.trigger('redraw-header-{key}'.supplant({
+            key: options.field.key
+        }));
+        if (rows) {
+            //only if paging is enabled change current behavior
+            if (options.field.rowsPerPage != null) {
+
+                //always trigger pager redraw with current row count
+                //if we redraw component where pager is
+                var redrawPaging = 'redraw-{key}-paging'.supplant({
+                    key: options.field.key
+                });
+                options.$events.trigger(redrawPaging, [options.field.rowsPerPage, require('./data')(options).validRows(lang)]);
+
+                var lastElement = page * options.field.rowsPerPage;
+                if (lastElement > rows.length) {
+                    lastElement = rows.length;
+                }
+
+                for (var i = ((page - 1) * options.field.rowsPerPage); i < lastElement; i++) {
+                    appendRow(options, $tbody, rows[i], $thead, lang);
+                }
+
+            } else {
+                rows.forEach(function (transferRow) {
+                    appendRow(options, $tbody, transferRow, $thead, lang)
+                });
+            }
+        }
+        return $tbody;
+    }
 
     /**
      * Creates table (container field or reference container) field.
@@ -40,10 +385,8 @@ define(function (require) {
      * @return {undefined} No return value.
      */
     return function (options, lang) {
-        var getPropertyNS = require('./utils/getPropertyNS');
-
         function addRowCommand($container, className, html, click, rowFilter) {
-            rowCommands.push({
+            options.rowCommands.push({
                 className: className,
                 html: html,
                 rowFilter: rowFilter
@@ -61,365 +404,7 @@ define(function (require) {
                 .text(text);
         }
 
-        function tableError(errors) {
-            if (errors && errors.length) {
-                this
-                    .addClass('danger')
-                    .tooltip({
-                        container: 'body',
-                        title: require('./dataValidationErrorText')(errors),
-                        html: true
-                    });
-            }
-        }
-
-        function tr(transferRow) {
-            var key = options.field.key;
-            var $tr = $('<tr>');
-            var infoTDs = {
-                saved: {},
-                approved: {}
-            };
-
-            tableError.call($tr, transferRow.errors);
-
-            if(options.fieldOptions.type === 'REFERENCECONTAINER') {
-                if(options.field.showReferenceValue) {
-                    infoTDs.value = $('<td>').text(EMPTY);
-                    $tr.append(infoTDs.value);
-                }
-
-                if(options.field.showReferenceType) {
-                    infoTDs.type = $('<td>').text(EMPTY);
-                    $tr.append(infoTDs.type);
-                }
-            }
-
-            $tr
-                .data('transferRow', transferRow)
-                .append(columns.map(function (column, i) {
-                    var $td = $('<td>')
-                        .toggleClass('hiddenByTranslationState', $thead.children('tr').children().eq(i).hasClass('hiddenByTranslationState'));
-
-                    if (options.fieldOptions.type === 'REFERENCECONTAINER') {
-                        require('./reference').optionByPath(column, options, options.defaultLang, function(option) {
-                            var columnOptions = $.extend(
-                                true
-                                , {}
-                                , getPropertyNS(options, 'dataConf.fields', column)
-                                , options.subfieldConfiguration && options.subfieldConfiguration[column] ? options.subfieldConfiguration[column].field : {});
-
-                            if(columnOptions && columnOptions.displayType === 'LINK') {
-                                require('./inherit')(function(options) {
-                                    require('./linkField')($td, options, "DEFAULT");
-                                })(options)({
-                                    fieldOptions: getPropertyNS(options, 'dataConf.fields', column),
-                                    field: columnOptions,
-                                    data: $.extend({}, options.data, {fields: transferRow.fields})
-                                });
-                            } else {
-                                var value = require('./selectInputOptionText')(option);
-                                $td.text(!!value && value.length ? value : EMPTY);
-                            }
-                        })(null, null, transferRow.value);
-
-                        return $td;
-                    }
-
-                    // This fetches the correct display text for each table cell. It would make sense to split and generalize this better but the amount of work makes it
-                    // not a priority at the moment.
-                    (function ($td) {
-                        var columnLang = $thead.children('tr').children().eq(i).data('lang') || lang;
-
-                        var columnOptions = $.extend(
-                            true
-                            , {}
-                            , getPropertyNS(options, 'dataConf.fields', column)
-                            , options.subfieldConfiguration && options.subfieldConfiguration[column] ? options.subfieldConfiguration[column].field : {});
-
-                        function setText(option) {
-                            var text = require('./selectInputOptionText')(option);
-                            $td.text(typeof text === 'undefined' ? EMPTY : text);
-                        }
-
-                        function setOptionText(listOptions) {
-                            setText(listOptions.find(function (option) {
-                                return option.value === value;
-                            }));
-                        }
-                        var dataConf = getPropertyNS(options, 'dataConf.fields', column);
-                        var type = columnOptions && columnOptions.displayType ? columnOptions.displayType : columnOptions.type;
-                        //var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
-
-                        if(type === 'CUSTOM_JS') {
-                            type = columnOptions.type;
-                        }
-
-                        if (!type) {
-                            log('not implemented', column);
-                            $td.text(EMPTY);
-                            return;
-                        }
-
-                        var transferField = getPropertyNS(transferRow, 'fields', column);
-                        var value = (function () {
-                            if (!transferField) {
-                                return;
-                            }
-
-                            tableError.call($td, (transferField.errors || []).concat(getPropertyNS(transferField, 'values', columnLang, 'errors') || []));
-
-                            if (!transferField.type) {
-                                log('transferField type not set (column: {column})'.supplant({
-                                    column: column
-                                }));
-                                return;
-                            }
-
-                            if (transferField.type !== 'VALUE') {
-                                log('not implemented (type: {type}, column: {column})'.supplant({
-                                    type: transferField.type,
-                                    column: column
-                                }));
-                                return;
-                            }
-
-                            return require('./data').latestValue(transferField, columnLang);
-                        })();
-
-                        if(!value && type !== 'REFERENCE') {
-                            $td.text(EMPTY);
-                            return;
-                        }
-
-                        switch(type) {
-                            case 'REFERENCE': {
-                                var refKey = getPropertyNS(options, 'dataConf.fields', column, 'reference');
-                                var reference = getPropertyNS(options, 'dataConf.references', refKey);
-
-                                require('./reference').optionByPath(column, options, columnLang, setText)(transferRow.fields, reference);
-                                return;
-                            }
-                            case 'SELECTION': {
-                                var list = require('./selectionList')(options, column);
-                                if (!list) {
-                                    $td.text(EMPTY);
-                                    break;
-                                }
-                                if (list.type === 'REFERENCE') {
-                                    require('./reference').optionsByPath(column, options, lang, setOptionText)(transferRow.fields, getPropertyNS(options, 'dataConf.references', list.reference));
-                                } else {
-                                    setOptionText(list.options);
-                                }
-                                break;
-                            }
-                            case 'STRING': {
-                                $td.text(value);
-                                break;
-                            }
-                            case 'INTEGER':
-                            case 'REAL': {
-                                $td.text(value);
-                                break;
-                            }
-                            case 'RICHTEXT': {
-                                $td.html(value);
-                                break;
-                            }
-                            case 'DATE':
-                            case 'TIME':
-                            case 'DATETIME': {
-                                $td.text(moment(value).format(require('./dateFormats')[type]));
-                                break;
-                            }
-                            case 'LINK': {
-                                require('./inherit')(function(options) {
-                                    require('./linkField')($td, options, "DEFAULT");
-                                })(options)({
-                                    fieldOptions: getPropertyNS(options, 'dataConf.fields', column),
-                                    field: columnOptions,
-                                    data: $.extend({}, options.data, {fields: transferRow.fields})
-                                });
-                                break;
-                            }
-                            default: {
-                                log('not implemented', column, type);
-                                $td.text(EMPTY);
-                                break;
-                            }
-                        }
-                    })($td);
-                    return $td;
-                }));
-
-            if (options.field.showSaveInfo) {
-                $tr.append(
-                    $('<td>')
-                        .text(transferRow.saved ? moment(transferRow.saved.time).format(require('./dateFormats')['DATE']) : EMPTY),
-                    $('<td>')
-                        .text(transferRow.saved ? transferRow.saved.user : EMPTY)
-                );
-            }
-
-            if(options.fieldOptions.type === 'REFERENCECONTAINER') {
-                if(infoTDs.value) {
-                    infoTDs.value.text(transferRow.value);
-                }
-                if(options.field.showReferenceSaveInfo) {
-                    infoTDs.saved.at = $('<td>').text(EMPTY);
-                    infoTDs.saved.by = $('<td>').text(EMPTY);
-                    $tr.append(infoTDs.saved.at, infoTDs.saved.by);
-                }
-                if(options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0) {
-                    $.each(options.field.showReferenceApproveInfo, function(index, lang) {
-                        lang = lang.toUpperCase();
-                        infoTDs.approved[lang] = {};
-                        infoTDs.approved[lang].at = $('<td>').text(EMPTY);
-                        infoTDs.approved[lang].by = $('<td>').text(EMPTY);
-                        infoTDs.approved[lang].revision = $('<td>').text(EMPTY);
-                        $tr.append(infoTDs.approved[lang].at, infoTDs.approved[lang].by, infoTDs.approved[lang].revision);
-                    });
-                }
-                if(options.field.showReferenceState) {
-                    infoTDs.state = $('<td>').text(EMPTY);
-                    $tr.append(infoTDs.state);
-                }
-                if(options.field.showReferenceType
-                        || options.field.showReferenceSaveInfo
-                        || (options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0)
-                        || options.field.showReferenceState) {
-                    require('./server')('/references/referenceStatus/{value}', transferRow, {
-                        method: 'GET',
-                        success: function (response) {
-                            if(resultParser(response.result).getResult() !== 'REVISION_FOUND') {
-                                require('./resultViewer')(response.result);
-                                return false;
-                            }
-                            if(infoTDs.type) {
-                                if(response.type) {
-                                    infoTDs.type.text(MetkaJS.L10N.get('type.'+response.type+".title"))
-                                }
-                            }
-                            if(response.saved) {
-                                if(response.saved.time && infoTDs.saved.at) {
-                                    infoTDs.saved.at.text(moment(response.saved.time).format(require('./dateFormats')['DATE']))
-                                }
-                                if(response.saved.user && infoTDs.saved.by) {
-                                    infoTDs.saved.by.text(response.saved.user);
-                                }
-                            }
-                            $.each(response.approved, function(key, value) {
-                                key = key.toUpperCase();
-                                if(infoTDs.approved[key] && value) {
-                                    if(infoTDs.approved[key].at && value.approved.time) {
-                                        infoTDs.approved[key].at.text(moment(value.approved.time).format(require('./dateFormats')['DATE']))
-                                    }
-                                    if(infoTDs.approved[key].by && value.approved.user) {
-                                        infoTDs.approved[key].by.text(value.approved.user);
-                                    }
-                                    if(infoTDs.approved[key].revision && value.revision) {
-                                        infoTDs.approved[key].revision.text(value.revision);
-                                    }
-                                }
-                            });
-                            if(infoTDs.state) {
-                                if(response.state) {
-                                    infoTDs.state.text(MetkaJS.L10N.get('state.'+response.state));
-                                } else {
-                                    infoTDs.state.text(EMPTY);
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-
-            if (rowCommands.length) {
-                $tr.append($('<td>')
-                    .css('text-align', 'right')
-                    .append($('<div class="btn-group btn-group-xs">')
-                        .append(rowCommands.map(
-                            function (button) {
-                                if(button.rowFilter && !button.rowFilter(transferRow)) {
-                                    return false;
-                                }
-                                return $('<button type="button" class="btn btn-default">')
-                                    .addClass(button.className)
-                                    .html(button.html);
-                            })
-                        )
-                    )
-                );
-            }
-
-            return $tr;
-        }
-
-        function redrawHeader() {
-            containerHeader.redraw();
-        }
-
-        function redraw(event, page) {
-            $tbody.empty();
-            var rows = require('./data')(options).getByLang(lang);
-            redrawHeader();
-            if (rows) {
-                //only if paging is enabled change current behavior
-                if (options.field.rowsPerPage != null) {
-
-                    //always trigger pager redraw with current row count
-                    //if we redraw component where pager is
-                    var redrawPaging = 'redraw-{key}-paging'.supplant({
-                        key: options.field.key
-                    });
-                    options.$events.trigger(redrawPaging, [options.field.rowsPerPage, require('./data')(options).validRows(lang)]);
-
-                    //if there is "paging-info" on $tbody.data and new page to draw is not provided
-                    //we get current page from .data and just redraw that
-                    //otherwise we can just go to page 1
-                    var currentPage = page;
-                    if (!page && $tbody.data("currentPage") != null) {
-                        currentPage = $tbody.data("currentPage");
-                    } else if (!page) {
-                        currentPage = 1;
-                    }
-
-                    //now that we know currentPage we store it to tbody.data so
-                    //we can get it in case of redraw event
-                    $tbody.data("currentPage", currentPage);
-
-                    var lastElement = currentPage * options.field.rowsPerPage;
-                    if (lastElement > rows.length) {
-                        lastElement = rows.length;
-                    }
-
-                    for (var i = ((currentPage - 1) * options.field.rowsPerPage); i < lastElement; i++) {
-                        appendRow($tbody, rows[i], columns);
-                    }
-
-                } else {
-                    rows.forEach(function (transferRow) {
-                        appendRow($tbody, transferRow, columns)
-                    });
-                }
-            }
-            return $tbody;
-        }
-
-        function appendRow($container, transferRow, columnList) {
-            function append() {
-                var $tr = tr(transferRow);
-                $container.append($tr);
-                $container.trigger('rowAppended', [$tr, columnList]);
-                return $tr;
-            }
-
-            if (!transferRow.removed) {
-                return append();
-            }
-        }
-
-        function addRow($container, transferRow, columnList) {
+        function addRow($container, transferRow) {
             require('./data')(options).appendByLang(lang, transferRow);
 
             //if paging is enabled and we add a new row just redraw current container page
@@ -430,10 +415,9 @@ define(function (require) {
                 options.$events.trigger(redrawKey);
             } else {
                 //otherwise we can just append new row without redrawing whole page
-                var $tr = appendRow($container, transferRow, columnList);
+                appendRow(options, $container, transferRow, $thead, lang);
                 //redraw header because if showRowAmount is enabled we need to update that
                 containerHeader.redraw();
-                return $tr;
             }
 
             options.$events.trigger('data-changed-{key}-{lang}'.supplant({
@@ -442,11 +426,12 @@ define(function (require) {
             }));
         }
 
-        function addRowFromDataObject($container, data, columnList) {
-            addRow($container, require('./map/object/transferRow')(data, lang), columnList);
+        function addRowFromDataObject($container, data) {
+            addRow($container, require('./map/object/transferRow')(data, lang));
         }
 
-        var columns = [];
+        options.columns = [];
+        options.rowCommands = [];
 
         //var key = options.field.key;
 
@@ -483,7 +468,7 @@ define(function (require) {
                 } else {
                     (options.field.onClick || rowDialog('MODIFY', 'ok'))
                     .call(this, $tr.data('transferRow'), function (transferRow) {
-                        var $trNew = tr(transferRow);
+                        var $trNew = formTR(transferRow, options, $thead, lang);
                         $tr.replaceWith($trNew);
                         options.$events.trigger('data-changed-{key}-{lang}'.supplant({
                             key: transferRow.key,
@@ -495,16 +480,15 @@ define(function (require) {
 
         // TODO: Should probably be on container options instead
         this.data('addRowFromDataObject', function(data) {
-            addRowFromDataObject($tbody, data, columns);
+            addRowFromDataObject($tbody, data);
         });
-        this.data('addRow', function(transferRow) {
-            return addRow($tbody, transferRow, columns);
+        options.$events.on('container-{key}-{lang}-push'.supplant({
+            key: options.field.key,
+            lang: lang
+        }), function(event, transferRow) {
+            return addRow($tbody, transferRow);
         });
         this.data('lang', lang);
-
-        var EMPTY = '-';
-        var rowCommands = [];
-        // TODO: Add clear container function
 
         var containerHeader = require('./containerHeader')(options, lang);
 
@@ -536,11 +520,11 @@ define(function (require) {
                                         // if container is not translatable && subfield is translatable, add columns
                                         if (!options.fieldOptions.translatable && getPropertyNS(options, 'dataConf.fields', fieldKey, 'translatable')) {
                                             MetkaJS.Languages.forEach(function (lang) {
-                                                columns.push(fieldKey);
+                                                options.columns.push(fieldKey);
                                                 response.push((require('./langLabel')(th(getTitle(fieldKey)).data('lang', lang), lang)));
                                             });
                                         } else {
-                                            columns.push(fieldKey);
+                                            options.columns.push(fieldKey);
                                             response.push(th(getTitle(fieldKey)));
                                         }
                                     });
@@ -561,7 +545,7 @@ define(function (require) {
                             .append(function () {
                                 if(options.fieldOptions.type === 'REFERENCECONTAINER') {
                                     if(options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0) {
-                                        var $appInfo = new Array();
+                                        var $appInfo = [];
                                         $.each(options.field.showReferenceApproveInfo, function(index, lang) {
                                             $appInfo.push((require('./langLabel')(th(MetkaJS.L10N.get('general.refApproveInfo.approvedAt')).data('lang', lang), lang)));
                                             $appInfo.push((require('./langLabel')(th(MetkaJS.L10N.get('general.refApproveInfo.approvedBy')).data('lang', lang), lang)));
@@ -619,7 +603,7 @@ define(function (require) {
                                         return false;
                                     }, options.field.removeFilter);
                                 }
-                                if (rowCommands.length) {
+                                if (options.rowCommands.length) {
                                     return th('');
                                 }
                             }));
@@ -645,7 +629,7 @@ define(function (require) {
                                     removed: false,
                                     unapproved: true
                                 }, function (transferRow) {
-                                    var $tr = addRow($tbody, transferRow, columns);
+                                    addRow($tbody, transferRow);
                                 });
                         }
                     });
@@ -678,8 +662,46 @@ define(function (require) {
         var redrawHeaderKey = 'redraw-header-{key}'.supplant({
             key: options.field.key
         });
-        options.$events.on(redrawKey, redraw);
-        options.$events.on(redrawHeaderKey, redrawHeader);
+
+        function callRedraw(event, page) {
+            //if there is "paging-info" on $tbody.data and new page to draw is not provided
+            //we get current page from .data and just redraw that
+            //otherwise we can just go to page 1
+            var currentPage = page;
+            if (!page && $tbody.data("currentPage") != null) {
+                currentPage = $tbody.data("currentPage");
+            } else if (!page) {
+                currentPage = 1;
+            }
+
+            //now that we know currentPage we store it to tbody.data so
+            //we can get it in case of redraw event
+            $tbody.data("currentPage", currentPage);
+
+            redraw(options, currentPage);
+        }
+
+        //options.$events.off(redrawKey, callRedraw);
+        options.$events.on(redrawKey, function(event, page) {
+            //if there is "paging-info" on $tbody.data and new page to draw is not provided
+            //we get current page from .data and just redraw that
+            //otherwise we can just go to page 1
+            var currentPage = page;
+            if (!page && $tbody.data("currentPage") != null) {
+                currentPage = $tbody.data("currentPage");
+            } else if (!page) {
+                currentPage = 1;
+            }
+
+            //now that we know currentPage we store it to tbody.data so
+            //we can get it in case of redraw event
+            $tbody.data("currentPage", currentPage);
+
+            redraw($tbody, options, lang, currentPage, $thead);
+        });
+        options.$events.on(redrawHeaderKey, function(){
+            containerHeader.redraw();
+        });
         options.$events.trigger(redrawKey);
     };
 });

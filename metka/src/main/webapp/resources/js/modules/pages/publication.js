@@ -351,6 +351,7 @@ define(function (require) {
                                             "type": "CELL",
                                             "title": "Julkaisuhaun tulokset",
                                             "colspan": 1,
+                                            "readOnly": true,
                                             "field": {
                                                 "key": "publicationresults",
                                                 "showRowAmount": true,

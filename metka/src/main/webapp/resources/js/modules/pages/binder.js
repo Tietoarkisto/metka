@@ -240,8 +240,6 @@ define(function (require) {
                             "showRowAmount": true,
                             "key": "pages",
                             "disableRemoval": true,
-                            //"displayType": "CONTAINER",
-                            "showReferenceValue": true,
                             "showReferenceState": true,
                             "columnFields": [
                                 "binderId",

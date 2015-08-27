@@ -641,10 +641,10 @@
 		},
 		"variables_file_ref": {
 			"key": "variables_file_ref",
-			"type": "DEPENDENCY",
-			"target": "variables",
-			"valuePath": "file",
-			"titlePath": "path"
+			"type": "REVISION",
+			"target": "STUDY_ATTACHMENT",
+
+			"titlePath": "file"
 		},
 		"attachment_ref": {
 			"key": "attachment_ref",

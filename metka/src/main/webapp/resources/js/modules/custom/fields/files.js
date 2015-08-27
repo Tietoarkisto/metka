@@ -39,6 +39,19 @@ define(function (require) {
         filesContainerCreated = true;
 
         return {
+            preCreate: function(options) {
+                // Add data confs for non removed and removed files
+                var fieldConf = options.dataConf.fields[options.field.key];
+                var existingConf = $.extend(true, {}, fieldConf, {
+                    key: "existingfiles"
+                });
+                var removedConf = $.extend(true, {}, fieldConf, {
+                    key: "removedfiles"
+                })
+
+                options.dataConf.fields[existingConf.key] = existingConf;
+                options.dataConf.fields[removedConf.key] = removedConf;
+            },
             postCreate: function (options) {
 
                 function partialRefresh() {
@@ -84,7 +97,7 @@ define(function (require) {
                     "title": "Liitetyt tiedostot",
                     "field": $.extend(true, {}, options.field, {
                         "displayType": "REFERENCECONTAINER",
-                        "key": "files",
+                        "key": "existingfiles",
                         "columnFields": [
                             "filepath",
                             "filelanguage"
@@ -118,7 +131,7 @@ define(function (require) {
                     "title": "Poistetut tiedostot",
                     "readOnly": true,
                     "field": $.extend(true, {}, options.field, {
-                        "key": "files",
+                        "key": "removedfiles",
                         "displayType": "REFERENCECONTAINER",
                         "columnFields": [
                             "filepath",
@@ -152,7 +165,11 @@ define(function (require) {
                                 method: 'GET',
                                 success: function (response) {
                                     if (response.exists) {
-                                        (!response.removed ? $filesContainer : $removedFilesContainer).find('.panel').parent().data('addRow')(transferRow);
+                                        options.$events.trigger('container-{key}-{lang}-push'.supplant({
+                                            key: !response.removed ? "existingfiles" : "removedfiles",
+                                            lang: options.defaultLang
+                                        }), [transferRow]);
+                                        //(!response.removed ? $filesContainer : $removedFilesContainer).find('.panel').parent().data('addRow')(transferRow);
                                     } else if(response.result === "REVISIONABLE_NOT_FOUND") {
                                         transferRow.removed = true;
                                     }

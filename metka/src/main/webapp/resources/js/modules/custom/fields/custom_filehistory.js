@@ -76,7 +76,11 @@ define(function (require) {
                         });
 
                         revisions && revisions.forEach(function (row) {
-                            $containerField.data('addRow')(row);
+                            options.$events.trigger('container-{key}-{lang}-push'.supplant({
+                                key: options.field.key,
+                                lang: options.defaultLang
+                            }), [row]);
+                            //$containerField.data('addRow')(row);
                         });
                     }
                 });

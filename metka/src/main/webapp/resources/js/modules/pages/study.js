@@ -627,6 +627,7 @@ define(function (require) {
                                                     "type": "CELL",
                                                     "title": "Aineistohaun tulokset",
                                                     "colspan": 1,
+                                                    "readOnly": true,
                                                     "field": {
                                                         "key": "studyresults",
                                                         "showRowAmount": true,

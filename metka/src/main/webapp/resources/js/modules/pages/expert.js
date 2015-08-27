@@ -29,7 +29,6 @@
 define(function (require) {
     'use strict';
 
-    var addRow;
     var $query;
     return function (options, onLoad) {
 
@@ -82,7 +81,8 @@ define(function (require) {
                                     "colspan": 1,
                                     "readOnly": true,
                                     "field": {
-                                        "displayType": "CONTAINER",
+                                        "key": "savedsearches",
+                                        "rowsPerPage": 2,
                                         "showSaveInfo": true,
                                         "columnFields": [
                                             "name"
@@ -106,14 +106,17 @@ define(function (require) {
                                         }
                                     },
                                     postCreate: function (options) {
-                                        var $containerField = $(this).children();
-                                        addRow = function (query) {
-                                            $containerField.data('addRow')(require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang));
-                                        };
                                         require('./../server')('/expert/list', {
                                             method: 'GET',
                                             success: function (data) {
-                                                data.queries.forEach(addRow);
+                                                data.queries.forEach(function(query) {
+                                                    require('./../data')(options).appendByLang( options.defaultLang, require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang));
+                                                    /*options.$events.trigger('container-{key}-{lang}-push'.supplant({
+                                                        key: options.field.key,
+                                                        lang: options.defaultLang
+                                                    }), [require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang)])*/
+                                                });
+                                                options.$events.trigger('redraw-{key}'.supplant({key: options.field.key}));
                                             }
                                         });
                                     }
@@ -229,7 +232,12 @@ define(function (require) {
                                                             query: require('./../data')(options)('search').getByLang(options.defaultLang),
                                                             title: require('./../data')(modalOptions)('title').getByLang(options.defaultLang)
                                                         }),
-                                                        success: addRow
+                                                        success: function(query) {
+                                                            options.$events.trigger('container-{key}-{lang}-push'.supplant({
+                                                                key: 'savedsearches',
+                                                                lang: options.defaultLang
+                                                            }), [require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang)])
+                                                        }
                                                     });
                                                 });
                                         }
@@ -247,10 +255,17 @@ define(function (require) {
             dataConf: {
                 fields: {
                     name: {
-                        type: "STRING"
+                        type: "STRING",
+                        subfield: true
                     },
                     search: {
                         type: "STRING"
+                    },
+                    savedsearches: {
+                        type: "CONTAINER",
+                        subfields: [
+                            "name"
+                        ]
                     }
                 }
             }

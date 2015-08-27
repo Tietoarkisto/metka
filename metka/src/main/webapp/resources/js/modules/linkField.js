@@ -34,34 +34,37 @@ define(function (require) {
         if (options.fieldOptions.type === 'REFERENCE') {
 
             var reference = require('./utils/getPropertyNS')(options, 'dataConf.references', options.fieldOptions.reference);
-            var getOptions = require('./reference').optionsByPath(options.field.key, options, lang, function (listOptions) {
-                var value = require('./data')(options).getByLang(lang);
-                var option = listOptions.find(function (option) {
-                    return option.value === value;
-                });
-
-                if (option) {
-                    $field.append($('<a>', {
-                        text: '{label} - {value}'.supplant({
-                            label: MetkaJS.L10N.get('type.{target}.title'.supplant(reference)),
-                            value: require('./selectInputOptionText')(option)
-                        }),
-                        href: require('./url')('view', {
-                            PAGE: reference.target,
-                            id: option.value,
-                            no: ''
-                        })
-                    }));
-                }
-            });
             if (!reference) {
                 return
             }
-            if (reference.type === 'DEPENDENCY') {
+            if (!(reference.type === 'REVISIONABLE' || reference.type === 'REVISION')) {
                 // TODO: merge code with other users of ´reference´ module
-                log('not implemented');
+                log('No linkable data');
             } else {
-                getOptions();
+                var value = require('./data')(options).getByLang(lang);
+                require('./reference').optionsByPath(options.field.key, options, lang, function (listOptions) {
+                    if(!listOptions) {
+                        return;
+                    }
+
+                    var option = listOptions.find(function (option) {
+                        return option.value === value;
+                    });
+
+                    if (option) {
+                        $field.append($('<a>', {
+                            text: '{label} - {value}'.supplant({
+                                label: MetkaJS.L10N.get('type.{target}.title'.supplant(reference)),
+                                value: require('./selectInputOptionText')(option)
+                            }),
+                            href: require('./url')('view', {
+                                PAGE: reference.target,
+                                id: reference.type == 'REVISIONABLE' ? option.value : option.value.split("-")[0],
+                                no: reference.type == 'REVISIONABLE' ? '' : option.value.split("-")[1]
+                            })
+                        }));
+                    }
+                })();
             }
         }
     };

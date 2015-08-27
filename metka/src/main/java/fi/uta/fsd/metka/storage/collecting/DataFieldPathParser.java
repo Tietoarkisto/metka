@@ -321,7 +321,7 @@ class DataFieldPathParser {
         // This path should be relative to the given field map
         String[] path = reference.getTitlePathParts();
 
-        String valueStr = revision.getKey().getId().toString();
+        String valueStr = reference.getType() == ReferenceType.REVISIONABLE ? revision.getKey().getId().toString() : revision.getKey().asCongregateKey();
         if(!StringUtils.hasText(valueStr)) {
             return null;
         }

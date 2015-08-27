@@ -59,12 +59,18 @@ define(function (require) {
                 current: "FI"
             };
 
-            $containers.filter(function(i, contnr) {
+            options.$events.trigger('container-{key}-{lang}-push'.supplant({
+                key: options.field.key,
+                lang: lang
+            }), [transferRow]);
+
+            /*$containers.filter(function(i, contnr) {
                 var $container = $(contnr);
                 if ($container.data('lang') === lang) {
+                    options.
                     $container.data('addRow')(transferRow);
                 }
-            });
+            });*/
         }
 
         return {
