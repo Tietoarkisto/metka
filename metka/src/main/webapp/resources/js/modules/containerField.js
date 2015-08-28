@@ -285,7 +285,7 @@ define(function (require) {
                     break;
                 }
                 if (list.type === 'REFERENCE') {
-                    require('./reference').optionsByPath(column, options, lang, setOptionText)(transferRow.fields, getPropertyNS(options, 'dataConf.references', list.reference));
+                    require('./reference').optionsByPath(column, options, columnLang, setOptionText)(transferRow.fields, getPropertyNS(options, 'dataConf.references', list.reference));
                 } else {
                     setOptionText(list.options);
                 }
