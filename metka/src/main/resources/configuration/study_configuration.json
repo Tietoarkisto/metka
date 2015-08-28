@@ -641,10 +641,14 @@
 		},
 		"variables_file_ref": {
 			"key": "variables_file_ref",
-			"type": "REVISION",
-			"target": "STUDY_ATTACHMENT",
-
-			"titlePath": "file"
+			"type": "REVISIONABLE",
+			"target": "STUDY_ATTACHMENT"
+		},
+		"variables_file_path_ref": {
+			"key": "variables_file_path_ref",
+			"type": "DEPENDENCY",
+			"target": "variables",
+			"valuePath": "filepath"
 		},
 		"attachment_ref": {
 			"key": "attachment_ref",
@@ -1999,7 +2003,8 @@
 			"subfields": [
 				"variableslanguage",
 				"variables",
-				"variablesfile"
+				"variablesfile",
+				"variablesfilepath"
 			]
 		},
 		"variables": {
@@ -2027,6 +2032,14 @@
 			"editable": false,
 			"subfield": true,
 			"reference": "variables_file_ref"
+		},
+		"variablesfilepath": {
+			"key": "variablesfilepath",
+			"type": "REFERENCE",
+			"translatable": false,
+			"editable": false,
+			"subfield": true,
+			"reference": "variables_file_path_ref"
 		},
 		"files": {
 			"key": "files",

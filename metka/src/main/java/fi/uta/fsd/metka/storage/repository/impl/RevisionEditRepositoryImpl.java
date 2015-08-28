@@ -278,8 +278,6 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
 
         files.replaceRow(row.getRowId(), ReferenceRow.build(files, new Value(data.getKey().asCongregateKey()), info), study.getChanges());
         revisions.updateRevisionData(study);
-
-        // TODO: Find
     }
 
     private void finalizeStudyVariablesEdit(ReturnResult result, RevisionData data, DateTimeUserPair info) {
@@ -287,12 +285,12 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return;
         }
 
-        checkStucyVariablesStudy(data, info);
+        checkStudyVariablesStudy(data, info);
 
         checkStudyVariablesAttachment(data, info);
     }
 
-    private void checkStucyVariablesStudy(RevisionData data, DateTimeUserPair info) {ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
+    private void checkStudyVariablesStudy(RevisionData data, DateTimeUserPair info) {ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
         if(field == null || !field.hasValueFor(Language.DEFAULT)) {
             // Something weird has happened but this is not the place to react to it, just return
             return;
@@ -346,15 +344,10 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return;
         }
 
-        field = attachment.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
-        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
-            // Something weird has happened but this is not the place to react to it, just return
-            return;
-        }
-
-        if(!field.valueForEquals(Language.DEFAULT, data.getKey().asCongregateKey())) {
-            attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(data.getKey().asCongregateKey()), Language.DEFAULT).setInfo(info).setChangeMap(attachment.getChanges()));
-            revisions.updateRevisionData(attachment);
+        // If attachment has had new revisions then update the file-field
+        if(!field.valueForEquals(Language.DEFAULT, attachment.getKey().asCongregateKey())) {
+            data.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(attachment.getKey().asCongregateKey()), Language.DEFAULT).setInfo(info).setChangeMap(data.getChanges()));
+            revisions.updateRevisionData(data);
         }
     }
 

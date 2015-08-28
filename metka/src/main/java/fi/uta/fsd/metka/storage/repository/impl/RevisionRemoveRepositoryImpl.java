@@ -332,6 +332,8 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 }
             }
         }
+
+        // TODO: Remove link from study variables if it still exists
     }
 
     private void finalizeDraftRemoval(RevisionData data, DateTimeUserPair info) {
@@ -360,7 +362,13 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return;
         }
 
-        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
+        checkStudyAttachmentStudy(data, info, revisionNos);
+
+        checkStudyAttachmentVariables(data, info, revisionNos);
+    }
+
+    private void checkStudyAttachmentStudy(RevisionData data, DateTimeUserPair info, List<Integer> revisionNos) {ValueDataField field = data.dataField(
+            ValueDataFieldCall.get(Fields.STUDY)).getRight();
         if(field == null || !field.hasValueFor(Language.DEFAULT)) {
             return;
         }
@@ -380,8 +388,27 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return;
         }
 
-        container.replaceRow(row.getRowId(), ReferenceRow.build(container, new Value(data.getKey().getId()+"-"+revisionNos.get(revisionNos.size()-1)), info), study.getChanges());
+        container.replaceRow(row.getRowId(), ReferenceRow.build(container, new Value(data.getKey().getId() + "-" + revisionNos.get(revisionNos.size() - 1)), info),
+                study.getChanges());
         revisions.updateRevisionData(study);
+    }
+
+    private void checkStudyAttachmentVariables(RevisionData data, DateTimeUserPair info, List<Integer> revisionNos) {
+        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            // Something weird has happened but this is not the place to react to it, just return
+            return;
+        }
+
+        RevisionData variables = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES).getRight();
+        if(variables == null || variables.getState() != RevisionState.DRAFT) {
+            return;
+        }
+
+        variables.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(data.getKey().getId() + "-" + revisionNos.get(revisionNos.size() - 1)), Language.DEFAULT)
+                .setInfo(info)
+                .setChangeMap(variables.getChanges()));
+        revisions.updateRevisionData(variables);
     }
 
     private void finalizeStudyVariableDraftRemoval(RevisionData data, DateTimeUserPair info) {
@@ -410,7 +437,8 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return;
         }
 
-        container.replaceRow(row.getRowId(), ReferenceRow.build(container, new Value(data.getKey().getId()+"-"+revisionNos.get(revisionNos.size()-1)), info), variables.getChanges());
+        container.replaceRow(row.getRowId(), ReferenceRow.build(container, new Value(data.getKey().getId() + "-" + revisionNos.get(revisionNos.size() - 1)), info),
+                variables.getChanges());
         revisions.updateRevisionData(variables);
     }
 
@@ -420,12 +448,6 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return;
         }
 
-        checkStucyVariablesStudy(data, info, revisionNos);
-
-        checkStudyVariablesAttachment(data, info, revisionNos);
-    }
-
-    private void checkStucyVariablesStudy(RevisionData data, DateTimeUserPair info, List<Integer> revisionNos) {
         ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
         if(field == null || !field.hasValueFor(Language.DEFAULT)) {
             // Something weird has happened but this is not the place to react to it, just return
@@ -461,22 +483,6 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         row.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(data.getKey().getId()+"-"+revisionNos.get(revisionNos.size()-1)), Language.DEFAULT).setInfo(info).setChangeMap(rc.getChanges()));
         revisions.updateRevisionData(study);
-    }
-
-    private void checkStudyVariablesAttachment(RevisionData data, DateTimeUserPair info, List<Integer> revisionNos) {
-        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
-        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
-            // Something weird has happened but this is not the place to react to it, just return
-            return;
-        }
-
-        RevisionData attachment = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_ATTACHMENT).getRight();
-        if(attachment == null || attachment.getState() != RevisionState.DRAFT) {
-            return;
-        }
-
-        attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(data.getKey().getId()+"-"+revisionNos.get(revisionNos.size()-1)), Language.DEFAULT).setInfo(info).setChangeMap(attachment.getChanges()));
-        revisions.updateRevisionData(attachment);
     }
 
     private void finalizeLogicalRemoval(RevisionData data, DateTimeUserPair info) {

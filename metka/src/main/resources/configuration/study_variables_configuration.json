@@ -21,7 +21,7 @@
         },
         "file_ref": {
             "key": "file_ref",
-            "type": "REVISIONABLE",
+            "type": "REVISION",
             "target": "STUDY_ATTACHMENT",
             "titlePath": "file"
         },

@@ -711,7 +711,7 @@ define(function (require) {
                                         "apiusersaccess",
                                         "apiuserscreated"
                                     ],
-                                    dialogTitles: {
+                                    dialogTitle: {
                                         VIEW: "API-Käyttäjä"
                                     },
                                     onRemove: function($row) {

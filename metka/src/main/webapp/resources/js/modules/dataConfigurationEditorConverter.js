@@ -133,18 +133,24 @@ define(function(require) {
             if(configuration.container) {
                 if(configuration.configuration) {
                     var container = getContainer(fields, configuration.container);
-                    if(container.rows && container.rows.DEFAULT) {
+                    if(container && container.rows && container.rows.DEFAULT) {
                         if(configuration.propertyKey) {
                             ret = {};
                             container.rows.DEFAULT.forEach(function(row) {
-                                ret[getValue(row.fields, configuration.propertyKey)] = parse(row.fields, configuration.configuration);
+                                if(!row.removed) {
+                                    ret[getValue(row.fields, configuration.propertyKey)] = dataToJson(row.fields, configuration.configuration);
+                                }
                             });
                         } else {
                             ret = [];
                             container.rows.DEFAULT.forEach(function(row) {
-                                ret.push(parse(row.fields, configuration.configuration));
+                                if(!row.removed) {
+                                    ret.push(dataToJson(row.fields, configuration.configuration));
+                                }
                             });
                         }
+                    } else if(!container) {
+                        ret = configuration.propertyKey ? {} : [];
                     }
                 }
             } else {
@@ -160,7 +166,7 @@ define(function(require) {
                             } else if(typeof mapping === 'function') {
                                 return mapping(fields)
                             } else if(typeof mapping === 'object' && !Array.isArray(mapping)) {
-                                return parse(fields, mapping);
+                                return dataToJson(fields, mapping);
                             } else {
                                 return null;
                             }
@@ -180,14 +186,14 @@ define(function(require) {
                 setFieldWithValue(fields, key, value);
             },
             dataToJson: function(fields, configuration) {
-                dataToJson(fields, configuration);
+                return dataToJson(fields, configuration);
             }
         }
     }
 
     var parser = jsonParser();
 
-    function selectionListsConf() {
+    function selectionListsConf(optionMapping) {
         return {
             container: "selectionLists",
             propertyKey: "selectionLists_key",
@@ -208,17 +214,7 @@ define(function(require) {
                     options: {
                         container: "selectionLists_options",
                         configuration: {
-                            mapping: {
-                                value: "selectionLists_option_value",
-                                title: "selectionLists_option_title_default",
-                                "&title": {
-                                    mapping: {
-                                        default: "selectionLists_option_title_default",
-                                        en: "selectionLists_option_title_en",
-                                        sv: "selectionLists_option_title_sv"
-                                    }
-                                }
-                            }
+                            mapping: optionMapping
                         }
                     }
                 }
@@ -324,6 +320,20 @@ define(function(require) {
 
     return {
         toEditor: function(json, options) {
+            function optionMapping() {
+                return {
+                    value: "selectionLists_option_value",
+                    title: "selectionLists_option_title_default",
+                    "&title": {
+                        mapping: {
+                            default: "selectionLists_option_title_default",
+                                en: "selectionLists_option_title_en",
+                                sv: "selectionLists_option_title_sv"
+                        }
+                    }
+                }
+            }
+
             function setTargets(json, fields) {
                 parser.jsonToData(json, fields, {
                     container: "targets",
@@ -369,7 +379,7 @@ define(function(require) {
                         }
                     },
                     displayId: "displayId",
-                    selectionLists: selectionListsConf(),
+                    selectionLists: selectionListsConf(optionMapping()),
                     references: referencesConf(),
                     fields: fieldsConf(),
                     namedTargets: namedTargetsConf(setTargets, setChecks),
@@ -379,8 +389,21 @@ define(function(require) {
             });
         },
         toConfiguration: function(options) {
+            function optionMapping() {
+                return {
+                    value: "selectionLists_option_value",
+                    "&title": {
+                        mapping: {
+                            default: "selectionLists_option_title_default",
+                            en: "selectionLists_option_title_en",
+                            sv: "selectionLists_option_title_sv"
+                        }
+                    }
+                }
+            }
+
             function targetsDataToJson(fields) {
-                parser.dataToJson(fields, {
+                return parser.dataToJson(fields, {
                     container: "targets",
                     configuration: {
                         mapping: {
@@ -394,7 +417,7 @@ define(function(require) {
             }
 
             function checksDataToJson(fields) {
-                parser.dataToJson(fields, {
+                return parser.dataToJson(fields, {
                     container: "checks",
                     configuration: {
                         mapping: {
@@ -427,7 +450,7 @@ define(function(require) {
                         }
                     },
                     displayId: "displayId",
-                    selectionLists: selectionListsConf(),
+                    selectionLists: selectionListsConf(optionMapping()),
                     references: referencesConf(),
                     fields: fieldsConf(),
                     namedTargets: namedTargetsConf(targetsDataToJson, checksDataToJson),

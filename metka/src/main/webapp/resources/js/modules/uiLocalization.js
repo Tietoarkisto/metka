@@ -480,6 +480,9 @@ define(function (require) {
                             },
                             "&PUBLICATION": {
                                 "default": "julkaisulta"
+                            },
+                            "&BINDER_PAGE": {
+                                "default": "mapitukselta"
                             }
                         }
                     },
@@ -499,6 +502,9 @@ define(function (require) {
                             },
                             "&PUBLICATION": {
                                 "default": "julkaisun"
+                            },
+                            "&BINDER_PAGE": {
+                                "default": "mapituksen"
                             }
                         }
                     }

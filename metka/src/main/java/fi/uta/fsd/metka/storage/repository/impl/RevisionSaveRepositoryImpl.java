@@ -726,7 +726,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             Pair<StatusCode, ValueDataField> fieldPair = rowPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARIABLESFILE));
             if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
                 StatusCode setResult = rowPair.getRight().dataField(
-                        ValueDataFieldCall.set(Fields.VARIABLESFILE, new Value(attachment.getKey().asCongregateKey()), Language.DEFAULT).setInfo(info).setChangeMap(study.getChanges()))
+                        ValueDataFieldCall.set(Fields.VARIABLESFILE, new Value(attachment.getKey().getId().toString()), Language.DEFAULT).setInfo(info).setChangeMap(study.getChanges()))
                         .getLeft();
                 if(!(setResult == StatusCode.FIELD_UPDATE || setResult == StatusCode.FIELD_INSERT)) {
                     Logger.error(getClass(), "Study update failed with result " + setResult);
@@ -742,8 +742,8 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
             // Let's first check if we need to update the value at all
             fieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
-            if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT) || !fieldPair.getRight().valueForEquals(Language.DEFAULT, varsKey)) {
-                attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(varsKey), Language.DEFAULT).setInfo(info));
+            if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT) || !fieldPair.getRight().valueForEquals(Language.DEFAULT, varsKey.split("-")[0])) {
+                attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(varsKey.split("-")[0]), Language.DEFAULT).setInfo(info));
                 changesAndErrors.setLeft(true);
             }
         }

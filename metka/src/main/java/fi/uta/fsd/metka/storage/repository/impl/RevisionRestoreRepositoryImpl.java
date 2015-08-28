@@ -164,15 +164,14 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
         }
 
         field = attachment.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
-        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+        if(field == null || field.hasValueFor(Language.DEFAULT)) {
             // Something weird has happened but this is not the place to react to it, just return
+            // If there already is a value then it doesn't matter if it equals this variables-file or not, we can't overwrite it even if it doesn't
             return;
         }
 
-        if(!field.valueForEquals(Language.DEFAULT, data.getKey().asCongregateKey())) {
-            attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(data.getKey().asCongregateKey()), Language.DEFAULT).setInfo(info).setChangeMap(attachment.getChanges()));
-            revisions.updateRevisionData(attachment);
-        }
+        attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(data.getKey().getId().toString()), Language.DEFAULT).setInfo(info).setChangeMap(attachment.getChanges()));
+        revisions.updateRevisionData(attachment);
     }
 
     private void checkStudyVariablesStudy(RevisionData data) {

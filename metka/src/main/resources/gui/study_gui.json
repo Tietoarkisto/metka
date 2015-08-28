@@ -518,9 +518,9 @@
             "key": "variableslanguage",
             "title": "Kieli"
         },
-        "variablesfile": {
-            "key": "variablesfile",
-            "title": "Muuttujatiedosto"
+        "variablesfilepath": {
+            "key": "variablesfilepath",
+            "title": "Muuttujatiedoston polku"
         },
         "summary": {
             "key": "summary",
@@ -2096,7 +2096,7 @@
                                     "columnFields": [
                                         "variableslanguage",
                                         "variables",
-                                        "variablesfile"
+                                        "variablesfilepath"
                                     ]
                                 },
                                 "subfieldConfiguration": {
@@ -2126,13 +2126,51 @@
                     "field": {
                         "key": "files",
                         "displayType": "CUSTOM_JS",
+                        "disableRemoval": true
+                    }
+                }]
+            }, {
+                "type": "ROW",
+                "cells": [{
+                    "type": "CELL",
+                    "title": "Aineiston tiedostoliitteet",
+                    "field": {
+                        "key": "filesexisting",
+                        "displayType": "CUSTOM_JS",
                         "showReferenceSaveInfo": true,
                         "showReferenceState": true,
                         "disableRemoval": true,
+                        "columnFields": [
+                            "filepath",
+                            "filelanguage"
+                        ],
                         "dialogTitle": {
-                            "key": "files",
+                            "key": "filesexisting",
                             "MODIFY": "Muokkaa liitetiedostoa",
                             "VIEW": "Aineiston liitetiedosto"
+                        }
+                    }
+                }]
+            }, {
+                "type": "ROW",
+                "cells": [{
+                    "type": "CELL",
+                    "title": "Aineiston poistetut tiedostot",
+                    "readOnly": true,
+                    "field": {
+                        "key": "filesremoved",
+                        "displayType": "CUSTOM_JS",
+                        "showReferenceSaveInfo": true,
+                        "showReferenceState": true,
+                        "disableRemoval": true,
+                        "columnFields": [
+                            "filepath",
+                            "filedescription",
+                            "filecomment"
+                        ],
+                        "dialogTitle": {
+                            "key": "filesremoved",
+                            "VIEW": "Poistettu tiedosto"
                         }
                     }
                 }]
