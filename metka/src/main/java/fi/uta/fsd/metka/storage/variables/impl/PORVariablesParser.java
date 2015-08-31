@@ -340,6 +340,7 @@ class PORVariablesParser implements VariablesParser {
         ReferenceRow row = popRowWithFieldIncludingValue(rows, includes);
         if(row == null) {
             row = ReferenceRow.build(target, new Value(value), info);
+            target.getReferences().add(row);
             ChangeUtil.insertChange(changeMap, target, row);
         } else if(!row.valueEquals(value)) {
             ReferenceRow newRow = ReferenceRow.build(target, new Value(value), info);
