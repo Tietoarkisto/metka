@@ -256,7 +256,7 @@ define(function(require) {
                 subfields: [
                     "selectionLists_key",
                     "selectionLists_type",
-                    //"selectionLists_default", // Default seems not to be implemented
+                    "selectionLists_default",
                     "selectionLists_includeEmpty",
                     "selectionLists_options",
                     "selectionLists_freeText_values",

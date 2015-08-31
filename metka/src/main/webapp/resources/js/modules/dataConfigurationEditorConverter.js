@@ -203,6 +203,7 @@ define(function(require) {
                     type: "selectionLists_type",
                     freeTextKey: "selectionLists_freeTextKey",
                     sublistKey: "selectionLists_sublistKey",
+                    default: "selectionLists_default",
                     includeEmpty: "selectionLists_includeEmpty",
                     reference: "selectionLists_reference",
                     freeText: {

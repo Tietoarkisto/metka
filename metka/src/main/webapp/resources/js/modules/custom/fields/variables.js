@@ -40,8 +40,8 @@ define(function (require) {
             field: {
                 onClick: function (transferRow, replaceTr) {
                     var requestOptions = {
-                        id: transferRow.value,
-                        no: ''
+                        id: transferRow.value.split("-")[0],
+                        no: transferRow.value.split("-")[1]
                     };
                     require('./../../revisionModal')(options, requestOptions, 'STUDY_VARIABLE', partialRefresh, options.field.key, true, 'Muokkaa muuttujaa');
                 }
