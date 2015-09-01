@@ -73,7 +73,7 @@ public class ReferenceServiceImpl implements ReferenceService {
      * @return
      */
     // TODO: We should try to move away from this
-    @Override public ReferenceOption getCurrentFieldOption(Language language, RevisionData data, Configuration configuration, String path) {
+    @Override public ReferenceOption getCurrentFieldOption(Language language, RevisionData data, Configuration configuration, String path, Boolean emptyEqualsNone) {
         // TODO: Gather dependencies, form request and return single result
         Long start;
         if(configuration == null) {
@@ -115,7 +115,7 @@ public class ReferenceServiceImpl implements ReferenceService {
         List<String> dependencyStack = formDependencyStack(field, configuration);
 
         // Let's form a request that we can use to fetch a reference option
-        request = formReferenceOptionsRequest(language, splits, dependencyStack, data, configuration);
+        request = formReferenceOptionsRequest(language, splits, dependencyStack, data, configuration, emptyEqualsNone);
 
         Logger.debug(getClass(), "Forming request took "+(System.currentTimeMillis()-start)+"ms");
         start = System.currentTimeMillis();
@@ -245,13 +245,14 @@ public class ReferenceServiceImpl implements ReferenceService {
         return reference;
     }
 
-    private ReferenceOptionsRequest formReferenceOptionsRequest(Language language, String[] path, List<String> stack, RevisionData data, Configuration config) {
+    private ReferenceOptionsRequest formReferenceOptionsRequest(Language language, String[] path, List<String> stack, RevisionData data, Configuration config, Boolean emptyEqualsNone) {
         ReferenceOptionsRequest request = new ReferenceOptionsRequest();
         request.setLanguage(language);
         request.setConfType(data.getConfiguration().getType().toValue());
         request.setConfVersion(data.getConfiguration().getVersion());
         request.setKey(path[path.length-1]);
         request.setConfiguration(config);
+        request.setEmptyEqualsNone(emptyEqualsNone);
         List<String> pathList = new ArrayList<>();
         Collections.addAll(pathList, path);
         parsePath(request, pathList, stack, data.getFields(), config);

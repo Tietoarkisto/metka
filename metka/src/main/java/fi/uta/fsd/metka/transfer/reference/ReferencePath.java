@@ -37,6 +37,7 @@ public class ReferencePath {
     private final String value;
     private ReferencePath prev = null;
     private ReferencePath next = null;
+    private Boolean emptyEqualsNone = false;
     @JsonIgnore private Configuration configuration; // This is here to speed up processing
 
     @JsonCreator
@@ -75,5 +76,13 @@ public class ReferencePath {
 
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getEmptyEqualsNone() {
+        return emptyEqualsNone;
+    }
+
+    public void setEmptyEqualsNone(Boolean emptyEqualsNone) {
+        this.emptyEqualsNone = emptyEqualsNone;
     }
 }

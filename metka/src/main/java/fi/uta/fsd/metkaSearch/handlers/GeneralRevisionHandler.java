@@ -346,7 +346,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                     // Field should not be indexed, ignore
                     continue;
                 }
-                ReferenceOption option = references.getCurrentFieldOption(language, data, config, rowPath.printPath()+"."+field.getKey());
+                ReferenceOption option = references.getCurrentFieldOption(language, data, config, rowPath.printPath()+"."+field.getKey(), true);
                 if(option != null) {
                     document.indexText(language, field, root+containerField.getIndexAs()+".", option, field.getGeneralSearch());
                 }
@@ -496,7 +496,7 @@ class GeneralRevisionHandler implements RevisionHandler {
     private void indexReferenceField(Field field, ValueDataField saved, IndexerDocument document, String root, Step path, RevisionData data, Configuration configuration, Language language) {
         Language inputLang = field.getTranslatable() ? language : Language.DEFAULT;
 
-        ReferenceOption option = references.getCurrentFieldOption(language, data, configuration, path.printPath());
+        ReferenceOption option = references.getCurrentFieldOption(language, data, configuration, path.printPath(), true);
         if(option != null) {
             document.indexKeywordField(root + field.getIndexAs() + ".value", option.getValue());
             document.indexText(inputLang, field, root, option, field.getGeneralSearch());

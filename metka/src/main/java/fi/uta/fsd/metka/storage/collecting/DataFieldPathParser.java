@@ -361,7 +361,7 @@ class DataFieldPathParser {
         Language optionLang = field.getTranslatable() ? language : Language.DEFAULT;
 
         if(!field.getWritable() && field.getType() == FieldType.REFERENCE) {
-            return references.getCurrentFieldOption(optionLang, context.getContainingRevision(), configuration, reference.getValuePath());
+            return references.getCurrentFieldOption(optionLang, context.getContainingRevision(), configuration, reference.getValuePath(), false);
         }
 
         DataField dataField = context.getField(valueKey);
@@ -443,7 +443,7 @@ class DataFieldPathParser {
     private String getReferenceTitle(Field field) {
         String titleStr = null;
 
-        ReferenceOption option = references.getCurrentFieldOption(language, context.getContainingRevision(), configuration, field.getKey());
+        ReferenceOption option = references.getCurrentFieldOption(language, context.getContainingRevision(), configuration, field.getKey(), false);
         if(option != null) {
             titleStr = option.getTitle().getValue();
         }

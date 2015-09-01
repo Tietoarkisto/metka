@@ -42,7 +42,7 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 public interface ReferenceService {
-    ReferenceOption getCurrentFieldOption(Language language, RevisionData data, Configuration configuration, String path);
+    ReferenceOption getCurrentFieldOption(Language language, RevisionData data, Configuration configuration, String path, Boolean emptyEqualsNone);
     ReferenceOption getCurrentFieldOption(ReferencePathRequest request);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")

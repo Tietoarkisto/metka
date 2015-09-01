@@ -30,7 +30,6 @@ package fi.uta.fsd.metka.ddi.builder;
 
 import codebook25.*;
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
@@ -80,8 +79,7 @@ class DDIWriteFileDescription extends DDIWriteSectionBase {
             Logger.error(getClass(), "Variables revision "+variables.toString()+" did not contain file reference although it should be present.");
             return;
         }
-        revisionDataPair = revisions.getLatestRevisionForIdAndType(
-                valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_ATTACHMENT);
+        revisionDataPair = revisions.getRevisionData(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
         if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "Couldn't find study attachment with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger() +
                     " even though it's referenced from variables data " + variables.toString());

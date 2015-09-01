@@ -46,6 +46,7 @@ public class ReferenceOptionsRequest {
     private final Map<String, String> fieldValues = new HashMap<>();
     private String container;
     private Boolean returnFirst = false;
+    private Boolean emptyEqualsNone = false;
     @JsonIgnore private Configuration configuration; // This is here to speed up processing
 
 
@@ -107,6 +108,14 @@ public class ReferenceOptionsRequest {
 
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getEmptyEqualsNone() {
+        return emptyEqualsNone;
+    }
+
+    public void setEmptyEqualsNone(Boolean emptyEqualsNone) {
+        this.emptyEqualsNone = emptyEqualsNone;
     }
 
     @Override

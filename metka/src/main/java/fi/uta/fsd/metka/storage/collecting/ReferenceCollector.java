@@ -123,6 +123,7 @@ public class ReferenceCollector {
         }
 
         ReferencePath path = new ReferencePath(reference, request.getFieldValues().get(key));
+        path.setEmptyEqualsNone(request.getEmptyEqualsNone());
         if(previous != null) {
             // We have a previous value, make sure there's no circular reference
             ReferencePath current = previous;

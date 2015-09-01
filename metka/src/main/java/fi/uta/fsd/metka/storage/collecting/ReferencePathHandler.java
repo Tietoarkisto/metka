@@ -30,17 +30,13 @@ package fi.uta.fsd.metka.storage.collecting;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.ReferenceType;
+import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.ReferenceRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
+import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
@@ -106,6 +102,9 @@ public class ReferencePathHandler {
         }
         if(step.getReference() == null) {
             Logger.error(getClass(), "Null reference sent to reference handling, can't continue");
+            return;
+        }
+        if(step.getEmptyEqualsNone() && !StringUtils.hasText(step.getValue())) {
             return;
         }
         switch(step.getReference().getType()) {
@@ -294,6 +293,9 @@ public class ReferencePathHandler {
         }
         if(StringUtils.hasText(step.getValue()) && step.getNext() != null && step.getNext().getReference().getType() != ReferenceType.DEPENDENCY) {
             Logger.error(getClass(), "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
+            return;
+        }
+        if(step.getEmptyEqualsNone() && !StringUtils.hasText(step.getValue())) {
             return;
         }
 
