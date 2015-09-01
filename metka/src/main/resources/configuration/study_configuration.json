@@ -3665,8 +3665,15 @@
 	}, {
 		"type": "ALL",
 		"targets": [{
-			"type": "QUERY",
-			"content": "+key.configuration.type:STUDY_VARIABLES +study.value:{id}"
+			"type": "FIELD",
+			"content": "studyvariables",
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "variables"
+				}]
+			}]
 		}, {
 			"type": "FIELD",
 			"content": "files"
