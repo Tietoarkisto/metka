@@ -121,7 +121,16 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             }
 
             Logger.info(getClass(), "Can't approve revision "+data.getKey().toString()+" since it is not in DRAFT state");
-            return new ImmutablePair<>(OperationResponse.build(ReturnResult.REVISION_NOT_A_DRAFT), transferData);
+            // Fetch the data again since cascade might have changed things
+            dataPair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(), false, transferData.getConfiguration().getType());
+            if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+                Logger.error(getClass(), "No revision to approve for " + transferData.getKey().toString());
+                return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), transferData);
+            }
+            data = dataPair.getRight();
+            if(data.getState() != RevisionState.DRAFT) {
+                return new ImmutablePair<>(OperationResponse.build(ReturnResult.REVISION_NOT_A_DRAFT), transferData);
+            }
         }
 
         // Do validation
@@ -151,6 +160,17 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         // If cascade fails then don't approve this revision
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {
             return new ImmutablePair<>(OperationResponse.build(result), transferData);
+        }
+
+        // Fetch the data again since cascade might have changed things
+        dataPair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(), false, transferData.getConfiguration().getType());
+        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+            Logger.error(getClass(), "No revision to approve for " + transferData.getKey().toString());
+            return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), transferData);
+        }
+        data = dataPair.getRight();
+        if(data.getState() != RevisionState.DRAFT) {
+            return new ImmutablePair<>(OperationResponse.build(ReturnResult.REVISION_NOT_A_DRAFT), transferData);
         }
 
         // TODO: Check that all SELECTION values are still valid (e.g. that they can be found and that the values are not marked deprecated
