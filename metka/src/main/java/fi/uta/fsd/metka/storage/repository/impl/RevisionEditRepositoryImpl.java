@@ -172,6 +172,15 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             }
             cascader.cascade(CascadeInstruction.build(OperationType.EDIT, info), data, operation.getTargets(), configPair.getRight());
         }
+
+        dataPair = revisions.getRevisionData(data.getKey().asCongregateKey());
+        if(dataPair.getLeft() == ReturnResult.REVISION_FOUND && dataPair.getRight().getState() == RevisionState.DRAFT) {
+            data = dataPair.getRight();
+        } else {
+            Logger.error(getClass(), "Revision state moved away from DRAFT during edit process. "+data.getKey().asCongregateKey());
+            return new ImmutablePair<>(OperationResponse.build(ReturnResult.OPERATION_FAIL), data);
+        }
+
         // Cascade can't stop the main operation
         /*if(!(result != ReturnResult.OPERATION_SUCCESSFUL)) {
             return new ImmutablePair<>(result, data);
@@ -378,5 +387,6 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
         }
 
         variables.replaceRow(row.getRowId(), ReferenceRow.build(variables, new Value(data.getKey().asCongregateKey()), info), variablesData.getChanges());
+        revisions.updateRevisionData(variablesData);
     }
 }
