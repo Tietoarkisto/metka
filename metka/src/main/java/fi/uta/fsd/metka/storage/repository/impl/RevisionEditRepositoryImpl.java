@@ -339,7 +339,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return;
         }
 
-        RevisionData attachment = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_ATTACHMENT).getRight();
+        RevisionData attachment = revisions.getLatestRevisionForIdAndType(Long.parseLong(field.getActualValueFor(Language.DEFAULT).split("-")[0]), false, ConfigurationType.STUDY_ATTACHMENT).getRight();
         if(attachment == null || attachment.getState() != RevisionState.DRAFT) {
             return;
         }

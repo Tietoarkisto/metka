@@ -337,7 +337,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 boolean needsParsing = false;
                 Language varLang = null;
 
-                ValueDataField pathField = revision.dataField(ValueDataFieldCall.get("file")).getRight();
+                ValueDataField pathField = revision.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
                 String fileName = pathField != null ? FilenameUtils.getName(pathField.getActualValueFor(Language.DEFAULT)) : null;
 
                 if(fileName != null) {

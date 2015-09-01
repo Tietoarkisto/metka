@@ -138,7 +138,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             RevisionCreateRequest request = new RevisionCreateRequest();
             request.setType(ConfigurationType.STUDY_VARIABLES);
             request.getParameters().put(Fields.STUDY, study.getKey().getId().toString());
-            request.getParameters().put(Fields.FILEID, attachment.getKey().getId().toString());
+            request.getParameters().put(Fields.FILEID, attachment.getKey().asCongregateKey());
             request.getParameters().put(Fields.VARFILEID, FilenameUtils.getBaseName(fileName));
             request.getParameters().put(Fields.LANGUAGE, varLang.toValue());
             String ext = FilenameUtils.getExtension(fileName.toUpperCase());
@@ -175,8 +175,20 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             variablesData = dataPair.getRight();
         }
 
+        boolean updateVariables = false;
+
+        fieldPair = variablesData.dataField(ValueDataFieldCall.get(Fields.FILE));
+        if(fieldPair.getRight() == null || !fieldPair.getRight().hasValueFor(Language.DEFAULT) || !fieldPair.getRight().valueForEquals(Language.DEFAULT, attachment.getKey().asCongregateKey())) {
+            variablesData.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(attachment.getKey().asCongregateKey()), Language.DEFAULT).setInfo(info));
+            updateVariables = true;
+        }
+
         if(!AuthenticationUtil.isHandler(variablesData)) {
             variablesData.setHandler(AuthenticationUtil.getUserName());
+            updateVariables = true;
+        }
+
+        if(updateVariables) {
             revisions.updateRevisionData(variablesData);
         }
 
