@@ -75,7 +75,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
         Pair<ReturnResult, RevisionData> revisionDataPair = revisions.getRevisionData(valueFieldPair.getRight().getActualValueFor(language));
         if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(),
-                    "Couldn't find expected variables revision with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
+                    "Couldn't find expected variables revision with id: " + valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
             return;
         }
         RevisionData variables = revisionDataPair.getRight();
