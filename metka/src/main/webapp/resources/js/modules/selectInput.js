@@ -32,7 +32,7 @@ define(function (require) {
     var getPropertyNS = require('./utils/getPropertyNS');
 
     return function ($input, options, lang, $field) {
-        function fillOptions(list) {
+        function setTriggers(list) {
             if (list.type === 'REFERENCE') {
                 var reference = getPropertyNS(options, 'dataConf.references', list.reference);
                 if (!reference) {
@@ -46,8 +46,6 @@ define(function (require) {
                     }), function (e) {
                         getOptions(options.data.fields, reference);
                     });
-                } else {
-                    getOptions();
                 }
             } else {
                 // You can only empty the selection through trigger if it has a valid empty value
@@ -68,8 +66,6 @@ define(function (require) {
                     key: options.field.key,
                     lang: lang
                 }), setValue);
-
-                setOptions(list.options);
             }
         }
 
@@ -111,7 +107,8 @@ define(function (require) {
             return;
         }
 
-        fillOptions(list);
+        setTriggers(list);
+
         options.$events.on('redraw-{key}'.supplant({
             key: options.field.key
         }), function() {
@@ -131,6 +128,10 @@ define(function (require) {
                 setOptions(list.options);
             }
         });
+
+        options.$events.trigger('redraw-{key}'.supplant({
+            key: options.field.key
+        }));
 
         if (list.freeTextKey) {
             var $freeText = $('<div>');
