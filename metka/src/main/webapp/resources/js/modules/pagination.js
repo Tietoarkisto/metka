@@ -46,6 +46,8 @@ define(function (require) {
             }).on("page", function (event, num) {
                 //this event is triggered when we change pages and this triggers
                 //redraw on containerField.js
+
+                // TODO: Make a separate redraw page event instead of full redraw
                 var redraw = 'redraw-{key}'.supplant({
                     key: options.field.key
                 });

@@ -343,28 +343,38 @@ define(function (require) {
 
     function redraw($tbody, options, lang, page, $thead) {
         $tbody.empty();
-        var rows = require('./data')(options).getByLang(lang);
         options.$events.trigger('redraw-header-{key}'.supplant({
             key: options.field.key
         }));
+        if (options.field.rowsPerPage != null) {
+            //always trigger pager redraw with current row count
+            //if we redraw component where pager is
+            var redrawPaging = 'redraw-{key}-paging'.supplant({
+                key: options.field.key
+            });
+            options.$events.trigger(redrawPaging, [options.field.rowsPerPage, require('./data')(options).validRows(lang)]);
+        }
+        if(options.onRedraw && !options.onRedraw($tbody, options, lang, page, $thead)) {
+            return;
+        }
+        var rows = require('./data')(options).getByLang(lang);
         if (rows) {
             //only if paging is enabled change current behavior
             if (options.field.rowsPerPage != null) {
-
-                //always trigger pager redraw with current row count
-                //if we redraw component where pager is
-                var redrawPaging = 'redraw-{key}-paging'.supplant({
-                    key: options.field.key
-                });
-                options.$events.trigger(redrawPaging, [options.field.rowsPerPage, require('./data')(options).validRows(lang)]);
-
-                var lastElement = page * options.field.rowsPerPage;
-                if (lastElement > rows.length) {
-                    lastElement = rows.length;
-                }
-
-                for (var i = ((page - 1) * options.field.rowsPerPage); i < lastElement; i++) {
-                    appendRow(options, $tbody, rows[i], $thead, lang);
+                var added = 0;
+                var processed = 0;
+                var first = ((page - 1) * options.field.rowsPerPage);
+                for (var i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    if(!row.removed) {
+                        if(processed++ >= first && added < options.field.rowsPerPage) {
+                            appendRow(options, $tbody, row, $thead, lang);
+                            added++;
+                        }
+                        if(added >= options.field.rowsPerPage) {
+                            break;
+                        }
+                    }
                 }
 
             } else {
@@ -409,10 +419,20 @@ define(function (require) {
 
             //if paging is enabled and we add a new row just redraw current container page
             if(options.field.rowsPerPage) {
-                var redrawKey = 'redraw-{key}'.supplant({
+                var currentPage = $tbody.data("currentPage");
+                var redrawPaging = 'redraw-{key}-paging'.supplant({
                     key: options.field.key
                 });
-                options.$events.trigger(redrawKey);
+                var validRows = require('./data')(options).validRows(lang)
+                options.$events.trigger(redrawPaging, [options.field.rowsPerPage, validRows]);
+                if(currentPage == Math.ceil(validRows / options.field.rowsPerPage)) {
+                    appendRow(options, $container, transferRow, $thead, lang);
+                }
+                containerHeader.redraw();
+                /*var redrawKey = 'redraw-{key}'.supplant({
+                    key: options.field.key
+                });
+                options.$events.trigger(redrawKey);*/
             } else {
                 //otherwise we can just append new row without redrawing whole page
                 appendRow(options, $container, transferRow, $thead, lang);
@@ -482,6 +502,10 @@ define(function (require) {
         this.data('addRowFromDataObject', function(data) {
             addRowFromDataObject($tbody, data);
         });
+        options.$events.off('container-{key}-{lang}-push'.supplant({
+            key: options.field.key,
+            lang: lang
+        }));
         options.$events.on('container-{key}-{lang}-push'.supplant({
             key: options.field.key,
             lang: lang
@@ -597,9 +621,13 @@ define(function (require) {
                                             key: options.field.key,
                                             lang: lang
                                         }));
-                                        options.$events.trigger('redraw-header-{key}'.supplant({
-                                            key: options.field.key
-                                        }));
+                                        if(options.field.rowsPerPage) {
+                                            options.$events.trigger('redraw-{key}'.supplant({key: options.field.key}));
+                                        } else {
+                                            options.$events.trigger('redraw-header-{key}'.supplant({
+                                                key: options.field.key
+                                            }));
+                                        }
                                         return false;
                                     }, options.field.removeFilter);
                                 }
@@ -681,7 +709,7 @@ define(function (require) {
             redraw(options, currentPage);
         }
 
-        //options.$events.off(redrawKey, callRedraw);
+        options.$events.off(redrawKey);
         options.$events.on(redrawKey, function(event, page) {
             //if there is "paging-info" on $tbody.data and new page to draw is not provided
             //we get current page from .data and just redraw that
@@ -699,6 +727,7 @@ define(function (require) {
 
             redraw($tbody, options, lang, currentPage, $thead);
         });
+        options.$events.off(redrawHeaderKey);
         options.$events.on(redrawHeaderKey, function(){
             containerHeader.redraw();
         });

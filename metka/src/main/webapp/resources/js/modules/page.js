@@ -45,8 +45,8 @@ define(function (require) {
         }
 
         // Let's reset events so that multiple calls for refresh don't duplicate them
-        //options.$events = $({});
-        //options.$events.on('refresh.metka', refreshMetka);
+        options.$events = $({});
+        options.$events.on('refresh.metka', refreshMetka);
 
         metka.id = getPropertyNS(options, 'data.key.id');
         metka.no = getPropertyNS(options, 'data.key.no');

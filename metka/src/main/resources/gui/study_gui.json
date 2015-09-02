@@ -2123,16 +2123,6 @@
                 "type": "ROW",
                 "cells": [{
                     "type": "CELL",
-                    "field": {
-                        "key": "files",
-                        "displayType": "CUSTOM_JS",
-                        "disableRemoval": true
-                    }
-                }]
-            }, {
-                "type": "ROW",
-                "cells": [{
-                    "type": "CELL",
                     "title": "Aineiston tiedostoliitteet",
                     "field": {
                         "key": "filesexisting",
@@ -2140,6 +2130,7 @@
                         "showReferenceSaveInfo": true,
                         "showReferenceState": true,
                         "disableRemoval": true,
+                        "rowsPerPage": 2,
                         "columnFields": [
                             "filepath",
                             "filelanguage"
