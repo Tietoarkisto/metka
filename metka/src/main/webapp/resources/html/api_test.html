@@ -7,9 +7,10 @@
         <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
 		<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js"></script>
         <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js"></script>
-		<script>function Tester() {
-            var secret = "b2dmRUtTaE5tT3RiWi9IUTQ5VzBLcEM1UlBRUDRMSE5hd3NIZ1VqU0VSQVZmcVM2ZXVoSS9rbnVLMFNJb1FYdEpQeXdyeTdqSlVkQ0JyLldKUDhpby8";
+		<script>
+        var secret = "NFpGM21pbWFLNzVtVzVCQ0FzWDNUN2xrZnNaTC5zV21PZmVVcEtKcGRiZWJyWWJNME5LeC9ON0JVQ0haN3BkWjUzcUJpTTB6NkRlNTQvcnd5eGRPVjE";
 
+        function Tester() {
             function call(url, request, success) {
                 $.ajax({
                     type: "POST",
@@ -22,6 +23,7 @@
                     },
                     dataType: 'json',
                     jsonp: false,
+                    async: false,
                     success: success || function(response) {
                         alert(response.result);
                     },
@@ -163,7 +165,7 @@
                     };
                     call(reqUrl, request, function(response) {
                         alert(response.result);
-                        $("#transferDataArea").text(JSON.stringify(response.response.data), null, 4);
+                        $("#transferDataArea").text(JSON.stringify(response.response.data));
                     });
                 },
                 revisionEdit: function() {
@@ -201,8 +203,73 @@
                         alert(response.result);
                         $("#transferDataArea").text(JSON.stringify(response.response.data));
                     });
+                },
+                createRevision: function(request) {
+                    var reqUrl = "/metka/api/createRevision";
+                    var rsp;
+                    call(reqUrl, request, function(response) {
+                        rsp = response
+                    });
+                    return rsp;
                 }
             }
+        }
+
+        function testStudy() {
+            var date = new Date();
+            var response = Tester().createRevision({
+                request: {
+                    type: "STUDY",
+                    parameters: {
+                        submissionid: $('#submissionid').val(),
+                        dataarrivaldate: date.toISOString().replace('Z','')
+                    }
+                },
+                authentication: secret
+            });
+
+            alert(response.result);
+            $("#transferDataArea").text(JSON.stringify(response.response.data));
+        }
+
+        function testStudyAttachment() {
+            var date = new Date();
+            var response = Tester().createRevision(
+                {
+                    request: {
+                        type: "STUDY",
+                        parameters: {
+                            submissionid: $('#submissionid').val(),
+                            dataarrivaldate: date.toISOString().replace('Z','')
+                        }
+                    },
+                    authentication: secret
+                });
+
+            var studyId = response.response.data.key.id;
+            response = Tester().createRevision(
+                {
+                    request: {
+                        type: "STUDY_ATTACHMENT",
+                        parameters: {
+                            study: studyId
+                        }
+                    },
+                    authentication: secret
+                });
+            alert(response.result);
+            $("#transferDataArea").text(JSON.stringify(response.response.data));
+        }
+
+        function testRevisionable(type) {
+            var response = Tester().createRevision({
+                request: {
+                    type: type
+                },
+                authentication: secret
+            });
+            alert(response.result);
+            $("#transferDataArea").text(JSON.stringify(response.response.data));
         }
 		</script>
 	</head>
@@ -313,6 +380,17 @@
             <div>
                 <h3>Hyväksy revisio</h3>
                 <input type="button" value="Hyväksy" onclick="Tester().revisionApprove()" />
+            </div>
+            <div>
+                <h3>Luo revisio</h3>
+
+                <p>Hankinta-aineistonumero</p><input type="text" id="submissionid"/>
+                <input type="button" value="Luo Aineisto" onclick="testStudy()" />
+                <input type="button" value="Luo Tiedostoliite" onclick="testStudyAttachment()" />
+                <input type="button" value="Luo Mappi" onclick="testRevisionable('BINDER_PAGE')"/>
+                <input type="button" value="Luo Sarja" onclick="testRevisionable('SERIES')"/>
+                <input type="button" value="Luo Julkaisu" onclick="testRevisionable('PUBLICATION')"/>
+
             </div>
         </div>
 	</body>
