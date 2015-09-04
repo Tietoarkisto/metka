@@ -43,9 +43,9 @@ define(function (require) {
                         });
                         //options.$events.trigger('refresh.metka');
                         var key = "redraw-{key}";
-                        //options.$events.trigger(key.supplant({key: "studyvariables"}));
+                        options.$events.trigger(key.supplant({key: "studyvariables"}));
                         options.$events.trigger(key.supplant({key: "filesexisting"}));
-                        //options.$events.trigger(key.supplant({key: "removedfiles"}));
+                        options.$events.trigger(key.supplant({key: "filesremoved"}));
                     }
                 }
             });
@@ -88,9 +88,6 @@ define(function (require) {
                     }, replaceTr);
                 }
             },
-            postCreate: function (options) {
-
-            },
             /**
              * Called during containerField redraw operation.
              * @param $tbody Container table body
@@ -100,7 +97,7 @@ define(function (require) {
              * @param $thead Container table header
              * @return boolean Return true if normal container redraw should be skipped
              */
-            onRedraw: function($tbody, options, lang, page, $thead) {
+            onRedraw: function($tbody, options, lang, $thead) {
                 require('./../../data')(options).removeRows('DEFAULT');
                 var rows = require('./../../data')(options)("files").getByLang(options.defaultLang);
                 if(rows) {

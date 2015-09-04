@@ -33,7 +33,11 @@ define(function (require) {
         options.type = "RESTORE";
 
         options.request = {
-            success: function() {options.$events.trigger('modal.refresh')}
+            success: function(response) {
+                $.extend(options.data, response.data);
+                options.$events.trigger('refresh.metka');
+                options.$events.trigger('modal.refresh');
+            }
         };
     };
 });

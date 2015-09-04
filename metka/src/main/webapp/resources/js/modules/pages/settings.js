@@ -33,6 +33,7 @@ define(function (require) {
 
 
         var $editor;
+        var indexNumber;
 
         $.extend(options, {
             data: {},
@@ -254,7 +255,7 @@ define(function (require) {
                     content: [
                         {
                             type: "COLUMN",
-                            columns: 1,
+                            columns: 2,
                             rows: [
                                 {
                                     type: "ROW",
@@ -265,16 +266,30 @@ define(function (require) {
                                                 displayType: "CUSTOM_JS"
                                             },
                                             postCreate: function(options) {
-                                                var $elem = $(this).children().first();
-                                                $elem.text("Indeksikomentoja jonossa: 0");
-                                                setInterval(function() {
-                                                    require("./../server")("/settings/openIndexCommands", {
-                                                        method: "GET",
-                                                        success: function(response) {
-                                                            $elem.text("Indeksikomentoja jonossa: "+response.openCommands);
-                                                        }
-                                                    })
-                                                }, 1000);
+                                                indexNumber = $(this).children().first();
+                                                indexNumber.text("Indeksikomentoja jonossa: 0");
+                                                require("./../server")("/settings/openIndexCommands", {
+                                                    method: "GET",
+                                                    success: function(response) {
+                                                        indexNumber.text("Indeksikomentoja jonossa: "+response.openCommands);
+                                                    }
+                                                });
+                                            }
+                                        }, {
+                                            type: "CELL",
+                                            contentType: "BUTTON",
+                                            button: {
+                                                title: "Päivitä",
+                                                create: function(options) {
+                                                    this.click(function() {
+                                                        require("./../server")("/settings/openIndexCommands", {
+                                                            method: "GET",
+                                                            success: function(response) {
+                                                                indexNumber.text("Indeksikomentoja jonossa: "+response.openCommands);
+                                                            }
+                                                        });
+                                                    });
+                                                }
                                             }
                                         }
                                     ]

@@ -2130,7 +2130,6 @@
                         "showReferenceSaveInfo": true,
                         "showReferenceState": true,
                         "disableRemoval": true,
-                        "rowsPerPage": 2,
                         "columnFields": [
                             "filepath",
                             "filelanguage"

@@ -341,46 +341,66 @@ define(function (require) {
         }
     }
 
-    function redraw($tbody, options, lang, page, $thead) {
+    function redraw($tbody, options, lang, $thead) {
         $tbody.empty();
         options.$events.trigger('redraw-header-{key}'.supplant({
             key: options.field.key
         }));
-        if (options.field.rowsPerPage != null) {
-            //always trigger pager redraw with current row count
-            //if we redraw component where pager is
+
+        if(options.onRedraw && !options.onRedraw($tbody, options, lang, $thead)) {
+            // This should differ hugely from the onRedraw function since recursive calls to redraw don't really work with pagination
+            return;
+        }
+
+        if(options.field.rowsPerPage) {
+            var page = $tbody.data('currentPage');
             var redrawPaging = 'redraw-{key}-paging'.supplant({
                 key: options.field.key
             });
-            options.$events.trigger(redrawPaging, [options.field.rowsPerPage, require('./data')(options).validRows(lang)]);
+            options.$events.trigger(redrawPaging, [options.field.rowsPerPage, require('./data')(options).validRows(lang), page]);
+            redrawPage(page, $tbody, options, lang, $thead);
+            return $tbody;
         }
-        if(options.onRedraw && !options.onRedraw($tbody, options, lang, page, $thead)) {
+
+        var rows = require('./data')(options).getByLang(lang);
+        if(rows) {
+            rows.forEach(function (transferRow) {
+                appendRow(options, $tbody, transferRow, $thead, lang)
+            });
+        }
+
+        return $tbody;
+    }
+
+    function redrawPage(page, $tbody, options, lang, $thead) {
+        $tbody.empty();
+        if(!options.field.rowsPerPage || options.field.rowsPerPage < 1) {
+            // Sanity check, if rowsPerPage is not defined then fall back on normal redraw instead
+            redraw($tbody, options, lang, $thead);
             return;
         }
+
+        if(options.onRedrawPage && !options.onRedrawPage(page, $tbody, options, lang, $thead)) {
+            // This should differ hugely from the onRedraw function since recursive calls to redraw don't really work with pagination
+            return;
+        }
+
         var rows = require('./data')(options).getByLang(lang);
         if (rows) {
-            //only if paging is enabled change current behavior
-            if (options.field.rowsPerPage != null) {
-                var added = 0;
-                var processed = 0;
-                var first = ((page - 1) * options.field.rowsPerPage);
-                for (var i = 0; i < rows.length; i++) {
-                    var row = rows[i];
-                    if(!row.removed) {
-                        if(processed++ >= first && added < options.field.rowsPerPage) {
-                            appendRow(options, $tbody, row, $thead, lang);
-                            added++;
-                        }
-                        if(added >= options.field.rowsPerPage) {
-                            break;
-                        }
+            var added = 0;
+            var processed = 0;
+            var first = ((page - 1) * options.field.rowsPerPage);
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                if(!row.removed) {
+                    if(processed++ >= first && added < options.field.rowsPerPage) {
+                        appendRow(options, $tbody, row, $thead, lang);
+                        added++;
+                    }
+                    if(added >= options.field.rowsPerPage) {
+                        break;
                     }
                 }
-
-            } else {
-                rows.forEach(function (transferRow) {
-                    appendRow(options, $tbody, transferRow, $thead, lang)
-                });
             }
         }
         return $tbody;
@@ -424,7 +444,7 @@ define(function (require) {
                     key: options.field.key
                 });
                 var validRows = require('./data')(options).validRows(lang)
-                options.$events.trigger(redrawPaging, [options.field.rowsPerPage, validRows]);
+                options.$events.trigger(redrawPaging, [options.field.rowsPerPage, validRows, currentPage]);
                 if(currentPage == Math.ceil(validRows / options.field.rowsPerPage)) {
                     appendRow(options, $container, transferRow, $thead, lang);
                 }
@@ -687,49 +707,48 @@ define(function (require) {
         var redrawKey = 'redraw-{key}'.supplant({
             key: options.field.key
         });
+        var redrawPageKey = 'redraw-{key}-page'.supplant({
+            key: options.field.key
+        });
         var redrawHeaderKey = 'redraw-header-{key}'.supplant({
             key: options.field.key
         });
 
-        function callRedraw(event, page) {
-            //if there is "paging-info" on $tbody.data and new page to draw is not provided
-            //we get current page from .data and just redraw that
-            //otherwise we can just go to page 1
-            var currentPage = page;
-            if (!page && $tbody.data("currentPage") != null) {
-                currentPage = $tbody.data("currentPage");
-            } else if (!page) {
-                currentPage = 1;
+        options.$events.register(redrawKey, function(event, page) {
+            if(options.field.rowsPerPage) {
+                //if there is "paging-info" on $tbody.data and new page to draw is not provided
+                //we get current page from .data and just redraw that
+                //otherwise we can just go to page 1
+                var currentPage = page;
+                if (!page && $tbody.data("currentPage") != null) {
+                    currentPage = $tbody.data("currentPage");
+                } else if (!page) {
+                    currentPage = 1;
+                }
+                $tbody.data("currentPage", currentPage);
             }
 
-            //now that we know currentPage we store it to tbody.data so
-            //we can get it in case of redraw event
-            $tbody.data("currentPage", currentPage);
-
-            redraw(options, currentPage);
-        }
-
-        options.$events.off(redrawKey);
-        options.$events.on(redrawKey, function(event, page) {
-            //if there is "paging-info" on $tbody.data and new page to draw is not provided
-            //we get current page from .data and just redraw that
-            //otherwise we can just go to page 1
-            var currentPage = page;
-            if (!page && $tbody.data("currentPage") != null) {
-                currentPage = $tbody.data("currentPage");
-            } else if (!page) {
-                currentPage = 1;
-            }
-
-            //now that we know currentPage we store it to tbody.data so
-            //we can get it in case of redraw event
-            $tbody.data("currentPage", currentPage);
-
-            redraw($tbody, options, lang, currentPage, $thead);
+            redraw($tbody, options, lang, $thead);
         });
-        options.$events.off(redrawHeaderKey);
-        options.$events.on(redrawHeaderKey, function(){
+        options.$events.register(redrawHeaderKey, function(){
             containerHeader.redraw();
+        });
+        options.$events.register(redrawPageKey, function(event, page) {
+            if(options.field.rowsPerPage) {
+                //if there is "paging-info" on $tbody.data and new page to draw is not provided
+                //we get current page from .data and just redraw that
+                //otherwise we can just go to page 1
+                var currentPage = page;
+                if (!page && $tbody.data("currentPage") != null) {
+                    currentPage = $tbody.data("currentPage");
+                } else if (!page) {
+                    currentPage = 1;
+                }
+                $tbody.data("currentPage", currentPage);
+                redrawPage(currentPage, $tbody, options, lang, $thead);
+            } else {
+                options.events.trigger(redrawKey);
+            }
         });
         options.$events.trigger(redrawKey);
     };

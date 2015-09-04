@@ -61,9 +61,8 @@ define(function (require) {
                     })
                 }
             },
-            postCreate: function (options) {
-                // TODO: Can be replaced with search and data insert instead.
-                var $containerField = $(this).children();
+            onRedraw: function($tbody, options, lang, $thead) {
+                require('./../../data')(options).removeRows('DEFAULT');
                 require('./../../server')('/study/attachmentHistory/', {
                     data: JSON.stringify(options.data),
                     success: function (data) {
@@ -84,6 +83,7 @@ define(function (require) {
                         });
                     }
                 });
+                return true;
             }
         }
     };

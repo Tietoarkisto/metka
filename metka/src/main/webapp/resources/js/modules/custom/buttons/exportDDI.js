@@ -37,7 +37,6 @@ define(function (require) {
                 '&title': {
                     default: "Lataa DDI"
                 },
-                $events: $({}),
                 defaultLang: "DEFAULT",
                 ignoreTranslate: true,
                 dataConf: {

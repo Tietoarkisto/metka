@@ -44,7 +44,7 @@ define(function (require) {
         if(customclass) {
             $label.addClass(customclass);
         }
-        options.$events.on('label-update-{key}-{lang}'.supplant({
+        options.$events.register('label-update-{key}-{lang}'.supplant({
             key: options.fieldOptions.key,
             lang: lang
         }), setLabel);

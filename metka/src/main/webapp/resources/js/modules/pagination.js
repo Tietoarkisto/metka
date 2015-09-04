@@ -48,7 +48,7 @@ define(function (require) {
                 //redraw on containerField.js
 
                 // TODO: Make a separate redraw page event instead of full redraw
-                var redraw = 'redraw-{key}'.supplant({
+                var redraw = 'redraw-{key}-page'.supplant({
                     key: options.field.key
                 });
                 options.$events.trigger(redraw, [num]);
@@ -58,8 +58,11 @@ define(function (require) {
                 key: options.field.key
             });
             //event to trigger paging redraw/recalc
-            options.$events.on(redrawPaging, function (event, perPage, rows) {
+            options.$events.register(redrawPaging, function (event, perPage, rows, page) {
                 $paging.bootpag({total: Math.ceil(rows / perPage)});
+                if(page) {
+                    $paging.bootpag({page: page});
+                }
             });
         }
 

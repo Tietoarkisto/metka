@@ -36,7 +36,6 @@ define(function (require) {
                 '&title': {
                     default: "Tuo DDI"
                 },
-                $events: $({}),
                 defaultLang: "DEFAULT",
                 ignoreTranslate: true,
                 dataConf: {

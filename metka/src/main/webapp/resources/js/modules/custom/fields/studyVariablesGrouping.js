@@ -267,7 +267,6 @@ define(function (require) {
                                         var containerOptions = $.extend(true, require('./../../optionsBase')(), {
                                             data: {},
                                             dataConf: {},
-                                            $events: $({}),
                                             defaultLang: options.defaultLang,
                                             content: [{
                                                 type: 'COLUMN',

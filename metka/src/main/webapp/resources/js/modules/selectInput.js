@@ -50,13 +50,13 @@ define(function (require) {
             } else {
                 // You can only empty the selection through trigger if it has a valid empty value
                 if(list.includeEmpty) {
-                    options.$events.on('data-empty-{key}-{lang}'.supplant({
+                    options.$events.register('data-empty-{key}-{lang}'.supplant({
                         key: options.field.key,
                         lang: lang
                     }), function() {
                         require('./data')(options).setByLang(lang, "");
                     });
-                    options.$events.on('data-empty-{key}'.supplant({
+                    options.$events.register('data-empty-{key}'.supplant({
                         key: options.field.key
                     }), function() {
                         require('./data')(options).setByLang(lang, "");
@@ -109,7 +109,7 @@ define(function (require) {
 
         setTriggers(list);
 
-        options.$events.on('redraw-{key}'.supplant({
+        options.$events.register('redraw-{key}'.supplant({
             key: options.field.key
         }), function() {
             list = require('./selectionList')(options, key);

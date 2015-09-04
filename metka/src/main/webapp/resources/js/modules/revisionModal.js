@@ -30,6 +30,7 @@ define(function(require) {
     'use strict';
 
     return function(options, requestOptions, page, modalRefresh, containerKey, large, title) {
+        var events = require('./events');
         if(!title) {
             title = MetkaJS.L10N.get('type.'+(page || requestOptions.PAGE)+".title");
         }
@@ -42,8 +43,7 @@ define(function(require) {
                     data: response.data,
                     title: title,
                     dataConf: response.configuration,
-                    // TODO: Events need better management so that some events can be inherited and others can be overwritten
-                    $events: $({}),
+                    $events: events(),
                     containerKey: containerKey,
                     large: !!large,
                     defaultLang: 'DEFAULT',
@@ -51,7 +51,7 @@ define(function(require) {
                     dialogTitles: options.dialogTitles || {}
                 });
 
-                if(modalRefresh) modalOptions.$events.on('modal.refresh', modalRefresh);
+                if(modalRefresh) modalOptions.$events.register('modal.refresh', modalRefresh);
                 modalOptions = $.extend(true, require('./optionsBase')(), modalOptions);
                 modalOptions.type = modalOptions.isReadOnly(modalOptions) ? 'VIEW' : 'MODIFY';
 

@@ -65,7 +65,6 @@ define(function (require) {
                         }
                     }),
                     containerKey: options.field.key,
-                    $events: $({}),
                     defaultLang: options.fieldOptions.translatable ? lang : options.defaultLang,
                     fieldTitles: options.fieldTitles,
                     dialogTitle: options.field.dialogTitle,

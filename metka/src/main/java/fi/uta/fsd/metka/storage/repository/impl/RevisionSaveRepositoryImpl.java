@@ -316,7 +316,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             TransferField tfFile = transfer.getField(Fields.FILE);
 
             if(notFile(fieldPair.getRight().getActualValueFor(Language.DEFAULT), tfFile, changesAndErrors)) {
-                // TODO: Send AMQP file missing message
                 messenger.sendAmqpMessage(messenger.FB_FILES_MISSING, new FileMissingPayload(study, revision));
 
                 Logger.error(getClass(), "Path in file-field is not a valid file");
@@ -357,6 +356,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     }
                 }
                 if(needsParsing) {
+
                     parseVariableFile(revision, study, varLang, info, changesAndErrors);
                 }
             }

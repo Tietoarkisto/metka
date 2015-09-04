@@ -36,6 +36,9 @@ define(function (require) {
             return function () {
                 (function clearErrors(fields) {
                     $.each(fields, function (key, field) {
+                        if(!field) {
+                            return;
+                        }
                         if (field.errors) {
                             field.errors.length = 0
                         }

@@ -45,8 +45,8 @@ define(function (require) {
         }
 
         // Let's reset events so that multiple calls for refresh don't duplicate them
-        options.$events = $({});
-        options.$events.on('refresh.metka', refreshMetka);
+        options.$events = require('./events')();
+        options.$events.register('refresh.metka', refreshMetka);
 
         metka.id = getPropertyNS(options, 'data.key.id');
         metka.no = getPropertyNS(options, 'data.key.no');
@@ -61,7 +61,7 @@ define(function (require) {
     }
     var content = null;
     require('./pageConfig')(options, function () {
-        options.$events.on('refresh.metka', refreshMetka);
+        options.$events.register('refresh.metka', refreshMetka);
         $('body')
             .append($('<div class="wrapper">')
                 .append($('<div class="content container">')));

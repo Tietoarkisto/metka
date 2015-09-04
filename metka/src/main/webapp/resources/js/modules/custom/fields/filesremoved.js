@@ -44,8 +44,8 @@ define(function (require) {
                         //options.$events.trigger('refresh.metka');
                         var key = "redraw-{key}";
                         options.$events.trigger(key.supplant({key: "studyvariables"}));
-                        options.$events.trigger(key.supplant({key: "filesremoved"}));
                         options.$events.trigger(key.supplant({key: "filesexisting"}));
+                        options.$events.trigger(key.supplant({key: "filesremoved"}));
                     }
                 }
             });
@@ -72,35 +72,44 @@ define(function (require) {
                     }, replaceTr);
                 }
             },
-            postCreate: function (options) {
+            /**
+             * Called during containerField redraw operation.
+             * @param $tbody Container table body
+             * @param options Field options
+             * @param lang Container lang
+             * @param page Current container page
+             * @param $thead Container table header
+             * @return boolean Return true if normal container redraw should be skipped
+             */
+            onRedraw: function($tbody, options, lang, $thead) {
+                require('./../../data')(options).removeRows('DEFAULT');
                 var rows = require('./../../data')(options)("files").getByLang(options.defaultLang);
-                if (rows) {
-                    var i = 0;
-                    (function processNextRow() {
-                        if (i < rows.length) {
+                if(rows) {
+                    (function processNextRow(i) {
+                        if(i < rows.length) {
                             var transferRow = rows[i++];
                             if(transferRow.removed) {
-                                processNextRow();
+                                processNextRow(i);
                                 return;
                             }
                             require('./../../server')('/references/referenceStatus/{value}', transferRow, {
                                 method: 'GET',
-                                success: function (response) {
-                                    if (response.exists && response.removed) {
+                                success: function(response) {
+                                    if(response.exists && response.removed) {
                                         options.$events.trigger('container-{key}-{lang}-push'.supplant({
                                             key: options.field.key,
                                             lang: options.defaultLang
                                         }), [transferRow]);
-                                        //(!response.removed ? $filesContainer : $removedFilesContainer).find('.panel').parent().data('addRow')(transferRow);
                                     } else if(response.result === "REVISIONABLE_NOT_FOUND") {
                                         transferRow.removed = true;
                                     }
-                                    processNextRow();
+                                    processNextRow(i);
                                 }
                             });
                         }
                     })(0);
                 }
+                return true;
             }
         };
     };

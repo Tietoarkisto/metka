@@ -104,14 +104,14 @@ define(function (require) {
 
         var content = null;
         if(!options.$events) {
-            options.$events = $({});
+            options.$events = require('./events')();
         }
 
         options.modalTarget = require('./autoId')("M");
-        options.$events.on('refresh.metka', refreshMetka);
+        options.$events.register('refresh.metka', refreshMetka);
         var $modal = $('<div class="modal fade" tabindex="-1" role="dialog" id="'+options.modalTarget+'">');
         content = $('<div class="modal-dialog">');
-        refreshMetka();
+        options.$events.trigger('refresh.metka');
         $modal.append(content);
         /*$modal.on('show.bs.modal', function() {
             options.$events.trigger('refresh.metka');

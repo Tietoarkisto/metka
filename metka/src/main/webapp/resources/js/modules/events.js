@@ -29,18 +29,27 @@
 define(function(require) {
     'use strict';
 
-    return function(parent) {
-        var events = require('./events');
+    return function() {
+        var events = $({});
         return {
-            header: 'Metka',
-            parent: parent,
-            isReadOnly: (parent && parent.isReadOnly ? parent.isReadOnly : require('./functions/isReadOnly')),
-            content: [],
-            body: null,
-            data: {},
-            dataConf: {},
-            $events: events(),
-            defaultLang: 'DEFAULT'
+            /**
+             * Clears old listeners before adding the provided function
+             * @param key
+             * @param callback
+             */
+            register: function(key, callback) {
+                events.off(key);
+                events.on(key, callback);
+            },
+            trigger: function(key, args) {
+                events.trigger(key, args);
+            },
+            on: function(key, callback) {
+                events.on(key, callback);
+            },
+            off: function(key) {
+                events.off(key);
+            }
         }
-    }
+    };
 });

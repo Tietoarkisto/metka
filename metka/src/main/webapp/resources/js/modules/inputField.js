@@ -174,8 +174,8 @@ define(function (require) {
                     });
 
                     // Each input type can be emptied using triggers, although you have to be careful with reference fields, especially dependencies
-                    options.$events.on(emptyTriggerLangKey, emptyField);
-                    options.$events.on(emptyTriggerKey, emptyField);
+                    options.$events.register(emptyTriggerLangKey, emptyField);
+                    options.$events.register(emptyTriggerKey, emptyField);
                     if (type === 'REFERENCE') {
                         var reference = getPropertyNS(options, 'dataConf.references', options.fieldOptions.reference);
                         changeTriggerKey = 'data-changed-{key}-{lang}'.supplant({
