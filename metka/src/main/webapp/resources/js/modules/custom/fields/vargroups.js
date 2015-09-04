@@ -118,8 +118,8 @@ define(function (require) {
                                         treeViewEvents.onClick = function (node) {
                                             if (!node.children) {
                                                 var requestOptions = {
-                                                    id: node.transferRow.value,
-                                                    no: ''
+                                                    id: node.transferRow.value.split("-")[0],
+                                                    no: node.transferRow.value.split("-")[1]
                                                 };
                                                 require('./../../revisionModal')(options, requestOptions, 'STUDY_VARIABLE', onChange, options.field.key, true, 'Muokkaa muuttujaa');
                                             } else {
