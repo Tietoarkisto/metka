@@ -68,18 +68,17 @@ public final class LuceneConfig {
      */
     public static final Version USED_VERSION = Version.LUCENE_48;
     /**
-     * Defines how many idle loops (i.e. loops with no new commands) must happen
-     * before changes are flushed to disk.
+     * Defines how long (in ms) indexing has to be idle before index is flushed to disk.
      */
-    public static final int IDLE_LOOPS_BEFORE_FLUSH = 3;
+    public static final int TIME_IDLING_BEFORE_FLUSH = 5000;
     /**
      * Defines if indexing will take a break after multiple commands to flush changes to disk.
      */
-    public static boolean FORCE_FLUSH_AFTER_BATCH_OF_COMMANDS = true;
+    public static boolean FORCE_FLUSH_AFTER_BATCH_OF_CHANGES = true;
     /**
-     * Defines maximum number of commands to handle between flushes if FORCE_FLUSH_AFTER_BATCH_OF_COMMANDS is true.
+     * Defines maximum number of changes to index between flushes if FORCE_FLUSH_AFTER_BATCH_OF_CHANGES is true.
      */
-    public static final int MAX_COMMAND_BATCH_SIZE = 100;
+    public static final int MAX_CHANGE_BATCH_SIZE = 100;
 
     static {
         // Set LongType no store

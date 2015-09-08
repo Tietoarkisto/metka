@@ -109,15 +109,9 @@ public class DirectoryInformation {
     }
 
     public void clearIndex() {
-        if(indexWriter != null) {
-            try {
-                indexWriter.close();
-            } catch(Exception e) {
-
-            }
-
+        if(indexWriter == null) {
+            indexWriter = getIndexWriter();
         }
-        indexWriter = IndexWriterFactory.createIndexWriter(directory);
 
         try {
             indexWriter.deleteAll();

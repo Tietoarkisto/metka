@@ -33,7 +33,8 @@ define(function (require) {
 
 
         var $editor;
-        var indexNumber;
+        var indexCommandNumber;
+        var indexRevisionNumber;
 
         $.extend(options, {
             data: {},
@@ -255,7 +256,7 @@ define(function (require) {
                     content: [
                         {
                             type: "COLUMN",
-                            columns: 2,
+                            columns: 3,
                             rows: [
                                 {
                                     type: "ROW",
@@ -266,12 +267,27 @@ define(function (require) {
                                                 displayType: "CUSTOM_JS"
                                             },
                                             postCreate: function(options) {
-                                                indexNumber = $(this).children().first();
-                                                indexNumber.text("Indeksikomentoja jonossa: 0");
+                                                indexCommandNumber = $(this).children().first();
+                                                indexCommandNumber.text("Indeksikomentoja jonossa: 0");
                                                 require("./../server")("/settings/openIndexCommands", {
                                                     method: "GET",
                                                     success: function(response) {
-                                                        indexNumber.text("Indeksikomentoja jonossa: "+response.openCommands);
+                                                        indexCommandNumber.text("Indeksikomentoja jonossa: "+response.openCommands);
+                                                    }
+                                                });
+                                            }
+                                        }, {
+                                            type: "CELL",
+                                            field: {
+                                                displayType: "CUSTOM_JS"
+                                            },
+                                            postCreate: function(options) {
+                                                indexRevisionNumber = $(this).children().first();
+                                                indexRevisionNumber.text("Indeksoimattomia revisioita: 0");
+                                                require("./../server")("/settings/openIndexCommands", {
+                                                    method: "GET",
+                                                    success: function(response) {
+                                                        indexRevisionNumber.text("Indeksoimattomia revisioita: "+response.openCommands);
                                                     }
                                                 });
                                             }
@@ -285,7 +301,13 @@ define(function (require) {
                                                         require("./../server")("/settings/openIndexCommands", {
                                                             method: "GET",
                                                             success: function(response) {
-                                                                indexNumber.text("Indeksikomentoja jonossa: "+response.openCommands);
+                                                                indexCommandNumber.text("Indeksikomentoja jonossa: "+response.openCommands);
+                                                            }
+                                                        });
+                                                        require("./../server")("/settings/revisionsWaitingIndexing", {
+                                                            method: "GET",
+                                                            success: function(response) {
+                                                                indexRevisionNumber.text("Indeksoimattomia revisioita: "+response.openCommands);
                                                             }
                                                         });
                                                     });

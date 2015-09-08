@@ -119,6 +119,11 @@ public class SettingsController {
         return service.getOpenIndexCommands();
     }
 
+    @RequestMapping(value="revisionsWaitingIndexing", method = RequestMethod.GET)
+    public @ResponseBody OpenIndexCommandsResponse revisionsWaitingIndexing() {
+        return service.getRevisionsWaitingIndexing();
+    }
+
     @RequestMapping(value="removeAPIUser/{secret}", method = RequestMethod.GET)
     public @ResponseBody ReturnResult removeAPIUser(@PathVariable String secret) {
         return service.removeAPIUser(secret);

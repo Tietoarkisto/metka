@@ -77,6 +77,9 @@ public interface SettingsService {
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_INDEX_INFO +"', 'PERMISSION')")
     OpenIndexCommandsResponse getOpenIndexCommands();
 
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_INDEX_INFO +"', 'PERMISSION')")
+    OpenIndexCommandsResponse getRevisionsWaitingIndexing();
+
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_MANUALLY_INDEX_CONTENT +"', 'PERMISSION')")
     ReturnResult indexEverything();
 

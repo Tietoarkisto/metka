@@ -36,6 +36,7 @@ import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
@@ -52,6 +53,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.NumericRangeQuery;
+import org.apache.lucene.store.AlreadyClosedException;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -102,7 +104,7 @@ class GeneralRevisionHandler implements RevisionHandler {
      * @param command
      * @return Tells if the command handling lead to additional documents being added to index
      */
-    public boolean handle(RevisionIndexerCommand command) {
+    public boolean handle(RevisionIndexerCommand command) throws AlreadyClosedException{
         boolean result = false;
 
         if(command == null) {
@@ -117,7 +119,36 @@ class GeneralRevisionHandler implements RevisionHandler {
         }
         Logger.debug(getClass(), "Got Revision in "+(System.currentTimeMillis()-start)+"ms");
         RevisionData data = pair.getRight();
-        Logger.debug(getClass(), "Trying to get configuration for "+data.getConfiguration().toString());
+        return handleRevision(result, data);
+    }
+
+    /**
+     * Handle given key.
+     *
+     * @param key
+     * @return Tells if the command handling lead to additional documents being added to index
+     */
+    public boolean handle(RevisionKey key) throws AlreadyClosedException{
+        boolean result = false;
+
+        if(key == null) {
+            return result;
+        }
+        Logger.debug(getClass(), "Trying to get revision ID: " + key.getId() + " NO: " + key.getNo());
+        Long start = System.currentTimeMillis();
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            Logger.warning(getClass(), "Revision not found with result " + pair.getLeft());
+            return result;
+        }
+        Logger.debug(getClass(), "Got Revision in "+(System.currentTimeMillis()-start)+"ms");
+        RevisionData data = pair.getRight();
+        return handleRevision(result, data);
+    }
+
+    private boolean handleRevision(boolean result, RevisionData data) throws AlreadyClosedException {
+        Long start;
+        Logger.debug(getClass(), "Trying to get configuration for " + data.getConfiguration().toString());
         start = System.currentTimeMillis();
         Pair<ReturnResult, Configuration> confPair = getConfiguration(data.getConfiguration());
         if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
@@ -131,7 +162,14 @@ class GeneralRevisionHandler implements RevisionHandler {
         BooleanQuery bQuery = new BooleanQuery();
         bQuery.add(NumericRangeQuery.newLongRange("key.id", 4, data.getKey().getId(), data.getKey().getId(), true, true), MUST);
         bQuery.add(NumericRangeQuery.newLongRange("key.no", 4, data.getKey().getNo().longValue(), data.getKey().getNo().longValue(), true, true), MUST);
-        indexer.removeDocument(bQuery);
+        try {
+            indexer.removeDocument(bQuery);
+        } catch(AlreadyClosedException ace) {
+            throw ace;
+        } catch(Exception e) {
+            Logger.error(getClass(), "Exception while removing revision "+data.getKey().toString()+" from index.", e);
+            return false;
+        }
 
         Logger.debug(getClass(), "Trying to find revision info.");
         start = System.currentTimeMillis();
@@ -213,8 +251,15 @@ class GeneralRevisionHandler implements RevisionHandler {
             if(contentForLanguage || language == Language.DEFAULT) {
                 Logger.debug(getClass(), "Adding document to index.");
                 PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveKeywordAnalyzer.ANALYZER, document.getAnalyzers());
-                indexer.addDocument(document.getDocument(), analyzer);
-                result = true;
+                try {
+                    indexer.addDocument(document.getDocument(), analyzer);
+                    result = true;
+                } catch(AlreadyClosedException ace) {
+                    throw ace;
+                } catch(Exception e) {
+                    Logger.error(getClass(), "Exception while adding revision "+data.getKey().toString()+" to index.", e);
+                    result = false;
+                }
             } else {
                 Logger.debug(getClass(), "Document was not added to index because content was not found for requested language ("+language+").");
             }

@@ -30,6 +30,14 @@
 	  "level": "ERROR",
 	  "text": "Uuden tiedoston siirto oikealle paikalle epäonnistui"
 	}, {
+	  "key": "NOT_VARIABLE_FILE",
+	  "level": "ERROR",
+	  "text": "Muuttujatiedostosta ei voi siirtyä tiedostoon joka ei ole muuttujatiedosto"
+	}, {
+	  "key": "CAN_NOT_CHANGE_LANGUAGE",
+	  "level": "ERROR",
+	  "text": "Muuttujatiedoston kieltä ei voi vaihtaa"
+	}, {
 	  "key": "",
 	  "level": "",
 	  "text": ""

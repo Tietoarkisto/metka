@@ -634,13 +634,14 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 break;
             case SUCCESS_LOGICAL:
                 // In this case we need to reindex all affected documents instead
-                List<Integer> nos = revisions.getAllRevisionNumbers(key.getId());
+                revisions.indexRevision(key);
+                /*List<Integer> nos = revisions.getAllRevisionNumbers(key.getId());
                 for(Integer no : nos) {
                     Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key.getId(), key.getNo());
                     if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                         revisions.indexRevision(pair.getRight().getKey());
                     }
-                }
+                }*/
                 break;
             default:
                 // Errors don't need special handling

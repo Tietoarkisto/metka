@@ -32,13 +32,20 @@ import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.enums.RevisionState;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
+import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "REVISION")
+@Table(name = "REVISION",
+        indexes = {
+                @Index(name = "revision_index_status", columnList = "INDEX_STATUS"),
+                @Index(name = "revision_index_handled", columnList = "INDEXING_HANDLED"),
+                @Index(name = "revision_index_requested", columnList = "INDEXING_REQUESTED")
+        })
 /*@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)*/
 public class RevisionEntity {
     @EmbeddedId
@@ -52,6 +59,17 @@ public class RevisionEntity {
     @Column(name = "DATA")
     @Type(type="org.hibernate.type.StringClobType")
     private String data;
+
+    @Column(name = "INDEXING_REQUESTED")
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+    private LocalDateTime indexingRequested;
+
+    @Column(name = "INDEXING_HANDLED")
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+    private LocalDateTime indexingHandled;
+
+    @Column(name = "INDEX_STATUS")
+    private String indexStatus;
 
     public RevisionEntity() {
     }
@@ -84,6 +102,30 @@ public class RevisionEntity {
         this.data = data;
     }
 
+    public LocalDateTime getIndexingRequested() {
+        return indexingRequested;
+    }
+
+    public void setIndexingRequested(LocalDateTime indexingRequested) {
+        this.indexingRequested = indexingRequested;
+    }
+
+    public LocalDateTime getIndexingHandled() {
+        return indexingHandled;
+    }
+
+    public void setIndexingHandled(LocalDateTime indexingHandled) {
+        this.indexingHandled = indexingHandled;
+    }
+
+    public String getIndexStatus() {
+        return indexStatus;
+    }
+
+    public void setIndexStatus(String indexStatus) {
+        this.indexStatus = indexStatus;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -104,5 +146,9 @@ public class RevisionEntity {
     @Override
     public String toString() {
         return "Entity[name="+this.getClass().getSimpleName()+", key="+key+"]";
+    }
+
+    public enum IndexStatus {
+        INDEXED    // Revision has been indexed
     }
 }

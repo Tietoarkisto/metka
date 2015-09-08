@@ -28,8 +28,6 @@
 
 package fi.uta.fsd.metkaSearch.entity;
 
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metkaSearch.commands.indexer.DummyIndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
@@ -40,7 +38,12 @@ import org.joda.time.LocalDateTime;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "INDEXER_COMMAND_QUEUE")
+@Table(name = "INDEXER_COMMAND_QUEUE",
+        indexes = {
+                @Index(name = "indexer_command_queue_index_requested", columnList = "REQUESTED"),
+                @Index(name = "indexer_command_queue_index_type", columnList = "TYPE"),
+                @Index(name = "indexer_command_queue_index_created", columnList = "CREATED")
+        })
 public class IndexerCommandEntity {
     public static IndexerCommandEntity buildFromCommand(IndexerCommand command) {
         IndexerCommandEntity entity = new IndexerCommandEntity();
@@ -185,9 +188,6 @@ public class IndexerCommandEntity {
     public IndexerCommand buildCommandFromEntity() {
         IndexerCommand command = null;
         switch(type) {
-            case DUMMY:
-                command = DummyIndexerCommand.fromParameterString(getPath(), action, parameters);
-                break;
             case REVISION:
                 command = RevisionIndexerCommand.fromParameterString(getPath(), action, parameters);
                 break;

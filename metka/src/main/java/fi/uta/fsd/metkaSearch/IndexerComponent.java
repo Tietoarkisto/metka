@@ -30,19 +30,15 @@ package fi.uta.fsd.metkaSearch;
 
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
-import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
-import fi.uta.fsd.metkaSearch.entity.IndexerCommandEntity;
 import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.enums.IndexerStatusMessage;
-import fi.uta.fsd.metkaSearch.indexers.DummyIndexer;
 import fi.uta.fsd.metkaSearch.indexers.Indexer;
 import fi.uta.fsd.metkaSearch.indexers.RevisionIndexer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -51,24 +47,18 @@ import org.apache.lucene.index.IndexWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 @Service
 public class IndexerComponent {
 
 
-    @PersistenceContext(name = "entityManager")
+    /*@PersistenceContext(name = "entityManager")
     private EntityManager em;
-
+*/
     @Autowired
     private RevisionRepository revisions;
 
@@ -98,7 +88,7 @@ public class IndexerComponent {
      * All objects within a single index should be parsed for indexing using similar procedures.
      * All objects within a single index should also be searchable using similar procedures.
      */
-    private final Map<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> handlers = new ConcurrentHashMap<>();
+    private final Map<IndexerConfigurationType, Future<IndexerStatusMessage>> handlers = new ConcurrentHashMap<>();
 
     /**
      * Executed at program startup. Clears requested status from all non handled methods and removes all handled methods from database.
@@ -132,15 +122,10 @@ public class IndexerComponent {
 
     /**
      * Checks for commands that have handlers that have stopped for one reason or another.
-     * Also checks requested commands that have not been repeated for stopped handles and
-     * if stopped handler is found then marks the command as repeated, removes the requested
-     * timestamp and refires the indexer for that command.
      */
     @Scheduled(fixedDelay = 5000)
     public void checkIndexers() {
-        //System.err.println("Checking for commands on stopped indexers");
-        // TODO: repeat try
-        IndexerCommand command = commandRepository.getNextCommandWithoutChange();
+        /*IndexerCommand command = commandRepository.getNextCommandWithoutChange();
         if(command != null) {
             if(handlers.containsKey(command.getPath())) {
                 if(handlers.get(command.getPath()).isDone()) {
@@ -148,6 +133,14 @@ public class IndexerComponent {
                 }
             } else {
                 startIndexer(command.getPath());
+            }
+        }*/
+        if(!handlers.containsKey(IndexerConfigurationType.REVISION)) {
+            startIndexer(IndexerConfigurationType.REVISION);
+        } else {
+            if(handlers.get(IndexerConfigurationType.REVISION).isDone()) {
+                stopIndexer(IndexerConfigurationType.REVISION);
+                startIndexer(IndexerConfigurationType.REVISION);
             }
         }
     }
@@ -163,13 +156,17 @@ public class IndexerComponent {
                         "SELECT e FROM RevisionableEntity e WHERE e.type " +
                                 "IN ('"+ConfigurationType.PUBLICATION+"','"+ConfigurationType.SERIES+"','"+ConfigurationType.STUDY+"')", RevisionableEntity.class).getResultList();*/
 
-                List<RevisionableEntity> entities = em.createQuery("SELECT e FROM RevisionableEntity e", RevisionableEntity.class).getResultList();
+                /*List<RevisionableEntity> entities = em.createQuery("SELECT e FROM RevisionableEntity e", RevisionableEntity.class).getResultList();*/
 
+                // Stop the current indexer and clear index
                 IndexerCommand command = RevisionIndexerCommand.stop();
                 manager.getIndexDirectory(command.getPath(), true).clearIndex();
                 commandRepository.addIndexerCommand(command);
                 commandAdded(command);
-                int current = 0;
+
+                // Clear indexing info from all revisions
+                revisions.clearAll();
+                /*int current = 0;
                 long timeSpent = 0L;
                 for(RevisionableEntity entity : entities) {
                     long startTime = System.currentTimeMillis();
@@ -186,7 +183,7 @@ public class IndexerComponent {
                         Logger.info(getClass(),"1000 revision index commands added to the queue in "+timeSpent+"ms. Still "+(entities.size()-current)+" commands to add.");
                         timeSpent = 0L;
                     }
-                }
+                }*/
                 return true;
             }
         });
@@ -204,29 +201,30 @@ public class IndexerComponent {
     }*/
 
     public synchronized void commandAdded(IndexerCommand command) {
-        if(handlers.containsKey(command.getPath())) {
-            if(handlers.get(command.getPath()).isDone()) {
-                startIndexer(command.getPath());
+        if(handlers.containsKey(command.getPath().getType())) {
+            if(handlers.get(command.getPath().getType()).isDone()) {
+                startIndexer(command.getPath().getType());
             }
         } else {
-            startIndexer(command.getPath());
+            startIndexer(command.getPath().getType());
         }
     }
 
-    public synchronized void startIndexer(DirectoryManager.DirectoryPath path) {
-        if(!isIndexerRunning(path)) {
+    public synchronized void startIndexer(IndexerConfigurationType type) {
+        if(!isIndexerRunning(type)) {
             // Remove possible stopped handlers
             clearHandlers();
 
-            Indexer indexer = createIndexer(path);
+            revisions.clearPartlyIndexed();
+            Indexer indexer = createIndexer(type);
             //indexers.put(path, indexer);
-            handlers.put(path, threadPool.submit(indexer));
+            handlers.put(type, threadPool.submit(indexer));
         }
     }
 
     public synchronized void clearHandlers() {
-        for(Iterator<Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>>> i = handlers.entrySet().iterator(); i.hasNext(); ) {
-            Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> e = i.next();
+        for(Iterator<Map.Entry<IndexerConfigurationType, Future<IndexerStatusMessage>>> i = handlers.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry<IndexerConfigurationType, Future<IndexerStatusMessage>> e = i.next();
             if(e.getValue().isDone()) {
                 i.remove();
             }
@@ -234,8 +232,8 @@ public class IndexerComponent {
     }
 
     public synchronized void stopIndexers() {
-        for(Iterator<Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>>> i = handlers.entrySet().iterator(); i.hasNext(); ) {
-            Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> e = i.next();
+        for(Iterator<Map.Entry<IndexerConfigurationType, Future<IndexerStatusMessage>>> i = handlers.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry<IndexerConfigurationType, Future<IndexerStatusMessage>> e = i.next();
             if(e.getValue().cancel(true)) {
                 i.remove();
             }
@@ -243,7 +241,7 @@ public class IndexerComponent {
     }
 
     public boolean hasRunningIndexers() {
-        for(Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> handler : handlers.entrySet()) {
+        for(Map.Entry<IndexerConfigurationType, Future<IndexerStatusMessage>> handler : handlers.entrySet()) {
             if(!handler.getValue().isDone()) {
                 return true;
             }
@@ -251,29 +249,29 @@ public class IndexerComponent {
         return false;
     }
 
-    public boolean containsIndexer(DirectoryManager.DirectoryPath path) {
-        if(path != null && StringUtils.hasText(path.toString())) {
-            return handlers.containsKey(path);
+    public boolean containsIndexer(IndexerConfigurationType type) {
+        if(type != null) {
+            return handlers.containsKey(type);
         }
         return false;
     }
 
-    public boolean isIndexerRunning(DirectoryManager.DirectoryPath path) {
-        if(path != null && StringUtils.hasText(path.toString()) && containsIndexer(path)) {
-            return !handlers.get(path).isDone();
+    public boolean isIndexerRunning(IndexerConfigurationType type) {
+        if(type != null && containsIndexer(type)) {
+            return !handlers.get(type).isDone();
         }
         return false;
     }
 
-    public void stopIndexer(DirectoryManager.DirectoryPath path) {
-        if(isIndexerRunning(path)) {
-            handlers.get(path).cancel(true);
+    public void stopIndexer(IndexerConfigurationType type) {
+        if(isIndexerRunning(type)) {
+            handlers.get(type).cancel(true);
         }
     }
 
     public List<Pair<String, Boolean>> indexerStatusList() {
         List<Pair<String, Boolean>> list = new ArrayList<>();
-        for(Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> handler : handlers.entrySet()) {
+        for(Map.Entry<IndexerConfigurationType, Future<IndexerStatusMessage>> handler : handlers.entrySet()) {
             list.add(new ImmutablePair<>(handler.getKey().toString(), !handler.getValue().isDone()));
         }
         return list;
@@ -281,30 +279,19 @@ public class IndexerComponent {
 
     /**
      * Returns an Indexer of the correct subclass based on the type
-     * @param path
+     * @param type
      * @return
      */
-    private Indexer createIndexer(DirectoryManager.DirectoryPath path) {
-        Indexer indexer = null;
-        switch(path.getType())  {
-            case DUMMY:
-                indexer = DummyIndexer.build(manager, path, commandRepository);
-                break;
+    private Indexer createIndexer(IndexerConfigurationType type) {
+        Indexer indexer;
+        switch(type)  {
             case REVISION:
-                indexer = RevisionIndexer.build(manager, path, commandRepository, revisions, configurations, references);
+                indexer = RevisionIndexer.build(manager, DirectoryManager.formPath(false, IndexerConfigurationType.REVISION), commandRepository, revisions, configurations, references);
                 break;
             default:
                 indexer = null;
                 break;
         }
         return indexer;
-    }
-
-    public Pair<ReturnResult, Integer> getOpenIndexCommands() {
-        List<IndexerCommandEntity> entities = em
-                .createQuery("SELECT e FROM IndexerCommandEntity e WHERE e.handled IS NULL AND e.requested IS NULL", IndexerCommandEntity.class)
-                .getResultList();
-
-        return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, entities.size());
     }
 }

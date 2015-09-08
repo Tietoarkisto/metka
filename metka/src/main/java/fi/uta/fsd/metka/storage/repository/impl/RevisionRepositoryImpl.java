@@ -60,6 +60,7 @@ import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -328,14 +329,29 @@ public class RevisionRepositoryImpl implements RevisionRepository {
 
     @Override
     public void indexRevision(RevisionKey key) {
-        indexRevision(key.toModelKey());
+        clearIndexing(key);
+    }
+
+    @Override
+    public void indexRevisions(RevisionKey key) {
+        em.createQuery("UPDATE RevisionEntity e "
+                + "SET e.indexStatus = null, e.indexingHandled = null, e.indexingRequested = null "
+                + "WHERE e.key.revisionableId=:id")
+            .setParameter("id", key.getRevisionableId())
+            .executeUpdate();
     }
 
     @Override
     public void indexRevision(fi.uta.fsd.metka.model.general.RevisionKey key) {
-        IndexerCommand command = RevisionIndexerCommand.index(key);
+        indexRevision(RevisionKey.fromModelKey(key));
+        /*IndexerCommand command = RevisionIndexerCommand.index(key);
         commandRepository.addIndexerCommand(command);
-        indexer.commandAdded(command);
+        indexer.commandAdded(command);*/
+    }
+
+    @Override
+    public void indexRevisions(fi.uta.fsd.metka.model.general.RevisionKey key) {
+        indexRevisions(RevisionKey.fromModelKey(key));
     }
 
     @Override
@@ -414,5 +430,72 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             return;
         }
         messenger.sendAmqpMessage(messenger.FB_ERROR_SCORE, new StudyPayload(pair.getRight()));
+    }
+
+    // Strictly for debug
+    //private Set<RevisionKey> keys = new HashSet<>();
+
+    @Override
+    public fi.uta.fsd.metka.model.general.RevisionKey getNextForIndexing() {
+        List<RevisionEntity> results = em.createQuery("SELECT r FROM RevisionEntity r "
+                + "WHERE r.indexStatus IS NULL AND r.indexingRequested IS NULL", RevisionEntity.class)
+            .setMaxResults(1)
+            .getResultList();
+        if(results.isEmpty()) {
+            return null;
+        }
+        RevisionEntity revision = results.get(0);
+        // DEBUG
+        /*if(keys.contains(revision.getKey())) {
+            Logger.info(getClass(), "Duplicate index request for "+revision.getKey().toModelKey());
+        } else {
+            keys.add(revision.getKey());
+        }*/
+        revision.setIndexingRequested(new LocalDateTime());
+        return revision.getKey().toModelKey();
+    }
+
+    @Override
+    public void markAsIndexed(RevisionKey key) {
+        RevisionEntity revision = em.find(RevisionEntity.class, key);
+        if(revision != null) {
+            revision.setIndexStatus(RevisionEntity.IndexStatus.INDEXED.name());
+            revision.setIndexingHandled(new LocalDateTime());
+        }
+    }
+
+    @Override
+    public void clearIndexing(RevisionKey key) {
+        RevisionEntity revision = em.find(RevisionEntity.class, key);
+        if(revision != null) {
+            revision.setIndexStatus(null);
+            revision.setIndexingHandled(null);
+        }
+    }
+
+    @Override
+    public void clearAll() {
+        em.createQuery("UPDATE RevisionEntity r SET r.indexStatus=:status, r.indexingRequested=:requested, r.indexingHandled=:handled")
+                .setParameter("status", null)
+                .setParameter("requested", null)
+                .setParameter("handled", null)
+                .executeUpdate();
+        // DEBUG
+        //keys.clear();
+    }
+
+    @Override
+    public void clearPartlyIndexed() {
+        em.createQuery("UPDATE RevisionEntity r SET r.indexStatus=:status, r.indexingRequested=:requested, r.indexingHandled=:handled WHERE r.indexStatus IS NULL AND r.indexingRequested IS NOT NULL")
+                .setParameter("status", null)
+                .setParameter("requested", null)
+                .setParameter("handled", null)
+                .executeUpdate();
+    }
+
+    @Override
+    public Pair<ReturnResult, Long> getRevisionsWaitingIndexing() {
+        Long count = em.createQuery("SELECT count(e.key.revisionableId) FROM RevisionEntity e WHERE e.indexStatus IS NULL and e.indexingHandled IS NULL", Long.class).getSingleResult();
+        return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, count);
     }
 }

@@ -31,14 +31,14 @@ package fi.uta.fsd.metka.transfer.settings;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
 public class OpenIndexCommandsResponse {
-    private Integer openCommands;
+    private Long openCommands;
     private ReturnResult result;
 
-    public Integer getOpenCommands() {
+    public Long getOpenCommands() {
         return openCommands;
     }
 
-    public void setOpenCommands(Integer openCommands) {
+    public void setOpenCommands(Long openCommands) {
         this.openCommands = openCommands;
     }
 

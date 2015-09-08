@@ -121,22 +121,24 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
 
         Configuration configuration = configPair.getRight();
-
-        // Do validation
         ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
+        // NOTICE: Validation for save is not really required at the moment.
+        // If save validation is required at some point then uncomment this part and implement validation for transfer data
+        /*
+        // Do validation
         for(Operation operation : configPair.getRight().getRestrictions()) {
             if(!(operation.getType() == OperationType.SAVE || operation.getType() == OperationType.ALL)) {
                 continue;
             }
-            /*if(!validator.validate(transferData, operation.getTargets(), configPair.getRight())) {
+            if(!validator.validate(transferData, operation.getTargets(), configPair.getRight())) {
                 result = ReturnResult.RESTRICTION_VALIDATION_FAILURE;
                 break;
-            }*/
+            }
         }
         // If validation fails then halt the whole process
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {
             return new ImmutablePair<>(result, transferData);
-        }
+        }*/
 
         // NOTICE: Cascade is not really a valid SAVE operation since the user modifies only one form at a time.
         // When some practical use for SAVE cascade is thought of then it can be added here
@@ -285,14 +287,15 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
     private void checkFile(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
         // Get study linked to this attachment
-        ValueDataField linkedStudy = revision.dataField(ValueDataFieldCall.get("study")).getRight();
+        ValueDataField linkedStudy = revision.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
         if(linkedStudy == null) {
-            // We have no linked study, no need to do anything else
+            // We have no linked study, no need to do anything else since this attachment is broken
             Logger.error(getClass(), "No linked study for " + revision.toString());
             changesAndErrors.setRight(true);
             return;
         }
 
+        // Get linked study revision data
         Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
                 linkedStudy.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY);
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -342,9 +345,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 if(fileName != null) {
                     // We need a file name for this section to make sense
                     if(fileIsVarFile(fileName)) {
-                        String base = FilenameUtils.getBaseName(fileName).toUpperCase();
-                        String lastChar = base.substring(base.length()-1);
-                        varLang = lastChar.equals("E") ? Language.EN : (lastChar.equals("S") ? Language.SV : Language.DEFAULT);
+                        varLang = getVarFileLanguage(fileName);
                         // If there already is a varfile for this language then check that it matches current varfile
                         if(hasVariablesFileFor(varLang, study)) {
                             if(variablesFileForEqual(varLang, revision.getKey().getId(), study)) {
@@ -363,6 +364,23 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
     }
 
+    private Language getVarFileLanguage(String fileName) {
+        Language varLang;
+        String base = FilenameUtils.getBaseName(fileName).toUpperCase();
+        String lastChar = base.substring(base.length()-1);
+        varLang = lastChar.equals("E") ? Language.EN : (lastChar.equals("S") ? Language.SV : Language.DEFAULT);
+        return varLang;
+    }
+
+    /**
+     * Checks if file should be moved.
+     * This is based on the correct calculated path for the current attachment.
+     * @param revision            Current attachment revision
+     * @param transfer            Current transfer data
+     * @param changesAndErrors    Tracks if there has been changes to the current revision or errors during the save process
+     * @param info                DateTimeUserPair used for the duration of this operation
+     * @return  boolean Tells if file was moved
+     */
     private boolean checkFileMove(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
         ValueDataField curFile = revision.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
         if(curFile != null && curFile.hasValueFor(Language.DEFAULT)) {
@@ -406,6 +424,14 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         return false;
     }
 
+    /**
+     * Checks if the current file should be updated with a new file.
+     * @param revision          Current attachment revision data
+     * @param transfer          Current attachment transfer data
+     * @param changesAndErrors  Tracks if there has been changes to the current revision or errors during the save process
+     * @param info              DateTimeUserPair used for the duration of this operation
+     * @return  boolean Tells if file was updated
+     */
     private boolean checkFileUpdate(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
         TransferField tf = transfer.getField(Fields.NEWPATH);
         if (tf != null && tf.hasCurrentFor(Language.DEFAULT)) {
@@ -431,6 +457,29 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 changesAndErrors.setRight(true);
                 return false;
             }
+
+            ValueDataField variablesField = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+            if(variablesField != null && variablesField.hasValueFor(Language.DEFAULT)) {
+                if(!fileIsVarFile(FilenameUtils.getName(path))) {
+                    tf.addError(FieldError.NOT_VARIABLE_FILE);
+                    changesAndErrors.setRight(true);
+                    return false;
+                }
+                Language varlang = getVarFileLanguage(FilenameUtils.getName(path));
+                RevisionData variables = revisions.getRevisionData(variablesField.getActualValueFor(Language.DEFAULT)).getRight();
+                if(variables != null) {
+                    ValueDataField langField = variables.dataField(ValueDataFieldCall.get(Fields.LANGUAGE)).getRight();
+                    if(langField != null && langField.hasValueFor(Language.DEFAULT)) {
+                        if(!langField.getActualValueFor(Language.DEFAULT).toUpperCase().equals(varlang.toValue().toUpperCase())) {
+                            tf.addError(FieldError.CAN_NOT_CHANGE_LANGUAGE);
+                            changesAndErrors.setRight(true);
+                            return false;
+                        }
+                    }
+                }
+            }
+
+
 
             // Set file path to file-field
             StatusCode result = revision.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(destLoc), Language.DEFAULT).setInfo(info)).getLeft();
@@ -569,6 +618,13 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
     }
 
+    /**
+     * Calculates the correct path for the attachment.
+     * This is based on file name as as well as given values for attachment's data fields.
+     * @param revision    Current attachment revision
+     * @param path        Current file path
+     * @return  String correct path for file
+     */
     private String getAttachmentFilePath(RevisionData revision, String path) {
         // We need to calculate the correct store path for the file
         // If some required field does not have value then assume the most common result
@@ -579,15 +635,12 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
         if(fileDirectory.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             Logger.error(getClass(), "Could not find revisionable when fetching file root for study in attachment " + revision.toString());
-
             return null;
         }
 
         String pathRoot = fileDirectory.getRight();
-
         String fileName = FilenameUtils.getName(path);
 
-        // If path current differs from path original then we need to move the file
         ValueDataField origField = revision.dataField(ValueDataFieldCall.get("fileoriginal")).getRight();
         boolean origLocation = (origField != null && origField.getActualValueFor(Language.DEFAULT).equals("1"));
 

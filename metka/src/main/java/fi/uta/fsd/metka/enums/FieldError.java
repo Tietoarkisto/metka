@@ -51,5 +51,7 @@ public enum FieldError {
     AUTOMATIC_CHANGE_FAILED_FILE_EXISTS, // We tried to move a file to a correct new location but there was already a file there
     FILE_EXISTS,            // There already exists a file in a location where we try to insert a new file
     MOVE_FAILED,            // We failed to move the new file to correct location
+    NOT_VARIABLE_FILE,
+    CAN_NOT_CHANGE_LANGUAGE,
     IS_DIRECTORY           // File path points to a directory based on Java IO status. This is wrong when actual file is expected
 }

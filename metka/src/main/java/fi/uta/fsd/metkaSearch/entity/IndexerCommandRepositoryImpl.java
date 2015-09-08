@@ -28,8 +28,11 @@
 
 package fi.uta.fsd.metkaSearch.entity;
 
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Repository;
 
@@ -52,7 +55,16 @@ public class IndexerCommandRepositoryImpl implements IndexerCommandRepository {
     public void markCommandAsHandled(Long id) {
         IndexerCommandEntity entity = em.find(IndexerCommandEntity.class, id);
         if(entity != null) {
-            entity.setHandled(new LocalDateTime());
+            em.remove(entity); // We don't need to save the command
+            //entity.setHandled(new LocalDateTime());
+        }
+    }
+
+    @Override
+    public void clearCommandRequest(Long id) {
+        IndexerCommandEntity entity = em.find(IndexerCommandEntity.class, id);
+        if(entity != null) {
+            entity.setRequested(null);
         }
     }
 
@@ -79,8 +91,8 @@ public class IndexerCommandRepositoryImpl implements IndexerCommandRepository {
     @Override
     public IndexerCommand getNextCommandWithoutChange() {
         IndexerCommandEntity entity = null;
-        List<IndexerCommandEntity> entities = em.createQuery("SELECT e FROM IndexerCommandEntity e " +
-                "WHERE e.requested IS NULL ORDER BY e.created ASC", IndexerCommandEntity.class)
+        List<IndexerCommandEntity> entities = em.createQuery("SELECT e FROM IndexerCommandEntity e " + "WHERE e.requested IS NULL ORDER BY e.created ASC",
+                IndexerCommandEntity.class)
                 .setMaxResults(1)
                 .getResultList();
         if(entities.size() == 1) {
@@ -101,5 +113,14 @@ public class IndexerCommandRepositoryImpl implements IndexerCommandRepository {
     @Override
     public void removeAllHandled() {
         em.createQuery("DELETE FROM IndexerCommandEntity e WHERE e.handled IS NOT NULL").executeUpdate();
+    }
+
+    @Override
+    public Pair<ReturnResult, Integer> getOpenIndexCommands() {
+        List<IndexerCommandEntity> entities = em
+                .createQuery("SELECT e FROM IndexerCommandEntity e WHERE e.handled IS NULL AND e.requested IS NULL", IndexerCommandEntity.class)
+                .getResultList();
+
+        return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, entities.size());
     }
 }

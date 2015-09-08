@@ -35,6 +35,7 @@ import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.indexers.Indexer;
 
 public final class HandlerFactory {
+
     public static RevisionHandler buildRevisionHandler(Indexer indexer, RevisionRepository revisions,
                                                        ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
         // Make some sanity checks
@@ -44,7 +45,6 @@ public final class HandlerFactory {
         if(revisions == null || configurations == null || references == null) {
             throw new UnsupportedOperationException("Needs all three: general repository, configuration repository and reference service");
         }
-
         return new GeneralRevisionHandler(indexer, revisions, configurations, references);
     }
 

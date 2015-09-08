@@ -38,6 +38,7 @@ import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.settings.*;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
+import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,6 +67,9 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Autowired
     private IndexerComponent indexer;
+
+    @Autowired
+    private IndexerCommandRepository indexCommands;
 
     @Value("${dir.autoload}")
     private String rootFolder;
@@ -159,7 +163,16 @@ public class SettingsServiceImpl implements SettingsService {
     @Override
     public OpenIndexCommandsResponse getOpenIndexCommands() {
         OpenIndexCommandsResponse response = new OpenIndexCommandsResponse();
-        Pair<ReturnResult, Integer> pair = indexer.getOpenIndexCommands();
+        Pair<ReturnResult, Integer> pair = indexCommands.getOpenIndexCommands();
+        response.setResult(pair.getLeft());
+        response.setOpenCommands(pair.getRight().longValue());
+        return response;
+    }
+
+    @Override
+    public OpenIndexCommandsResponse getRevisionsWaitingIndexing() {
+        OpenIndexCommandsResponse response = new OpenIndexCommandsResponse();
+        Pair<ReturnResult, Long> pair = revisions.getRevisionsWaitingIndexing();
         response.setResult(pair.getLeft());
         response.setOpenCommands(pair.getRight());
         return response;
