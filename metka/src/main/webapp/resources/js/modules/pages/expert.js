@@ -82,7 +82,7 @@ define(function (require) {
                                     "readOnly": true,
                                     "field": {
                                         "key": "savedsearches",
-                                        "rowsPerPage": 2,
+                                        "rowsPerPage": 10,
                                         "showSaveInfo": true,
                                         "columnFields": [
                                             "name"
@@ -122,11 +122,30 @@ define(function (require) {
                                     }
                                 }
                             ]
+                        }, {
+                            type: "ROW",
+                            cells: [{
+                                type: "CELL",
+                                colspan: 2,
+                                title: "Hakutulokset",
+                                field: {
+                                    key: "expertsearchresults",
+                                    showReferenceValue: true,
+                                    showReferenceState: true
+                                }
+                            }]
                         }
                     ]
                 }
             ],
-            buttons: [
+            buttons: [{
+                title: "Hae",
+                create: function(options) {
+                    this.click(function() {
+                        require('./../searchQuerySearch')(options, require('./../data')(options)('search').getByLang(options.defaultLang), "expertsearchresults").search();
+                    });
+                }
+            }/*,
                 require('./../searchButton')('/expert/query', function () {
                     return {
                         query: require('./../data')(options)('search').getByLang(options.defaultLang)
@@ -187,7 +206,7 @@ define(function (require) {
                                 .change();
                         });
                     }
-                }, {
+                }*/, {
                     "&title": {
                         "default": "Tallenna haku"
                     },
@@ -253,6 +272,11 @@ define(function (require) {
             ],
             data: {},
             dataConf: {
+                references: {
+                    expertsearchresult_ref: {
+                        type: "REVISION"
+                    }
+                },
                 fields: {
                     name: {
                         type: "STRING",
@@ -266,6 +290,10 @@ define(function (require) {
                         subfields: [
                             "name"
                         ]
+                    },
+                    expertsearchresults: {
+                        type: "REFERENCECONTAINER",
+                        reference: "expertsearchresult_ref"
                     }
                 }
             }

@@ -28,18 +28,14 @@
 
 package fi.uta.fsd.metkaSearch.results;
 
-import fi.uta.fsd.metka.enums.Language;
-
 public class RevisionResult implements SearchResult {
     private final ResultList.ResultType type = ResultList.ResultType.REVISION;
     private final Long id;
     private final Integer no;
-    private final Language language;
 
-    public RevisionResult(Long id, Integer no, Language language) {
+    public RevisionResult(Long id, Integer no) {
         this.id = id;
         this.no = no;
-        this.language = language;
     }
 
     @Override
@@ -55,12 +51,27 @@ public class RevisionResult implements SearchResult {
         return no;
     }
 
-    public Language getLanguage() {
-        return language;
-    }
-
     @Override
     public String toString() {
         return "Result is "+"ID: "+id+" | NO: "+no;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+
+        RevisionResult that = (RevisionResult) o;
+
+        if(!id.equals(that.id)) return false;
+        return no.equals(that.no);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + no.hashCode();
+        return result;
     }
 }

@@ -43,6 +43,8 @@ import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.*;
+import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -215,13 +217,9 @@ public class RevisionServiceImpl implements RevisionService {
     @Override public RevisionSearchResponse search(RevisionSearchRequest request) {
         RevisionSearchResponse response = new RevisionSearchResponse();
 
-        Pair<ReturnResult, List<RevisionSearchResult>> result = search.search(request);
+        Pair<ReturnResult, ResultList<RevisionResult>> result = search.search(request);
         response.setResult(result.getLeft());
-        if(result.getLeft() == ReturnResult.OPERATION_SUCCESSFUL) {
-            for(RevisionSearchResult searchResult : result.getRight()) {
-                response.getRows().add(searchResult);
-            }
-        }
+        response.setResults(result.getRight());
 
         return response;
     }

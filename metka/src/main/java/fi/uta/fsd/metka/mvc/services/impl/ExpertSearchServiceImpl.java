@@ -29,22 +29,14 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.UIRevisionState;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
-import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.mvc.services.ExpertSearchService;
-import fi.uta.fsd.metka.names.Fields;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.SavedSearchRepository;
+import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.expert.*;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
+import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -53,8 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -93,7 +84,7 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         findQueries(request.getQuery(), query);
 
         // After that the queries are performed in a depth first manner
-        Pair<ReturnResult, List<RevisionResult>> queryResults = performQuery(request.getQuery(), query);
+        Pair<ReturnResult, ResultList<RevisionResult>> queryResults = performQuery(request.getQuery(), query);
 
         if(queryResults.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             Logger.error(ExpertSearchServiceImpl.class, "Search failed with the result "+queryResults.getLeft()+". Query was: "+request.getQuery());
@@ -101,7 +92,9 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
             return response;
         }
 
-        for(RevisionResult result : queryResults.getRight()) {
+        response.setResults(collectResults(queryResults.getRight()));
+
+        /*for(RevisionResult result : queryResults.getRight()) {
             Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(result.getId());
             if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
                 Logger.warning(getClass(), "Revisionable was not found for id "+result.getId());
@@ -162,12 +155,31 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
                 }
             }
             response.getResults().add(qr);
-        }
+        }*/
         response.setResult(ReturnResult.OPERATION_SUCCESSFUL);
         return response;
     }
 
-    private Pair<ReturnResult, List<RevisionResult>> performQuery(String qryStr, Query query) {
+    private ResultList<RevisionResult> collectResults(ResultList<RevisionResult> resultList) {
+        if(resultList == null) {
+            return resultList;
+        }
+
+        resultList.sort(new Comparator<RevisionResult>() {
+            @Override
+            public int compare(RevisionResult o1, RevisionResult o2) {
+                if(o1.getId().compareTo(o2.getId()) == 0) {
+                    return o1.getNo().compareTo(o2.getNo());
+                } else {
+                    return o1.getId().compareTo(o2.getId());
+                }
+            }
+        });
+
+        return resultList;
+    }
+
+    private Pair<ReturnResult, ResultList<RevisionResult>> performQuery(String qryStr, Query query) {
         // If subquery was found then the result provided by the reqursion is formed into a grouping and the whole subquery is replaced by it
         // After replacing the subquery with the result grouping the query is then run and the results are returned
         // This process continues untill all subqueries and the main query have been executed and the last result set is returned to the caller
@@ -175,16 +187,16 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
             int difference = 0;
             for(Query sq : query.getQueries()) {
                 String subq = qryStr.substring(sq.start+difference, sq.end+difference);
-                Pair<ReturnResult, List<RevisionResult>> queryResults = performQuery(subq, sq);
+                Pair<ReturnResult, ResultList<RevisionResult>> queryResults = performQuery(subq, sq);
                 if(queryResults.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                     return queryResults;
                 }
-                if(queryResults.getRight().isEmpty()) {
+                if(queryResults.getRight().getResults().isEmpty()) {
                     return new ImmutablePair<>(ReturnResult.EMPTY_SUBQUERY, null);
                 }
 
                 String replc = "(";
-                for(RevisionResult rr : queryResults.getRight()) {
+                for(RevisionResult rr : queryResults.getRight().getResults()) {
                     if(replc.length() > 1) {
                         replc += " ";
                     }
@@ -202,7 +214,7 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         return performSearch(qryStr);
     }
 
-    private Pair<ReturnResult, List<RevisionResult>> performSearch(String qryStr) {
+    private Pair<ReturnResult, ResultList<RevisionResult>> performSearch(String qryStr) {
         ReturnResult response;
         SearchCommand<RevisionResult> command = null;
         try {
@@ -228,7 +240,7 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
             Logger.error(getClass(), "Exception while forming search command.", e);
             throw e;
         }
-        List<RevisionResult> results = searcher.executeSearch(command).getResults();
+        ResultList<RevisionResult> results = searcher.executeSearch(command);
         return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, results);
     }
 

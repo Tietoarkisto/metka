@@ -44,8 +44,6 @@ import java.util.concurrent.Callable;
  */
 public abstract class Searcher<T extends SearchResult> implements Callable<ResultList<T>> {
 
-    private final DirectoryManager manager;
-
     /**
      * Indexer path where this search should be performed
      */
@@ -58,7 +56,6 @@ public abstract class Searcher<T extends SearchResult> implements Callable<Resul
     private final DirectoryInformation indexer;
 
     protected Searcher(DirectoryManager manager, SearchCommand<T> command) throws UnsupportedOperationException {
-        this.manager = manager;
         this.path = command.getPath();
         this.command = command;
         indexer = manager.getIndexDirectory(path, false);

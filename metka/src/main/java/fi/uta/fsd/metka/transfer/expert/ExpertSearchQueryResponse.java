@@ -29,14 +29,13 @@
 package fi.uta.fsd.metka.transfer.expert;
 
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-
-import java.util.ArrayList;
-import java.util.List;
+import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.RevisionResult;
 
 public class ExpertSearchQueryResponse {
     private ReturnResult result;
     private ExpertSearchOperation operation;
-    private final List<ExpertSearchRevisionQueryResult> results = new ArrayList<>();
+    private ResultList<RevisionResult> results;
 
     public ExpertSearchOperation getOperation() {
         return operation;
@@ -46,8 +45,12 @@ public class ExpertSearchQueryResponse {
         this.operation = operation;
     }
 
-    public List<ExpertSearchRevisionQueryResult> getResults() {
+    public ResultList<RevisionResult> getResults() {
         return results;
+    }
+
+    public void setResults(ResultList<RevisionResult> results) {
+        this.results = results;
     }
 
     public ReturnResult getResult() {

@@ -80,8 +80,6 @@ public class RevisionIndexer extends Indexer {
 
     // Counter for idle loops. If there's been changes to index they will be flushed after certain number of times.
     volatile private int changeBatch = 0;
-    // Switch to see if there has been indexed data that needs to be flushed to disk
-    volatile private boolean indexChanged = false;
 
     private RevisionRepository revisions;
     private ConfigurationRepository configurations;
@@ -134,9 +132,10 @@ public class RevisionIndexer extends Indexer {
                     }
                 }
 
-                if(indexChanged && ((getStatus() == IndexerStatusMessage.IDLING && System.currentTimeMillis()-getIdleStart() >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
+                long idleCheckTime = System.currentTimeMillis()-getIdleStart();
+                if(changeBatch > 0 && ((getStatus() == IndexerStatusMessage.IDLING && idleCheckTime >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
                         || (LuceneConfig.FORCE_FLUSH_AFTER_BATCH_OF_CHANGES && changeBatch >= LuceneConfig.MAX_CHANGE_BATCH_SIZE))) {
-                    Logger.info(getClass(), (!(getStatus() == IndexerStatusMessage.IDLING && System.currentTimeMillis()-getIdleStart() >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
+                    Logger.info(getClass(), (!(getStatus() == IndexerStatusMessage.IDLING && idleCheckTime >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
                             ? "Forcing index flush." : "Flushing index after idle timer.")+" It's been "+(System.currentTimeMillis()-flushTimer)+"ms since last flush. PATH: "+getPath().toString());
                     IndexerStatusMessage status = getStatus();
                     setStatus(IndexerStatusMessage.FLUSHING);
@@ -145,21 +144,17 @@ public class RevisionIndexer extends Indexer {
                     Logger.info(getClass(), "Flushing "+changeBatch+" index changes");
                     flushIndex();
                     changeBatch = 0;
-                    indexChanged = false;
                     setStatus(status);
-                    if(getStatus() == IndexerStatusMessage.IDLING && System.currentTimeMillis()-getIdleStart() >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH) {
-                        clearSkipped = true;
-                    }
-                    if(clearSkipped) {
-                        clearSkipped = false;
-                        Pair<ReturnResult, Long> pair = revisions.getRevisionsWaitingIndexing();
-                        if(pair.getRight() != null && pair.getRight() > 0) {
-                            Logger.info(getClass(), "Clearing revisions that have been requested but not indexed since idle mode has been reached. PATH: "+getPath().toString());
-                            revisions.clearPartlyIndexed();
-                        }
+                    clearSkipped = true;
+                }
+                if(clearSkipped && changeBatch == 0 && revisionKeyQueue.size() == 0) {
+                    clearSkipped = false;
+                    Pair<ReturnResult, Long> pair = revisions.getRevisionsWaitingIndexing();
+                    if(pair.getRight() != null && pair.getRight() > 0) {
+                        Logger.info(getClass(), "Clearing revisions that have been requested but not indexed since idle mode has been reached. PATH: "+getPath().toString());
+                        revisions.clearPartlyIndexed();
                     }
                 }
-
 
                 // Check if process should continue running
                 if(Thread.currentThread().isInterrupted()) {
@@ -308,7 +303,7 @@ public class RevisionIndexer extends Indexer {
                                     }
                                     BooleanQuery query = new BooleanQuery();
                                     query.add(NumericRangeQuery.newLongRange("key.id", 1, rCom.getId(), rCom.getId(), true, true), BooleanClause.Occur.MUST);
-                                    query.add(NumericRangeQuery.newIntRange("key.no", 1, rCom.getNo(), rCom.getNo(), true, true), BooleanClause.Occur.MUST);
+                                    query.add(NumericRangeQuery.newLongRange("key.no", 1, rCom.getNo().longValue(), rCom.getNo().longValue(), true, true), BooleanClause.Occur.MUST);
                                     try {
                                         removeDocument(query);
                                         commandHandled = true;
@@ -333,15 +328,11 @@ public class RevisionIndexer extends Indexer {
                                     commandHandled = true;
                                     break;
                             }
-                            // Set indexChanged to true since command was handled
-                            indexChanged = true;
                         }
                         // Assume that command was handled appropriately
                         if(commandHandled) {
                             commands.markCommandAsHandled(command.getQueueId());
-                            if(LuceneConfig.FORCE_FLUSH_AFTER_BATCH_OF_CHANGES) {
-                                changeBatch++;
-                            }
+                            changeBatch++;
                         } else {
                             commands.clearCommandRequest(command.getQueueId());
                             continue;
@@ -471,11 +462,8 @@ public class RevisionIndexer extends Indexer {
                         // Index revision
                         try {
                             if(indexRevision(key)) {
-                                indexChanged = true;
                                 markAsIndexed(key);
-                                if(LuceneConfig.FORCE_FLUSH_AFTER_BATCH_OF_CHANGES) {
-                                    changeBatch++;
-                                }
+                                changeBatch++;
                             } else {
                                 clearIndexing(key);
                                 continue;

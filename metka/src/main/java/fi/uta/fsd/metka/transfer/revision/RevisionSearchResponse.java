@@ -29,12 +29,15 @@
 package fi.uta.fsd.metka.transfer.revision;
 
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.RevisionResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RevisionSearchResponse {
     private ReturnResult result;
+    private ResultList<RevisionResult> results;
     private final List<RevisionSearchResult> rows = new ArrayList<>();
 
     public ReturnResult getResult() {
@@ -47,5 +50,13 @@ public class RevisionSearchResponse {
 
     public List<RevisionSearchResult> getRows() {
         return rows;
+    }
+
+    public ResultList<RevisionResult> getResults() {
+        return results;
+    }
+
+    public void setResults(ResultList<RevisionResult> results) {
+        this.results = results;
     }
 }

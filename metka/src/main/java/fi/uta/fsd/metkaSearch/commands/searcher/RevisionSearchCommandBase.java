@@ -118,7 +118,6 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
                     IndexableField field = document.getField("key.id");
                     Long id = null;
                     Long no = null;
-                    Language language = null;
                     if(field != null) {
                         id = field.numericValue().longValue();
                     }
@@ -126,13 +125,10 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
                     if(field != null) {
                         no = field.numericValue().longValue();
                     }
-                    field = document.getField("key.language");
-                    if(field != null) {
-                        language = Language.fromValue(field.stringValue());
-                    }
-                    list.addResult(new RevisionResult(id, no.intValue(), language));
+                    RevisionResult result = new RevisionResult(id, no.intValue());
+                    if(!list.getResults().contains(result)) list.addResult(result);
                 } catch(IOException ioe) {
-                    list.addResult(new RevisionResult(null, null, null));
+                    list.addResult(new RevisionResult(null, null));
                 }
             }
 

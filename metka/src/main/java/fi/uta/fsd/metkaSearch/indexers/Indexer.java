@@ -36,9 +36,8 @@ import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.enums.IndexerStatusMessage;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Query;
+import org.apache.lucene.index.*;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.AlreadyClosedException;
 
 import java.io.IOException;
@@ -70,7 +69,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
 
     private IndexerStatusMessage status;
 
-    private Long idleStart;
+    private long idleStart = System.currentTimeMillis();
 
     //protected BlockingQueue<IndexerCommand> commandQueue = new LinkedBlockingQueue<>();
 
@@ -129,6 +128,9 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
     }
 
     public void removeDocument(Query query) throws Exception {
+        DirectoryReader dr = DirectoryReader.open(indexWriter.getDirectory());
+        IndexSearcher is = new IndexSearcher(dr);
+        TopDocs results = is.search(query, Integer.MAX_VALUE);
         indexWriter.deleteDocuments(query);
     }
 

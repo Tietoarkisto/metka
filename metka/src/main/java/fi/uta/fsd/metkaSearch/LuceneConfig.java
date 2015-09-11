@@ -70,7 +70,7 @@ public final class LuceneConfig {
     /**
      * Defines how long (in ms) indexing has to be idle before index is flushed to disk.
      */
-    public static final int TIME_IDLING_BEFORE_FLUSH = 5000;
+    public static final int TIME_IDLING_BEFORE_FLUSH = 1000;
     /**
      * Defines if indexing will take a break after multiple commands to flush changes to disk.
      */

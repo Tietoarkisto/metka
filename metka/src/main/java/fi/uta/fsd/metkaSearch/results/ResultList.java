@@ -36,7 +36,6 @@ import java.util.List;
  * Doesn't really define that much functionality since there's a great deal of variation between
  * the actual data contained in different result lists.
  *
- * TODO: Possibly extend List so Result Lists can be iterated over but more likely provide a wrapper for contained list
  */
 public interface ResultList<T extends SearchResult> {
     public static enum ResultType {

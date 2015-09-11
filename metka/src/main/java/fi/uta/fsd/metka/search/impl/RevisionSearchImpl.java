@@ -29,13 +29,9 @@
 package fi.uta.fsd.metka.search.impl;
 
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.*;
 import fi.uta.fsd.metka.model.data.container.*;
@@ -51,9 +47,7 @@ import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.*;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -74,7 +68,7 @@ public class RevisionSearchImpl implements RevisionSearch {
     private ConfigurationRepository configurations;
 
     @Override
-    public Pair<ReturnResult, List<RevisionSearchResult>> search(RevisionSearchRequest request) {
+    public Pair<ReturnResult, ResultList<RevisionResult>> search(RevisionSearchRequest request) {
         return performBasicSearch(request);
         /*switch(request.getType()) {
             case SERIES:
@@ -291,7 +285,7 @@ public class RevisionSearchImpl implements RevisionSearch {
         }
     }
 
-    private Pair<ReturnResult, List<RevisionSearchResult>> performBasicSearch(RevisionSearchRequest request) {
+    private Pair<ReturnResult, ResultList<RevisionResult>> performBasicSearch(RevisionSearchRequest request) {
         /*Pair<ReturnResult, Configuration> configPair = configurations.findLatestConfiguration(request.getType());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             return new ImmutablePair<>(configPair.getLeft(), null);
@@ -299,7 +293,7 @@ public class RevisionSearchImpl implements RevisionSearch {
         try {
             ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build(request, configurations);
             ResultList<RevisionResult> results = searcher.executeSearch(command);
-            return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, collectResults(results, request));
+            return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, collectResults(results));
         } catch(QueryNodeException qne) {
             // Couldn't form query command
             Logger.error(getClass(), "Exception while performing basic series search:", qne);
@@ -307,8 +301,23 @@ public class RevisionSearchImpl implements RevisionSearch {
         }
     }
 
-    private List<RevisionSearchResult> collectResults(ResultList<RevisionResult> resultList) {
-        return collectResults(resultList, null);
+    private ResultList<RevisionResult> collectResults(ResultList<RevisionResult> resultList) {
+        if(resultList == null) {
+            return resultList;
+        }
+
+        resultList.sort(new Comparator<RevisionResult>() {
+            @Override
+            public int compare(RevisionResult o1, RevisionResult o2) {
+                if(o1.getId().compareTo(o2.getId()) == 0) {
+                    return o1.getNo().compareTo(o2.getNo());
+                } else {
+                    return o1.getId().compareTo(o2.getId());
+                }
+            }
+        });
+
+        return resultList;
     }
 
     private List<RevisionSearchResult> collectResults(ResultList<RevisionResult> resultList, RevisionSearchRequest request) {

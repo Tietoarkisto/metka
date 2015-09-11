@@ -44,7 +44,7 @@ define(function(require) {
 
         var rowId = 0;
         require('./data')(options)(key).removeRows('DEFAULT');
-        response.rows.map(function(row) {
+        response.results.results.map(function(row) {
             require('./data')(options)(key).appendByLang('DEFAULT', {
                 key: key,
                 rowId: ++rowId,
