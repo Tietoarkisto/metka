@@ -28,7 +28,6 @@
 
 package fi.uta.fsd.metka.storage.repository;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
@@ -61,40 +60,19 @@ public interface RevisionRepository {
      * @return Pair with ReturnResult in the left value and returned RevisionData in the right value, or null if no RevisionData is returned.
      */
     Pair<ReturnResult, RevisionData> getRevisionData(Long id, Integer no);
-    Pair<ReturnResult, RevisionData> getRevisionData(RevisionKey key);
+
+    /**
+     * Returns the revision data based on String form of revision key.
+     * If it's detected that the key does not contain the revision number then latest revision is fetched.
+     * In that case the second form with boolean parameter should be used if drafts need to be excluded
+     * @param key
+     * @return
+     */
     Pair<ReturnResult, RevisionData> getRevisionData(String key);
+    Pair<ReturnResult, RevisionData> getRevisionData(String key, boolean approveOnly);
+    Pair<ReturnResult, RevisionData> getRevisionData(RevisionKey key);
 
-    /**
-     * Returns the revision data with given id and number and checks that it is of the requested type.
-     * Forwards the call to revision key variant.
-     * @param id RevisionableId of the requested revision
-     * @param no Revision number of the requested revision
-     * @param type Type the requested revision should be,
-     * @return Pair with ReturnResult in the left value and returned RevisionData in the right value, or null if no RevisionData is returned.
-     */
-    Pair<ReturnResult, RevisionData> getRevisionDataOfType(Long id, Integer no, ConfigurationType type);
-
-    /**
-     * Returns the revision data with given id and number and checks that it is of the requested type.
-     * If revision is found with the given id and no pair then the type of it is checked if it matches
-     * the provided type, if it does or no type is provided then the RevisionData is returned, otherwise
-     * or if no revision was found null is returned.
-     * @param key RevisionKey of the requested revision
-     * @param type Type the requested revision should be,
-     * @return Pair with ReturnResult in the left value and returned RevisionData in the right value, or null if no RevisionData is returned.
-     */
-    Pair<ReturnResult, RevisionData> getRevisionDataOfType(RevisionKey key, ConfigurationType type);
-
-    /**
-     * Returns the latest approved or draft revision for given revisionable id depending on the value of approvedOnly parameter.
-     * If ConfigurationType is present then checks to see that returned revision matches given type.
-     * @param id Id of the revisionable object for which a revision is requested.
-     * @param approvedOnly If only approved revisions should be allowed
-     * @return Pair with left value being the result code of the operation and right value being the returned RevisionData or null if return was unsuccessful
-     */
-    Pair<ReturnResult, RevisionData> getLatestRevisionForIdAndType(Long id, boolean approvedOnly, ConfigurationType type);
-
-    /**
+    /*
      * Returns a revision number for given id.
      * If approvedOnly is true then returns the current approved number, otherwise returns latest revision number.
      * If type is present then checks to see that type of revisionable matches given type and if not a correct error value is returned
@@ -103,7 +81,7 @@ public interface RevisionRepository {
      * @param type Requested type of revisionable, can be null in which case this check is omitted
      * @return
      */
-    Pair<ReturnResult, Integer> getLatestRevisionNoForIdAndType(Long id, boolean approvedOnly, ConfigurationType type);
+    /*Pair<ReturnResult, Integer> getLatestRevisionNoForIdAndType(Long id, boolean approvedOnly, ConfigurationType type);*/
 
     List<Integer> getAllRevisionNumbers(Long id);
 

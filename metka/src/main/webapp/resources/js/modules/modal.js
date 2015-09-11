@@ -72,7 +72,7 @@ define(function (require) {
             }
 
             var $header = $('<div class="modal-header">')
-                .append('<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>')
+                .append((options.disableClose ? null : '<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>'))
                 .append($('<h4 class="modal-title">')
                     .text(getTitle(options)));
             content
@@ -81,7 +81,7 @@ define(function (require) {
                 .append($('<div class="modal-content">')
                     .append($header)
                     .append($body)
-                    .append($('<div class="modal-footer">')
+                    .append((options.disableFooter ? null : $('<div class="modal-footer">')
                         .append((options.buttons || []).map(function (buttonOptions) {
                             $.extend(true, buttonOptions, {
                                 modalTarget: options.modalTarget
@@ -94,7 +94,7 @@ define(function (require) {
                                     // default behaviour dismisses modal
                                     this.attr('data-dismiss', 'modal');
                                 });
-                        }))));
+                        })))));
 
             if (options.translatableCurrentLang) {
                 $header.append(require('./languageRadioInputGroup')(options, 'dialog-translation-lang', options.translatableCurrentLang));
@@ -116,9 +116,11 @@ define(function (require) {
         /*$modal.on('show.bs.modal', function() {
             options.$events.trigger('refresh.metka');
         });*/
-        $modal.modal({
-            backdrop: 'static'
-        }).on('hidden.bs.modal', function () {
+        var modalSettings = {
+            backdrop: 'static',
+            keyboard: options.keyboard
+        };
+        $modal.modal(modalSettings).on('hidden.bs.modal', function () {
             $(this).remove();
 
             // workaround to keep scrolling enabled for nested modals

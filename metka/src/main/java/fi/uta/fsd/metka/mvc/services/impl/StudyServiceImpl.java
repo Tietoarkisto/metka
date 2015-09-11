@@ -127,7 +127,7 @@ public class StudyServiceImpl implements StudyService {
     public ReturnResult uploadOrganizations(JsonNode misc) {
         //backupAndCopy(file, "misc");
 
-        ReturnResult result = miscJSONRepository.insert(misc);
+        ReturnResult result = miscJSONRepository.insert("Organizations", misc);
         return result == ReturnResult.DATABASE_INSERT_SUCCESS ? ReturnResult.OPERATION_SUCCESSFUL : result;
     }
 }

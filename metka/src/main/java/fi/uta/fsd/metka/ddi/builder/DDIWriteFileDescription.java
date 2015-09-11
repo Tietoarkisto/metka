@@ -81,7 +81,7 @@ class DDIWriteFileDescription extends DDIWriteSectionBase {
         }
         revisionDataPair = revisions.getRevisionData(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
         if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(getClass(), "Couldn't find study attachment with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger() +
+            Logger.error(getClass(), "Couldn't find study attachment with id: " + valueFieldPair.getRight().getActualValueFor(Language.DEFAULT) +
                     " even though it's referenced from variables data " + variables.toString());
             return;
         }

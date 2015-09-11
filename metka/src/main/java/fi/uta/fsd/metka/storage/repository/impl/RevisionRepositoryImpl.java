@@ -63,6 +63,8 @@ import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -107,31 +109,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
         return new ImmutablePair<>(ReturnResult.REVISIONABLE_FOUND, info);
     }
 
-    @Override
-    public Pair<ReturnResult, RevisionData> getLatestRevisionForIdAndType(Long id, boolean approvedOnly, ConfigurationType type) {
-        RevisionableEntity entity = em.find(RevisionableEntity.class, id);
-        if(entity == null) {
-            return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
-        }
-        if(type != null && !entity.getType().equals(type.toValue())) {
-            return new ImmutablePair<>(ReturnResult.REVISIONABLE_OF_INCORRECT_TYPE, null);
-        }
-        if(entity.getLatestRevisionNo() == null) {
-            // This is a serious error
-            return new ImmutablePair<>(ReturnResult.NO_REVISION_FOR_REVISIONABLE, null);
-        }
-        if(approvedOnly && entity.getCurApprovedNo() == null) {
-            // This is not a serious problem since approved revision
-            return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
-        }
-        Pair<ReturnResult, RevisionData> pair = getRevisionDataOfType((approvedOnly) ? entity.currentApprovedRevisionKey() : entity.latestRevisionKey(), type);
-        if(pair.getLeft() == ReturnResult.REVISION_NOT_FOUND) {
-            // Since we know that the revision should exist upgrade the error to NO_REVISION_FOR_REVISIONABLE
-            Logger.error(getClass(), "Revision that should exist " + ((approvedOnly) ? entity.currentApprovedRevisionKey() : entity.latestRevisionKey()) + " was not found for entity " + entity.toString());
-            return new ImmutablePair<>(ReturnResult.NO_REVISION_FOR_REVISIONABLE, null);
-        }
-        return pair;
-    }
+    /*
 
     @Override
     public Pair<ReturnResult, Integer> getLatestRevisionNoForIdAndType(Long id, boolean approvedOnly, ConfigurationType type) {
@@ -146,33 +124,51 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             return new ImmutablePair<>(ReturnResult.NO_REVISION_FOR_REVISIONABLE, null);
         }
         return new ImmutablePair<>(ReturnResult.REVISION_FOUND, (approvedOnly) ? entity.getCurApprovedNo() : entity.getLatestRevisionNo());
-    }
+    }*/
 
     @Override
     public Pair<ReturnResult, RevisionData> getRevisionData(Long id, Integer no) {
-        return getRevisionDataOfType(new RevisionKey(id, no), null);
-    }
-
-    @Override
-    public Pair<ReturnResult, RevisionData> getRevisionData(RevisionKey key) {
-        return getRevisionDataOfType(key, null);
+        return getRevisionData(new RevisionKey(id, no));
     }
 
     @Override
     public Pair<ReturnResult, RevisionData> getRevisionData(String key) {
+        return getRevisionData(key, false);
+    }
+
+    @Override
+    public Pair<ReturnResult, RevisionData> getRevisionData(String key, boolean approveOnly) {
         if(!key.contains("-")) {
-            return getLatestRevisionForIdAndType(Long.parseLong(key), false, null);
+            return getLatestRevisionForId(Long.parseLong(key), approveOnly);
         }
-        return getRevisionDataOfType(Long.parseLong(key.split("-")[0]), Integer.parseInt(key.split("-")[1]), null);
+        return getRevisionData(Long.parseLong(key.split("-")[0]), Integer.parseInt(key.split("-")[1]));
+    }
+
+    private Pair<ReturnResult, RevisionData> getLatestRevisionForId(Long id, boolean approvedOnly) {
+        RevisionableEntity entity = em.find(RevisionableEntity.class, id);
+        if(entity == null) {
+            return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
+        }
+        if(entity.getLatestRevisionNo() == null) {
+            // This is a serious error
+            return new ImmutablePair<>(ReturnResult.NO_REVISION_FOR_REVISIONABLE, null);
+        }
+        if(approvedOnly && entity.getCurApprovedNo() == null) {
+            // This is not a serious problem since approved revision
+            return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
+        }
+        Pair<ReturnResult, RevisionData> pair = getRevisionData((approvedOnly) ? entity.currentApprovedRevisionKey() : entity.latestRevisionKey());
+        if(pair.getLeft() == ReturnResult.REVISION_NOT_FOUND) {
+            // Since we know that the revision should exist upgrade the error to NO_REVISION_FOR_REVISIONABLE
+            Logger.error(getClass(), "Revision that should exist " + ((approvedOnly) ? entity.currentApprovedRevisionKey() : entity.latestRevisionKey()) + " was not found for entity " + entity.toString());
+            return new ImmutablePair<>(ReturnResult.NO_REVISION_FOR_REVISIONABLE, null);
+        }
+        return pair;
     }
 
     @Override
-    public Pair<ReturnResult, RevisionData> getRevisionDataOfType(Long id, Integer no, ConfigurationType type) {
-        return getRevisionDataOfType(new RevisionKey(id, no), type);
-    }
-
-    @Override
-    public Pair<ReturnResult, RevisionData> getRevisionDataOfType(RevisionKey key, ConfigurationType type) {
+    @Cacheable(value = "revision-cache", key = "#key")
+    public Pair<ReturnResult, RevisionData> getRevisionData(RevisionKey key) {
         RevisionEntity entity = em.find(RevisionEntity.class, key);
         if(entity == null) {
             // Didn't found entity
@@ -184,12 +180,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             Logger.error(getClass(), "Couldn't get revision data from "+entity.toString());
             return pair;
         }
-        if(type != null && pair.getRight().getConfiguration().getType() != type) {
-            // Requested revision isn't a study variables revision
-            Logger.warning(getClass(), "Someone requested a revision of type " + type + " with id " + key.getRevisionableId() + " and no " + key.getRevisionNo() + ". " +
-                    "These do not match a revision of type " + type + " but instead a " + pair.getRight().getConfiguration().getType());
-            return new ImmutablePair<>(ReturnResult.REVISION_OF_INCORRECT_TYPE, null);
-        }
+
         return pair;
     }
 
@@ -221,6 +212,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     }
 
     @Override
+    @CacheEvict(value = "revision-cache", key = "#revision.key")
     public ReturnResult updateRevisionData(RevisionData revision) {
         RevisionableEntity revisionableEntity = em.find(RevisionableEntity.class, revision.getKey().getId());
         if(revisionableEntity == null) {
@@ -297,7 +289,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
                 .setParameter("id", id)
                 .getResultList();
         for(StudyVariableEntity entity : entities) {
-            Pair<ReturnResult, RevisionData> pair = getLatestRevisionForIdAndType(entity.getId(), false, ConfigurationType.STUDY_VARIABLE);
+            Pair<ReturnResult, RevisionData> pair = getRevisionData(entity.getId().toString());
             if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                 revisions.add(pair.getRight());
             } else {
@@ -324,7 +316,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
         if(list.size() == 0) {
             return new ImmutablePair<>(ReturnResult.NO_RESULTS, null);
         }
-        return getLatestRevisionForIdAndType(list.get(0).getId(), false, request.getCurrent().getConfiguration().getType());
+        return getRevisionData(list.get(0).getId().toString());
     }
 
     @Override
@@ -378,7 +370,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             return;
         }
 
-        Long study = fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger();
+        String study = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
 
         int score = 0;
         fieldPair = revision.dataField(ValueDataFieldCall.get(Fields.ERRORSCORE));
@@ -408,7 +400,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             if(id == revision.getKey().getId()) {
                 continue;
             }
-            Pair<ReturnResult, RevisionData> pair = getLatestRevisionForIdAndType(id, false, ConfigurationType.STUDY_ERROR);
+            Pair<ReturnResult, RevisionData> pair = getRevisionData(id.toString());
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 continue;
             }
@@ -425,7 +417,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
         if(score < 10) {
             return;
         }
-        Pair<ReturnResult, RevisionData> pair = getLatestRevisionForIdAndType(study, false, ConfigurationType.STUDY);
+        Pair<ReturnResult, RevisionData> pair = getRevisionData(study);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return;
         }
@@ -469,6 +461,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
         RevisionEntity revision = em.find(RevisionEntity.class, key);
         if(revision != null) {
             revision.setIndexStatus(null);
+            revision.setIndexingRequested(null);
             revision.setIndexingHandled(null);
         }
     }

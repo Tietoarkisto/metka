@@ -29,7 +29,6 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.UIRevisionState;
 import fi.uta.fsd.metka.model.access.calls.*;
@@ -39,8 +38,8 @@ import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.ReportRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +51,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
@@ -80,7 +77,7 @@ public class ReportRepositoryImpl implements ReportRepository {
         List<GeneralStudyReportObject> reportStudies = new ArrayList<>();
 
         for(StudyEntity study : studies) {
-            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(study.getId(), false, ConfigurationType.STUDY);
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(study.getId().toString());
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 Logger.error(getClass(), "Did not find revision for study with id " + study.getId() + ". Returned result was " + dataPair.getLeft());
                 continue;
@@ -108,7 +105,7 @@ public class ReportRepositoryImpl implements ReportRepository {
             Pair<StatusCode, ReferenceContainerDataField> references = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.PUBLICATIONS));
             if(references.getLeft() == StatusCode.FIELD_FOUND && !references.getRight().getReferences().isEmpty()) {
                 for(ReferenceRow reference : references.getRight().getReferences()) {
-                    dataPair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), false, ConfigurationType.PUBLICATION);
+                    dataPair = revisions.getRevisionData(reference.getActualValue());
                     if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                         continue;
                     }

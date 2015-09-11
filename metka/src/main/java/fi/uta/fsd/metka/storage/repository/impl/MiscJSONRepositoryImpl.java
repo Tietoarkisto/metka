@@ -39,6 +39,8 @@ import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -55,9 +57,9 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
     private JSONUtil json;
 
     @Override
-    public ReturnResult insert(JsonNode misc) {
-        JsonNode key = misc.get("key");
-        if(key == null || key.getNodeType() != JsonNodeType.STRING) {
+    @CacheEvict(value = "json-cache", key = "#key")
+    public ReturnResult insert(String key, JsonNode misc) {
+        if(key == null) {
             // Not key or key is not text, ignore
             return ReturnResult.PARAMETERS_MISSING;
         }
@@ -71,7 +73,7 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
             return ReturnResult.PARAMETERS_MISSING;
         }
 
-        MiscJSONEntity entity = em.find(MiscJSONEntity.class, key.asText());
+        MiscJSONEntity entity = em.find(MiscJSONEntity.class, key);
         if(entity == null) {
             entity = new MiscJSONEntity();
             entity.setKey(misc.get("key").asText());
@@ -79,7 +81,7 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
         }
         entity.setData(misc.toString());
         return ReturnResult.DATABASE_INSERT_SUCCESS;
-    }
+    }/*
 
     @Override
     public ReturnResult insert(String text) {
@@ -89,9 +91,10 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
         } else {
             return ReturnResult.OPERATION_FAIL;
         }
-    }
+    }*/
 
     @Override
+    @Cacheable("json-cache")
     public Pair<ReturnResult, JsonNode> findByKey(String key) {
         MiscJSONEntity entity = em.find(MiscJSONEntity.class, key);
         if(entity == null || !StringUtils.hasText(entity.getData())) {

@@ -187,7 +187,7 @@ class PORVariablesParser implements VariablesParser {
 
             // If removal of the revision returns SUCCESS_DRAFT this means that there's more revisions to remove and second call with new latest revision should clear out any remaining revisions.
             if(RemoveResult.valueOf(remove.remove(variableRevision.getKey(), info).getResult()) == RemoveResult.SUCCESS_DRAFT) {
-                Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(variableRevision.getKey().getId(), false, ConfigurationType.STUDY_VARIABLE);
+                Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(variableRevision.getKey().getId().toString());
                 remove.remove(dataPair.getRight().getKey(), info);
             }
 

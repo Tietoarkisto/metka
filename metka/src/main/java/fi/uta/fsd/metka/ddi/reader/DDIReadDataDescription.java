@@ -95,11 +95,10 @@ class DDIReadDataDescription extends DDIReadSectionBase {
         }
 
         // Get variables data since it contains most of the information needed for this. Some additional data is also needed from the actual file but very little.
-        Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(
-                valuePair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
+        Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(valuePair.getRight().getActualValueFor(Language.DEFAULT));
         if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(),
-                    "Couldn't find expected variables revision with id: " + valuePair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
+                    "Couldn't find expected variables revision with id: " + valuePair.getRight().getActualValueFor(Language.DEFAULT));
             return revisionPair.getLeft();
         }
         RevisionData variables = revisionPair.getRight();

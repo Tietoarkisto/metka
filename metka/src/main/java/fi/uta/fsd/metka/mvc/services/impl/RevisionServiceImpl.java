@@ -147,13 +147,13 @@ public class RevisionServiceImpl implements RevisionService {
         return response;
     }
 
-    @Override public RevisionDataResponse view(Long id, ConfigurationType type) {
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(id, false, type);
+    @Override public RevisionDataResponse view(Long id) {
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(id.toString());
         return getResponseGUI(OperationResponse.build(dataPair.getRight() != null ? ReturnResult.VIEW_SUCCESSFUL.name() : dataPair.getLeft().name()), dataPair.getRight());
     }
 
-    @Override public RevisionDataResponse view(Long id, Integer no, ConfigurationType type) {
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionDataOfType(id, no, type);
+    @Override public RevisionDataResponse view(Long id, Integer no) {
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(id, no);
         return getResponseGUI(OperationResponse.build(dataPair.getRight() != null ? ReturnResult.VIEW_SUCCESSFUL.name() : dataPair.getLeft().name()), dataPair.getRight());
     }
 
@@ -207,7 +207,7 @@ public class RevisionServiceImpl implements RevisionService {
         RemoveResult result = restore.restore(key.getId());
         response.setResult(OperationResponse.build(result));
 
-        response.setData(TransferData.buildFromRevisionData(revisions.getLatestRevisionForIdAndType(key.getId(), false, null).getRight(), RevisionableInfo.FALSE));
+        response.setData(TransferData.buildFromRevisionData(revisions.getRevisionData(key.getId().toString()).getRight(), RevisionableInfo.FALSE));
 
         return response;
     }

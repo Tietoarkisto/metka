@@ -30,11 +30,8 @@ package fi.uta.fsd.metka.ddi.builder;
 
 import codebook25.*;
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -128,7 +125,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
                             if(reference.getRemoved()) {
                                  continue;
                             }
-                            revisionDataPair = revisions.getLatestRevisionForIdAndType(reference.getReference().asInteger(), false, ConfigurationType.STUDY_VARIABLE);
+                            revisionDataPair = revisions.getRevisionData(reference.getReference().getValue());
                             if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                                 Logger.error(getClass(), "Referenced study variable with id: " + reference.getReference().asInteger() + " could not be found with result " + revisionDataPair.getLeft());
                                 continue;

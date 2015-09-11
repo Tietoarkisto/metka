@@ -338,6 +338,7 @@ define(function (require) {
                                     allowDownload: true,
                                     key: "variableslist",
                                     showReferenceState: true,
+                                    rowsPerPage: 50,
                                     columnFields: [
                                         "variablesstudyid",
                                         "variablesstudytitle",
@@ -437,6 +438,7 @@ define(function (require) {
                                     allowDownload: true,
                                     key: "variablelist",
                                     showReferenceState: true,
+                                    rowsPerPage: 50,
                                     columnFields: [
                                         "variablestudyid",
                                         "variablestudytitle",

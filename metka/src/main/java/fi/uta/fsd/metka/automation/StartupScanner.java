@@ -137,7 +137,7 @@ public class StartupScanner {
             }
             Pair<ReturnResult, JsonNode> existing = miscJsonRepo.findByKey(key.textValue());
             if(existing.getLeft() != ReturnResult.MISC_JSON_FOUND) {
-                miscJsonRepo.insert(misc.getRight());
+                miscJsonRepo.insert(key.textValue(), misc.getRight());
             }
         }
 

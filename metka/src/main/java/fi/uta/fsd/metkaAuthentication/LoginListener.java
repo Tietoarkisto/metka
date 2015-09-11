@@ -94,7 +94,7 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
         }
 
         if(changes) {
-            misc.insert(userList);
+            misc.insert("user-list", userList);
             Logger.info(getClass(), "Updated user-list");
         }
     }

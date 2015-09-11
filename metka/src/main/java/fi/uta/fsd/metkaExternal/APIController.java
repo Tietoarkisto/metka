@@ -199,9 +199,9 @@ public class APIController {
         }
         RevisionDataResponse response;
         if(request.getKey().getNo() == null) {
-            response = revisions.view(request.getKey().getId(), null);
+            response = revisions.view(request.getKey().getId());
         } else {
-            response = revisions.view(request.getKey().getId(), request.getKey().getNo(), null);
+            response = revisions.view(request.getKey().getId(), request.getKey().getNo());
         }
 
         return APIRevisionOperationResponse.success(response.getResult().getResult(), response);

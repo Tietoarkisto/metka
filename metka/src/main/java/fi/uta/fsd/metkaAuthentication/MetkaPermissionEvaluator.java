@@ -160,7 +160,7 @@ public class MetkaPermissionEvaluator implements PermissionEvaluator {
      * @return boolean
      */
     private boolean checkIsHandler(RevisionKey key) {
-        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(key.getId(), false, null);
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key.getId().toString());
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.warning(getClass(), "No revision found for key " + key.toString() + " while checking handler permission.");
             return false;

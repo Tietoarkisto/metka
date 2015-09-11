@@ -361,7 +361,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
      */
     private void finalizeStudyAttachment(StudyAttachmentEntity revisionable) {
         // Get the latest revision for study and, if it exists, get or create files reference container
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(revisionable.getStudyAttachmentStudy(), false, ConfigurationType.STUDY);
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(revisionable.getStudyAttachmentStudy().toString());
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "Didn't find  latest revision for study with id "+revisionable.getStudyAttachmentStudy()+" with result "+dataPair.getLeft());
             return;

@@ -29,17 +29,13 @@
 package fi.uta.fsd.metka.storage.cascade;
 
 import fi.uta.fsd.metka.enums.*;
-import fi.uta.fsd.metka.model.access.calls.*;
+import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
-import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.response.OperationResponse;
-import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 
 /**
  * Handles FIELD type targets.
@@ -177,7 +173,7 @@ class FieldTargetCascader {
 
         RevisionData data;
         if(reference.getType() == ReferenceType.REVISIONABLE) {
-            data = repositories.getRevisions().getLatestRevisionForIdAndType(value.asInteger(), false, null).getRight();
+            data = repositories.getRevisions().getRevisionData(value.getValue()).getRight();
         } else {
             String[] splits = value.getValue().split("-");
             if(splits.length != 2) {

@@ -31,6 +31,8 @@ define(function (require) {
 
     var CACHE_SIZE = 25;
 
+    var waitDialog = require('./waitDialog');
+
     var callCache = [];
     var callQueue = [];
 
@@ -54,6 +56,11 @@ define(function (require) {
     }
 
     function cacheCall(index, call) {
+        var wd;
+        if(call.forceWait) {
+            wd = waitDialog();
+            wd.showWait();
+        }
         var oldSuccess = call.success;
         call.success = function(data) {
             if(oldSuccess) {
@@ -61,6 +68,11 @@ define(function (require) {
             }
             callCache[index] = null;
             checkQueue();
+        };
+        call.complete = function(data) {
+            if(wd) {
+                wd.hideWait();
+            }
         };
         callCache[index] = function() {
             $.ajax(call);

@@ -48,16 +48,12 @@ import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveKeywordAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.indexers.Indexer;
 import fi.uta.fsd.metkaSearch.indexers.IndexerDocument;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.springframework.util.StringUtils;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.apache.lucene.document.Field.Store.YES;
 import static org.apache.lucene.search.BooleanClause.Occur.MUST;
@@ -67,8 +63,6 @@ class GeneralRevisionHandler implements RevisionHandler {
     private final RevisionRepository revisions;
     private final ConfigurationRepository configurations;
     private final ReferenceService references;
-
-    private final Map<ConfigurationKey, Configuration> configCache = new HashMap<>();
 
     // This attribute should only ever be set to true and it tells the handler if it should add the document to index or not.
     // If we don't find content that's exclusive for requested language (i.e. translated content) then there's no point in
@@ -85,17 +79,8 @@ class GeneralRevisionHandler implements RevisionHandler {
     }
 
     private Pair<ReturnResult, Configuration> getConfiguration(ConfigurationKey key) {
-        if(configCache.get(key) != null) {
-            return new ImmutablePair<>(ReturnResult.CONFIGURATION_FOUND, configCache.get(key));
-        } else {
-            Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(key);
-            if(pair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-                return pair;
-            } else {
-                configCache.put(key, pair.getRight());
-                return pair;
-            }
-        }
+        Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(key);
+        return pair;
     }
 
     /**
@@ -112,7 +97,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         }
         Logger.debug(getClass(), "Trying to get revision ID: " + command.getId() + " NO: " + command.getNo());
         Long start = System.currentTimeMillis();
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionDataOfType(command.getId(), command.getNo(), null);
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(command.getId(), command.getNo());
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.warning(getClass(), "Revision not found with result " + pair.getLeft());
             return result;

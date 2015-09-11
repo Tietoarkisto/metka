@@ -29,6 +29,7 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
@@ -218,8 +219,12 @@ public class SettingsServiceImpl implements SettingsService {
     @Override
     public ReturnResult uploadJson(JsonNode misc) {
         //backupAndCopy(file, "misc");
+        JsonNode key = misc.get("key");
+        if(key == null || key.getNodeType() != JsonNodeType.STRING) {
+            return ReturnResult.OPERATION_FAIL;
+        }
 
-        ReturnResult result = miscJSONRepository.insert(misc);
+        ReturnResult result = miscJSONRepository.insert(key.textValue(), misc);
         return result == ReturnResult.DATABASE_INSERT_SUCCESS ? ReturnResult.OPERATION_SUCCESSFUL : result;
     }
 }

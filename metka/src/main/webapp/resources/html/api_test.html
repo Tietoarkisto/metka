@@ -8,13 +8,14 @@
 		<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js"></script>
         <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js"></script>
 		<script>
-        var secret = "NFpGM21pbWFLNzVtVzVCQ0FzWDNUN2xrZnNaTC5zV21PZmVVcEtKcGRiZWJyWWJNME5LeC9ON0JVQ0haN3BkWjUzcUJpTTB6NkRlNTQvcnd5eGRPVjE";
+        var secret = "QS5rcU5BMVU4MlkvbG9Xdm45cXd0L2JibFRVM09hOEY2ZzRSZ2RQODh4aklUY1l1c3p1MFdMUWM4Y3ZXdjVHeXR1dk1UUFdmVzNxcmxCaFZOMmNnZC8";
 
         function Tester() {
             function call(url, request, success) {
                 $.ajax({
                     type: "POST",
-                    url: "http://localhost:8080"+url,
+                    url: "https://metka-qa.demo.proactum.fi"+url,
+                    //url: "http://localhost:8080"+url,
                     data: JSON.stringify(request),
                     cache: false,
                     headers: {

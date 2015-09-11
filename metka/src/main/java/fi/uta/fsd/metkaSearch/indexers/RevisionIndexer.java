@@ -33,6 +33,7 @@ import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
@@ -42,6 +43,7 @@ import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.enums.IndexerStatusMessage;
 import fi.uta.fsd.metkaSearch.handlers.HandlerFactory;
 import fi.uta.fsd.metkaSearch.handlers.RevisionHandler;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.AlreadyClosedException;
 
@@ -53,7 +55,10 @@ public class RevisionIndexer extends Indexer {
 
     // Pool for indexer threads.
     private ExecutorService threadPool = Executors.newCachedThreadPool();
-    private static int MAX_REVISION_DATA_INDEXERS = 3;
+    private static final int MAX_REVISION_COMMAND_HANDLERS = 1;
+    private static final int MAX_REVISION_DATA_INDEXERS = 10;
+    private static final int MAX_KEY_QUEUE_SIZE = 100;
+    private static int ID = 1;
 
     public static RevisionIndexer build(DirectoryManager manager, DirectoryManager.DirectoryPath path, IndexerCommandRepository commands,
                                         RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
@@ -82,6 +87,8 @@ public class RevisionIndexer extends Indexer {
     private ConfigurationRepository configurations;
     private ReferenceService references;
 
+    private BlockingQueue<RevisionKey> revisionKeyQueue = new ArrayBlockingQueue<>(MAX_KEY_QUEUE_SIZE);
+
     private RevisionIndexer(DirectoryManager manager, DirectoryManager.DirectoryPath path, IndexerCommandRepository commands,
                             RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
         super(manager, path, commands);
@@ -92,51 +99,80 @@ public class RevisionIndexer extends Indexer {
 
     @Override
     public IndexerStatusMessage call() throws Exception {
-        Future<IndexerStatusMessage> commandHandler = null;
-        List<Future<IndexerStatusMessage>> revisionHandlers = new ArrayList<>();
+        Future<Boolean> revisionKeyQueueFiller = null;
+        List<Future<Boolean>> commandHandlers = new ArrayList<>();
+        List<Future<Boolean>> revisionHandlers = new ArrayList<>();
+
+        boolean clearSkipped = false;
+
+        Long flushTimer = System.currentTimeMillis();
+
         while(getStatus() != IndexerStatusMessage.STOP && getStatus() != IndexerStatusMessage.RETURNED) {
             try {
-                if(commandHandler == null) {
-                    commandHandler = threadPool.submit(new CommandIndexer(this, revisions, configurations, references, commands));
+                if(revisionKeyQueueFiller == null) {
+                    revisionKeyQueueFiller = threadPool.submit(new RevisionKeyQueueFiller());
+                }
+
+                while(commandHandlers.size() < MAX_REVISION_COMMAND_HANDLERS) {
+                    commandHandlers.add(threadPool.submit(new CommandIndexer(this, ID++)));
                 }
                 while(revisionHandlers.size() < MAX_REVISION_DATA_INDEXERS) {
-                    revisionHandlers.add(threadPool.submit(new RevisionDataIndexer(this, revisions, configurations, references)));
+                    revisionHandlers.add(threadPool.submit(new RevisionDataIndexer(this, ID++)));
                 }
 
-                if(commandHandler.isDone()) {
-                    commandHandler = threadPool.submit(new CommandIndexer(this, revisions, configurations, references, commands));
+                if(revisionKeyQueueFiller.isDone()) {
+                    revisionKeyQueueFiller = threadPool.submit(new RevisionKeyQueueFiller());
                 }
-
+                for(int i = 0; i < commandHandlers.size(); i++) {
+                    if(commandHandlers.get(i).isDone()) {
+                        commandHandlers.set(i, threadPool.submit(new CommandIndexer(this, ID++)));
+                    }
+                }
                 for(int i = 0; i < revisionHandlers.size(); i++) {
                     if(revisionHandlers.get(i).isDone()) {
-                        revisionHandlers.set(i, threadPool.submit(new RevisionDataIndexer(this, revisions, configurations, references)));
+                        revisionHandlers.set(i, threadPool.submit(new RevisionDataIndexer(this, ID++)));
                     }
                 }
 
                 if(indexChanged && ((getStatus() == IndexerStatusMessage.IDLING && System.currentTimeMillis()-getIdleStart() >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
                         || (LuceneConfig.FORCE_FLUSH_AFTER_BATCH_OF_CHANGES && changeBatch >= LuceneConfig.MAX_CHANGE_BATCH_SIZE))) {
+                    Logger.info(getClass(), (!(getStatus() == IndexerStatusMessage.IDLING && System.currentTimeMillis()-getIdleStart() >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
+                            ? "Forcing index flush." : "Flushing index after idle timer.")+" It's been "+(System.currentTimeMillis()-flushTimer)+"ms since last flush. PATH: "+getPath().toString());
+                    IndexerStatusMessage status = getStatus();
+                    setStatus(IndexerStatusMessage.FLUSHING);
+                    Thread.sleep(500);
+                    flushTimer = System.currentTimeMillis();
+                    Logger.info(getClass(), "Flushing "+changeBatch+" index changes");
                     flushIndex();
+                    changeBatch = 0;
                     indexChanged = false;
+                    setStatus(status);
+                    if(getStatus() == IndexerStatusMessage.IDLING && System.currentTimeMillis()-getIdleStart() >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH) {
+                        clearSkipped = true;
+                    }
+                    if(clearSkipped) {
+                        clearSkipped = false;
+                        Pair<ReturnResult, Long> pair = revisions.getRevisionsWaitingIndexing();
+                        if(pair.getRight() != null && pair.getRight() > 0) {
+                            Logger.info(getClass(), "Clearing revisions that have been requested but not indexed since idle mode has been reached. PATH: "+getPath().toString());
+                            revisions.clearPartlyIndexed();
+                        }
+                    }
                 }
+
 
                 // Check if process should continue running
                 if(Thread.currentThread().isInterrupted()) {
-                    if(!commandHandler.isDone()) {
-                        commandHandler.cancel(true);
+                    if(!revisionKeyQueueFiller.isDone()) {
+                        revisionKeyQueueFiller.cancel(true);
                     }
-                    for(int i = 0; i < revisionHandlers.size(); i++) {
-                        if(!revisionHandlers.get(i).isDone()) {
-                            revisionHandlers.get(i).cancel(true);
-                        }
-                    }
+                    cancelAll(commandHandlers);
+                    cancelAll(revisionHandlers);
 
                     setStatus(IndexerStatusMessage.STOP);
                 }
-                // If there was no new commands to handle, idle for 5 seconds before checking again
-                // Otherwise continue straight to next command
-                if(getStatus() == IndexerStatusMessage.IDLING) {
-                    Thread.sleep(100);
-                }
+
+                Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 setStatus(IndexerStatusMessage.STOP);
                 // Try to close the indexer
@@ -144,49 +180,88 @@ public class RevisionIndexer extends Indexer {
                 indexer.getIndexWriter().close();
                 //ex.printStackTrace();
                 Thread.currentThread().interrupt();
+                if(!revisionKeyQueueFiller.isDone()) {
+                    revisionKeyQueueFiller.cancel(true);
+                }
+                cancelAll(commandHandlers);
+                cancelAll(revisionHandlers);
             } catch(Exception e) {
                 Logger.error(getClass(), "Exception while indexing", e);
                 Thread.currentThread().interrupt();
+                if(revisionKeyQueueFiller != null && !revisionKeyQueueFiller.isDone()) {
+                    revisionKeyQueueFiller.cancel(true);
+                }
+                cancelAll(commandHandlers);
+                cancelAll(revisionHandlers);
             }
         }
         if(getStatus() == IndexerStatusMessage.STOP) {
             indexer.getIndexWriter().close();
-            if(!commandHandler.isDone()) {
-                commandHandler.cancel(true);
+            if(revisionKeyQueueFiller != null && !revisionKeyQueueFiller.isDone()) {
+                revisionKeyQueueFiller.cancel(true);
             }
-            for(int i = 0; i < revisionHandlers.size(); i++) {
-                if(!revisionHandlers.get(i).isDone()) {
-                    revisionHandlers.get(i).cancel(true);
-                }
-            }
+            cancelAll(commandHandlers);
+            cancelAll(revisionHandlers);
         }
         return IndexerStatusMessage.RETURNED;
     }
 
-    synchronized private RevisionKey getNextKey() {
-        return revisions.getNextForIndexing();
+    private void cancelAll(List<Future<Boolean>> handlers) {
+        for(Future<Boolean> handler : handlers) {
+            if(!handler.isDone()) {
+                handler.cancel(true);
+            }
+        }
     }
+
 
     synchronized private IndexerCommand getNextCommand() {
         return commands.getNextCommand(getPath().getType(), getPath().toString());
     }
+    private void clearIndexing(RevisionKey key) {
+        revisions.clearIndexing(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+    }
+    private void markAsIndexed(RevisionKey key) {
+        revisions.markAsIndexed(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+    }
 
-    private class CommandIndexer implements Callable<IndexerStatusMessage> {
-        private final RevisionIndexer indexer;
+    private class RevisionKeyQueueFiller implements Callable<Boolean> {
+        @Override
+        public Boolean call() throws Exception {
+            while(!Thread.currentThread().isInterrupted() && getStatus() != IndexerStatusMessage.STOP) {
+                try {
+                    RevisionKey key = getNextKey();
+                    if(!revisionKeyQueue.offer(key)) {
+                        clearIndexing(key);
+                        Thread.sleep(2000);
+                    }
+                } catch(InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    setStatus(IndexerStatusMessage.STOP);
+                }
+            }
+            return true;
+        }
+
+        private RevisionKey getNextKey() {
+            return revisions.getNextForIndexing();
+        }
+    }
+
+    private class CommandIndexer implements Callable<Boolean> {
         private final RevisionHandler handler;
-        private final IndexerCommandRepository commands;
+        private final int ID;
 
-        public CommandIndexer(RevisionIndexer indexer, RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references, IndexerCommandRepository commands) {
-            this.indexer = indexer;
-            this.commands = commands;
-            this.handler = HandlerFactory.buildRevisionHandler(this.indexer, revisions, configurations, references);
+        public CommandIndexer(RevisionIndexer indexer, int ID) {
+            this.handler = HandlerFactory.buildRevisionHandler(indexer, revisions, configurations, references);
+            this.ID = ID;
         }
 
         @Override
-        public IndexerStatusMessage call() throws Exception {
+        public Boolean call() throws Exception {
             long timeHandlingCommands = 0L;
-            long previousTime = 0L;
-            long batch = 0L;
+            long previousTime;
+            long total = 0L;
             boolean firstBatch = true;
             boolean first100Batch = true;
             long batchIn10Minutes = 0L;
@@ -195,17 +270,20 @@ public class RevisionIndexer extends Indexer {
             boolean firstIdle = true;
             while(!Thread.currentThread().isInterrupted() && getStatus() != IndexerStatusMessage.STOP) {
                 try {
-                    IndexerCommand command = indexer.getNextCommand();
+                    while(getStatus() == IndexerStatusMessage.FLUSHING) {
+                        Thread.sleep(100);
+                    }
+                    IndexerCommand command = getNextCommand();
                     if(command != null) {
-                        long start = System.currentTimeMillis();
-                        if(handleEnd > 0L) extraTime += start-handleEnd;
-                        Logger.debug(getClass(), "Started new command for: " + command.getPath());
-                        if(getStatus() != IndexerStatusMessage.STOP) {
+                        if(getStatus() != IndexerStatusMessage.STOP && getStatus() != IndexerStatusMessage.FLUSHING) {
                             setStatus(IndexerStatusMessage.PROCESSING);
                         } else {
                             commands.clearCommandRequest(command.getQueueId());
                             continue;
                         }
+                        long start = System.currentTimeMillis();
+                        if(handleEnd > 0L) extraTime += start-handleEnd;
+                        Logger.debug(getClass(), "Started new command for: " + command.getPath());
                         firstIdle = true;
 
                         boolean commandHandled = false;
@@ -232,19 +310,23 @@ public class RevisionIndexer extends Indexer {
                                     query.add(NumericRangeQuery.newLongRange("key.id", 1, rCom.getId(), rCom.getId(), true, true), BooleanClause.Occur.MUST);
                                     query.add(NumericRangeQuery.newIntRange("key.no", 1, rCom.getNo(), rCom.getNo(), true, true), BooleanClause.Occur.MUST);
                                     try {
-                                        this.indexer.removeDocument(query);
+                                        removeDocument(query);
                                         commandHandled = true;
                                     } catch(AlreadyClosedException ace) {
                                         setStatus(IndexerStatusMessage.STOP);
                                         commands.clearCommandRequest(command.getQueueId());
                                         continue;
-                                    } catch(Exception e) {
-                                        Logger.error(getClass(), "Exception while removing revision ["+rCom.getId()+","+rCom.getNo()+"] from index.", e);
                                     }
                                     break;
                                 case INDEX:
-                                    Logger.debug(getClass(), "Performing INDEX action on revision");
-                                    commandHandled = indexCommand(rCom);
+                                    try {
+                                        Logger.debug(getClass(), "Performing INDEX action on revision");
+                                        commandHandled = indexCommand(rCom);
+                                    } catch(AlreadyClosedException ace) {
+                                        setStatus(IndexerStatusMessage.STOP);
+                                        commands.clearCommandRequest(command.getQueueId());
+                                        continue;
+                                    }
                                     break;
                                 case STOP:
                                     // This is here to remove compiler warning, actual STOP command is handled earlier
@@ -272,38 +354,46 @@ public class RevisionIndexer extends Indexer {
                         previousTime = timeHandlingCommands;
                         timeHandlingCommands += end-start;
 
-                        batch++;
+                        total++;
                         batchIn10Minutes++;
-                        if(batch%100 == 0 && first100Batch) {
+                        if(total%100 == 0 && first100Batch) {
                             first100Batch = false;
-                            Logger.info(getClass(), "Took "+(timeHandlingCommands+extraTime)+ "ms to handle first 100 commands. PATH: "+getPath().toString());
+                            Logger.info(getClass(), "Took "+(timeHandlingCommands+extraTime)+ "ms to handle first 100 commands. "
+                                    + "ID: " + ID + ". "
+                                    + "PATH: " + getPath().toString());
                         }
 
-                        if(indexer.checkInterval(timeHandlingCommands, previousTime, extraTime, 1000 * 60)) {
+                        if(checkInterval(timeHandlingCommands, previousTime, extraTime, 1000 * 60)) {
                             if(firstBatch) {
                                 firstBatch = false;
-                                Logger.info(getClass(), "Handled "+batchIn10Minutes+" commands in first minute of current batch. PATH: "+getPath().toString());
+                                Logger.info(getClass(), "Handled "+batchIn10Minutes+" commands in first minute of current batch. "
+                                        + "ID: " + ID + ". "
+                                        + "PATH: " + getPath().toString());
                             }
                         }
-                        if(indexer.checkInterval(timeHandlingCommands, previousTime, extraTime, 1000 * 60 * 10)) {
-                            Logger.info(getClass(), "Handled "+batchIn10Minutes+" commands in previous 10 minutes of current batch. PATH: "+getPath().toString());
+                        if(checkInterval(timeHandlingCommands, previousTime, extraTime, 1000 * 60 * 10)) {
+                            Logger.info(getClass(), "Handled "+batchIn10Minutes+" commands in previous 10 minutes of current batch. "
+                                    + "ID: " + ID + ". "
+                                    + "PATH: " + getPath().toString());
                             batchIn10Minutes = 0L;
                         }
-                        //Logger.debug(getClass(), "Took " + (end - start) + "ms to handle command. PATH: "+getPath().toString());
                     } else {
                         if(getStatus() != IndexerStatusMessage.IDLING) {
-                            // Previous loop was handling command, post DEBUG info
                             setStatus(IndexerStatusMessage.IDLING);
                         }
                         if(firstIdle) {
-                            Logger.info(getClass(), "Queue clear. Spent " + timeHandlingCommands + "ms handling "+batch+" commands + "+extraTime+"ms of extra time. PATH: "+getPath().toString());
+                            // Previous loop was handling command, post DEBUG info
+                            if(total > 0) {
+                                Logger.info(getClass(), "Queue clear. Spent " + timeHandlingCommands + "ms handling " + total + " commands + " + extraTime + "ms of extra time. "
+                                        + "ID: " + ID + ". "
+                                        + "PATH: " + getPath().toString());
+                            }
                             timeHandlingCommands = 0L;
                             extraTime = 0L;
                             handleEnd = 0L;
-                            batch= 0L;
+                            total= 0L;
                             firstBatch = true;
                             first100Batch = true;
-                            previousTime = 0L;
                             batchIn10Minutes = 0L;
                             firstIdle = false;
                         }
@@ -311,7 +401,7 @@ public class RevisionIndexer extends Indexer {
                     }
                 } catch (InterruptedException ex) {
                     // Try to close the indexer
-                    Logger.warning(getClass(), "Closing index handler on indexer " + this.indexer.getPath().toString() + " because of interruption");
+                    Logger.warning(getClass(), "Closing index handler on indexer " + getPath().toString() + " because of interruption");
                     //ex.printStackTrace();
                     Thread.currentThread().interrupt();
                     setStatus(IndexerStatusMessage.STOP);
@@ -321,7 +411,7 @@ public class RevisionIndexer extends Indexer {
                 }
             }
 
-            return IndexerStatusMessage.RETURNED;
+            return true;
         }
 
 
@@ -337,60 +427,61 @@ public class RevisionIndexer extends Indexer {
         }
     }
 
-    private class RevisionDataIndexer implements Callable<IndexerStatusMessage> {
-        private final RevisionIndexer indexer;
+    private class RevisionDataIndexer implements Callable<Boolean> {
         private final RevisionHandler handler;
-        private final RevisionRepository revisions;
+        private final int ID;
 
-        public RevisionDataIndexer(RevisionIndexer indexer, RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references) {
-            this.indexer = indexer;
-            this.revisions = revisions;
-            this.handler = HandlerFactory.buildRevisionHandler(this.indexer, revisions, configurations, references);
+        public RevisionDataIndexer(RevisionIndexer indexer, int ID) {
+            this.handler = HandlerFactory.buildRevisionHandler(indexer, revisions, configurations, references);
+            this.ID = ID;
         }
 
         @Override
-        public IndexerStatusMessage call() throws Exception {
-            long timeHandlingCommands = 0L;
-            long previousTime = 0L;
-            long batch = 0L;
+        public Boolean call() throws Exception {
+            // Debug guides
             boolean firstBatch = true;
             boolean first100Batch = true;
+
+            long timeHandlingCommands = 0L;
+            long previousTime;
+            long total = 0L;
+
             long batchIn10Minutes = 0L;
             long extraTime = 0L;
             long handleEnd = 0L;
             boolean firstIdle = true;
             while(!Thread.currentThread().isInterrupted() && getStatus() != IndexerStatusMessage.STOP) {
                 try {
-                    RevisionKey key = indexer.getNextKey();
+                    while(getStatus() == IndexerStatusMessage.FLUSHING) {
+                        Thread.sleep(100);
+                    }
+                    RevisionKey key = revisionKeyQueue.poll();
                     if(key != null) {
+                        if(getStatus() != IndexerStatusMessage.STOP && getStatus() != IndexerStatusMessage.FLUSHING) {
+                            setStatus(IndexerStatusMessage.PROCESSING);
+                        } else {
+                            clearIndexing(key);
+                            continue;
+                        }
                         long start = System.currentTimeMillis();
                         if(handleEnd > 0L) extraTime += start-handleEnd;
                         Logger.debug(getClass(), "Started new indexing for: " + key);
-                        if(getStatus() != IndexerStatusMessage.STOP) {
-                            setStatus(IndexerStatusMessage.PROCESSING);
-                        } else {
-                            revisions.clearIndexing(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
-                            continue;
-                        }
                         firstIdle = true;
 
                         // Index revision
-                        // Set indexChanged to true since command was handled
-
-                        // Assume that command was handled appropriately
                         try {
                             if(indexRevision(key)) {
                                 indexChanged = true;
-                                revisions.markAsIndexed(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+                                markAsIndexed(key);
                                 if(LuceneConfig.FORCE_FLUSH_AFTER_BATCH_OF_CHANGES) {
                                     changeBatch++;
                                 }
                             } else {
-                                revisions.clearIndexing(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+                                clearIndexing(key);
                                 continue;
                             }
                         } catch(AlreadyClosedException ace) {
-                            revisions.clearIndexing(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+                            clearIndexing(key);
                             setStatus(IndexerStatusMessage.STOP);
                             continue;
                         }
@@ -401,38 +492,47 @@ public class RevisionIndexer extends Indexer {
                         previousTime = timeHandlingCommands;
                         timeHandlingCommands += end-start;
 
-                        batch++;
+                        total++;
                         batchIn10Minutes++;
-                        if(batch%100 == 0 && first100Batch) {
+                        if(total%100 == 0 && first100Batch) {
                             first100Batch = false;
-                            Logger.info(getClass(), "Took "+ (timeHandlingCommands + extraTime) + "ms to handle first 100 commands and revisions. PATH: "+getPath().toString());
+                            Logger.info(getClass(), "Took "+ (timeHandlingCommands + extraTime) + "ms to handle first 100 commands and revisions. "
+                                    + "ID: " + ID + ". "
+                                    + "PATH: " + getPath().toString());
                         }
 
-                        if(indexer.checkInterval(timeHandlingCommands, previousTime, extraTime, 1000 * 60)) {
+                        if(checkInterval(timeHandlingCommands, previousTime, extraTime, 1000 * 60)) {
                             if(firstBatch) {
                                 firstBatch = false;
-                                Logger.info(getClass(), "Indexed "+batchIn10Minutes+" in first minute of current batch. PATH: "+getPath().toString());
+                                Logger.info(getClass(), "Indexed "+batchIn10Minutes+" in first minute of current batch. "
+                                        + "ID: " + ID + ". "
+                                        + "PATH: " + getPath().toString());
                             }
                         }
-                        if(indexer.checkInterval(timeHandlingCommands, previousTime, extraTime, 1000 * 60 * 10)) {
-                            Logger.info(getClass(), "Indexed "+batchIn10Minutes+" in previous 10 minutes of current batch. PATH: "+getPath().toString());
+                        if(checkInterval(timeHandlingCommands, previousTime, extraTime, 1000 * 60 * 10)) {
+                            Logger.info(getClass(), "Indexed "+batchIn10Minutes+" in previous 10 minutes of current batch. "
+                                    + "ID: " + ID + ". "
+                                    + "PATH: " + getPath().toString());
                             batchIn10Minutes = 0L;
                         }
                         Logger.debug(getClass(), "Took " + (end - start) + "ms to index revision. PATH: "+getPath().toString());
                     } else {
                         if(getStatus() != IndexerStatusMessage.IDLING) {
-                            // Previous loop was handling command, post DEBUG info
                             setStatus(IndexerStatusMessage.IDLING);
                         }
                         if(firstIdle) {
-                            Logger.info(getClass(), "Queue clear. Spent " + timeHandlingCommands + "ms indexing "+batch+" revisions + "+extraTime+"ms of extra time. PATH: "+getPath().toString());
+                            // Previous loop was handling command, post DEBUG info
+                            if(total > 0) {
+                                Logger.info(getClass(), "Queue clear. Spent " + timeHandlingCommands + "ms indexing "+total+" revisions + "+extraTime+"ms of extra time. "
+                                        + "ID: " + ID + ". "
+                                        + "PATH: " + getPath().toString());
+                            }
                             timeHandlingCommands = 0L;
                             extraTime = 0L;
                             handleEnd = 0L;
-                            batch = 0L;
+                            total = 0L;
                             firstBatch = true;
                             first100Batch = true;
-                            previousTime = 0L;
                             batchIn10Minutes = 0L;
                             firstIdle = false;
                         }
@@ -440,7 +540,7 @@ public class RevisionIndexer extends Indexer {
                     }
                 } catch (InterruptedException ex) {
                     // Try to close the indexer
-                    Logger.warning(getClass(), "Closing index handler on indexer " + this.indexer.getPath().toString() + " because of interruption");
+                    Logger.warning(getClass(), "Closing index handler on indexer " + getPath().toString() + " because of interruption");
                     Thread.currentThread().interrupt();
                     //ex.printStackTrace();
                     setStatus(IndexerStatusMessage.STOP);
@@ -450,7 +550,7 @@ public class RevisionIndexer extends Indexer {
                 }
             }
 
-            return IndexerStatusMessage.RETURNED;
+            return true;
         }
 
         /**

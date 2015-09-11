@@ -34,6 +34,7 @@ define(function(require) {
             search: function() {
                 require('./server')('searchAjax', {
                     data: JSON.stringify(require('./searchRequest')(options, searchOptions, lang, prefix)),
+                    forceWait: true,
                     success: function(response) {
                         require('./updateSearchResultContainer')(options, response, resultFieldKey);
                     }

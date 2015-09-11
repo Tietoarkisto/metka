@@ -28,16 +28,12 @@
 
 package fi.uta.fsd.metka.storage.restrictions;
 
-import com.ctc.wstx.util.StringUtil;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
-import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
-import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -247,27 +243,13 @@ class ChildrenTargetHandler {
     }
 
     private static Pair<ReturnResult, RevisionData> fetchRevisionData(Reference reference, String value, RevisionRepository revisions) {
+        if(!(reference.getType() == ReferenceType.REVISION || reference.getType() == ReferenceType.REVISIONABLE)) {
+            return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
+        }
         if(!StringUtils.hasText(value)) {
             Logger.error(ChildrenTargetHandler.class, "Value was missing during fetchRevisionData operation");
             return new ImmutablePair<>(ReturnResult.PARAMETERS_MISSING, null);
         }
-        String id;
-        String no = null;
-        if(reference.getType() == ReferenceType.REVISION) {
-            String[] splits = value.split("-");
-            if(splits == null || splits.length < 2) {
-                id = value;
-            } else {
-                id = splits[0];
-                no = splits[1];
-            }
-        } else {
-            id = value;
-        }
-        if(no == null) {
-            return revisions.getLatestRevisionForIdAndType(Long.parseLong(id), false, ConfigurationType.fromValue(reference.getTarget()));
-        } else {
-            return revisions.getRevisionData(Long.parseLong(id), Integer.parseInt(no));
-        }
+        return revisions.getRevisionData(value);
     }
 }

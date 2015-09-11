@@ -96,7 +96,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             info = DateTimeUserPair.build();
         }
 
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(), false, transferData.getConfiguration().getType());
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(transferData.getKey().getId().toString());
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "No revision to approve for " + transferData.getKey().toString());
             return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), transferData);
@@ -122,7 +122,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
             Logger.info(getClass(), "Can't approve revision "+data.getKey().toString()+" since it is not in DRAFT state");
             // Fetch the data again since cascade might have changed things
-            dataPair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(), false, transferData.getConfiguration().getType());
+            dataPair = revisions.getRevisionData(transferData.getKey().getId().toString());
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 Logger.error(getClass(), "No revision to approve for " + transferData.getKey().toString());
                 return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), transferData);
@@ -163,7 +163,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         }
 
         // Fetch the data again since cascade might have changed things
-        dataPair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(), false, transferData.getConfiguration().getType());
+        dataPair = revisions.getRevisionData(transferData.getKey().getId().toString());
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "No revision to approve for " + transferData.getKey().toString());
             return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), transferData);
@@ -424,77 +424,4 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             changesIn.add(language);
         }
     }
-
-
-    /*private ReturnResult checkStudyAttachments(RevisionData revision, TransferData transferData) {
-        Pair<StatusCode, ReferenceContainerDataField> pair = revision.dataField(ReferenceContainerDataFieldCall.get("files"));
-        if(pair.getLeft() != StatusCode.FIELD_FOUND || pair.getRight().getReferences().isEmpty()) {
-            return ReturnResult.OPERATION_SUCCESSFUL;
-        }
-
-        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
-        TransferField tf = transferData.getField("files");
-        for(ReferenceRow reference : pair.getRight().getReferences()) {
-            Pair<ReturnResult, RevisionData> variablePair =
-                    revisions.getLatestRevisionForIdAndType(
-                        Long.parseLong(reference.getActualValue()),
-                        false, ConfigurationType.STUDY_ATTACHMENT);
-            if(variablePair.getLeft() != ReturnResult.REVISION_FOUND) {
-                Logger.error(getClass(), "Didn't find revision for " + reference.getActualValue() + " while approving study attachments. Continuin approval.");
-                continue;
-            }
-            RevisionData variable = variablePair.getRight();
-            if(variable.getState() != RevisionState.DRAFT) {
-                // Variable doesn't require approving
-                continue;
-            }
-            Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variable, RevisionableInfo.FALSE));
-            if(approveResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
-                Logger.error(getClass(), "Tried to approve "+variable.toString()+" and failed with result "+approveResult.getLeft());
-                result = ReturnResult.OPERATION_FAIL;
-                // Let's mark the specific TransferRow with approval error.
-                // Missing rows should have been inserted during saving process before this phase so we can be confident that everything exists
-                // and since we are returning APPROVE_FAILED from here the TransferData provided to this method is the one that will be returned
-                // to the user.
-                tf.getRow(reference.getRowId()).addError(FieldError.APPROVE_FAILED);
-            }
-        }
-
-        return result;
-    }*/
-
-    /*private ReturnResult checkStudyVariables(RevisionData revision, TransferData transferData) {
-        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            // Check that transferData actually has the field with this value (it should).
-            // If the field or value is missing then add them
-            TransferField field = transferData.getField(Fields.VARIABLES);
-            if(field == null) {
-                field = new TransferField(Fields.VARIABLES, TransferFieldType.VALUE);
-                TransferValue transferValue = TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, fieldPair.getRight());
-                field.addValueFor(Language.DEFAULT, transferValue);
-                transferData.getFields().put(field.getKey(), field);
-            }
-
-            // We have variables reference and it contains a value
-            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
-                    Long.parseLong(fieldPair.getRight().getActualValueFor(Language.DEFAULT)), false, ConfigurationType.STUDY_VARIABLES);
-            if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                Logger.error(getClass(), "Didn't find revision for study variables "+ fieldPair.getRight().getActualValueFor(Language.DEFAULT)
-                        + " even though it should have existed, not halting approval");
-                return ReturnResult.OPERATION_SUCCESSFUL;
-            }
-            RevisionData variables = dataPair.getRight();
-            if(variables.getState() != RevisionState.DRAFT) {
-                // No need for approval
-                return ReturnResult.OPERATION_SUCCESSFUL;
-            }
-            Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variables, RevisionableInfo.FALSE));
-            if(approveResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
-                Logger.error(getClass(), "Tried to approve "+variables.toString()+" and failed with result "+approveResult.getLeft());
-                return ReturnResult.OPERATION_FAIL;
-            }
-        }
-        return ReturnResult.OPERATION_SUCCESSFUL;
-    }*/
 }

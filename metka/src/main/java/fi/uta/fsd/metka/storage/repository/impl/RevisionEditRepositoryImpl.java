@@ -85,8 +85,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
-                key.getId(), false, null);
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(key.getId().toString());
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "No revision with id " + key.getId() + ". Can't get editable revision.");
             return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), null);
@@ -208,14 +207,14 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
                     return ReturnResult.REVISIONABLE_NOT_FOUND;
                 }
                 ValueContainer vc = field.getRight().getValueFor(Language.DEFAULT);
-                return vc == null ? ReturnResult.REVISION_FOUND : checkStudyDraftStatus(vc.valueAsInteger());
+                return vc == null ? ReturnResult.REVISION_FOUND : checkStudyDraftStatus(vc.getActualValue());
             default:
                 return ReturnResult.CAN_CREATE_DRAFT;
         }
     }
 
-    private ReturnResult checkStudyDraftStatus(Long id) {
-        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(id, false, ConfigurationType.STUDY);
+    private ReturnResult checkStudyDraftStatus(String id) {
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(id);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "Didn't find revision for study id "+id+" with result "+pair.getLeft());
             return pair.getLeft();
@@ -270,7 +269,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return;
         }
 
-        RevisionData study = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY).getRight();
+        RevisionData study = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
         if(study == null || study.getState() != RevisionState.DRAFT) {
             return;
         }
@@ -305,7 +304,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return;
         }
 
-        RevisionData study = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY).getRight();
+        RevisionData study = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
         if(study == null || study.getState() != RevisionState.DRAFT) {
             return;
         }
@@ -348,7 +347,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return;
         }
 
-        RevisionData attachment = revisions.getLatestRevisionForIdAndType(Long.parseLong(field.getActualValueFor(Language.DEFAULT).split("-")[0]), false, ConfigurationType.STUDY_ATTACHMENT).getRight();
+        RevisionData attachment = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT).split("-")[0]).getRight();
         if(attachment == null || attachment.getState() != RevisionState.DRAFT) {
             return;
         }
@@ -371,7 +370,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return;
         }
 
-        RevisionData variablesData = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES).getRight();
+        RevisionData variablesData = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
         if(variablesData == null || variablesData.getState() != RevisionState.DRAFT) {
             return;
         }

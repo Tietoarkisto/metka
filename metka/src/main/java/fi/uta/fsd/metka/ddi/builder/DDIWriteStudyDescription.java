@@ -30,15 +30,10 @@ package fi.uta.fsd.metka.ddi.builder;
 
 import codebook25.*;
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Option;
-import fi.uta.fsd.metka.model.configuration.SelectionList;
+import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
@@ -286,8 +281,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
         // Add series statement, excel row #70
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.SERIES));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(
-                    valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), true, ConfigurationType.SERIES);
+            Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
             if(revisionPair.getLeft() == ReturnResult.REVISION_FOUND) {
                 RevisionData series = revisionPair.getRight();
                 valueFieldPair = series.dataField(ValueDataFieldCall.get(Fields.SERIESABBR));
@@ -313,7 +307,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
                     }
                 }
             } else {
-                Logger.error(getClass(), "Did not find referenced SERIES with id: "+valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
+                Logger.error(getClass(), "Did not find referenced SERIES with id: "+valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
             }
         }
     }
@@ -1252,10 +1246,10 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
         Pair<StatusCode, ReferenceContainerDataField> referenceContainerPair = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.STUDIES));
         if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && !referenceContainerPair.getRight().getReferences().isEmpty()) {
             for(ReferenceRow row : referenceContainerPair.getRight().getReferences()) {
-                if(row.getRemoved()) {
+                if(row.getRemoved() || !row.hasValue()) {
                     continue;
                 }
-                Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.STUDY);
+                Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(row.getReference().getValue());
                 if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
                     Logger.error(getClass(), "Could not find referenced study with ID: "+row.getReference().getValue());
                     continue;
@@ -1281,10 +1275,10 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
         referenceContainerPair = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.PUBLICATIONS));
         if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && !referenceContainerPair.getRight().getReferences().isEmpty()) {
             for(ReferenceRow row : referenceContainerPair.getRight().getReferences()) {
-                if (row.getRemoved()) {
+                if (row.getRemoved() || !row.hasValue()) {
                     continue;
                 }
-                Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.PUBLICATION);
+                Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(row.getReference().getValue());
                 if (revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
                     Logger.error(getClass(), "Could not find referenced publication with ID: " + row.getReference().getValue());
                     continue;

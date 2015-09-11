@@ -42,9 +42,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(noRollbackFor = {NumberFormatException.class})
 public interface RevisionService {
 
-    @Transactional(readOnly = true) RevisionDataResponse view(Long id, ConfigurationType type);
+    @Transactional(readOnly = true) RevisionDataResponse view(Long id);
 
-    @Transactional(readOnly = true) RevisionDataResponse view(Long id, Integer no, ConfigurationType type);
+    @Transactional(readOnly = true) RevisionDataResponse view(Long id, Integer no);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_CREATE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     RevisionDataResponse create(RevisionCreateRequest request);

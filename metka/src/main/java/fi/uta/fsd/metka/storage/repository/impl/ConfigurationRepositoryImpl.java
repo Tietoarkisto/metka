@@ -30,15 +30,11 @@ package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.FieldType;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.configuration.SelectionList;
-import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.storage.entity.ConfigurationEntity;
 import fi.uta.fsd.metka.storage.entity.GUIConfigurationEntity;
-import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -47,6 +43,8 @@ import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -69,6 +67,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     private RevisionRepository revisions;
 
     @Override
+    @CacheEvict(value = "data-configuration-cache", key = "#configuration.key")
     public ReturnResult insert(Configuration configuration) {
         List<ConfigurationEntity> list =
                 em.createQuery(
@@ -142,6 +141,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     }
 
     @Override
+    @CacheEvict(value = "gui-configuration-cache", key = "#configuration.key")
     public ReturnResult insert(GUIConfiguration configuration) {
         List<GUIConfigurationEntity> list =
                 em.createQuery(
@@ -173,7 +173,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             error(getClass(), "Serialization of guiconfiguration failed, no merge performed for "+configuration.toString());
             return ReturnResult.DATABASE_INSERT_FAILED;
         }
-    }
+    }/*
 
     @Override
     public ReturnResult insertDataConfig(String text) {
@@ -195,7 +195,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             error(getClass(), "Failed to deserialize guiconfiguration for insertion.");
             return ReturnResult.DATABASE_INSERT_FAILED;
         }
-    }
+    }*/
 
     @Override
     public Pair<ReturnResult, Configuration> findConfiguration(String type, Integer version) {
@@ -208,11 +208,10 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     }
 
     @Override
+    @Cacheable("data-configuration-cache")
     public Pair<ReturnResult, Configuration> findConfiguration(ConfigurationKey key) {
         List<ConfigurationEntity> list =
-                em.createQuery(
-                        "SELECT c FROM ConfigurationEntity c WHERE c.type = :type AND c.version = :version",
-                        ConfigurationEntity.class)
+                em.createQuery("SELECT c FROM ConfigurationEntity c WHERE c.type = :type AND c.version = :version", ConfigurationEntity.class)
                 .setParameter("type", key.getType())
                 .setParameter("version", key.getVersion())
                 .getResultList();
@@ -228,15 +227,13 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     @Override
     public Pair<ReturnResult, Configuration> findLatestConfiguration(ConfigurationType type) {
         List<ConfigurationEntity> list =
-                em.createQuery(
-                    "SELECT c FROM ConfigurationEntity c WHERE c.type = :type ORDER BY c.version DESC",
-                    ConfigurationEntity.class)
+                em.createQuery("SELECT c FROM ConfigurationEntity c WHERE c.type = :type ORDER BY c.version DESC", ConfigurationEntity.class)
                 .setParameter("type", type)
                 .setMaxResults(1)
                 .getResultList();
 
         return deserializeDataConfiguration(list);
-    }
+    }/*
 
     @Override
     public Pair<ReturnResult, Configuration> findLatestByRevisionableId(Long id) {
@@ -269,7 +266,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
                         .getResultList();
 
         return deserializeDataConfiguration(list);
-    }
+    }*/
 
     private Pair<ReturnResult, Configuration> deserializeDataConfiguration(List<ConfigurationEntity> list) {
         if(list.size() == 0) {
@@ -291,10 +288,10 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
         }
     }
 
-    @Override
+    /*@Override
     public Pair<ReturnResult, GUIConfiguration> findGUIConfiguration(String type, Integer version) {
         return findGUIConfiguration(ConfigurationType.fromValue(type), version);
-    }
+    }*/
 
     @Override
     public Pair<ReturnResult, GUIConfiguration> findGUIConfiguration(ConfigurationType type, Integer version) {
@@ -302,6 +299,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     }
 
     @Override
+    @Cacheable("gui-configuration-cache")
     public Pair<ReturnResult, GUIConfiguration> findGUIConfiguration(ConfigurationKey key) {
         List<GUIConfigurationEntity> list =
                 em.createQuery(

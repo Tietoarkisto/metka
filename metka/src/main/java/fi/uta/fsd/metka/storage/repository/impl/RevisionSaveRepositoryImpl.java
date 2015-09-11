@@ -97,7 +97,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
-        Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionDataOfType(transferData.getKey().getId(), transferData.getKey().getNo(), transferData.getConfiguration().getType());
+        Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(transferData.getKey().asCongregateKey());
         if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "Couldn't find Revision " + transferData.getKey().toString() + " while saving.");
             return new ImmutablePair<>(revisionPair.getLeft(), transferData);
@@ -296,8 +296,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
 
         // Get linked study revision data
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
-                linkedStudy.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY);
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(linkedStudy.getActualValueFor(Language.DEFAULT));
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "Could not find linked study "+linkedStudy.getActualValueFor(Language.DEFAULT)+" for "+revision.toString());
             return;
@@ -859,7 +858,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
 
         private void checkBidirectionality(Long id, List<Pair<String, Boolean>> pairs) {
-            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(id, false, null);
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(id.toString());
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 // Something is wrong
                 Logger.error(getClass(), "Tried to force bidirectionality for a revisionable that is nonexistent");

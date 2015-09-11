@@ -416,6 +416,9 @@ define(function (require) {
         },
 
         "dialog": {
+            "waitDialog": {
+                "title": "Toimintoa suoritetaan..."
+            }
         },
 
         "alert": {

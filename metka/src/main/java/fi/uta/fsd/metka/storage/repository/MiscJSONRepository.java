@@ -42,9 +42,9 @@ public interface MiscJSONRepository {
      *
      * @param misc Misc JSON data to be inserted.
      */
-    @Transactional(readOnly = false) public ReturnResult insert(JsonNode misc);
+    @Transactional(readOnly = false) public ReturnResult insert(String key, JsonNode misc);
 
-    @Transactional(readOnly = false) public ReturnResult insert(String text);
+    /*@Transactional(readOnly = false) public ReturnResult insert(String text);*/
 
     /**
      * Find MiscJSON data with given key.

@@ -29,7 +29,6 @@
 package fi.uta.fsd.metka.search.impl;
 
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.search.StudyVariableSearch;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariableEntity;
@@ -68,6 +67,6 @@ public class StudyVariableSearchImpl implements StudyVariableSearch {
         }
         StudyVariableEntity entity = entities.get(0);
 
-        return revisions.getLatestRevisionForIdAndType(entity.getId(), false, ConfigurationType.STUDY_VARIABLE);
+        return revisions.getRevisionData(entity.getId().toString());
     }
 }

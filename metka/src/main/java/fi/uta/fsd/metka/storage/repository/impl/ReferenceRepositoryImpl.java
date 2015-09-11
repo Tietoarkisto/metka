@@ -40,6 +40,7 @@ import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -80,6 +81,7 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
     }*/
 
     @Override
+    @Cacheable("json-cache")
     public Pair<ReturnResult, JsonNode> getMiscJson(String key) {
         MiscJSONEntity entity = em.find(MiscJSONEntity.class, key);
         if(entity == null || !StringUtils.hasText(entity.getData())) {

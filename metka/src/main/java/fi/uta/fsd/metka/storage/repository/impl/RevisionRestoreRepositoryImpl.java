@@ -105,7 +105,7 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
         entity.setRemovedBy(null);
         entity.setRemovalDate(null);
 
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(entity.getId(), false, ConfigurationType.fromValue(entity.getType()));
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(entity.getId().toString());
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             return RemoveResult.NOT_FOUND;
         }
@@ -158,7 +158,7 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
             return;
         }
 
-        RevisionData attachment = revisions.getLatestRevisionForIdAndType(Long.parseLong(field.getActualValueFor(Language.DEFAULT).split("-")[0]), false, ConfigurationType.STUDY_ATTACHMENT).getRight();
+        RevisionData attachment = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT).split("-")[0]).getRight();
         if(attachment == null || attachment.getState() != RevisionState.DRAFT) {
             return;
         }
@@ -175,8 +175,7 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
     }
 
     private void checkStudyVariablesStudy(RevisionData data) {
-        RevisionData study = revisions.getLatestRevisionForIdAndType(data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight().getValueFor(Language.DEFAULT).valueAsInteger(),
-                false, ConfigurationType.STUDY).getRight();
+        RevisionData study = revisions.getRevisionData(data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight().getActualValueFor(Language.DEFAULT)).getRight();
         if(study == null) {
             Logger.error(getClass(), "Tried to finalize study variables restore but could not find study for study variables " + data.toString());
             return;
@@ -203,7 +202,7 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
             return;
         }
 
-        RevisionData variablesData = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES).getRight();
+        RevisionData variablesData = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
         if(variablesData == null || variablesData.getState() != RevisionState.DRAFT) {
             return;
         }

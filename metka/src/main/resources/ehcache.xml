@@ -2,8 +2,36 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
          updateCheck="false" monitoring="autodetect" dynamicConfig="true">
-    <defaultCache maxElementsInMemory="10000" eternal="true"
-                  overflowToDisk="false" diskPersistent="false"
-                  diskExpiryThreadIntervalSeconds="1800" memoryStoreEvictionPolicy="FIFO">
-    </defaultCache>
+    <cache name="data-configuration-cache"
+           overflowToDisk="false"
+           maxElementsInMemory="100"
+           eternal="false"
+           timeToIdleSeconds="300"
+           memoryStoreEvictionPolicy="LRU"
+           transactionalMode="off"
+    />
+    <cache name="gui-configuration-cache"
+           overflowToDisk="false"
+           maxElementsInMemory="100"
+           eternal="false"
+           timeToIdleSeconds="300"
+           memoryStoreEvictionPolicy="LRU"
+           transactionalMode="off"
+    />
+    <cache name="json-cache"
+           overflowToDisk="false"
+           maxElementsInMemory="100"
+           eternal="false"
+           timeToIdleSeconds="300"
+           memoryStoreEvictionPolicy="LRU"
+           transactionalMode="off"
+    />
+    <cache name="revision-cache"
+           overflowToDisk="false"
+           maxElementsInMemory="500"
+           eternal="false"
+           timeToIdleSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"
+           transactionalMode="off"
+    />
 </ehcache>

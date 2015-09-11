@@ -78,7 +78,7 @@ public final class LuceneConfig {
     /**
      * Defines maximum number of changes to index between flushes if FORCE_FLUSH_AFTER_BATCH_OF_CHANGES is true.
      */
-    public static final int MAX_CHANGE_BATCH_SIZE = 100;
+    public static final int MAX_CHANGE_BATCH_SIZE = 500;
 
     static {
         // Set LongType no store

@@ -127,7 +127,7 @@ public class RevisionController {
      */
     @RequestMapping(value = "ajax/view/{type}/{id}", method = RequestMethod.GET)
     public @ResponseBody RevisionDataResponse ajaxViewLatestRevisionWithType(@PathVariable ConfigurationType type, @PathVariable Long id) {
-        return revisions.view(id, type);
+        return revisions.view(id);
     }
 
     /**
@@ -141,7 +141,7 @@ public class RevisionController {
      */
     @RequestMapping(value = "ajax/view/{type}/{id}/{no}", method = RequestMethod.GET)
     public @ResponseBody RevisionDataResponse ajaxViewRevisionWithType(@PathVariable ConfigurationType type, @PathVariable Long id, @PathVariable Integer no) {
-        return revisions.view(id, no, type);
+        return revisions.view(id, no);
     }
 
     @RequestMapping(value="download", method = RequestMethod.POST)

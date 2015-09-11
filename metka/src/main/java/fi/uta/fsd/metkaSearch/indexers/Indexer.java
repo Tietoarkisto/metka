@@ -96,15 +96,18 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
         return path;
     }
 
-    synchronized public IndexerStatusMessage getStatus() {
+    public IndexerStatusMessage getStatus() {
         return status;
     }
 
     synchronized public void setStatus(IndexerStatusMessage status) {
+        if(status != IndexerStatusMessage.IDLING && status != IndexerStatusMessage.FLUSHING) {
+            idleStart = System.currentTimeMillis();
+        }
         if(this.status == status) {
             return;
         }
-        if(this.status != IndexerStatusMessage.IDLING && status == IndexerStatusMessage.IDLING) {
+        if(this.status != IndexerStatusMessage.FLUSHING && this.status != IndexerStatusMessage.IDLING && status == IndexerStatusMessage.IDLING) {
             idleStart = System.currentTimeMillis();
         }
         this.status = status;
@@ -125,11 +128,11 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
         indexWriter.deleteDocuments(term);
     }
 
-    synchronized public void removeDocument(Query query) throws Exception {
+    public void removeDocument(Query query) throws Exception {
         indexWriter.deleteDocuments(query);
     }
 
-    synchronized public void addDocument(Document document, Analyzer analyzer) throws Exception {
+    public void addDocument(Document document, Analyzer analyzer) throws Exception {
         indexWriter.addDocument(document, analyzer);
     }
 

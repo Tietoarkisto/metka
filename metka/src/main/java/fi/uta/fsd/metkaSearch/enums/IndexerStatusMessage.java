@@ -32,5 +32,6 @@ public enum IndexerStatusMessage {
     STOP,
     RETURNED,
     IDLING,
+    FLUSHING,
     PROCESSING
 }

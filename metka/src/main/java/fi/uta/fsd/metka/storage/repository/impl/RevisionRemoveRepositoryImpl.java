@@ -189,7 +189,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             }
         }
 
-        pair = revisions.getLatestRevisionForIdAndType(key.getId(), false, pair.getRight().getConfiguration().getType());
+        pair = revisions.getRevisionData(key.getId().toString());
 
         // NOTICE: These could be moved to restrictions quite easily
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -258,8 +258,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         // and if we're performing the final revision removal then there has not been an approve operation between the events
         Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
         if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
-                    ConfigurationType.STUDY);
+            Pair<ReturnResult, RevisionData> revPair = revisions.getRevisionData(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
             if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
                 RevisionData study = revPair.getRight();
                 Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES));
@@ -279,8 +278,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         fieldPair = data.dataField(ValueDataFieldCall.get(Fields.FILE));
         if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
-                    ConfigurationType.STUDY_ATTACHMENT);
+            Pair<ReturnResult, RevisionData> revPair = revisions.getRevisionData(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
             if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
                 RevisionData attachment = revPair.getRight();
                 fieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
@@ -297,8 +295,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         // and if we're performing the final revision removal then there has not been an approve operation between the events
         Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
-                    ConfigurationType.STUDY_VARIABLES);
+            Pair<ReturnResult, RevisionData> revPair = revisions.getRevisionData(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
             if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
                 RevisionData variables = revPair.getRight();
                 Pair<StatusCode, ReferenceContainerDataField> conPair = variables.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES));
@@ -318,8 +315,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         // and if we're performing the final revision removal then there has not been an approve operation between the events
         Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
         if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
-                    ConfigurationType.STUDY);
+            Pair<ReturnResult, RevisionData> revPair = revisions.getRevisionData(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
             if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
                 RevisionData study = revPair.getRight();
                 Pair<StatusCode, ReferenceContainerDataField> conPair = study.dataField(ReferenceContainerDataFieldCall.get(Fields.FILES));
@@ -373,7 +369,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return;
         }
 
-        RevisionData study = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY).getRight();
+        RevisionData study = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
         if(study == null) {
             return;
         }
@@ -400,7 +396,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return;
         }
 
-        RevisionData variables = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES).getRight();
+        RevisionData variables = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
         if(variables == null || variables.getState() != RevisionState.DRAFT) {
             return;
         }
@@ -422,7 +418,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return;
         }
 
-        RevisionData variables = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES).getRight();
+        RevisionData variables = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
         if(variables == null) {
             return;
         }
@@ -454,7 +450,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return;
         }
 
-        RevisionData study = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY).getRight();
+        RevisionData study = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
         if(study == null || study.getState() != RevisionState.DRAFT) {
             return;
         }
@@ -500,8 +496,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             case STUDY_VARIABLES: {
                 Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
                 if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-                    Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
-                            ConfigurationType.STUDY);
+                    Pair<ReturnResult, RevisionData> revPair = revisions.getRevisionData(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
                     if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
                         RevisionData study = revPair.getRight();
                         Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES));
@@ -530,7 +525,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 if(value.split("-").length > 1) {
                     study = revisions.getRevisionData(Long.parseLong(value.split("-")[0]), Integer.parseInt(value.split("-")[1])).getRight();
                 } else {
-                    study = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, null).getRight();
+                    study = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
                 }
                 if(study == null) {
                     break;
@@ -613,7 +608,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         if(field == null || !field.hasValueFor(Language.DEFAULT)) {
             return RemoveResult.ALLOW_REMOVAL;
         }
-        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(field.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY);
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT));
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return RemoveResult.ALLOW_REMOVAL;
         }
