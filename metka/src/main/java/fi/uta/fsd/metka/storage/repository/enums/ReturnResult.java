@@ -91,5 +91,6 @@ public enum ReturnResult {
     NO_CHANGES,                         // Operation did not result in any changes
     HAS_HANDLER,                        // Revision already has handler in a situation where null handler is required
     EXCEPTION_DURING_API_CALL,
+    RESULT_SET_TOO_LARGE,
     FILE_ALREADY_EXISTS                // Special failure condition when file move is tried to a location that already contains a file
 }

@@ -56,13 +56,9 @@ public class ListBasedResultList<T extends SearchResult> implements ResultList<T
         return true;
     }
 
-    /**
-     * Return a clone of the results-list for immutability.
-     * @return
-     */
     @Override
     public List<T> getResults() {
-        return new ArrayList<>(results);
+        return results;
     }
 
     @Override

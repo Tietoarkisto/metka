@@ -29,13 +29,20 @@
 define(function(require) {
     'use strict';
 
+    var resultParser = require('./resultParser');
+
     return function(options, searchValues, resultFieldKey) {
         return {
             search: function() {
                 require('./server')('searchAjax', {
                     data: JSON.stringify(searchValues),
                     success: function(response) {
-                        require('./updateSearchResultContainer')(options, response, resultFieldKey);
+                        if(resultParser(response.result).getResult() !== 'OPERATION_SUCCESSFUL') {
+                            require('./resultViewer')(response.result);
+                        }
+                        if(resultParser(response.result).getResult() === 'OPERATION_SUCCESSFUL' || resultParser(response.result).getResult() === 'RESULT_SET_TOO_LARGE') {
+                            require('./updateSearchResultContainer')(options, response, resultFieldKey);
+                        }
                     }
                 });
             }

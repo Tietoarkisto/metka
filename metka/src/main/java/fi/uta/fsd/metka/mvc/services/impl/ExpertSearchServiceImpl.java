@@ -86,77 +86,23 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         // After that the queries are performed in a depth first manner
         Pair<ReturnResult, ResultList<RevisionResult>> queryResults = performQuery(request.getQuery(), query);
 
+        Logger.info(getClass(), "QUERY: " + request.getQuery() + " | Results: " + queryResults.getRight().getResults().size());
+
         if(queryResults.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             Logger.error(ExpertSearchServiceImpl.class, "Search failed with the result "+queryResults.getLeft()+". Query was: "+request.getQuery());
             response.setResult(queryResults.getLeft());
             return response;
         }
 
-        response.setResults(collectResults(queryResults.getRight()));
-
-        /*for(RevisionResult result : queryResults.getRight()) {
-            Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(result.getId());
-            if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
-                Logger.warning(getClass(), "Revisionable was not found for id "+result.getId());
-                continue;
-            }
-            Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(result.getId(), result.getNo());
-            if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-                Logger.warning(getClass(), "Couldn't find a revision for search result "+result.toString());
-                continue;
-            }
-            RevisionableInfo info = infoPair.getRight();
-            RevisionData revision = pair.getRight();
-            ExpertSearchRevisionQueryResult qr = new ExpertSearchRevisionQueryResult();
-            if(info.getRemoved()) {
-                qr.setState(UIRevisionState.REMOVED);
-            } else {
-                qr.setState(UIRevisionState.fromRevisionState(revision.getState()));
-            }
-            qr.setId(revision.getKey().getId());
-            qr.setNo(revision.getKey().getNo());
-            qr.setType(revision.getConfiguration().getType());
-            // TODO: Maybe generalize this better
-            switch(revision.getConfiguration().getType()) {
-                case STUDY: {
-                    Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get(Fields.TITLE));
-                    if(field.getLeft() == StatusCode.FIELD_FOUND) {
-                        qr.setTitle(field.getRight().getActualValueFor(result.getLanguage()));
-                    }
-                    break;
-                }
-                case SERIES: {
-                    Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get(Fields.SERIESNAME));
-                    if(field.getLeft() == StatusCode.FIELD_FOUND) {
-                        qr.setTitle(field.getRight().getActualValueFor(result.getLanguage()));
-                    }
-                    break;
-                }
-                case PUBLICATION: {
-                    Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get(Fields.PUBLICATIONTITLE));
-                    if(field.getLeft() == StatusCode.FIELD_FOUND) {
-                        qr.setTitle(field.getRight().getActualValueFor(result.getLanguage()));
-                    }
-                    break;
-                }
-                case STUDY_VARIABLE: {
-                    Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get(Fields.VARLABEL));
-                    if(field.getLeft() == StatusCode.FIELD_FOUND) {
-                        qr.setTitle(field.getRight().getActualValueFor(result.getLanguage()));
-                    }
-                    break;
-                }
-                case STUDY_ATTACHMENT: {
-                    Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get(Fields.FILE));
-                    if(field.getLeft() == StatusCode.FIELD_FOUND) {
-                        qr.setTitle(field.getRight().getActualValueFor(result.getLanguage()));
-                    }
-                    break;
-                }
-            }
-            response.getResults().add(qr);
-        }*/
-        response.setResult(ReturnResult.OPERATION_SUCCESSFUL);
+        ResultList<RevisionResult> results = collectResults(queryResults.getRight());
+        if(results.getResults().size() > 50000) {
+            results.getResults().removeAll(results.getResults().subList(50000, results.getResults().size()));
+            response.setResults(results);;
+            response.setResult(ReturnResult.RESULT_SET_TOO_LARGE);
+        } else {
+            response.setResults(results);
+            response.setResult(ReturnResult.OPERATION_SUCCESSFUL);
+        }
         return response;
     }
 

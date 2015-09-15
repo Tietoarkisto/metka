@@ -352,7 +352,6 @@ class JsonPathParser {
             return null;
         }
         String[] path = reference.getValuePathParts();
-        //String[] path = (reference.getValuePath()).split("\\.");
         String valueKey = path[path.length-1];
 
         path = reference.getTitlePathParts();

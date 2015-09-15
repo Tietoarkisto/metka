@@ -14,8 +14,7 @@
             function call(url, request, success) {
                 $.ajax({
                     type: "POST",
-                    url: "https://metka-qa.demo.proactum.fi"+url,
-                    //url: "http://localhost:8080"+url,
+                    url: "http://localhost:8080"+url,
                     data: JSON.stringify(request),
                     cache: false,
                     headers: {

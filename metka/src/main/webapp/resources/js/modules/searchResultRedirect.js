@@ -26,24 +26,44 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    return function (url, requestData, getResults, mapResult, fields, columnFields, options) {
-        var args = arguments;
-        return {
-            "&title": {
-                "default": MetkaJS.L10N.get('general.buttons.search')
-            },
-            create: function () {
-                this
-                    .click(function () {
-                        require('./searchResultContainer').apply(this, args);
-                    })
-            },
-            permissions: [
-                "canPerformSearch"
-            ]
-        };
-    };
+    function viewModal(requestOptions) {
+        require('./revisionModal')(options, requestOptions, 'BINDER_PAGE', pagesSearch.search, 'pages');
+    }
+
+    function viewPage(requestOptions) {
+        require('./assignUrl')('view', requestOptions);
+    }
+
+    var resultParser = require('./resultParser');
+
+    return function(useModal) {
+        return function(transferRow) {
+            require('./server')('/references/referenceStatus/{value}', transferRow, {
+                method: 'GET',
+                success: function(response) {
+                    if(resultParser(response.result).getResult() !== 'REVISION_FOUND') {
+                        require('./resultViewer')(response.result);
+                        return false;
+                    }
+
+                    var request = {
+                        id: transferRow.value.split("-")[0],
+                        no: transferRow.value.split("-")[1]
+                    };
+
+                    if(useModal) {
+                        if((typeof useModal === 'function' && useModal(response.type)) || (typeof useModal !== 'function')) {
+                            viewModal(request);
+                            return;
+                        }
+                    }
+                    request.PAGE = response.type;
+                    viewPage(request);
+                }
+            });
+        }
+    }
 });

@@ -30,6 +30,16 @@ define(function (require) {
     'use strict';
 
     var $query;
+    var redirect = require('./../searchResultRedirect')(function(type) {
+        switch(type) {
+            default:
+                return false;
+            case 'STUDY_VARIABLE':
+            case 'STUDY_ERROR':
+            case 'BINDER_PAGE':
+                return true;
+        }
+    });
     return function (options, onLoad) {
 
         $.extend(options, {
@@ -126,155 +136,140 @@ define(function (require) {
                             type: "ROW",
                             cells: [{
                                 type: "CELL",
+                                colspan: 1,
+                                contentType: "BUTTON",
+                                button: {
+                                    title: "Hae",
+                                    create: function(options) {
+                                        this.click(function() {
+                                            require('./../searchQuerySearch')(options, require('./../data')(options)('search').getByLang(options.defaultLang), "expertsearchresults").search();
+                                        });
+                                    }
+                                }
+                            }, {
+                                type: "CELL",
+                                colspan: 1,
+                                contentType: "BUTTON",
+                                button: {
+                                    "&title": {
+                                        "default": "Tallenna haku"
+                                    },
+                                    create: function () {
+                                        this
+                                            .click(function () {
+                                                var modalOptions = ($.extend(true, require('./../optionsBase')(), {
+                                                    //title: 'Tallenna haku',
+                                                    type: "ADD",
+                                                    dialogTitle: {
+                                                        "ADD": "Tallenna haku"
+                                                    },
+                                                    content: [{
+                                                        type: 'COLUMN',
+                                                        columns: 1,
+                                                        rows: [
+                                                            {
+                                                                "type": "ROW",
+                                                                "cells": [
+                                                                    {
+                                                                        "type": "CELL",
+                                                                        "title": "Nimi",
+                                                                        "colspan": 1,
+                                                                        "field": {
+                                                                            "displayType": "STRING",
+                                                                            "key": "title"
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    }],
+                                                    buttons: [{
+                                                        "&title": {
+                                                            "default": 'Tallenna'
+                                                        },
+                                                        create: function () {
+                                                            this
+                                                                .click(function () {
+                                                                    require('./../server')('/expert/save', {
+                                                                        data: JSON.stringify({
+                                                                            query: require('./../data')(options)('search').getByLang(options.defaultLang),
+                                                                            title: require('./../data')(modalOptions)('title').getByLang(options.defaultLang)
+                                                                        }),
+                                                                        success: function(query) {
+                                                                            options.$events.trigger('container-{key}-{lang}-push'.supplant({
+                                                                                key: 'savedsearches',
+                                                                                lang: options.defaultLang
+                                                                            }), [require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang)])
+                                                                        }
+                                                                    });
+                                                                });
+                                                        }
+                                                    }, {
+                                                        type: 'CANCEL'
+                                                    }]
+                                                }));
+
+                                                require('./../modal')(modalOptions);
+                                            });
+                                    }
+                                }
+                            }]
+                        }, {
+                            type: "ROW",
+                            cells: [{
+                                type: "CELL",
                                 colspan: 2,
                                 title: "Hakutulokset",
+                                readOnly: true,
                                 field: {
                                     key: "expertsearchresults",
                                     showReferenceValue: true,
-                                    showReferenceState: true
+                                    showReferenceState: true,
+                                    showReferenceType: true,
+                                    showRowAmount: true,
+                                    allowDownload: true,
+                                    rowsPerPage: 100,
+                                    columnFields: [
+                                        "title"
+                                    ],
+                                    onClick: function(transferRow) {
+                                        redirect(transferRow);
+                                    }
                                 }
                             }]
                         }
                     ]
                 }
             ],
-            buttons: [{
-                title: "Hae",
-                create: function(options) {
-                    this.click(function() {
-                        require('./../searchQuerySearch')(options, require('./../data')(options)('search').getByLang(options.defaultLang), "expertsearchresults").search();
-                    });
-                }
-            }/*,
-                require('./../searchButton')('/expert/query', function () {
-                    return {
-                        query: require('./../data')(options)('search').getByLang(options.defaultLang)
-                    };
-                }, function (data) {
-                    return data.results;
-                }, function (result) {
-                    return {
-                        title: result.title,
-                        type: MetkaJS.L10N.get('type.{type}.title'.supplant(result)),
-                        TYPE: result.type,
-                        id: result.id,
-                        no: result.no,
-                        state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
-                    };
-                }, {
-                    title: {
-                        type: 'STRING'
-                    },
-                    type: {
-                        type: 'STRING'
-                    },
-                    id: {
-                        type: 'INTEGER'
-                    },
-                    no: {
-                        type: 'INTEGER'
-                    },
-                    state: {
-                        type: 'STRING'
-                    }
-                }, [
-                    "type",
-                    "title",
-                    "id",
-                    "no",
-                    "state"
-                ],
-                options,
-                function(transferRow) {
-                    switch(transferRow.fields.TYPE.values.DEFAULT.current) {
-                        default:
-                            return false;
-                        case 'STUDY_VARIABLE':
-                        case 'STUDY_ERROR':
-                        case 'BINDER_PAGE':
-                            return true;
-                    }
-                }),
-                {
-                    "&title": {
-                        "default": "Tyhjennä"
-                    },
-                    create: function () {
-                        this.click(function () {
-                            $query
-                                .val('')
-                                .change();
-                        });
-                    }
-                }*/, {
-                    "&title": {
-                        "default": "Tallenna haku"
-                    },
-                    create: function () {
-                        this
-                            .click(function () {
-                                var modalOptions = ($.extend(true, require('./../optionsBase')(), {
-                                    //title: 'Tallenna haku',
-                                    type: "ADD",
-                                    dialogTitle: {
-                                        "ADD": "Tallenna haku"
-                                    },
-                                    content: [{
-                                        type: 'COLUMN',
-                                        columns: 1,
-                                        rows: [
-                                            {
-                                                "type": "ROW",
-                                                "cells": [
-                                                    {
-                                                        "type": "CELL",
-                                                        "title": "Nimi",
-                                                        "colspan": 1,
-                                                        "field": {
-                                                            "displayType": "STRING",
-                                                            "key": "title"
-                                                        }
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }],
-                                    buttons: [{
-                                        "&title": {
-                                            "default": 'Tallenna'
-                                        },
-                                        create: function () {
-                                            this
-                                                .click(function () {
-                                                    require('./../server')('/expert/save', {
-                                                        data: JSON.stringify({
-                                                            query: require('./../data')(options)('search').getByLang(options.defaultLang),
-                                                            title: require('./../data')(modalOptions)('title').getByLang(options.defaultLang)
-                                                        }),
-                                                        success: function(query) {
-                                                            options.$events.trigger('container-{key}-{lang}-push'.supplant({
-                                                                key: 'savedsearches',
-                                                                lang: options.defaultLang
-                                                            }), [require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang)])
-                                                        }
-                                                    });
-                                                });
-                                        }
-                                    }, {
-                                        type: 'CANCEL'
-                                    }]
-                                }));
-
-                                require('./../modal')(modalOptions);
-                            });
-                    }
-                }
-            ],
+            buttons: [],
             data: {},
             dataConf: {
                 references: {
                     expertsearchresult_ref: {
                         type: "REVISION"
+                    },
+                    title_ref: function(transferRow) {
+                        var base = {
+                            type: "DEPENDENCY",
+                            target: "expertsearchresults"
+                        };
+                        switch(transferRow.info.type) {
+                            case "STUDY": {
+                                base.valuePath = "title";
+                                return base;
+                            }
+                            case "STUDY_ATTACHMENT": {
+                                base.valuePath = "file";
+                                return base;
+                            }
+                            case "STUDY_VARIABLE": {
+                                base.valuePath = "varid";
+                                return base;
+                            }
+                            default: {
+                                return null;
+                            }
+                        }
                     }
                 },
                 fields: {
@@ -293,7 +288,15 @@ define(function (require) {
                     },
                     expertsearchresults: {
                         type: "REFERENCECONTAINER",
-                        reference: "expertsearchresult_ref"
+                        reference: "expertsearchresult_ref",
+                        subfields: [
+                            "title"
+                        ]
+                    },
+                    title: {
+                        type: "REFERENCE",
+                        subfield: true,
+                        reference: "title_ref"
                     }
                 }
             }

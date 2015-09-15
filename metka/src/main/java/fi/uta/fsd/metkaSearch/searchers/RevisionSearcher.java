@@ -29,13 +29,10 @@
 package fi.uta.fsd.metkaSearch.searchers;
 
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
-import fi.uta.fsd.metkaSearch.results.ResultHandler;
-import fi.uta.fsd.metkaSearch.results.ResultList;
-import fi.uta.fsd.metkaSearch.results.SearchResult;
+import fi.uta.fsd.metkaSearch.results.*;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TopDocs;
@@ -76,7 +73,8 @@ public class RevisionSearcher<T extends SearchResult> extends Searcher<T> {
         IndexSearcher searcher = new IndexSearcher(reader);
         Logger.debug(getClass(), "RevisionSearcher is performing the following query: " + getCommand().getQuery().toString());
         // TODO: Tarvitaan parempi ratkaisu tulosten määrien rajaamiseen
-        TopDocs results = searcher.search(getCommand().getQuery(), Integer.MAX_VALUE);
+        TopDocs results = searcher.search(getCommand().getQuery(), 70000);
+        //TopDocs results = searcher.search(getCommand().getQuery(), Integer.MAX_VALUE);
         return handler.handle(searcher, results);
     }
 }

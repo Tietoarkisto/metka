@@ -141,7 +141,7 @@ define(function (require) {
                 return amnt;
             };
 
-            byFieldKey.appendByLang = function (lang, transferRow) {
+            byFieldKey.appendByLang = function (lang, transferRow, stopEvent) {
                 var transferField = getTransferField(true);
 
                 transferField.rows = transferField.rows || {};
@@ -150,10 +150,12 @@ define(function (require) {
 
                 transferField.rows[lang].push(transferRow);
 
-                options.$events.trigger('data-changed-{key}-{lang}'.supplant({
-                    key: key,
-                    lang: lang
-                }), [transferRow]);
+                if(!stopEvent) {
+                    options.$events.trigger('data-changed-{key}-{lang}'.supplant({
+                        key: key,
+                        lang: lang
+                    }), [transferRow]);
+                }
             };
 
             return byFieldKey;

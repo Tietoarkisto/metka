@@ -51,16 +51,18 @@ public class ReferenceSerializer extends ObjectSerializer<Reference> {
             jgen.writeStringField("titlePath", value.getTitlePath());
         }
         switch(value.getType()) {
-            case REVISION: {
-                ConfigurationType confType = ConfigurationType.fromValue(value.getTarget());
-                jgen.writeStringField("target", confType.toValue());
-                break;
-            }
             case REVISIONABLE: {
-                ConfigurationType confType = ConfigurationType.fromValue(value.getTarget());
-                jgen.writeStringField("target", confType.toValue());
                 jgen.writeBooleanField("approvedOnly", value.getApprovedOnly());
                 jgen.writeBooleanField("ignoreRemoved", value.getIgnoreRemoved());
+                /* INTENTIONAL FALLTHROUGH */
+            }
+            case REVISION: {
+                if(ConfigurationType.isValue(value.getTarget())) {
+                    ConfigurationType confType = ConfigurationType.fromValue(value.getTarget());
+                    jgen.writeStringField("target", confType.toValue());
+                } else {
+                    jgen.writeNullField("target");
+                }
                 break;
             }
             case JSON:

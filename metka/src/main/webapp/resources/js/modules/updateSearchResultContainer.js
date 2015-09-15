@@ -51,7 +51,7 @@ define(function(require) {
                 value: (reference.type === 'REVISIONABLE' ? row.id : row.id+"-"+row.no),
                 removed: false,
                 unapproved: true
-            })
+            }, true)
         });
         options.$events.trigger('redraw-{key}'.supplant({
             key: key

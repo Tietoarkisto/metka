@@ -33,7 +33,7 @@ define(function (require) {
 
     return {
         optionsByPath: function (key, options, lang, callback) {
-            return function (dataFields, reference, rowValue) {
+            return function (dataFields, reference, rowValue, transferRow) {
 
                 // TODO: This should always be called with reference, also reference fetching should be generalized somewhere
                 var target = getPropertyNS(options, 'dataConf.fields', key);
@@ -50,6 +50,14 @@ define(function (require) {
                         }
                     }
                 }
+                if(typeof reference === 'function') {
+                    reference = reference(transferRow);
+                }
+
+                if(!reference) {
+                    callback([]);
+                }
+
                 var root = function r(currentKey, dataFields, lang, reference, next) {
                     var path = {
                         reference: reference,

@@ -172,7 +172,7 @@ public class RevisionSearchImpl implements RevisionSearch {
             if(change.getType() == Change.ChangeType.CONTAINER) {
                 gatherContainerChanges(root, (ContainerChange)change, container, changes, originalFields);
             } else {
-                gatherValueChanges(root, (ValueChange)change, container, changes, originalFields);
+                gatherValueChanges(root, (ValueChange) change, container, changes, originalFields);
             }
         }
     }
@@ -293,7 +293,12 @@ public class RevisionSearchImpl implements RevisionSearch {
         try {
             ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build(request, configurations);
             ResultList<RevisionResult> results = searcher.executeSearch(command);
-            return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, collectResults(results));
+            results = collectResults(results);
+            if(results.getResults().size() > 50000) {
+                results.getResults().removeAll(results.getResults().subList(50000, results.getResults().size()));
+                return new ImmutablePair<>(ReturnResult.RESULT_SET_TOO_LARGE, results);
+            }
+            return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, results);
         } catch(QueryNodeException qne) {
             // Couldn't form query command
             Logger.error(getClass(), "Exception while performing basic series search:", qne);
@@ -353,7 +358,7 @@ public class RevisionSearchImpl implements RevisionSearch {
                 continue;
             }
 
-            Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(result.getId(), result.getNo().intValue());
+            Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(result.getId(), result.getNo());
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 Logger.error(getClass(), "Failed to find revision for id: "+result.getId()+" and no: "+result.getNo());
                 continue;

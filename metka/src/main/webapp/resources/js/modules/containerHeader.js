@@ -123,7 +123,7 @@ define(function (require) {
                         addInfoObject(column, value);
 
                         asyncRequestsReceived++;
-                    })(null, null, transferRow.value);
+                    })(null, null, transferRow.value, transferRow);
 
                     return;
                 }
@@ -178,7 +178,7 @@ define(function (require) {
                                 asyncRequestsReceived++;
 
                                 addColumnObject(setText(option));
-                            })(transferRow.fields, reference);
+                            })(transferRow.fields, reference, null, transferRow);
 
                             return;
                         }
@@ -195,7 +195,7 @@ define(function (require) {
 
                                     addColumnObject(setOptionText(listOptions));
 
-                                })(transferRow.fields, getPropertyNS(options, 'dataConf.references', list.reference));
+                                })(transferRow.fields, getPropertyNS(options, 'dataConf.references', list.reference), null, transferRow);
 
                                 return;
 

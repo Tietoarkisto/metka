@@ -166,6 +166,10 @@
 			"text": "Luonnoksella on jo käsittelijä. Jos haluat varmasti editoida luonnosta käytä 'ota haltuun'-toimintoa"
 		}]
 	}, {
+		"key": "RESULT_SET_TOO_LARGE",
+		"title": "NOTICE",
+		"text": "Hakutuloksia oli liikaa, näytetään ensimmäiset 50000 hakutulosta. Tarkenna hakua."
+	}, {
 		"key": "",
 		"title": "",
 		"text": ""
