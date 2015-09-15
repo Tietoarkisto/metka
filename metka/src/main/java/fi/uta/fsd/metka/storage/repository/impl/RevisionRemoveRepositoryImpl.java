@@ -100,7 +100,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(key.getId(), key.getNo());
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(key);
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             return OperationResponse.build(RemoveResult.ALREADY_REMOVED);
         }
@@ -121,7 +121,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key.getId(), key.getNo());
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return OperationResponse.build(RemoveResult.NOT_FOUND);
         }
@@ -176,7 +176,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key.getId(), key.getNo());
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return OperationResponse.build(RemoveResult.NOT_FOUND);
         }

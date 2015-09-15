@@ -40,10 +40,10 @@ import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
@@ -81,7 +81,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
     private Messenger messenger;
 
     @Override
-    public Pair<OperationResponse, RevisionData> edit(fi.uta.fsd.metka.model.general.RevisionKey key, DateTimeUserPair info) {
+    public Pair<OperationResponse, RevisionData> edit(RevisionKey key, DateTimeUserPair info) {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
@@ -132,13 +132,13 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
                 Logger.warning(getClass(), "User can't create draft revision because: "+result);
                 return new ImmutablePair<>(OperationResponse.build(result), data);
             }
-            Pair<ReturnResult, RevisionKey> keyPair = revisions.createNewRevision(data);
+            Pair<ReturnResult, fi.uta.fsd.metka.model.general.RevisionKey> keyPair = revisions.createNewRevision(data);
             if(keyPair.getLeft() != ReturnResult.REVISION_CREATED) {
                 return new ImmutablePair<>(OperationResponse.build(keyPair.getLeft()), data);
             }
 
             // TODO: If update fails then the possibly created revision should be removed
-            RevisionData newData = new RevisionData(keyPair.getRight().toModelKey(), configPair.getRight().getKey());
+            RevisionData newData = new RevisionData(keyPair.getRight(), configPair.getRight().getKey());
             newData.setState(RevisionState.DRAFT);
             copyDataToNewRevision(data, newData);
 
@@ -155,9 +155,9 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
 
         if(!StringUtils.hasText(data.getHandler())) {
             // Try to claim revision since it hasn't been claimed yet
-            handler.changeHandler(RevisionKey.fromModelKey(data.getKey()), false);
+            handler.changeHandler(data.getKey(), false);
             // Get the revision again so that we have a claimed version
-            dataPair = revisions.getRevisionData(RevisionKey.fromModelKey(data.getKey()));
+            dataPair = revisions.getRevisionData(data.getKey());
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 return new ImmutablePair<>(OperationResponse.build(dataPair.getLeft()), dataPair.getRight());
             }

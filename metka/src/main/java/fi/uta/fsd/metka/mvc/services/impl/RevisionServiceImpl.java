@@ -226,19 +226,19 @@ public class RevisionServiceImpl implements RevisionService {
 
     @Override
     public RevisionDataResponse claimRevision(RevisionKey key) {
-        Pair<ReturnResult, TransferData> dataPair = handler.changeHandler(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key), false);
+        Pair<ReturnResult, TransferData> dataPair = handler.changeHandler(key, false);
         return getResponse(OperationResponse.build(dataPair.getLeft()), dataPair.getRight());
     }
 
     @Override
     public RevisionDataResponse beginEditingRevision(RevisionKey key) {
-        Pair<ReturnResult, TransferData> dataPair = handler.beginEditing(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+        Pair<ReturnResult, TransferData> dataPair = handler.beginEditing(key);
         return getResponse(OperationResponse.build(dataPair.getLeft()), dataPair.getRight());
     }
 
     @Override
     public RevisionDataResponse releaseRevision(RevisionKey key) {
-        Pair<ReturnResult, TransferData> dataPair = handler.changeHandler(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key), true);
+        Pair<ReturnResult, TransferData> dataPair = handler.changeHandler(key, true);
         return getResponse(OperationResponse.build(dataPair.getLeft()), dataPair.getRight());
     }
 
@@ -283,7 +283,7 @@ public class RevisionServiceImpl implements RevisionService {
     @Override
     public RevisionExportResponse exportRevision(RevisionKey key) {
 
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key);
         RevisionExportResponse response = new RevisionExportResponse();
         response.setResult(pair.getLeft());
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {

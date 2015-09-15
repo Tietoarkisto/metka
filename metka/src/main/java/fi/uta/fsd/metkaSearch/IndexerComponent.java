@@ -55,10 +55,6 @@ import java.util.concurrent.*;
 @Service
 public class IndexerComponent {
 
-
-    /*@PersistenceContext(name = "entityManager")
-    private EntityManager em;
-*/
     @Autowired
     private RevisionRepository revisions;
 
@@ -76,10 +72,6 @@ public class IndexerComponent {
 
     // Pool for indexer threads.
     private ExecutorService threadPool = Executors.newCachedThreadPool();
-
-    /*private final Map<RevisionKey, Boolean> studyCommandBatch = new ConcurrentHashMap<>();*/
-
-    /*private volatile boolean runningBatch = false;*/
 
     /**
      * Map of indexers.

@@ -30,7 +30,7 @@ package fi.uta.fsd.metka.storage.repository;
 
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.revision.AdjacentRevisionRequest;
@@ -108,11 +108,8 @@ public interface RevisionRepository {
     Pair<ReturnResult,RevisionData> getAdjacentRevision(AdjacentRevisionRequest request);
 
     @Transactional(readOnly = false) void indexRevision(RevisionKey key);
-    @Transactional(readOnly = false) void indexRevision(fi.uta.fsd.metka.model.general.RevisionKey key);
     @Transactional(readOnly = false) void indexRevisions(RevisionKey key);
-    @Transactional(readOnly = false) void indexRevisions(fi.uta.fsd.metka.model.general.RevisionKey key);
     @Transactional(readOnly = false) void removeRevision(RevisionKey key);
-    @Transactional(readOnly = false) void removeRevision(fi.uta.fsd.metka.model.general.RevisionKey key);
 
     void sendStudyErrorMessageIfNeeded(RevisionData revision, Configuration configuration);
 

@@ -44,6 +44,9 @@ import fi.uta.fsd.metkaSearch.enums.IndexerStatusMessage;
 import fi.uta.fsd.metkaSearch.handlers.HandlerFactory;
 import fi.uta.fsd.metkaSearch.handlers.RevisionHandler;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.AlreadyClosedException;
 
@@ -80,6 +83,42 @@ public class RevisionIndexer extends Indexer {
 
     // Counter for idle loops. If there's been changes to index they will be flushed after certain number of times.
     volatile private int changeBatch = 0;
+
+    @Override
+    public void removeDocument(Term term) throws Exception {
+        while(getStatus() == IndexerStatusMessage.FLUSHING) {
+            Thread.sleep(50);
+        }
+        super.removeDocument(term);
+        changeBatch++;
+    }
+
+    @Override
+    public void removeDocument(Query query) throws Exception {
+        while(getStatus() == IndexerStatusMessage.FLUSHING) {
+            Thread.sleep(50);
+        }
+        super.removeDocument(query);
+        changeBatch++;
+    }
+
+    @Override
+    public void addDocument(Document document, Analyzer analyzer) throws Exception {
+        while(getStatus() == IndexerStatusMessage.FLUSHING) {
+            Thread.sleep(50);
+        }
+        super.addDocument(document, analyzer);
+        changeBatch++;
+    }
+
+    public void updateDocument(Query removeQuery, Document document, Analyzer analyzer) throws Exception {
+        while(getStatus() == IndexerStatusMessage.FLUSHING) {
+            Thread.sleep(50);
+        }
+        super.removeDocument(removeQuery);
+        super.addDocument(document, analyzer);
+        changeBatch++;
+    }
 
     private RevisionRepository revisions;
     private ConfigurationRepository configurations;
@@ -214,10 +253,10 @@ public class RevisionIndexer extends Indexer {
         return commands.getNextCommand(getPath().getType(), getPath().toString());
     }
     private void clearIndexing(RevisionKey key) {
-        revisions.clearIndexing(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+        revisions.clearIndexing(key);
     }
     private void markAsIndexed(RevisionKey key) {
-        revisions.markAsIndexed(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+        revisions.markAsIndexed(key);
     }
 
     private class RevisionKeyQueueFiller implements Callable<Boolean> {
@@ -332,7 +371,6 @@ public class RevisionIndexer extends Indexer {
                         // Assume that command was handled appropriately
                         if(commandHandled) {
                             commands.markCommandAsHandled(command.getQueueId());
-                            changeBatch++;
                         } else {
                             commands.clearCommandRequest(command.getQueueId());
                             continue;
@@ -463,7 +501,6 @@ public class RevisionIndexer extends Indexer {
                         try {
                             if(indexRevision(key)) {
                                 markAsIndexed(key);
-                                changeBatch++;
                             } else {
                                 clearIndexing(key);
                                 continue;

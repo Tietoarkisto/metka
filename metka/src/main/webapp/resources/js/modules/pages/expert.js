@@ -266,6 +266,10 @@ define(function (require) {
                                 base.valuePath = "varid";
                                 return base;
                             }
+                            case "SERIES": {
+                                base.valuePath = "seriesname";
+                                return base;
+                            }
                             default: {
                                 return null;
                             }

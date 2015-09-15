@@ -36,7 +36,6 @@ import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveKeywordAnalyzer;
 import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.document.Field.Store;
 
@@ -145,11 +144,18 @@ public class IndexerDocument {
         if(analyzers.containsKey(key)) {
             return;
         }
-        if(language == Language.DEFAULT) {
+        if(language == null) {
+            analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
+        } else if(language == Language.DEFAULT) {
             analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
-        } else {
+        } else if(language == Language.EN) {
             // Add some other tokenizing analyzer if StandardAnalyzer is not enough
-            analyzers.put(key, new StandardAnalyzer(LuceneConfig.USED_VERSION));
+            analyzers.put(key, LuceneConfig.ENGLISH_ANALYZER);
+        } else if(language == Language.SV) {
+            // Add some other tokenizing analyzer if StandardAnalyzer is not enough
+            analyzers.put(key, LuceneConfig.SWEDISH_ANALYZER);
+        } else {
+            analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
         }
     }
 }

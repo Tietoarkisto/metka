@@ -32,11 +32,11 @@ import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
-import fi.uta.fsd.metkaSearch.indexers.Indexer;
+import fi.uta.fsd.metkaSearch.indexers.RevisionIndexer;
 
 public final class HandlerFactory {
 
-    public static RevisionHandler buildRevisionHandler(Indexer indexer, RevisionRepository revisions,
+    public static RevisionHandler buildRevisionHandler(RevisionIndexer indexer, RevisionRepository revisions,
                                                        ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
         // Make some sanity checks
         if(indexer == null || indexer.getPath().getType() != IndexerConfigurationType.REVISION) {

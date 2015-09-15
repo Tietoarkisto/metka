@@ -28,10 +28,9 @@
 
 package fi.uta.fsd.metkaSearch;
 
-import org.apache.lucene.document.DoubleField;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.document.LongField;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.sv.SwedishAnalyzer;
+import org.apache.lucene.document.*;
 import org.apache.lucene.util.Version;
 
 public final class LuceneConfig {
@@ -80,6 +79,9 @@ public final class LuceneConfig {
      */
     public static final int MAX_CHANGE_BATCH_SIZE = 500;
 
+    public static final EnglishAnalyzer ENGLISH_ANALYZER;
+    public static final SwedishAnalyzer SWEDISH_ANALYZER;
+
     static {
         // Set LongType no store
         LongField tempLong;
@@ -109,6 +111,9 @@ public final class LuceneConfig {
         tempType.setNumericPrecisionStep(PRECISION_STEP);
         tempType.freeze();
         DOUBLE_TYPE_STORE = tempType;
+
+        ENGLISH_ANALYZER  = new EnglishAnalyzer(USED_VERSION);
+        SWEDISH_ANALYZER = new SwedishAnalyzer(USED_VERSION);
 
     }
 }

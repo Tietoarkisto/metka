@@ -68,17 +68,7 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
                         .setParameter("removed", false)
                         .getResultList();
         return entities;
-    }/*
-
-    @Override
-    public RevisionEntity getRevisionForReference(RevisionableEntity revisionable, Reference reference) {
-        if(reference.getApprovedOnly() && revisionable.getCurApprovedNo() == null) {
-            return null;
-        }
-        RevisionKey key = (reference.getApprovedOnly()) ? revisionable.currentApprovedRevisionKey() : revisionable.latestRevisionKey();
-        RevisionEntity revision = em.find(RevisionEntity.class, key);
-        return revision;
-    }*/
+    }
 
     @Override
     @Cacheable("json-cache")
@@ -102,20 +92,5 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
     public MiscJSONEntity getMiscJsonForReference(Reference reference) {
         MiscJSONEntity entity = em.find(MiscJSONEntity.class, reference.getTarget());
         return entity;
-    }/*
-
-
-
-    @Override
-    public RevisionEntity getRevisionForReferencedRevisionable(Reference reference, String value) {
-        Long key = stringToLong(value);
-        if(key == null) {
-            return null;
-        }
-        RevisionableEntity revisionable = em.find(RevisionableEntity.class, key);
-        if(revisionable == null) {
-            return null;
-        }
-        return getRevisionForReference(revisionable, reference);
-    }*/
+    }
 }

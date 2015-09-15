@@ -32,13 +32,13 @@ import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
-import fi.uta.fsd.metkaSearch.analyzer.*;
+import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveKeywordAnalyzer;
+import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.results.*;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.search.*;
@@ -89,11 +89,18 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
     }*/
 
     protected void addTextAnalyzer(String key) {
-        if(language == Language.DEFAULT) {
+        if(language == null) {
+            analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
+        } else if(language == Language.DEFAULT) {
             analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
-        } else {
+        } else if(language == Language.EN) {
             // Add some other tokenizing analyzer if StandardAnalyzer is not enough
-            analyzers.put(key, new StandardAnalyzer(LuceneConfig.USED_VERSION));
+            analyzers.put(key, LuceneConfig.ENGLISH_ANALYZER);
+        } else if(language == Language.SV) {
+            // Add some other tokenizing analyzer if StandardAnalyzer is not enough
+            analyzers.put(key, LuceneConfig.SWEDISH_ANALYZER);
+        } else {
+            analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
         }
     }
 

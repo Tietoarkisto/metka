@@ -72,7 +72,6 @@ public class RevisionSearcher<T extends SearchResult> extends Searcher<T> {
         IndexReader reader = getIndexer().getIndexReader();
         IndexSearcher searcher = new IndexSearcher(reader);
         Logger.debug(getClass(), "RevisionSearcher is performing the following query: " + getCommand().getQuery().toString());
-        // TODO: Tarvitaan parempi ratkaisu tulosten määrien rajaamiseen
         TopDocs results = searcher.search(getCommand().getQuery(), 70000);
         //TopDocs results = searcher.search(getCommand().getQuery(), Integer.MAX_VALUE);
         return handler.handle(searcher, results);

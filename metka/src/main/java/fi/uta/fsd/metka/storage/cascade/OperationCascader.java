@@ -31,7 +31,6 @@ package fi.uta.fsd.metka.storage.cascade;
 import fi.uta.fsd.metka.enums.OperationType;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
@@ -78,13 +77,13 @@ class OperationCascader {
                RemoveResult result = repositories.getRestore().restore(transferData.getKey().getId(), instruction.getInfo().getTime());
                 return result == RemoveResult.SUCCESS_RESTORE;
             } case BEGIN_EDIT: {
-                ReturnResult rr = repositories.getHandler().beginEditing(RevisionKey.fromModelKey(transferData.getKey())).getLeft();
+                ReturnResult rr = repositories.getHandler().beginEditing(transferData.getKey()).getLeft();
                 return rr == ReturnResult.REVISION_UPDATE_SUCCESSFUL;
             } case CLAIM: {
-                ReturnResult rr = repositories.getHandler().changeHandler(RevisionKey.fromModelKey(transferData.getKey()), false).getLeft();
+                ReturnResult rr = repositories.getHandler().changeHandler(transferData.getKey(), false).getLeft();
                 return rr == ReturnResult.REVISION_UPDATE_SUCCESSFUL;
             } case RELEASE: {
-                ReturnResult rr = repositories.getHandler().changeHandler(RevisionKey.fromModelKey(transferData.getKey()), true).getLeft();
+                ReturnResult rr = repositories.getHandler().changeHandler(transferData.getKey(), true).getLeft();
                 return rr == ReturnResult.REVISION_UPDATE_SUCCESSFUL;
             }
         }

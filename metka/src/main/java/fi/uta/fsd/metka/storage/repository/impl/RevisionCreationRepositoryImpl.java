@@ -40,11 +40,11 @@ import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.factories.*;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.*;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
@@ -104,7 +104,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_CREATED, null);
         }
         em.persist(revisionable);
-        RevisionEntity revision = new RevisionEntity(new RevisionKey(revisionable.getId(), 1));
+        RevisionEntity revision = new RevisionEntity(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(new RevisionKey(revisionable.getId(), 1)));
         Pair<ReturnResult, RevisionData> dataPair = createRevisionData(revisionable, revision, configPair.getRight(), request);
         if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
             Logger.error(getClass(), "Couldn't create revision because of: "+dataPair.getLeft());
@@ -131,7 +131,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
 
         em.merge(revisionable);
 
-        revisions.indexRevision(revision.getKey());
+        revisions.indexRevision(revision.getKey().toModelKey());
 
         messenger.sendAmqpMessage(messenger.FD_CREATE, new RevisionPayload(data));
 

@@ -633,7 +633,7 @@ define(function (require) {
                                                         "showRowAmount": true,
                                                         "allowDownload": true,
                                                         "disableRemoval": true,
-
+                                                        "rowsPerPage": 100,
                                                         "showReferenceState": true,
 
                                                         // "showReferenceValue": true,

@@ -8,7 +8,7 @@
   <title>Käyttöohjeiden sisällysluettelo</title>
 
 </head><body>
-<div class="container-fluid">
+<br class="container-fluid">
 <ol id="mozToc">
 
 </ol>
@@ -36,14 +36,16 @@ Valitse ikkunan oikeassa ylälaidassa oleva linkki <strong>Kirjaudu ulos</strong
 <h3>Hakulauseen muodostaminen</h3>
 
 <var>
-&lt;Objektin tyyppi&gt;&lt;Kieli&gt;&lt;Hakukriteerit
-revisioitaville objekteille&gt;</var><br>
+&lt;Kenttäavain&gt;:&lt;Hakutermi&gt;</var><br>
+
 
 <code><br>
-</code>Esimerkiksi hakulause <code>SERIES lang:en seriesname:Something</code>
-palauttaisi kaikki
-englanninkieliset sarjat joiden englanninkielisessä nimessä on sana
-"<code>Something</code>". <br>
+</code>Esimerkiksi hakulause <code>+key.configuration.type:STUDY +state.draft:true</code>
+palauttaisi kaikki luonnostilassa olevat aineistot<br>
+<br>
+Usean hakutermin hakulauseessa kaikki termit ovat oletusarvoisesti OR termejä ellei käyttäjä toisin määritä.<br>
+Esimerkiksi hakulause <code>key.configuration.type:STUDY state.draft:true</code> palauttaisi kaikki aineistot ja kaikki luonnostilassa olevat revisiot.<br>
+
 
 <br>
 
@@ -52,39 +54,24 @@ englanninkieliset sarjat joiden englanninkielisessä nimessä on sana
 
   <tbody>
     <tr>
-      <td style="vertical-align: top;"><var>Objektin
-tyyppi</var><br>
+      <td style="vertical-align: top;"><var>Kenttäavain</var><br>
       </td>
-      <td style="vertical-align: top;">Eksperttihaussa ensimmäiseksi
-hakutermiksi voi laittaa haettavat
-objektin tyypin. Sen arvo voi olla sarja (<code>SERIES</code>),
-julkaisu (<code>PUBLICATION</code>) tai aineisto (<code>STUDY</code>).
-Tämän hakutermin
-oletusarvo on <code>STUDY</code> eli ensimmäinen hakutermi voidaan
-jättää antamatta silloin kun tehdään hakua aineistojen joukosta.<br>
-      </td>
+      <td style="vertical-align: top;">Kenttäavaimena voidaan käyttää revisioitavien
+objektien kenttiä, tai automaattisesti lisättäviä metatietokenttiä. Järjestelmä tarjoaa alla
+olevan taulukon mukaiset kenttäavaimet revisioitaville objekteille.
+Lisätietoja kenttäavaimen muotoilusta löydät luvusta: <a href="#Syntaksi">Hakujehtojen syntaksi</a>.<code></code> </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>Kieli</var><br>
+      <td style="vertical-align: top;"><var>Hakutermi</var><br>
       </td>
-      <td style="vertical-align: top;">Toiseksi hakutermiksi voi
-laittaa haettavan kielen, esim. <code>lang:en</code> ja
-tämä on oletusarvona on suomi eli suomea ei tarvitse erikseen
-määritellä.</td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;"><var>Hakukriteerit
-revisioitaville objekteille</var><br>
-      </td>
-      <td style="vertical-align: top;">Kolmas
-hakutermi on
-hakukriteerit.&nbsp; Hakukriteereinä voidaan käyttää revisioitavien
-objektien kenttiä, kuten yllä olevassa esimerkissä käytettiin sarjan
-nimikenttää, tai järjestelmän omia kenttiä, jotka on kuvattu alla
-olevassa taulukossa. Näitä hakukriteereitä voi olla useita ja ne ovat
-oletusarvona vaihtoehtoisia toisilleen (OR). Järjestelmä tarjoaa alla
-olevan taulukon mukaiset hakukriteerit revisioitaville objekteille.
-Lisätietoja hakukriteerien muotoilusta löydät luvusta: <a href="#Syntaksi">Hakujehtojen syntaksi</a>. Hakukriteeri on pakollinen osa hakulausetta.<code></code> </td>
+      <td style="vertical-align: top;">Hakutermi on haluttu haettava arvo. Oletusarvoisesti hakutermit käsitellään välilyönnittöminä tekstiavaimina
+ellei käyttäjä erikseen määritä käytettyä konfiguraatiota. Jos konfiguraatiota ei ole määritelty niin numeerisia kenttiä ei pysty hakemaan
+koska kenttien tiedot on tallennettu numeeriseen muotoon korrektin järjestämisen ja nopeamman käsittelyn mahdollistamiseksi. Jos konfiguraatio
+on määritelty mutta kieltä ei ole määritelty käytetään exact:false merkittyjen kenttien hakemiseen termihakua, eli hakuteksti tulkataan välilyönteineen
+yhdeksi hakutermiksi (jos hakuteksi sisältää välilyöntejä täytyy käyttää joko sulkuja tai regex hakua). Jos sekä konfiguraatio että kieli on annettu
+voidaan exact:false kenttien kohdalla käyttää kielelle määriteltyä sanajuurianalyysiä joka on suomen kielen (default) kohdalla Voikko-kirjastoa käyttävä
+analysaattori ja englannilla sekä ruotsinkielellä Lucenen tarjoama kyseisen kielen analysaattori.
+Lisätietoja hakutermin muotoilusta löydät luvusta: <a href="#Syntaksi">Hakujehtojen syntaksi</a>.<code></code> </td>
     </tr>
   </tbody>
 </table>
@@ -108,16 +95,40 @@ suomenkieliseksi sanaksi hyväksymä.<br>
       <td style="vertical-align: top;"><code>key.id:</code><var>&lt;ID&gt;</var></td>
       <td style="vertical-align: top;">Revisioitavan objektin ID
 (RevisionableId), johon sen revisiot liitetään. Esimerkki: hakulause <code>SERIES
-key.id:1 </code>palauttaisi sarjan, jonka ID on 1.<span style="font-weight: bold;"><br>
+key.id:1 </code>palauttaisi sarjan, jonka ID on 1 kaikki revisiot.<span style="font-weight: bold;"><br>
       </span> </td>
     </tr>
     <tr>
       <td style="vertical-align: top;"><code>key.no:</code><var>&lt;Revisionumero&gt;
       </var><br>
       </td>
-      <td style="vertical-align: top;">Haetaan kaikki objektit, joiden <var>Revisionumero</var>
-on annettu. Esimerkiksi <code>key.no:1</code> palauttaa
-revisiot 1 kaikista objekteista. <span style="font-weight: bold;"></span><br>
+      <td style="vertical-align: top;">Haetaan kaikki revisiot, joiden <var>Revisionumero</var>
+on annettu. Esimerkiksi <code>key.no:1</code> palauttaa kaikki
+revisiot joiden revisionumero on 1. <span style="font-weight: bold;"></span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>key.language:</code><var>&lt;Kieli&gt;
+      </var><br>
+      </td>
+      <td style="vertical-align: top;">Haetaan kaikki revisiot, joiden <var>Kieli</var>
+on annettu kieli. Esimerkiksi <code>key.language:default</code> palauttaa kaikki suomenkieliset revisiot <span style="font-weight: bold;"></span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>key.configuration.type:</code><var>&lt;Konfiguraatiotyyppi&gt;
+      </var><br>
+      </td>
+      <td style="vertical-align: top;">Haetaan kaikki revisiot, joiden <var>Konfiguraatiotyyppi</var>
+on annettu tyyppi. Esimerkiksi <code>key.configuration.type:STUDY</code> palauttaa kaikki aineistorevisiot <span style="font-weight: bold;"></span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>key.configuration.version:</code><var>&lt;Konfiguraatioversio&gt;
+      </var><br>
+      </td>
+      <td style="vertical-align: top;">Haetaan kaikki revisiot, joiden <var>Konfiguraatioversio</var>
+on annettu versio. Esimerkiksi <code>key.configuration.version:1</code> palauttaa kaikki revisiot joiden käytetyn konfiguraation versio on 1<span style="font-weight: bold;"></span><br>
       </td>
     </tr>
     <tr>
@@ -240,20 +251,19 @@ lisätietoja <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llyslu
 käyttämisestä hakukriteerinä</a>.</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>&lt;Kentän nimi&gt;</var>:<var>&lt;Hakusanat&gt;</var><br>
+      <td style="vertical-align: top;"><var>&lt;Kentän nimi&gt;</var><br>
       </td>
-      <td style="vertical-align: top;">Haetaan objekteja jonkin sen
+      <td style="vertical-align: top;">Haetaan revisiota jonkin sen
 kentän<code> (</code><span style="font-family: monospace;"></span><var>Kentän
 nimi</var>) arvon <var></var>perusteella. Haku palauttaa kaikki ne
-objektit, joissa annetussa kentässä on jokin annetuista hakusanoista <var>(Hakusanat</var>),
+revisiot, joissa annetussa kentässä on annetun haun mukaista sisältöä,
 haku on siis looginen OR annetuista hakusanoista. Esimerkiksi jos
 halutaan hakea kaikki sarjat, joiden <strong>Kuvaus</strong>
 (seriesdesc) kentästä löytyy sana "Kuvaus", se voidaan tehdä
-kirjoittamalla <strong>Hakulause</strong> <code>SERIES
-seriesdesc:Kuvaus.</code></td>
+kirjoittamalla <strong>Hakulause</strong> <code>seriesdesc:Kuvaus.</code></td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>&lt;Kentän nimi&gt;</var><code>.value:</code><var>&lt;ID&gt;</var></td>
+      <td style="vertical-align: top;"><var>&lt;Kentän nimi&gt;</var><code>.value:</code></td>
       <td style="vertical-align: top;">Järjestelmä tallentaa kentille,
 jotka sisältävät jonkinlaisen ID -arvon ja sen perusteella
 löydettävän tekstiarvon (kuten esim. aineistojen
@@ -399,6 +409,15 @@ hakujen erikoismerkkejä ovat: <code>+ - &amp;&amp; || ! ( ) { } [ ] ^
 sisältää merkkijonon (1+1):2, kirjoitetaan hakutermiin <code>\(1\+1\)\:2.</code><br>
       </td>
     </tr>
+    <tr>
+      <td style="vertical-align: top;"><code>[ ] tai { }</code><br>
+      </td>
+      <td style="vertical-align: top;">Jos halutaan hakea arvoja joltakin tietyltä väliltä voidaan arvot sijoittaa hakasulkujen, aaltosulkujen tai näiden yhdistelmän väliin.<br>
+          Arvot sijoitetaan järjestykseen <code>Alkuarvo Loppuarvo</code> ja arvot erotetaan välilyönnillä. Hakasulku toimii arvon inklusiivisena määrittäjänä ja
+          aaltosulku toimii eksklusiivisena määrittäjänä. Näin esimerkiksi haku <code>key.no:[1 2]</code> hakee kaikki revisiot joiden revisionumero on joko 1 tai 2
+          ja haku <code>key.no:[1 3}</code> hakee myös revisiot joiden revisionumero on 1 tai 2.
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -511,57 +530,6 @@ osien välillä</td>
 </table>
 
 <br>
-
-<h3>Harvemmin tarvittavia hakuja</h3>
-
-<br>
-
-<table style="text-align: left; width: 887px; height: 60px;" border="1" cellpadding="2" cellspacing="2">
-
-  <tbody>
-    <tr>
-      <td style="vertical-align: top;"><code>key.configuration.type:SERIES</code></td>
-      <td style="vertical-align: top;">Tätä ei yleensä tarvita vaan
-käytetään <var>Objektin tyyppiä</var>. Käytännössä esim. jos <var>Objektin
-tyyppi</var> on<var> </var>SERIES sen konfiguraatiotyyppi pitäisi myös
-olla SERIES.<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;"><code>key.configuration.type:PUBLICATION</code></td>
-      <td style="vertical-align: top;"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;"><code>key.configuration.type:STUDY</code></td>
-      <td style="vertical-align: top;"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;"><code>key.configuration.type:STUDY_ATTACHMENT</code></td>
-      <td style="vertical-align: top;"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;"><code>key.configuration.type:STUDY_VARIABLES</code></td>
-      <td style="vertical-align: top;"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;"><code>key.configuration.type:STUDY_VARIABLE</code></td>
-      <td style="vertical-align: top;"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;"><code>key.configuration.version</code></td>
-      <td style="vertical-align: top;">Haetaan kaikki tiettyä
-konfiguraatioversiota käyttävät sarjat. Objektien konfiguraatiot on
-mahdollista versioida ja esim. sarjasta voi olla monta eri
-konfiguraatioversiota ja oletettavasti tässä tapauksessa vanhemmat
-sarjat käyttävät konfiguraatioita joissa on pienempi versionumero. </td>
-    </tr>
-  </tbody>
-</table>
 
 <h2>Tee eksperttihaku</h2>
 
@@ -1160,11 +1128,15 @@ tilapäiseen hakemistoon.</li>
   <li><a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee_aineistohaku_ja_avaa_aineiston_">Tee aineistohaku ja avaa aineiston tiedot.</a></li>
   <li>Valitse Tiedostojen hallinta välilehti.</li>
   <li>Valitse päivitettävä tiedosto <strong>Liitetyt tiedostot</strong> listasta.</li>
-  <li>Muokkaa <strong>Tiedoston polku</strong> osoittamaan päivitettyyn tiedostoon.</li>
-  <li>Valitse valintaruutu "Parsi muuttujat uudelleen tallennuksen yhteydessä".</li>
+  <li>Lisää päivitetyn tiedoston polku <strong>uusi tiedosto</strong> kenttään</li>
   <li>Valitse <strong>Tallenna</strong>.</li>
 </ol>
 Aineiston muuttujatiedot ovat päivittyneet vastaamaan uuden muuttujatiedoston sisältöä.<br>
+
+    <h3>Automaattisesti muutettavat arvot</h3>
+    Aineistoliite sisältää arvoja jotka voidaan automaattisesti muuttaa palvelimella muiden annettujen arvojen perusteella<br>
+Jos arvoja on muutettu automaattisesti tästä ilmoitetaan tallennuksen yhteydessä sekä ponnahdusikkunassa että merkitsemällä muutettu arvo.<br>
+Aineistoliite on tässä tapauksessa jo tallennettu joten mitään muita toimia ei tarvitse tehdä jos tallennus on onnistunut ja ainoa "virheilmoitus" on automaattisesti muutettu arvo.
 <h1>Käsittele muuttujia</h1>
 
 <span style="font-weight: bold;"></span>
@@ -1234,16 +1206,16 @@ niistä pois.<br>
 Hae ja avaa aineiston muuttujatiedot:
 <ol>
 
-  <li>Valitse <strong>Muuttujat</strong>. <strong>Aineistot</strong>
-listalla näytetään kaikki aineistot, joilla on muuttujia.</li>
-  <li>Valitse rivi, jolla on aineisto, jonka muuttujia halutaan
+  <li>Valitse <strong>Muuttujat</strong>. <strong>Muuttujajoukot</strong>
+välilehdellä voit hakea muuttujajoukkoja.</li>
+  <li>Kun olet suorittanut haun niin valitse rivi jonka muuttujia halutaan
 tarkastella.</li>
 </ol>
 
 <h2><a name="Avaa_muuttujan_kuvailu"></a>Avaa muuttujan kuvailu</h2>
 
-Muuttujan kuvailu voidaan avata joko (A) kaikki muuttujat sisältävästä
-muuttujalistasta tai (B) ryhmitellystä muuttujalistasta.<br>
+Muuttujan kuvailu voidaan avata joko muuttujajoukosta käsin (A) kaikki muuttujat sisältävästä
+muuttujalistasta tai (B) ryhmitellystä muuttujalistasta, tai (C) muuttujien hakusivulta kun haluttu muuttuja on löydetty hakuehdoilla.<br>
 
 <ol start="1" style="list-style-type: upper-alpha;">
 
@@ -1268,7 +1240,19 @@ nimeä, jonka kuvailun haluat avata.</li>
   <li>Etsi <strong>Ryhmitelty näkymä</strong> välilehdeltä ryhmä,
 johon muuttuja kuuluu.</li>
   <li>Klikkaa ryhmän nimen vierestä <strong>+</strong> ikonia.</li>
-  <li>Klikkaa ryhmän nimeä.<br>
+  <li>Klikkaa muuttujan nimeä.<br>
+  </li>
+</ol>
+<ol start="3" style="list-style-type: upper-alpha;">
+
+  <li>Avaa muuttujan kuvailu hakusivulta:</li>
+</ol>
+
+<ol style="margin-left: 40px;">
+
+  <li>Syötä halutut hakutermit</a>.</li>
+  <li>Etsi haluttu muuttuja <strong>Muuttujat</strong> taulukosta.</li>
+  <li>Klikkaa riviä jolla haluttu muuttuja on.<br>
   </li>
 </ol>
 

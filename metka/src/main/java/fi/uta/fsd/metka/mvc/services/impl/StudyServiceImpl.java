@@ -36,10 +36,10 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.services.StudyService;
 import fi.uta.fsd.metka.search.StudySearch;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
@@ -88,8 +88,8 @@ public class StudyServiceImpl implements StudyService {
     }
 
     @Override
-    public Pair<ReturnResult, CodeBookDocument> exportDDI(fi.uta.fsd.metka.model.general.RevisionKey key, Language language) {
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(key));
+    public Pair<ReturnResult, CodeBookDocument> exportDDI(RevisionKey key, Language language) {
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             // TODO: Return error to user
             return new ImmutablePair<>(pair.getLeft(), null);
@@ -108,8 +108,8 @@ public class StudyServiceImpl implements StudyService {
     }
 
     @Override
-    public ReturnResult importDDI(fi.uta.fsd.metka.model.general.RevisionKey key, String path) {
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(key));
+    public ReturnResult importDDI(RevisionKey key, String path) {
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return pair.getLeft();
         }

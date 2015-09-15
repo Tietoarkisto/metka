@@ -46,8 +46,7 @@ import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveKeywordAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
-import fi.uta.fsd.metkaSearch.indexers.Indexer;
-import fi.uta.fsd.metkaSearch.indexers.IndexerDocument;
+import fi.uta.fsd.metkaSearch.indexers.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.search.BooleanQuery;
@@ -59,7 +58,7 @@ import static org.apache.lucene.document.Field.Store.YES;
 import static org.apache.lucene.search.BooleanClause.Occur.MUST;
 
 class GeneralRevisionHandler implements RevisionHandler {
-    private final Indexer indexer;
+    private final RevisionIndexer indexer;
     private final RevisionRepository revisions;
     private final ConfigurationRepository configurations;
     private final ReferenceService references;
@@ -69,7 +68,7 @@ class GeneralRevisionHandler implements RevisionHandler {
     // adding the document to index since it's not actually translated at all.
     private boolean contentForLanguage = false;
 
-    GeneralRevisionHandler(Indexer indexer, RevisionRepository revisions,
+    GeneralRevisionHandler(RevisionIndexer indexer, RevisionRepository revisions,
                            ConfigurationRepository configurations, ReferenceService references) {
         this.indexer = indexer;
 
@@ -121,7 +120,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         }
         Logger.debug(getClass(), "Trying to get revision ID: " + key.getId() + " NO: " + key.getNo());
         Long start = System.currentTimeMillis();
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.warning(getClass(), "Revision not found with result " + pair.getLeft());
             return result;
@@ -144,17 +143,9 @@ class GeneralRevisionHandler implements RevisionHandler {
         Logger.debug(getClass(), "Got configuration in "+(System.currentTimeMillis()-start)+"ms");
         Configuration config = confPair.getRight();
         // TODO: For now just removes any previous documents from the index, optimization is possible in cases where no changes have been made
-        BooleanQuery bQuery = new BooleanQuery();
-        bQuery.add(NumericRangeQuery.newLongRange("key.id", 4, data.getKey().getId(), data.getKey().getId(), true, true), MUST);
-        bQuery.add(NumericRangeQuery.newLongRange("key.no", 4, data.getKey().getNo().longValue(), data.getKey().getNo().longValue(), true, true), MUST);
-        try {
-            indexer.removeDocument(bQuery);
-        } catch(AlreadyClosedException ace) {
-            throw ace;
-        } catch(Exception e) {
-            Logger.error(getClass(), "Exception while removing revision "+data.getKey().toString()+" from index.", e);
-            return false;
-        }
+        BooleanQuery removeQuery = new BooleanQuery();
+        removeQuery.add(NumericRangeQuery.newLongRange("key.id", 4, data.getKey().getId(), data.getKey().getId(), true, true), MUST);
+        removeQuery.add(NumericRangeQuery.newLongRange("key.no", 4, data.getKey().getNo().longValue(), data.getKey().getNo().longValue(), true, true), MUST);
 
         Logger.debug(getClass(), "Trying to find revision info.");
         start = System.currentTimeMillis();
@@ -237,7 +228,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 Logger.debug(getClass(), "Adding document to index.");
                 PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveKeywordAnalyzer.ANALYZER, document.getAnalyzers());
                 try {
-                    indexer.addDocument(document.getDocument(), analyzer);
+                    indexer.updateDocument(removeQuery, document.getDocument(), analyzer);
                     result = true;
                 } catch(AlreadyClosedException ace) {
                     throw ace;

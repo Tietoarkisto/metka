@@ -35,12 +35,12 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariableEntity;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
@@ -157,7 +157,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             // This is not a serious problem since approved revision
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
         }
-        Pair<ReturnResult, RevisionData> pair = getRevisionData((approvedOnly) ? entity.currentApprovedRevisionKey() : entity.latestRevisionKey());
+        Pair<ReturnResult, RevisionData> pair = getRevisionData((approvedOnly) ? entity.currentApprovedRevisionKey().toModelKey() : entity.latestRevisionKey().toModelKey());
         if(pair.getLeft() == ReturnResult.REVISION_NOT_FOUND) {
             // Since we know that the revision should exist upgrade the error to NO_REVISION_FOR_REVISIONABLE
             Logger.error(getClass(), "Revision that should exist " + ((approvedOnly) ? entity.currentApprovedRevisionKey() : entity.latestRevisionKey()) + " was not found for entity " + entity.toString());
@@ -169,7 +169,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     @Override
     @Cacheable(value = "revision-cache", key = "#key")
     public Pair<ReturnResult, RevisionData> getRevisionData(RevisionKey key) {
-        RevisionEntity entity = em.find(RevisionEntity.class, key);
+        RevisionEntity entity = em.find(RevisionEntity.class, fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
         if(entity == null) {
             // Didn't found entity
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
@@ -224,7 +224,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             Logger.error(getClass(), "Failed at serializing "+revision.toString());
             return ReturnResult.REVISION_NOT_VALID;
         }
-        RevisionEntity entity = em.find(RevisionEntity.class, RevisionKey.fromModelKey(revision.getKey()));
+        RevisionEntity entity = em.find(RevisionEntity.class, fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(revision.getKey()));
         if(entity == null) {
             return ReturnResult.REVISION_NOT_FOUND;
         }
@@ -258,10 +258,10 @@ public class RevisionRepositoryImpl implements RevisionRepository {
         if(!entity.getLatestRevisionNo().equals(entity.getCurApprovedNo())) {
             return new ImmutablePair<>(ReturnResult.REVISION_FOUND, null);
         }
-        RevisionEntity revision = new RevisionEntity(new RevisionKey(entity.getId(), entity.getLatestRevisionNo()+1));
+        RevisionEntity revision = new RevisionEntity(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(new RevisionKey(entity.getId(), entity.getLatestRevisionNo()+1)));
         revision.setState(RevisionState.DRAFT);
         em.persist(revision);
-        return new ImmutablePair<>(ReturnResult.REVISION_CREATED, revision.getKey());
+        return new ImmutablePair<>(ReturnResult.REVISION_CREATED, revision.getKey().toModelKey());
     }
 
     @Override
@@ -320,39 +320,21 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     }
 
     @Override
+    public void indexRevisions(RevisionKey key) {
+        em.createQuery("UPDATE RevisionEntity e "
+                + "SET e.indexStatus = null, e.indexingHandled = null, e.indexingRequested = null "
+                + "WHERE e.key.revisionableId=:id")
+            .setParameter("id", key.getId())
+            .executeUpdate();
+    }
+
+    @Override
     public void indexRevision(RevisionKey key) {
         clearIndexing(key);
     }
 
     @Override
-    public void indexRevisions(RevisionKey key) {
-        em.createQuery("UPDATE RevisionEntity e "
-                + "SET e.indexStatus = null, e.indexingHandled = null, e.indexingRequested = null "
-                + "WHERE e.key.revisionableId=:id")
-            .setParameter("id", key.getRevisionableId())
-            .executeUpdate();
-    }
-
-    @Override
-    public void indexRevision(fi.uta.fsd.metka.model.general.RevisionKey key) {
-        indexRevision(RevisionKey.fromModelKey(key));
-        /*IndexerCommand command = RevisionIndexerCommand.index(key);
-        commandRepository.addIndexerCommand(command);
-        indexer.commandAdded(command);*/
-    }
-
-    @Override
-    public void indexRevisions(fi.uta.fsd.metka.model.general.RevisionKey key) {
-        indexRevisions(RevisionKey.fromModelKey(key));
-    }
-
-    @Override
     public void removeRevision(RevisionKey key) {
-        removeRevision(key.toModelKey());
-    }
-
-    @Override
-    public void removeRevision(fi.uta.fsd.metka.model.general.RevisionKey key) {
         IndexerCommand command = RevisionIndexerCommand.remove(key);
         commandRepository.addIndexerCommand(command);
         indexer.commandAdded(command);
@@ -449,7 +431,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
 
     @Override
     public void markAsIndexed(RevisionKey key) {
-        RevisionEntity revision = em.find(RevisionEntity.class, key);
+        RevisionEntity revision = em.find(RevisionEntity.class, fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
         if(revision != null) {
             revision.setIndexStatus(RevisionEntity.IndexStatus.INDEXED.name());
             revision.setIndexingHandled(new LocalDateTime());
@@ -458,7 +440,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
 
     @Override
     public void clearIndexing(RevisionKey key) {
-        RevisionEntity revision = em.find(RevisionEntity.class, key);
+        RevisionEntity revision = em.find(RevisionEntity.class, fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
         if(revision != null) {
             revision.setIndexStatus(null);
             revision.setIndexingRequested(null);

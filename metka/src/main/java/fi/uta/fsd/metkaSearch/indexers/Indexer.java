@@ -123,7 +123,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
         return (previousTime+extraTime) % interval > (timeHandlingCommands+extraTime) % interval;
     }
 
-    synchronized public void removeDocument(Term term) throws Exception {
+    public void removeDocument(Term term) throws Exception {
         indexWriter.deleteDocuments(term);
     }
 

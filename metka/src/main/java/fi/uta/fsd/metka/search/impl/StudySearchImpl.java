@@ -29,7 +29,6 @@
 package fi.uta.fsd.metka.search.impl;
 
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
@@ -48,7 +47,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class StudySearchImpl implements StudySearch {
@@ -72,7 +72,7 @@ public class StudySearchImpl implements StudySearch {
             return new ImmutablePair<>(infoPair.getLeft(), results);
         }
         for(RevisionEntity revision : revisions) {
-            Pair<ReturnResult, RevisionData> dataPair = this.revisions.getRevisionData(revision.getKey());
+            Pair<ReturnResult, RevisionData> dataPair = this.revisions.getRevisionData(revision.getKey().toModelKey());
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 Logger.error(getClass(), "Could not find revision for study attachment with key " + revision.getKey().toString());
                 continue;

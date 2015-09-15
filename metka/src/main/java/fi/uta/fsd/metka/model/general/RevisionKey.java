@@ -30,12 +30,16 @@ package fi.uta.fsd.metka.model.general;
 
 import com.fasterxml.jackson.annotation.*;
 
+import java.io.Serializable;
+
 /**
  * Identifies a single Revision from a combination of id (id of the revisionable object) and revision (ordering
  * number for revisions within revisionable).
  * Specification and documentation is found from uml/data/uml_json_data.graphml
  */
-public class RevisionKey implements Comparable<RevisionKey> {
+public class RevisionKey implements Comparable<RevisionKey>, Serializable {
+    public static final long serialVersionUID = 1L;
+
     private final Long id;
     private final Integer no;
 

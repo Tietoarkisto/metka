@@ -122,7 +122,7 @@ public class MetkaPermissionEvaluator implements PermissionEvaluator {
     }
 
     private boolean claimReleaseCheck(RevisionKey key, PermissionCheck check) {
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.warning(getClass(), "No revision found for key " + key.toString() + " while checking claim or release permission.");
             return false;
