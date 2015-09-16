@@ -228,7 +228,8 @@
         },
         {
             "title": "Poista",
-            "type": "REMOVE",
+            "type": "CUSTOM",
+            "customHandler": "studyVariablesRemove",
             "isHandledByUser": "study",
             "isHandler": true,
             "states": [

@@ -29,79 +29,15 @@
 define(function (require) {
     'use strict';
 
-    function isHandler(options) {
-        return options.data.state.handler === MetkaJS.User.userName;
-    }
-
     var buttons = require('./buttons');
 
-    return require('./inherit')(function (options) {
-        function isVisible() {
-            if (options.data && options.data.state) {
-                if (options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('hasHandler') && options.hasHandler !== null) {
-                    if (!!options.hasHandler !== !!options.data.state.handler) {
-                        return false;
-                    }
-                }
-                if (options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('isHandler') && options.isHandler !== null) {
-                    if (options.isHandler !== (options.data.state.handler === MetkaJS.User.userName)) {
-                        return false;
-                    }
-                }
-                if (options.states && options.states.length) {
-                    // if every state mismatch
-                    if (options.states.every(function (state) {
-                        return options.data.state.uiState !== state;
-                    })) {
-                        return false;
-                    }
-                }
-            }
-
-            if(!require('./hasEveryPermission')(options.permissions)) {
-                return false;
-            }
-
-            return true;
+    function finalizeButton(options, $button) {
+        if(buttons[options.type]) {
+            buttons[options.type].call($button, options);
         }
 
-        options = options || {};
-
-        var $button = $('<button type="button" class="btn">');
-
-        if(options.type && buttons[options.type]) {
-            if(options.type === 'CUSTOM') {
-                if(options.customHandler) {
-                    // If there is a custom handler then prevent dismiss. Each custom handler should decide for itself if it needs to close a dialog or not.
-                    $.extend(true, options, {
-                        preventDismiss: true
-                    });
-                    require(['./custom/buttons/'+options.customHandler], function(customHandler) {
-                        switch (typeof customHandler) {
-                            case 'object':
-                                $.extend(true, options, customHandler);
-                                break;
-                            case 'function':
-                                customHandler.call($button, options);
-                                break;
-                        }
-                        if(buttons[options.type]) {
-                            buttons[options.type].call($button, options);
-                        }
-                    }.bind(this));
-                    /*var customHandler = require('./custom/buttons')[options.customHandler];
-                     switch (typeof customHandler) {
-                     case 'object':
-                     $.extend(true, options, customHandler);
-                     break;
-                     case 'function':
-                     customHandler.call(this, options);
-                     break;
-                     }*/
-                }
-            } else if(buttons[options.type]) {
-                buttons[options.type].call($button, options);
-            }
+        if (options.create) {
+            options.create.call($button, options);
         }
 
         $button.addClass('btn-' + (options.style || 'primary'));
@@ -109,22 +45,78 @@ define(function (require) {
         if(!!options.isHandledByUser && options.isHandledByUser.length > 0) {
             require('./isHandledByUser')(options, options.isHandledByUser, function(isHandledByUser) {
                 if(isHandledByUser) {
-                    $button.toggleClass('hiddenByButtonConfiguration', !isVisible());
+                    $button.toggleClass('hiddenByButtonConfiguration', !isVisible(options));
                 } else {
                     $button.toggleClass('hiddenByButtonConfiguration', true);
                 }
             });
         } else {
-            $button.toggleClass('hiddenByButtonConfiguration', !isVisible());
+            $button.toggleClass('hiddenByButtonConfiguration', !isVisible(options));
         }
 
-        $button
-            .text(MetkaJS.L10N.localize(options, 'title'));
+        $button.text(MetkaJS.L10N.localize(options, 'title'));
+    }
 
-        if (options.create) {
-            options.create.call($button, options);
+    function isVisible(options) {
+        if (options.data && options.data.state) {
+            if (options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('hasHandler') && options.hasHandler !== null) {
+                if (!!options.hasHandler !== !!options.data.state.handler) {
+                    return false;
+                }
+            }
+            if (options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('isHandler') && options.isHandler !== null) {
+                if (options.isHandler !== (options.data.state.handler === MetkaJS.User.userName)) {
+                    return false;
+                }
+            }
+            if (options.states && options.states.length) {
+                // if every state mismatch
+                if (options.states.every(function (state) {
+                        return options.data.state.uiState !== state;
+                    })) {
+                    return false;
+                }
+            }
         }
 
+        if(!require('./hasEveryPermission')(options.permissions)) {
+            return false;
+        }
+
+        return !options.forceHide;
+    }
+
+    function isHandler(options) {
+        return options.data.state.handler === MetkaJS.User.userName;
+    }
+
+    return require('./inherit')(function (options) {
+
+        options = options || {};
+
+        var $button = $('<button type="button" class="btn">');
+
+        if(options.type && options.type === 'CUSTOM') {
+            if(options.customHandler) {
+                // If there is a custom handler then prevent dismiss. Each custom handler should decide for itself if it needs to close a dialog or not.
+                $.extend(true, options, {
+                    preventDismiss: true
+                });
+                require(['./custom/buttons/'+options.customHandler], function(customHandler) {
+                    switch (typeof customHandler) {
+                        case 'object':
+                            $.extend(true, options, customHandler);
+                            break;
+                        case 'function':
+                            customHandler.call(this, options);
+                            break;
+                    }
+                    finalizeButton(options, this);
+                }.bind($button));
+            }
+        } else {
+            finalizeButton(options, $button);
+        }
         return $button;
     });
 });
