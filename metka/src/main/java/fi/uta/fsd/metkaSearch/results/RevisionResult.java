@@ -32,10 +32,16 @@ public class RevisionResult implements SearchResult {
     private final ResultList.ResultType type = ResultList.ResultType.REVISION;
     private final Long id;
     private final Integer no;
+    private final boolean draft;
+    private final boolean approved;
+    private final boolean removed;
 
-    public RevisionResult(Long id, Integer no) {
+    public RevisionResult(Long id, Integer no, boolean draft, boolean approved, boolean removed) {
         this.id = id;
         this.no = no;
+        this.draft = draft;
+        this.approved = approved;
+        this.removed = removed;
     }
 
     @Override
@@ -49,6 +55,18 @@ public class RevisionResult implements SearchResult {
 
     public Integer getNo() {
         return no;
+    }
+
+    public boolean isDraft() {
+        return draft;
+    }
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public boolean isRemoved() {
+        return removed;
     }
 
     @Override

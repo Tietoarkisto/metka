@@ -55,6 +55,7 @@ public class TransferRow implements TransferFieldContainer {
     private final List<FieldError> errors = new ArrayList<>();
     private Boolean removed;
     private Boolean unapproved;
+    @JsonIgnore private Object info; // Provide access point for info object used on client side but don't process it further
 
     @JsonCreator
     public TransferRow(@JsonProperty("key")String key) {
@@ -111,6 +112,14 @@ public class TransferRow implements TransferFieldContainer {
 
     public void setUnapproved(Boolean unapproved) {
         this.unapproved = unapproved;
+    }
+
+    public Object getInfo() {
+        return info;
+    }
+
+    public void setInfo(Object info) {
+        this.info = info;
     }
 
     @JsonIgnore

@@ -122,9 +122,12 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
             for(ScoreDoc doc : results.scoreDocs) {
                 try {
                     Document document = searcher.doc(doc.doc);
-                    IndexableField field = document.getField("key.id");
                     Long id = null;
                     Long no = null;
+                    boolean draft = false;
+                    boolean approved = false;
+                    boolean removed = false;
+                    IndexableField field = document.getField("key.id");
                     if(field != null) {
                         id = field.numericValue().longValue();
                     }
@@ -132,10 +135,22 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
                     if(field != null) {
                         no = field.numericValue().longValue();
                     }
-                    RevisionResult result = new RevisionResult(id, no.intValue());
+                    field = document.getField("state.draft");
+                    if(field != null) {
+                        draft = Boolean.parseBoolean(field.stringValue());
+                    }
+                    field = document.getField("state.approved");
+                    if(field != null) {
+                        approved = Boolean.parseBoolean(field.stringValue());
+                    }
+                    field = document.getField("state.removed");
+                    if(field != null) {
+                        removed = Boolean.parseBoolean(field.stringValue());
+                    }
+                    RevisionResult result = new RevisionResult(id, no.intValue(), draft, approved, removed);
                     if(!list.getResults().contains(result)) list.addResult(result);
                 } catch(IOException ioe) {
-                    list.addResult(new RevisionResult(null, null));
+                    list.addResult(new RevisionResult(null, null, false, false, false));
                 }
             }
 

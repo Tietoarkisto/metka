@@ -36,7 +36,6 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.*;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
-import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.search.RevisionSearch;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -198,7 +197,7 @@ public class RevisionSearchImpl implements RevisionSearch {
                         // If we don't have original row and the current row is removed then nothing of note has happened
                         if(changes.containsKey(rowKey)) {
                             // There's no difference between original row and current row
-                            // TODO: Clear possible changes related to anything inside this row since those didn't exist either in the origina
+                            // TODO: Clear possible changes related to anything inside this row since those didn't exist either in the original
                             // This can be done by adding a 'clear' attribute to gatherChanges that tells that all possible changes from then onwards should be removed
                             changes.remove(rowKey);
                         }
@@ -322,8 +321,23 @@ public class RevisionSearchImpl implements RevisionSearch {
             }
         });
 
+        List<RevisionResult> removeList = new ArrayList<>();
+
+        RevisionResult prev = null;
+        for(Iterator<RevisionResult> i = resultList.getResults().listIterator() ; i.hasNext(); ) {
+            RevisionResult current = i.next();
+            if(prev != null && prev.getId().equals(current.getId())) {
+                if((current.isApproved() && prev.isApproved()) || (current.isRemoved() && prev.isRemoved())) {
+                    removeList.add(prev);
+                }
+            }
+            prev = current;
+        }
+
+        resultList.getResults().removeAll(removeList);
+
         return resultList;
-    }
+    }/*
 
     private List<RevisionSearchResult> collectResults(ResultList<RevisionResult> resultList, RevisionSearchRequest request) {
         List<RevisionSearchResult> results = new ArrayList<>();
@@ -460,5 +474,5 @@ public class RevisionSearchImpl implements RevisionSearch {
         if(hasValue(fieldPair, Language.DEFAULT)) {
             searchResult.getValues().put("publicationtitle", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         }
-    }
+    }*/
 }

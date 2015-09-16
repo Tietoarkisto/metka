@@ -44,6 +44,7 @@ import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.ChangeUtil;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
@@ -65,6 +66,7 @@ class PORVariablesParser implements VariablesParser {
     private final RevisionRepository revisions;
     private final RevisionCreationRepository create;
     private final RevisionEditRepository edit;
+    private final RevisionRestoreRepository restore;
 
     private final String softwareName;
     private final String softwareVersion;
@@ -75,7 +77,7 @@ class PORVariablesParser implements VariablesParser {
     private final List<RevisionData> variableRevisions;
 
     PORVariablesParser(String path, Language varLang, RevisionData variablesData, DateTimeUserPair info, String studyId,
-                       RevisionRepository revisions, RevisionRemoveRepository remove, RevisionCreationRepository create, RevisionEditRepository edit) {
+                       RevisionRepository revisions, RevisionRemoveRepository remove, RevisionCreationRepository create, RevisionEditRepository edit, RevisionRestoreRepository restore) {
         this.varLang = varLang;
         this.remove = remove;
         this.revisions = revisions;
@@ -84,6 +86,7 @@ class PORVariablesParser implements VariablesParser {
         this.variablesData = variablesData;
         this.info = info;
         this.studyId = studyId;
+        this.restore = restore;
 
         PORReader reader = new PORReader();
         PORFile por;
@@ -273,6 +276,15 @@ class PORVariablesParser implements VariablesParser {
                     return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES);
                 }
                 variableData = dataPair.getRight();
+            }
+
+            RevisionableInfo revInfo = revisions.getRevisionableInfo(variableData.getKey().getId()).getRight();
+            if(revInfo == null) {
+                continue;
+            }
+            // If we're trying to reuse an already removed variable then restore that variable. If this is not desirable then the variable should be explicitly removed from the database when removed from the por file.
+            if(revInfo.getRemoved()) {
+                restore.restore(variableData.getKey().getId());
             }
 
             if(variableData.getState() != RevisionState.DRAFT) {

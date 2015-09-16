@@ -298,5 +298,11 @@
 			"type": "FIELD",
 			"content": "variables"
 		}]
+	}, {
+		"type": "RESTORE",
+		"targets": [{
+			"type": "FIELD",
+			"content": "variables"
+		}]
 	}]
 }

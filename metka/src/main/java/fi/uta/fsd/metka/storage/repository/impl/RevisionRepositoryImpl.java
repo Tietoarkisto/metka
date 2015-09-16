@@ -103,7 +103,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             // No entity found, can't return any info
             return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
         }
-        RevisionableInfo info = new RevisionableInfo(entity.getId(), ConfigurationType.fromValue(entity.getType()),
+        RevisionableInfo info = new RevisionableInfo(entity.getId(), entity.getType() != null ? ConfigurationType.fromValue(entity.getType()) : null,
                 entity.getCurApprovedNo(), entity.getLatestRevisionNo(),
                 entity.getRemoved(), entity.getRemovalDate(), entity.getRemovedBy());
         return new ImmutablePair<>(ReturnResult.REVISIONABLE_FOUND, info);

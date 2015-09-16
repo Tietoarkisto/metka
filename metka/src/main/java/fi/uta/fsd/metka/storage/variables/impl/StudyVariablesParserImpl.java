@@ -75,6 +75,9 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
     @Autowired
     private RevisionEditRepository edit;
 
+    @Autowired
+    private RevisionRestoreRepository restore;
+
     static ParseResult checkResultForUpdate(Pair<StatusCode, ? extends DataField> fieldPair, ParseResult result) {
         if(fieldPair.getLeft() == StatusCode.FIELD_UPDATE || fieldPair.getLeft() == StatusCode.FIELD_INSERT) {
             return resultCheck(result, ParseResult.REVISION_CHANGES);
@@ -210,7 +213,8 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                         revisions,
                         remove,
                         create,
-                        edit);
+                        edit,
+                        restore);
                 break;
         }
         if(parser != null) {
