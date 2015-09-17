@@ -225,6 +225,9 @@ define(function (require) {
                 },
                 "&yes": {
                     "default": "Kyllä"
+                },
+                "&addGroup": {
+                    "default": "Lisää ryhmä"
                 }
             },
 

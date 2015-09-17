@@ -202,36 +202,36 @@ define(function (require) {
             var arrangeInVariables;
 
             var $moveToGroup = require('./../../button')()({
+                html: '<span class="glyphicon glyphicon-chevron-right"></span>',
                 create: function () {
                     this
-                        .html('<span class="glyphicon glyphicon-chevron-right"></span>')
                         .click(function () {
                             $variableView.data('move')($groupView);
                         });
                 }
             });
             var $moveToVariables = require('./../../button')()({
+                html: '<span class="glyphicon glyphicon-chevron-left"></span>',
                 create: function () {
                     this
-                        .html('<span class="glyphicon glyphicon-chevron-left"></span>')
                         .click(function () {
                             $groupView.data('move')($variableView);
                         });
                 }
             });
             var $moveVariableUp = require('./../../button')()({
+                html: '<span class="glyphicon glyphicon-chevron-up"></span>',
                 create: function() {
                     this
-                        .html('<span class="glyphicon glyphicon-chevron-up"></span>')
                         .click(function () {
                             $groupView.data('moveDir')(-1);
                         });
                 }
             });
             var $moveVariableDown = require('./../../button')()({
+                html: '<span class="glyphicon glyphicon-chevron-down"></span>',
                 create: function() {
                     this
-                        .html('<span class="glyphicon glyphicon-chevron-down"></span>')
                         .click(function () {
                             $groupView.data('moveDir')(1);
                         });
@@ -256,9 +256,7 @@ define(function (require) {
                         .append($('<div class="col-xs-offset-7">')
                             .append(require('./../../button')()({
                             style: 'default',
-                            "&title": {
-                                "default": "Lisää ryhmä"
-                            },
+                            "title": MetkaJS.L10N.get('general.buttons.addGroup'),
                             create: function () {
                                 this
                                     .addClass('btn-sm')

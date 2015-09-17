@@ -347,7 +347,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         varLang = getVarFileLanguage(fileName);
                         // If there already is a varfile for this language then check that it matches current varfile
                         if(hasVariablesFileFor(varLang, study)) {
-                            if(variablesFileForEqual(varLang, revision.getKey().getId(), study)) {
+                            if(variablesFileForIncludes(varLang, revision.getKey().getId().toString()+"-", study)) {
                                 needsParsing = true;
                             }
                         } else {
@@ -356,8 +356,8 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     }
                 }
                 if(needsParsing) {
-
-                    parseVariableFile(revision, study, varLang, info, changesAndErrors);
+                    //parseVariableFile(revision, study, varLang, info, changesAndErrors);
+                    parser.parse(revision, VariableDataType.POR, study, varLang, info);
                 }
             }
         }
@@ -704,7 +704,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         return fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT);
     }
 
-    private boolean variablesFileForEqual(Language varLang, Long fileId, RevisionData study) {
+    private boolean variablesFileForIncludes(Language varLang, String fileId, RevisionData study) {
         Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES));
         if(conPair.getLeft() != StatusCode.FIELD_FOUND) {
             return false;
@@ -720,7 +720,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             return false;
         }
 
-        return fieldPair.getRight().valueForEquals(Language.DEFAULT, fileId.toString());
+        return fieldPair.getRight().valueForIncludes(Language.DEFAULT, fileId);
     }
 
     private boolean fileIsVarFile(String fileName) {
@@ -760,7 +760,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         return result != ParseResult.REVISION_CHANGES ? def : result;
     }
 
-    private void parseVariableFile(RevisionData attachment, RevisionData study, Language varLang, DateTimeUserPair info, MutablePair<Boolean, Boolean> changesAndErrors) {
+    /*private void parseVariableFile(RevisionData attachment, RevisionData study, Language varLang, DateTimeUserPair info, MutablePair<Boolean, Boolean> changesAndErrors) {
         ParseResult result = parser.parse(attachment, VariableDataType.POR, study, varLang, info);
 
         // Check that study has a link to the variable file (we should not be in this method if there is a link to another attachment)
@@ -803,7 +803,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         if(result == ParseResult.REVISION_CHANGES) {
             revisions.updateRevisionData(study);
         }
-    }
+    }*/
 
 
     private class SaveHandler {
@@ -1443,25 +1443,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     if(freeSave.getRight()) {
                         returnPair.setRight(freeSave.getRight());
                     }
-                    // Let's get the free text value from the
-
-                    /*TransferField tf = transferFields.getField(list.getFreeTextKey());
-                    if(tf == null || tf.getValueFor(language) == null) {
-                        // New value is empty so let's try and clear the value just in case
-                        dataFields.dataField(ValueDataFieldCall.set(list.getFreeTextKey(), new Value(""), language)
-                            .setChangeMap(changeMap).setConfiguration(configuration).setInfo(info));
-                    } else {
-                        // We have at least some kind of value for free text, if current value is null then nothing should happen
-                        // if there's an original value so we should be ok with trying to set the value to current value in transfer value
-                        dataFields.dataField(ValueDataFieldCall.set(list.getFreeTextKey(), new Value(tf.getValueFor(language).getCurrent()), language)
-                            .setChangeMap(changeMap).setConfiguration(configuration).setInfo(info));
-                    }*/
-
-                }/* else {
-                    // Let's make sure the free text field is clear
-                    dataFields.dataField(ValueDataFieldCall.set(list.getFreeTextKey(), new Value(""), language)
-                            .setChangeMap(changeMap).setConfiguration(configuration).setInfo(info));
-                }*/
+                }
             }
         }
 

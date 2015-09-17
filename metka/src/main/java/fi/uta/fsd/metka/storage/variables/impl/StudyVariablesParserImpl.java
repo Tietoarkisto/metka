@@ -192,6 +192,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         }
 
         if(updateVariables) {
+            // After this point the parser will update the variables data if necessary so this data should not be used for anything else
             revisions.updateRevisionData(variablesData);
         }
 
@@ -205,9 +206,8 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 // Read POR file
                 String studyId = study.dataField(ValueDataFieldCall.get(Fields.STUDYID)).getRight().getActualValueFor(Language.DEFAULT);
                 parser = new PORVariablesParser(
-                        attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT),
+                        fileName,
                         varLang,
-                        variablesData,
                         info,
                         studyId,
                         revisions,
@@ -220,17 +220,17 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         if(parser != null) {
             long start = System.currentTimeMillis(); // Debug times
             Logger.debug(getClass(), "Starting variables parsing for study");
-            variablesResult = parser.parse();
+            variablesResult = parser.parse(variablesData);
             result = resultCheck(result, variablesResult);
             Logger.debug(getClass(), "Variables parsing for study ended. Spent "+(System.currentTimeMillis()-start)+"ms");
-        }
+        }/*
         if(variablesResult == ParseResult.REVISION_CHANGES) {
             ReturnResult updateResult = revisions.updateRevisionData(variablesData);
             if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 Logger.error(getClass(), "Could not update revision data for "+variablesData.toString()+" with result "+updateResult);
                 return resultCheck(result, ParseResult.VARIABLES_SERIALIZATION_FAILED);
             }
-        }
+        }*/
         return result;
     }
 }

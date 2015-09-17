@@ -31,8 +31,7 @@ package fi.uta.fsd.metka.storage.repository.impl;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -339,6 +338,9 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case PUBLICATION:
                 finalizePublication(data);
                 break;
+            case STUDY_VARIABLES:
+                finalizeStudyVariables(data);
+                break;
             default:
                 // Nothing to finalize
                 break;
@@ -396,5 +398,38 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             return;
         }
         data.dataField(ValueDataFieldCall.set(Fields.PUBLICATIONFIRSTSAVED, new Value((new LocalDate()).toString()), Language.DEFAULT).setChangeMap(data.getChanges()));
+    }
+
+    private void finalizeStudyVariables(RevisionData data) {
+        DateTimeUserPair info = DateTimeUserPair.build();
+        RevisionData study = null;
+        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
+        if(field != null && field.hasValueFor(Language.DEFAULT)) {
+            study = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
+        }
+        if(study == null) {
+            return;
+        }
+        RevisionData attachment = null;
+        field = data.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
+        if(field != null && field.hasValueFor(Language.DEFAULT)) {
+            attachment = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
+        }
+        if(attachment == null) {
+            return;
+        }
+        ValueDataField language = data.dataField(ValueDataFieldCall.get(Fields.LANGUAGE)).getRight();
+        if(language == null) {
+            return;
+        }
+        Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.set(Fields.STUDYVARIABLES));
+        Pair<StatusCode, DataRow> rowPair = conPair.getRight().getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE,
+                new Value(language.getActualValueFor(Language.DEFAULT)), study.getChanges(), info);
+
+        rowPair.getRight().dataField(ValueDataFieldCall.set(Fields.VARIABLESFILE, new Value(attachment.getKey().asCongregateKey()), Language.DEFAULT).setInfo(info).setChangeMap(study.getChanges()));
+        rowPair.getRight().dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(data.getKey().asCongregateKey()), Language.DEFAULT).setInfo(info).setChangeMap(study.getChanges()));
+        revisions.updateRevisionData(study);
+
+        attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(data.getKey().getId().toString()), Language.DEFAULT).setInfo(info).setChangeMap(attachment.getChanges()));
     }
 }

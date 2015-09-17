@@ -109,7 +109,7 @@ define(function (require) {
                                 success: function (data) {
                                     var variables = data.responses.map(function (response) {
                                         return {
-                                            text: response.options[0].title.value,
+                                            text: (response && response.options[0]) ? response.options[0].title.value : "",
                                             value: response.fieldValues.variables
                                         };
                                     });

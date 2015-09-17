@@ -32,7 +32,8 @@ import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.*;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
@@ -300,12 +301,30 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 RevisionData variables = revPair.getRight();
                 Pair<StatusCode, ReferenceContainerDataField> conPair = variables.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES));
                 if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
-                    Pair<StatusCode, ReferenceRow> rowPair = conPair.getRight().getReferenceIncludingValue(data.getKey().getId() + "-");
+                    Pair<StatusCode, ReferenceRow> rowPair = conPair.getRight().getReferenceIncludingValue(data.getKey().asPartialKey());
                     if(rowPair.getLeft() == StatusCode.ROW_FOUND && !rowPair.getRight().getRemoved()) {
                         conPair.getRight().removeReference(rowPair.getRight().getRowId(), variables.getChanges(), info);
-                        revisions.updateRevisionData(variables);
                     }
                 }
+
+                ContainerDataField variableGroups = variables.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS)).getRight();
+                if(variableGroups != null) {
+                    for(DataRow dataRow : variableGroups.getRowsFor(Language.DEFAULT)) {
+                        conPair = dataRow.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS));
+                        if(conPair.getRight() != null) {
+                            // See that respective rows are removed from VARGROUPVARS
+                            //    Remove from variables list
+                            ReferenceRow reference = conPair.getRight().getReferenceIncludingValue(data.getKey().asPartialKey()).getRight();
+                            if(reference != null) {
+                                conPair.getRight().removeReference(reference.getRowId(), variables.getChanges(), info).getLeft();
+                                // Since variable should always be only in one group at a time we can break out.
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                revisions.updateRevisionData(variables);
             }
         }
     }
@@ -320,7 +339,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 RevisionData study = revPair.getRight();
                 Pair<StatusCode, ReferenceContainerDataField> conPair = study.dataField(ReferenceContainerDataFieldCall.get(Fields.FILES));
                 if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
-                    Pair<StatusCode, ReferenceRow> rowPair = conPair.getRight().getReferenceIncludingValue(data.getKey().getId() + "-");
+                    Pair<StatusCode, ReferenceRow> rowPair = conPair.getRight().getReferenceIncludingValue(data.getKey().asPartialKey());
                     if(rowPair.getLeft() == StatusCode.ROW_FOUND && !rowPair.getRight().getRemoved()) {
                         conPair.getRight().removeReference(rowPair.getRight().getRowId(), study.getChanges(), info);
                         revisions.updateRevisionData(study);
@@ -435,6 +454,25 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         container.replaceRow(row.getRowId(), ReferenceRow.build(container, new Value(data.getKey().getId() + "-" + revisionNos.get(revisionNos.size() - 1)), info),
                 variables.getChanges());
+
+        ContainerDataField variableGroups = variables.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS)).getRight();
+        if(variableGroups != null) {
+            for(DataRow dataRow : variableGroups.getRowsFor(Language.DEFAULT)) {
+                container = dataRow.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS)).getRight();
+                if(container != null) {
+                    // See that respective rows are removed from VARGROUPVARS
+                    //    Remove from variables list
+                    ReferenceRow reference = container.getReferenceIncludingValue(data.getKey().asPartialKey()).getRight();
+                    if(reference != null) {
+                        container.replaceRow(row.getRowId(), ReferenceRow.build(container, new Value(data.getKey().getId() + "-" + revisionNos.get(revisionNos.size() - 1)), info),
+                                variables.getChanges());
+                        // Since variable should always be only in one group at a time we can break out.
+                        break;
+                    }
+                }
+            }
+        }
+
         revisions.updateRevisionData(variables);
     }
 
@@ -531,6 +569,49 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                     break;
                 }
                 messenger.sendAmqpMessage(messenger.FB_FILE_REMOVAL, new FileRemovalPayload(data, study));
+                break;
+            }
+            case STUDY_VARIABLE: {
+                ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+                if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+                    return;
+                }
+
+                RevisionData variables = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
+                if(variables == null) {
+                    return;
+                }
+
+                ReferenceContainerDataField container = variables.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
+                if(container == null || !container.hasValidRows()) {
+                    return;
+                }
+
+                ReferenceRow row = container.getReferenceWithValue(data.getKey().asCongregateKey()).getRight();
+                if(row == null) {
+                    return;
+                }
+                container.removeReference(row.getRowId(), variables.getChanges(), info);
+
+                ContainerDataField variableGroups = variables.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS)).getRight();
+                if(variableGroups != null) {
+                    for(DataRow dataRow : variableGroups.getRowsFor(Language.DEFAULT)) {
+                        container = dataRow.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS)).getRight();
+                        if(container != null) {
+                            // See that respective rows are removed from VARGROUPVARS
+                            //    Remove from variables list
+                            ReferenceRow reference = container.getReferenceIncludingValue(data.getKey().asPartialKey()).getRight();
+                            if(reference != null) {
+                                container.removeReference(reference.getRowId(), variables.getChanges(), info).getLeft();
+                                // Since variable should always be only in one group at a time we can break out.
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                revisions.updateRevisionData(variables);
+                break;
             }
             default: {
                 break;

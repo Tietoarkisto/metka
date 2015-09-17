@@ -90,9 +90,7 @@ define(function (require) {
                         onClick: function(options) {
                             return appendRow(options.lang);
                         },
-                        title: function() {
-                            return MetkaJS.L10N.get('general.table.countries.addFinland')
-                        }
+                        title: MetkaJS.L10N.get('general.table.countries.addFinland')
                     });
                 }
             },

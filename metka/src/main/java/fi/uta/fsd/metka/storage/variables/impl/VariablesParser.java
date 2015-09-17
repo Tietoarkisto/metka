@@ -28,8 +28,9 @@
 
 package fi.uta.fsd.metka.storage.variables.impl;
 
+import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 
 interface VariablesParser {
-    ParseResult parse();
+    ParseResult parse(RevisionData variablesData);
 }

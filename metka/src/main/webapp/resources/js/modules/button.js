@@ -53,8 +53,11 @@ define(function (require) {
         } else {
             $button.toggleClass('hiddenByButtonConfiguration', !isVisible(options));
         }
-
-        $button.text(MetkaJS.L10N.localize(options, 'title'));
+        if(options.html) {
+            $button.html(options.html);
+        } else {
+            $button.text(MetkaJS.L10N.localize(options, 'title'));
+        }
     }
 
     function isVisible(options) {

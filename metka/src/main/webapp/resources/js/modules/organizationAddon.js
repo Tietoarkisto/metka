@@ -46,6 +46,7 @@ define(function (require) {
                     }
                     var $button = require('./button')()({
                         style: 'default',
+                        title: MetkaJS.L10N.get('general.buttons.add'),
                         create: function () {
                             this
                                 .html('<i class="glyphicon glyphicon-plus"></i> Lisää')
@@ -56,13 +57,13 @@ define(function (require) {
                                         $(this).find('.btn').addClass('btn-sm');
                                     });
                                     require('./modal')($.extend(true, require('./optionsBase')(), {
-                                        title: 'Lisää',
+                                        title: MetkaJS.L10N.get('general.buttons.add'),
                                         large: true,
                                         body: $editor,
                                         buttons: [{
+                                            title: MetkaJS.L10N.get('general.buttons.add'),
                                             create: function () {
                                                 this
-                                                    .text(MetkaJS.L10N.get('general.buttons.add'))
                                                     .click(function () {
                                                         require('./server')('/study/getOrganizations', {
                                                             type: 'GET',

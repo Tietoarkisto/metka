@@ -641,7 +641,7 @@
 		},
 		"variables_file_ref": {
 			"key": "variables_file_ref",
-			"type": "REVISIONABLE",
+			"type": "REVISION",
 			"target": "STUDY_ATTACHMENT"
 		},
 		"variables_file_path_ref": {

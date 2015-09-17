@@ -737,9 +737,7 @@ define(function (require) {
                 if (!require('./isFieldDisabled')(options, lang)) {
                     buttons.push({
                         buttonId: options.field.key+"_add",
-                        title: function() {
-                            return MetkaJS.L10N.get('general.table.add');
-                        },
+                        title: MetkaJS.L10N.get('general.table.add'),
                         onClick: function () {
                             (options.field.onAdd || rowDialog('ADD', 'add'))
                                 .call(this, {
@@ -759,9 +757,10 @@ define(function (require) {
                                 var $button = {
                                     style: 'default',
                                     lang: lang,
+                                    title: button.title,
                                     create: function (options) {
                                         this
-                                            .text(button.title)
+                                            //.text(button.title)
                                             .click(function () {
                                                 button.onClick(options)
                                             });
