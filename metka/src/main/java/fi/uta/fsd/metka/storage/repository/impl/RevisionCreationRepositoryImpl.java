@@ -228,7 +228,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 break;
             case PUBLICATION:
                 PublicationEntity p = new PublicationEntity();
-                p.setPublicationId(sequences.getNewSequenceValue(ConfigurationType.PUBLICATION.toValue(), 3000L).getSequence());
+                p.setPublicationId(sequences.getNewSequenceValue(ConfigurationType.PUBLICATION.toValue(), 3000L));
                 revisionable = p;
                 break;
             case STUDY_ATTACHMENT:
@@ -283,7 +283,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case STUDY: {
                 StudyFactory factory = new StudyFactory();
                 data = factory.newData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
-                        sequences.getNewSequenceValue(ConfigurationType.STUDY.toValue(), 10000L).getSequence().toString(),
+                        sequences.getNewSequenceValue(ConfigurationType.STUDY.toValue(), 10000L).toString(),
                         request.getParameters().get(Fields.SUBMISSIONID), request.getParameters().get(Fields.DATAARRIVALDATE));
                 break;
             }

@@ -32,8 +32,7 @@ import fi.uta.fsd.metka.storage.entity.SequenceEntity;
 import fi.uta.fsd.metka.storage.repository.SequenceRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
 
 @Repository
 public class SequenceRepositoryImpl implements SequenceRepository {
@@ -42,13 +41,13 @@ public class SequenceRepositoryImpl implements SequenceRepository {
     private EntityManager em;
 
     @Override
-    public SequenceEntity getNewSequenceValue(String key) {
+    public Long getNewSequenceValue(String key) {
         return getNewSequenceValue(key, 1L);
     }
 
     @Override
-    public SequenceEntity getNewSequenceValue(String key, Long initialValue) {
-        SequenceEntity seq = em.find(SequenceEntity.class, key);
+    public Long getNewSequenceValue(String key, Long initialValue) {
+        SequenceEntity seq = em.find(SequenceEntity.class, key, LockModeType.PESSIMISTIC_WRITE);
         if(seq == null) {
             seq = new SequenceEntity();
             seq.setKey(key);
@@ -57,6 +56,6 @@ public class SequenceRepositoryImpl implements SequenceRepository {
         } else {
             seq.setSequence(seq.getSequence()+1);
         }
-        return seq;
+        return seq.getSequence();
     }
 }

@@ -77,22 +77,23 @@ define(function(require) {
                         }
                         return temp;
                     })();
-                if (value && searchOptions.exactValue) {
+                if(!value) {
+                    return;
+                }
+                if (searchOptions.exactValue) {
                     value = '/' + (searchOptions.addWildcard?".*":"") + value + (searchOptions.addWildcard?".*":"") + '/';
-                } else if(value && searchOptions.addWildcard) {
+                } else if(searchOptions.addWildcard) {
                     value = "*"+value+"*";
                 }
-                if (value && searchOptions.addParens) {
+                if (searchOptions.addParens) {
                     value = '(' + value + ')';
                 }
-                if(value && searchOptions.useSubquery) {
+                if(searchOptions.useSubquery) {
                     value = 'S{'+useSubquery.supplant({
                         value: value
                     })+'}S'
                 }
-                if (value) {
-                    requestData.values[searchOptions.rename || key] = value;
-                }
+                requestData.values[searchOptions.rename || key] = value;
             });
             if(lang) {
                 requestData.values['key.language'] = lang;

@@ -172,9 +172,9 @@ public class RevisionIndexer extends Indexer {
                 }
 
                 long idleCheckTime = System.currentTimeMillis()-getIdleStart();
-                if(changeBatch > 0 && ((getStatus() == IndexerStatusMessage.IDLING && idleCheckTime >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
+                if(changeBatch > 0 && ((revisionKeyQueue.isEmpty() && getStatus() == IndexerStatusMessage.IDLING && idleCheckTime >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
                         || (LuceneConfig.FORCE_FLUSH_AFTER_BATCH_OF_CHANGES && changeBatch >= LuceneConfig.MAX_CHANGE_BATCH_SIZE))) {
-                    Logger.info(getClass(), (!(getStatus() == IndexerStatusMessage.IDLING && idleCheckTime >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
+                    Logger.info(getClass(), (!(revisionKeyQueue.isEmpty() && getStatus() == IndexerStatusMessage.IDLING && idleCheckTime >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
                             ? "Forcing index flush." : "Flushing index after idle timer.")+" It's been "+(System.currentTimeMillis()-flushTimer)+"ms since last flush. PATH: "+getPath().toString());
                     IndexerStatusMessage status = getStatus();
                     setStatus(IndexerStatusMessage.FLUSHING);

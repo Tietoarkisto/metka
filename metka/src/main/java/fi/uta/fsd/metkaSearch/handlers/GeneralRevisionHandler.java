@@ -49,8 +49,8 @@ import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.indexers.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.NumericRangeQuery;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.springframework.util.StringUtils;
 
@@ -143,9 +143,6 @@ class GeneralRevisionHandler implements RevisionHandler {
         Logger.debug(getClass(), "Got configuration in "+(System.currentTimeMillis()-start)+"ms");
         Configuration config = confPair.getRight();
         // TODO: For now just removes any previous documents from the index, optimization is possible in cases where no changes have been made
-        BooleanQuery removeQuery = new BooleanQuery();
-        removeQuery.add(NumericRangeQuery.newLongRange("key.id", 4, data.getKey().getId(), data.getKey().getId(), true, true), MUST);
-        removeQuery.add(NumericRangeQuery.newLongRange("key.no", 4, data.getKey().getNo().longValue(), data.getKey().getNo().longValue(), true, true), MUST);
 
         Logger.debug(getClass(), "Trying to find revision info.");
         start = System.currentTimeMillis();
@@ -228,6 +225,10 @@ class GeneralRevisionHandler implements RevisionHandler {
                 Logger.debug(getClass(), "Adding document to index.");
                 PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveKeywordAnalyzer.ANALYZER, document.getAnalyzers());
                 try {
+                    BooleanQuery removeQuery = new BooleanQuery();
+                    removeQuery.add(NumericRangeQuery.newLongRange("key.id", 4, data.getKey().getId(), data.getKey().getId(), true, true), MUST);
+                    removeQuery.add(NumericRangeQuery.newLongRange("key.no", 4, data.getKey().getNo().longValue(), data.getKey().getNo().longValue(), true, true), MUST);
+                    removeQuery.add(new TermQuery(new Term("key.language", language.toValue())), MUST);
                     indexer.updateDocument(removeQuery, document.getDocument(), analyzer);
                     result = true;
                 } catch(AlreadyClosedException ace) {
