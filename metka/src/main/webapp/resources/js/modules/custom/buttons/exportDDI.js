@@ -93,8 +93,7 @@ define(function (require) {
                     }
                 ],
                 buttons: [{
-                    type: 'CUSTOM',
-                    title: "Lataa",
+                    title: MetkaJS.L10N.get('general.buttons.download'),
                     create: function(options) {
                         this.click(function() {
                             var request = {

@@ -131,7 +131,9 @@ public class ReferencePathHandler {
                 return;
             }
             Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(step.getValue(), step.getReference().getApprovedOnly());
-            Logger.debug(getClass(), "Got info and revision in "+(System.currentTimeMillis()-start)+"ms");
+            if(System.currentTimeMillis()-start > 0) {
+                Logger.debug(getClass(), "Got info and revision in "+(System.currentTimeMillis()-start)+"ms");
+            }
 
             if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                 if(step.getConfiguration() != null && !step.getConfiguration().getKey().equals(pair.getRight().getConfiguration())) {
@@ -139,7 +141,9 @@ public class ReferencePathHandler {
                 }
                 start = System.currentTimeMillis();
                 handleRevisionStep(pair.getRight(), step, options, language, returnFirst);
-                Logger.debug(getClass(), "Handling step took "+(System.currentTimeMillis()-start)+"ms");
+                if(System.currentTimeMillis()-start > 0) {
+                    Logger.debug(getClass(), "Handling step took "+(System.currentTimeMillis()-start)+"ms");
+                }
             }
         } else {
             List<RevisionableEntity> revisionables = em.createQuery("SELECT r FROM RevisionableEntity r WHERE r.type=:type", RevisionableEntity.class)

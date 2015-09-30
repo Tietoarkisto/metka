@@ -20,6 +20,7 @@
 	<!-- Application Loggers -->
 	<logger name="fi.uta.fsd">
 		<level value="info" />
+		<!--<level value="debug" />-->
 	</logger>
 
 	<!-- 3rdparty Loggers -->

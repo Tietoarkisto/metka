@@ -70,8 +70,9 @@ public class ReferenceCollector {
             }
 
             configuration = configPair.getRight();
-
-            Logger.debug(getClass(), "Getting configuration "+configuration.getKey()+" took "+(System.currentTimeMillis()-start)+"ms");
+            if(System.currentTimeMillis()-start > 0) {
+                Logger.debug(getClass(), "Getting configuration "+configuration.getKey()+" took "+(System.currentTimeMillis()-start)+"ms");
+            }
         } else {
             configuration = request.getConfiguration();
         }
@@ -89,14 +90,18 @@ public class ReferenceCollector {
             return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, options);
         }
 
-        Logger.debug(getClass(), "Forming reference path took "+(System.currentTimeMillis()-start)+"ms");
+        if(System.currentTimeMillis()-start > 0) {
+            Logger.debug(getClass(), "Forming reference path took "+(System.currentTimeMillis()-start)+"ms");
+        }
         start = System.currentTimeMillis();
 
         root.setConfiguration(configuration);
 
         Pair<ReturnResult, List<ReferenceOption>> result = pathHandler.handleReferencePath(root, options, request.getLanguage(), request.getReturnFirst());
 
-        Logger.debug(getClass(), "Handling reference path took "+(System.currentTimeMillis()-start)+"ms");
+        if(System.currentTimeMillis()-start > 0) {
+            Logger.debug(getClass(), "Handling reference path took "+(System.currentTimeMillis()-start)+"ms");
+        }
 
         return result;
     }

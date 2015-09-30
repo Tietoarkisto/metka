@@ -68,8 +68,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
 import java.util.*;
 
 @Repository
@@ -413,6 +412,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     public fi.uta.fsd.metka.model.general.RevisionKey getNextForIndexing() {
         List<RevisionEntity> results = em.createQuery("SELECT r FROM RevisionEntity r "
                 + "WHERE r.indexStatus IS NULL AND r.indexingRequested IS NULL", RevisionEntity.class)
+            .setLockMode(LockModeType.PESSIMISTIC_WRITE)
             .setMaxResults(1)
             .getResultList();
         if(results.isEmpty()) {

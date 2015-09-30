@@ -33,6 +33,7 @@ import fi.uta.fsd.metka.mvc.services.ExpertSearchService;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.expert.*;
+import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
@@ -95,8 +96,8 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         }
 
         ResultList<RevisionResult> results = collectResults(queryResults.getRight());
-        if(results.getResults().size() > 50000) {
-            results.getResults().removeAll(results.getResults().subList(50000, results.getResults().size()));
+        if(results.getResults().size() > LuceneConfig.MAX_RETURNED_RESULTS) {
+            results.getResults().removeAll(results.getResults().subList(LuceneConfig.MAX_RETURNED_RESULTS, results.getResults().size()));
             response.setResults(results);;
             response.setResult(ReturnResult.RESULT_SET_TOO_LARGE);
         } else {

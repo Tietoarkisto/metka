@@ -307,7 +307,7 @@ define(function (require) {
                     $pullRight
                         .append($('<div class="btn-group btn-group-xs pull-right">')
                             .append(require('./button')()({
-                                title: 'Lataa',
+                                title: MetkaJS.L10N.get('general.buttons.download'),
                                 style: 'default',
                                 create: function () {
                                     this.click(function () {

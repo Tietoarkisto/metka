@@ -99,24 +99,22 @@ define(function (require) {
 
         var $button = $('<button type="button" class="btn">');
 
-        if(options.type && options.type === 'CUSTOM') {
-            if(options.customHandler) {
-                // If there is a custom handler then prevent dismiss. Each custom handler should decide for itself if it needs to close a dialog or not.
-                $.extend(true, options, {
-                    preventDismiss: true
-                });
-                require(['./custom/buttons/'+options.customHandler], function(customHandler) {
-                    switch (typeof customHandler) {
-                        case 'object':
-                            $.extend(true, options, customHandler);
-                            break;
-                        case 'function':
-                            customHandler.call(this, options);
-                            break;
-                    }
-                    finalizeButton(options, this);
-                }.bind($button));
-            }
+        if(options.type && options.type === 'CUSTOM' && options.customHandler) {
+            // If there is a custom handler then prevent dismiss. Each custom handler should decide for itself if it needs to close a dialog or not.
+            $.extend(true, options, {
+                preventDismiss: true
+            });
+            require(['./custom/buttons/'+options.customHandler], function(customHandler) {
+                switch (typeof customHandler) {
+                    case 'object':
+                        $.extend(true, options, customHandler);
+                        break;
+                    case 'function':
+                        customHandler.call(this, options);
+                        break;
+                }
+                finalizeButton(options, this);
+            }.bind($button));
         } else {
             finalizeButton(options, $button);
         }

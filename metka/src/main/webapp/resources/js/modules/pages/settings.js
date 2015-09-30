@@ -413,7 +413,7 @@ define(function (require) {
                                     type: "CELL",
                                     contentType: "BUTTON",
                                     button: {
-                                        title: "Lataa",
+                                        title: MetkaJS.L10N.get('general.buttons.download'),
                                         create: function(options) {
                                             this.click(function() {
                                                 var data = require('./../data')(options)("dataConfigTypes").getByLang("DEFAULT");
@@ -524,7 +524,7 @@ define(function (require) {
                                     type: "CELL",
                                     contentType: "BUTTON",
                                     button: {
-                                        title: "Lataa",
+                                        title: MetkaJS.L10N.get('general.buttons.download'),
                                         create: function(options) {
                                             this.click(function() {
                                                 var data = require('./../data')(options)("guiConfigTypes").getByLang("DEFAULT");
@@ -615,7 +615,7 @@ define(function (require) {
                                     type: "CELL",
                                     contentType: "BUTTON",
                                     button: {
-                                        title: "Lataa",
+                                        title: MetkaJS.L10N.get('general.buttons.download'),
                                         create: function(options) {
                                             this.click(function() {
                                                 var data = require('./../data')(options)("jsonKeys").getByLang("DEFAULT");

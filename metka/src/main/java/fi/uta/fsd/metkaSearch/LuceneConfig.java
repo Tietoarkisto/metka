@@ -79,6 +79,8 @@ public final class LuceneConfig {
      */
     public static final int MAX_CHANGE_BATCH_SIZE = 500;
 
+    public static final int MAX_RETURNED_RESULTS = 20000;
+
     public static final EnglishAnalyzer ENGLISH_ANALYZER;
     public static final SwedishAnalyzer SWEDISH_ANALYZER;
 

@@ -94,14 +94,15 @@ class GeneralRevisionHandler implements RevisionHandler {
         if(command == null) {
             return result;
         }
-        Logger.debug(getClass(), "Trying to get revision ID: " + command.getId() + " NO: " + command.getNo());
         Long start = System.currentTimeMillis();
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(command.getId(), command.getNo());
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.warning(getClass(), "Revision not found with result " + pair.getLeft());
             return result;
         }
-        Logger.debug(getClass(), "Got Revision in "+(System.currentTimeMillis()-start)+"ms");
+        if(System.currentTimeMillis()-start > 0) {
+            Logger.debug(getClass(), "Got Revision ID: " + command.getId() + " NO: " + command.getNo() + " in "+(System.currentTimeMillis()-start)+"ms");
+        }
         RevisionData data = pair.getRight();
         return handleRevision(result, data);
     }
@@ -125,14 +126,15 @@ class GeneralRevisionHandler implements RevisionHandler {
             Logger.warning(getClass(), "Revision not found with result " + pair.getLeft());
             return result;
         }
-        Logger.debug(getClass(), "Got Revision in "+(System.currentTimeMillis()-start)+"ms");
+        if(System.currentTimeMillis()-start > 0) {
+            Logger.debug(getClass(), "Got Revision in "+(System.currentTimeMillis()-start)+"ms");
+        }
         RevisionData data = pair.getRight();
         return handleRevision(result, data);
     }
 
     private boolean handleRevision(boolean result, RevisionData data) throws AlreadyClosedException {
         Long start;
-        Logger.debug(getClass(), "Trying to get configuration for " + data.getConfiguration().toString());
         start = System.currentTimeMillis();
         Pair<ReturnResult, Configuration> confPair = getConfiguration(data.getConfiguration());
         if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
@@ -140,7 +142,9 @@ class GeneralRevisionHandler implements RevisionHandler {
             Logger.warning(getClass(), "Configuration not found with result "+confPair.getLeft());
             return result;
         }
-        Logger.debug(getClass(), "Got configuration in "+(System.currentTimeMillis()-start)+"ms");
+        if(System.currentTimeMillis()-start > 0) {
+            Logger.debug(getClass(), "Got configuration "+data.getConfiguration().toString()+" in "+(System.currentTimeMillis()-start)+"ms");
+        }
         Configuration config = confPair.getRight();
         // TODO: For now just removes any previous documents from the index, optimization is possible in cases where no changes have been made
 
@@ -152,7 +156,9 @@ class GeneralRevisionHandler implements RevisionHandler {
             Logger.warning(getClass(), "Revision info not found with reason "+removedInfoPair.getLeft());
             return result;
         }
-        Logger.debug(getClass(), "Got info in "+(System.currentTimeMillis()-start)+"ms");
+        if(System.currentTimeMillis()-start > 0) {
+            Logger.debug(getClass(), "Got info in "+(System.currentTimeMillis()-start)+"ms");
+        }
         RevisionableInfo info = removedInfoPair.getRight();
 
         // Loop through languages, we index the documents once for each language
@@ -211,15 +217,21 @@ class GeneralRevisionHandler implements RevisionHandler {
                 document.indexKeywordField("state.saved", "false", YES);
             }
 
-            Logger.debug(getClass(), "Indexed base fields in "+(System.currentTimeMillis()-start)+"ms");
+            if(System.currentTimeMillis()-start > 0) {
+                Logger.debug(getClass(), "Indexed base fields in "+(System.currentTimeMillis()-start)+"ms");
+            }
 
             // Index the actual fields
             start = System.currentTimeMillis();
             indexFields(data, document, "", new Step("", null), config, language);
 
             finalizeIndexing(data, document, config, language);
-            Logger.debug(getClass(), "Field indexing took "+(System.currentTimeMillis()-start)+"ms");
-            Logger.debug(getClass(), "Indexing language "+language+" took "+(System.currentTimeMillis()-langStart)+"ms");
+            if(System.currentTimeMillis()-start > 0) {
+                Logger.debug(getClass(), "Field indexing took " + (System.currentTimeMillis() - start) + "ms");
+            }
+            if(System.currentTimeMillis()-langStart > 0) {
+                Logger.debug(getClass(), "Indexing language " + language + " took " + (System.currentTimeMillis() - langStart) + "ms");
+            }
 
             if(contentForLanguage || language == Language.DEFAULT) {
                 Logger.debug(getClass(), "Adding document to index.");
@@ -291,7 +303,9 @@ class GeneralRevisionHandler implements RevisionHandler {
                 indexReferenceField(field, fieldContainer.dataField(ValueDataFieldCall.get(field.getKey())).getRight(), document, root, path, data, config, language);
             }
         }
-        Logger.debug(getClass(), "Indexing field "+field.getKey()+" took "+(System.currentTimeMillis()-start)+"ms");
+        if(System.currentTimeMillis()-start > 0) {
+            Logger.debug(getClass(), "Indexing field "+field.getKey()+" took "+(System.currentTimeMillis()-start)+"ms");
+        }
     }
 
     private void indexContainer(Field containerField, DataFieldContainer fieldContainer, IndexerDocument document, String root, Step path,

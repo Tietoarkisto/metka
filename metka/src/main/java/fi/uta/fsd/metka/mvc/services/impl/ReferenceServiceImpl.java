@@ -84,8 +84,9 @@ public class ReferenceServiceImpl implements ReferenceService {
                 return null;
             }
             configuration = configPair.getRight();
-
-            Logger.debug(getClass(), "Getting configuration "+data.getConfiguration()+" took "+(System.currentTimeMillis()-start)+"ms");
+            if(System.currentTimeMillis()-start > 0) {
+                Logger.debug(getClass(), "Getting configuration "+data.getConfiguration()+" took "+(System.currentTimeMillis()-start)+"ms");
+            }
         }
 
         start = System.currentTimeMillis();
@@ -116,13 +117,16 @@ public class ReferenceServiceImpl implements ReferenceService {
 
         // Let's form a request that we can use to fetch a reference option
         request = formReferenceOptionsRequest(language, splits, dependencyStack, data, configuration, emptyEqualsNone);
-
-        Logger.debug(getClass(), "Forming request took "+(System.currentTimeMillis()-start)+"ms");
+        if(System.currentTimeMillis()-start > 0) {
+            Logger.debug(getClass(), "Forming request took "+(System.currentTimeMillis()-start)+"ms");
+        }
         start = System.currentTimeMillis();
 
         // Perform the request
         List<ReferenceOption> options = references.handleReferenceRequest(request).getRight();
-        Logger.debug(getClass(), "Handling request took "+(System.currentTimeMillis()-start)+"ms");
+        if(System.currentTimeMillis()-start > 0) {
+            Logger.debug(getClass(), "Handling request took "+(System.currentTimeMillis()-start)+"ms");
+        }
 
         // Return first option or null if no options were found
         return options.isEmpty() ? null : options.get(0);

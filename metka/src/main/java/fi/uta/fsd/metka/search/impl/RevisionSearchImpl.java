@@ -42,6 +42,7 @@ import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.revision.*;
+import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
@@ -293,8 +294,8 @@ public class RevisionSearchImpl implements RevisionSearch {
             ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build(request, configurations);
             ResultList<RevisionResult> results = searcher.executeSearch(command);
             results = collectResults(results);
-            if(results.getResults().size() > 50000) {
-                results.getResults().removeAll(results.getResults().subList(50000, results.getResults().size()));
+            if(results.getResults().size() > LuceneConfig.MAX_RETURNED_RESULTS) {
+                results.getResults().removeAll(results.getResults().subList(LuceneConfig.MAX_RETURNED_RESULTS, results.getResults().size()));
                 return new ImmutablePair<>(ReturnResult.RESULT_SET_TOO_LARGE, results);
             }
             return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, results);

@@ -58,8 +58,9 @@ public class RevisionIndexer extends Indexer {
 
     // Pool for indexer threads.
     private ExecutorService threadPool = Executors.newCachedThreadPool();
+    private static final int MAX_KEY_QUE_FILLERS = 1;
     private static final int MAX_REVISION_COMMAND_HANDLERS = 1;
-    private static final int MAX_REVISION_DATA_INDEXERS = 10;
+    private static final int MAX_REVISION_DATA_INDEXERS = 5;
     private static final int MAX_KEY_QUEUE_SIZE = 100;
     private static int ID = 1;
 
@@ -136,7 +137,7 @@ public class RevisionIndexer extends Indexer {
 
     @Override
     public IndexerStatusMessage call() throws Exception {
-        Future<Boolean> revisionKeyQueueFiller = null;
+        List<Future<Boolean>> revisionKeyQueueFiller = new ArrayList<>();
         List<Future<Boolean>> commandHandlers = new ArrayList<>();
         List<Future<Boolean>> revisionHandlers = new ArrayList<>();
 
@@ -146,8 +147,8 @@ public class RevisionIndexer extends Indexer {
 
         while(getStatus() != IndexerStatusMessage.STOP && getStatus() != IndexerStatusMessage.RETURNED) {
             try {
-                if(revisionKeyQueueFiller == null) {
-                    revisionKeyQueueFiller = threadPool.submit(new RevisionKeyQueueFiller());
+                while(revisionKeyQueueFiller.size() < MAX_KEY_QUE_FILLERS) {
+                    revisionKeyQueueFiller.add(threadPool.submit(new RevisionKeyQueueFiller()));
                 }
 
                 while(commandHandlers.size() < MAX_REVISION_COMMAND_HANDLERS) {
@@ -157,8 +158,10 @@ public class RevisionIndexer extends Indexer {
                     revisionHandlers.add(threadPool.submit(new RevisionDataIndexer(this, ID++)));
                 }
 
-                if(revisionKeyQueueFiller.isDone()) {
-                    revisionKeyQueueFiller = threadPool.submit(new RevisionKeyQueueFiller());
+                for(int i = 0; i < revisionKeyQueueFiller.size(); i++) {
+                    if(revisionKeyQueueFiller.get(i).isDone()) {
+                        revisionKeyQueueFiller.set(i, threadPool.submit(new RevisionKeyQueueFiller()));
+                    }
                 }
                 for(int i = 0; i < commandHandlers.size(); i++) {
                     if(commandHandlers.get(i).isDone()) {
@@ -197,9 +200,7 @@ public class RevisionIndexer extends Indexer {
 
                 // Check if process should continue running
                 if(Thread.currentThread().isInterrupted()) {
-                    if(!revisionKeyQueueFiller.isDone()) {
-                        revisionKeyQueueFiller.cancel(true);
-                    }
+                    cancelAll(revisionKeyQueueFiller);
                     cancelAll(commandHandlers);
                     cancelAll(revisionHandlers);
 
@@ -214,26 +215,20 @@ public class RevisionIndexer extends Indexer {
                 indexer.getIndexWriter().close();
                 //ex.printStackTrace();
                 Thread.currentThread().interrupt();
-                if(!revisionKeyQueueFiller.isDone()) {
-                    revisionKeyQueueFiller.cancel(true);
-                }
+                cancelAll(revisionKeyQueueFiller);
                 cancelAll(commandHandlers);
                 cancelAll(revisionHandlers);
             } catch(Exception e) {
                 Logger.error(getClass(), "Exception while indexing", e);
                 Thread.currentThread().interrupt();
-                if(revisionKeyQueueFiller != null && !revisionKeyQueueFiller.isDone()) {
-                    revisionKeyQueueFiller.cancel(true);
-                }
+                cancelAll(revisionKeyQueueFiller);
                 cancelAll(commandHandlers);
                 cancelAll(revisionHandlers);
             }
         }
         if(getStatus() == IndexerStatusMessage.STOP) {
             indexer.getIndexWriter().close();
-            if(revisionKeyQueueFiller != null && !revisionKeyQueueFiller.isDone()) {
-                revisionKeyQueueFiller.cancel(true);
-            }
+            cancelAll(revisionKeyQueueFiller);
             cancelAll(commandHandlers);
             cancelAll(revisionHandlers);
         }

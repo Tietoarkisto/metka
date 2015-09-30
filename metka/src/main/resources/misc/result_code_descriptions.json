@@ -168,7 +168,7 @@
 	}, {
 		"key": "RESULT_SET_TOO_LARGE",
 		"title": "NOTICE",
-		"text": "Hakutuloksia oli liikaa, näytetään ensimmäiset 50000 hakutulosta. Tarkenna hakua."
+		"text": "Hakutuloksia oli liikaa, näytetään ensimmäiset 20000 hakutulosta. Tarkenna hakua."
 	}, {
 		"key": "",
 		"title": "",

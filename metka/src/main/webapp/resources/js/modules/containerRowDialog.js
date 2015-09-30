@@ -43,9 +43,9 @@ define(function (require) {
                     type: type.toUpperCase(),
                     buttons: [
                         {
+                            title: MetkaJS.L10N.get('general.buttons.' + button),
                             create: function () {
                                 this
-                                    .text(MetkaJS.L10N.get('general.buttons.' + button))
                                     .click(function () {
                                         $.extend(transferRow, modalOptions.data);
                                         onClose(transferRow);
