@@ -50,6 +50,7 @@ import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -83,6 +84,7 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
         return restore(id,null);
     }
 
+    @CacheEvict(value="info-cache", key="#id")
     public RemoveResult restore(Long id, LocalDateTime dt) {
         Pair<ReturnResult, RevisionableInfo> pair = revisions.getRevisionableInfo(id);
         if(pair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {

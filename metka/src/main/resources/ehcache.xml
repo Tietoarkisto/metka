@@ -6,7 +6,7 @@
            overflowToDisk="false"
            maxElementsInMemory="100"
            eternal="false"
-           timeToIdleSeconds="300"
+           timeToIdleSeconds="3600"
            memoryStoreEvictionPolicy="LRU"
            transactionalMode="off"
     />
@@ -14,7 +14,7 @@
            overflowToDisk="false"
            maxElementsInMemory="100"
            eternal="false"
-           timeToIdleSeconds="300"
+           timeToIdleSeconds="3600"
            memoryStoreEvictionPolicy="LRU"
            transactionalMode="off"
     />
@@ -22,11 +22,19 @@
            overflowToDisk="false"
            maxElementsInMemory="100"
            eternal="false"
-           timeToIdleSeconds="300"
+           timeToIdleSeconds="3600"
            memoryStoreEvictionPolicy="LRU"
            transactionalMode="off"
     />
     <cache name="revision-cache"
+           overflowToDisk="false"
+           maxElementsInMemory="500"
+           eternal="false"
+           timeToIdleSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"
+           transactionalMode="off"
+    />
+    <cache name="info-cache"
            overflowToDisk="false"
            maxElementsInMemory="500"
            eternal="false"

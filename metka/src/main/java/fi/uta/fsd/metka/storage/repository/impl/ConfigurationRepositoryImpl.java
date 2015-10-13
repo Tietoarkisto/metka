@@ -233,40 +233,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
                 .getResultList();
 
         return deserializeDataConfiguration(list);
-    }/*
-
-    @Override
-    public Pair<ReturnResult, Configuration> findLatestByRevisionableId(Long id) {
-        RevisionableEntity rev = em.find(RevisionableEntity.class, id);
-        if(rev == null) {
-            return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
-        }
-        List<ConfigurationEntity> list =
-                em.createQuery("SELECT c FROM ConfigurationEntity c WHERE c.type =:type ORDER BY c.version DESC", ConfigurationEntity.class)
-                .setParameter("type", ConfigurationType.valueOf(rev.getType()))
-                .setMaxResults(1)
-                .getResultList();
-
-        return deserializeDataConfiguration(list);
     }
-
-    @Override
-    public Pair<ReturnResult, Configuration> findConfigurationForRevision(Long id, Integer no) {
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(id, no);
-        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            return new ImmutablePair<>(pair.getLeft(), null);
-        }
-        RevisionData revision = pair.getRight();
-
-        List<ConfigurationEntity> list =
-                em.createQuery("SELECT c FROM ConfigurationEntity c WHERE c.type =:type AND c.version = :version", ConfigurationEntity.class)
-                        .setParameter("type", revision.getConfiguration().getType())
-                        .setParameter("version", revision.getConfiguration().getVersion())
-                        .setMaxResults(1)
-                        .getResultList();
-
-        return deserializeDataConfiguration(list);
-    }*/
 
     private Pair<ReturnResult, Configuration> deserializeDataConfiguration(List<ConfigurationEntity> list) {
         if(list.size() == 0) {
@@ -287,11 +254,6 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_FOUND, pair.getRight());
         }
     }
-
-    /*@Override
-    public Pair<ReturnResult, GUIConfiguration> findGUIConfiguration(String type, Integer version) {
-        return findGUIConfiguration(ConfigurationType.fromValue(type), version);
-    }*/
 
     @Override
     public Pair<ReturnResult, GUIConfiguration> findGUIConfiguration(ConfigurationType type, Integer version) {

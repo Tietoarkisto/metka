@@ -59,6 +59,7 @@ import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -158,18 +159,28 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         }
 
         if(revInfo != null && revInfo.getApproved() == null) {
-            em.remove(em.find(RevisionableEntity.class, data.getKey().getId()));
+            removeRevisionable(data.getKey().getId());
             finalizeFinalRevisionRemoval(data, info);
             result = RemoveResult.SUCCESS_REVISIONABLE;
         } else {
-            RevisionableEntity entity = em.find(RevisionableEntity.class, data.getKey().getId());
-            entity.setLatestRevisionNo(entity.getCurApprovedNo());
+            updateRevisionableRevisionNumber(data.getKey().getId());
             finalizeDraftRemoval(data, info);
             result = RemoveResult.SUCCESS_DRAFT;
         }
         messenger.sendAmqpMessage(messenger.FD_REMOVE, new RevisionPayload(data));
         addRemoveIndexCommand(data.getKey(), result);
         return OperationResponse.build(result);
+    }
+
+    @CacheEvict(value="info-cache", key="#id")
+    private void removeRevisionable(Long id) {
+        em.remove(em.find(RevisionableEntity.class, id));
+    }
+
+    @CacheEvict(value="info-cache", key="#id")
+    private void updateRevisionableRevisionNumber(Long id) {
+        RevisionableEntity entity = em.find(RevisionableEntity.class, id);
+        entity.setLatestRevisionNo(entity.getCurApprovedNo());
     }
 
     @Override
@@ -208,16 +219,9 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return response;
         }
 
-        RevisionableEntity entity = em.find(RevisionableEntity.class, data.getKey().getId());
-
-        //this needs to be checked so that restore-cascade can work appropriately.
-        if (entity.getRemoved()) {
+        if(logicallyRemoveRevisionable(info, data.getKey().getId())) {
             return OperationResponse.build(RemoveResult.ALREADY_REMOVED);
         }
-
-        entity.setRemoved(true);
-        entity.setRemovalDate(info.getTime());
-        entity.setRemovedBy(info.getUser());
 
         /*if(data.getConfiguration().getType() == ConfigurationType.STUDY) {
             propagateStudyLogicalRemoval(data);
@@ -233,6 +237,21 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         messenger.sendAmqpMessage(messenger.FD_REMOVE, new RevisionPayload(data));
         addRemoveIndexCommand(data.getKey(), result);
         return OperationResponse.build(result);
+    }
+
+    @CacheEvict(value="info-cache", key="#id")
+    private boolean logicallyRemoveRevisionable(DateTimeUserPair info, Long id) {
+        RevisionableEntity entity = em.find(RevisionableEntity.class, id);
+
+        //this needs to be checked so that restore-cascade can work appropriately.
+        if (entity.getRemoved()) {
+            return true;
+        }
+
+        entity.setRemoved(true);
+        entity.setRemovalDate(info.getTime());
+        entity.setRemovedBy(info.getUser());
+        return false;
     }
 
     private void finalizeFinalRevisionRemoval(RevisionData data, DateTimeUserPair info) {

@@ -63,7 +63,7 @@ import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.*;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -96,6 +96,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     private Messenger messenger;
 
     @Override
+    @Cacheable(value="info-cache", key="#id")
     public Pair<ReturnResult, RevisionableInfo> getRevisionableInfo(Long id) {
         RevisionableEntity entity = em.find(RevisionableEntity.class, id);
         if(entity == null) {
@@ -107,23 +108,6 @@ public class RevisionRepositoryImpl implements RevisionRepository {
                 entity.getRemoved(), entity.getRemovalDate(), entity.getRemovedBy());
         return new ImmutablePair<>(ReturnResult.REVISIONABLE_FOUND, info);
     }
-
-    /*
-
-    @Override
-    public Pair<ReturnResult, Integer> getLatestRevisionNoForIdAndType(Long id, boolean approvedOnly, ConfigurationType type) {
-        RevisionableEntity entity = em.find(RevisionableEntity.class, id);
-        if(entity == null) {
-            return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
-        }
-        if(type != null && !entity.getType().equals(type.toValue())) {
-            return new ImmutablePair<>(ReturnResult.REVISIONABLE_OF_INCORRECT_TYPE, null);
-        }
-        if(approvedOnly && entity.getCurApprovedNo() == null) {
-            return new ImmutablePair<>(ReturnResult.NO_REVISION_FOR_REVISIONABLE, null);
-        }
-        return new ImmutablePair<>(ReturnResult.REVISION_FOUND, (approvedOnly) ? entity.getCurApprovedNo() : entity.getLatestRevisionNo());
-    }*/
 
     @Override
     public Pair<ReturnResult, RevisionData> getRevisionData(Long id, Integer no) {
@@ -211,7 +195,10 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     }
 
     @Override
-    @CacheEvict(value = "revision-cache", key = "#revision.key")
+    @Caching(evict={
+                @CacheEvict(value = "revision-cache", key = "#revision.key"),
+                @CacheEvict(value="info-cache", key="#revision.key.id")
+            })
     public ReturnResult updateRevisionData(RevisionData revision) {
         RevisionableEntity revisionableEntity = em.find(RevisionableEntity.class, revision.getKey().getId());
         if(revisionableEntity == null) {

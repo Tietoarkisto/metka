@@ -60,8 +60,10 @@ public class RevisionIndexer extends Indexer {
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private static final int MAX_KEY_QUE_FILLERS = 1;
     private static final int MAX_REVISION_COMMAND_HANDLERS = 1;
-    private static final int MAX_REVISION_DATA_INDEXERS = 5;
+    private static final int MAX_REVISION_DATA_INDEXERS = 3;
     private static final int MAX_KEY_QUEUE_SIZE = 100;
+    private static final boolean LOW_PERFORMANCE = true; // If this is set to true then queue process is simplified
+    private static final int LOW_PERFORMANCE_DATA_INDEXERS = 3;
     private static int ID = 1;
 
     public static RevisionIndexer build(DirectoryManager manager, DirectoryManager.DirectoryPath path, IndexerCommandRepository commands,
@@ -125,7 +127,7 @@ public class RevisionIndexer extends Indexer {
     private ConfigurationRepository configurations;
     private ReferenceService references;
 
-    private BlockingQueue<RevisionKey> revisionKeyQueue = new ArrayBlockingQueue<>(MAX_KEY_QUEUE_SIZE);
+    private BlockingQueue<RevisionKey> revisionKeyQueue = null;
 
     private RevisionIndexer(DirectoryManager manager, DirectoryManager.DirectoryPath path, IndexerCommandRepository commands,
                             RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
@@ -135,8 +137,15 @@ public class RevisionIndexer extends Indexer {
         this.references = references;
     }
 
+    private RevisionKey getNextKey() {
+        return revisions.getNextForIndexing();
+    }
+
     @Override
     public IndexerStatusMessage call() throws Exception {
+        if(!LOW_PERFORMANCE) {
+            revisionKeyQueue = new ArrayBlockingQueue<>(MAX_KEY_QUEUE_SIZE);
+        }
         List<Future<Boolean>> revisionKeyQueueFiller = new ArrayList<>();
         List<Future<Boolean>> commandHandlers = new ArrayList<>();
         List<Future<Boolean>> revisionHandlers = new ArrayList<>();
@@ -147,17 +156,17 @@ public class RevisionIndexer extends Indexer {
 
         while(getStatus() != IndexerStatusMessage.STOP && getStatus() != IndexerStatusMessage.RETURNED) {
             try {
-                while(revisionKeyQueueFiller.size() < MAX_KEY_QUE_FILLERS) {
+
+                while(!LOW_PERFORMANCE && revisionKeyQueueFiller.size() < MAX_KEY_QUE_FILLERS) {
                     revisionKeyQueueFiller.add(threadPool.submit(new RevisionKeyQueueFiller()));
                 }
 
                 while(commandHandlers.size() < MAX_REVISION_COMMAND_HANDLERS) {
                     commandHandlers.add(threadPool.submit(new CommandIndexer(this, ID++)));
                 }
-                while(revisionHandlers.size() < MAX_REVISION_DATA_INDEXERS) {
+                while(revisionHandlers.size() < (LOW_PERFORMANCE ? LOW_PERFORMANCE_DATA_INDEXERS : MAX_REVISION_DATA_INDEXERS)) {
                     revisionHandlers.add(threadPool.submit(new RevisionDataIndexer(this, ID++)));
                 }
-
                 for(int i = 0; i < revisionKeyQueueFiller.size(); i++) {
                     if(revisionKeyQueueFiller.get(i).isDone()) {
                         revisionKeyQueueFiller.set(i, threadPool.submit(new RevisionKeyQueueFiller()));
@@ -175,26 +184,62 @@ public class RevisionIndexer extends Indexer {
                 }
 
                 long idleCheckTime = System.currentTimeMillis()-getIdleStart();
-                if(changeBatch > 0 && ((revisionKeyQueue.isEmpty() && getStatus() == IndexerStatusMessage.IDLING && idleCheckTime >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
-                        || (LuceneConfig.FORCE_FLUSH_AFTER_BATCH_OF_CHANGES && changeBatch >= LuceneConfig.MAX_CHANGE_BATCH_SIZE))) {
-                    Logger.info(getClass(), (!(revisionKeyQueue.isEmpty() && getStatus() == IndexerStatusMessage.IDLING && idleCheckTime >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
-                            ? "Forcing index flush." : "Flushing index after idle timer.")+" It's been "+(System.currentTimeMillis()-flushTimer)+"ms since last flush. PATH: "+getPath().toString());
-                    IndexerStatusMessage status = getStatus();
-                    setStatus(IndexerStatusMessage.FLUSHING);
-                    Thread.sleep(500);
-                    flushTimer = System.currentTimeMillis();
-                    Logger.info(getClass(), "Flushing "+changeBatch+" index changes");
-                    flushIndex();
-                    changeBatch = 0;
-                    setStatus(status);
-                    clearSkipped = true;
-                }
-                if(clearSkipped && changeBatch == 0 && revisionKeyQueue.size() == 0) {
-                    clearSkipped = false;
-                    Pair<ReturnResult, Long> pair = revisions.getRevisionsWaitingIndexing();
-                    if(pair.getRight() != null && pair.getRight() > 0) {
-                        Logger.info(getClass(), "Clearing revisions that have been requested but not indexed since idle mode has been reached. PATH: "+getPath().toString());
-                        revisions.clearPartlyIndexed();
+
+                if(LOW_PERFORMANCE) {
+                    if(changeBatch > 0 && ((getStatus() == IndexerStatusMessage.IDLING && idleCheckTime >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
+                            || (LuceneConfig.FORCE_FLUSH_AFTER_BATCH_OF_CHANGES && changeBatch >= LuceneConfig.MAX_CHANGE_BATCH_SIZE))) {
+                        Logger.info(getClass(), (!(getStatus() == IndexerStatusMessage.IDLING && idleCheckTime >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
+                                ? "Forcing index flush."
+                                : "Flushing index after idle timer.") + " It's been " + (System.currentTimeMillis() - flushTimer) + "ms since last flush. PATH: "
+                                + getPath().toString());
+                        IndexerStatusMessage status = getStatus();
+                        setStatus(IndexerStatusMessage.FLUSHING);
+                        Thread.sleep(500);
+                        flushTimer = System.currentTimeMillis();
+                        Logger.info(getClass(), "Flushing "+changeBatch+" index changes");
+                        flushIndex();
+                        changeBatch = 0;
+                        setStatus(status);
+                        clearSkipped = true;
+                    }
+
+                    RevisionKey key = getNextKey();
+                    if(clearSkipped && changeBatch == 0 && key == null) {
+                        clearSkipped = false;
+                        Pair<ReturnResult, Long> pair = revisions.getRevisionsWaitingIndexing();
+                        if(pair.getRight() != null && pair.getRight() > 0) {
+                            Logger.info(getClass(), "Clearing revisions that have been requested but not indexed since idle mode has been reached. PATH: "+getPath().toString());
+                            revisions.clearPartlyIndexed();
+                        }
+                    }
+                    if(key != null) {
+                        clearIndexing(key);
+                    }
+                } else {
+                    if(changeBatch > 0 && ((revisionKeyQueue.isEmpty() && getStatus() == IndexerStatusMessage.IDLING && idleCheckTime >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
+                            || (LuceneConfig.FORCE_FLUSH_AFTER_BATCH_OF_CHANGES && changeBatch >= LuceneConfig.MAX_CHANGE_BATCH_SIZE))) {
+                        Logger.info(getClass(), (!(revisionKeyQueue.isEmpty() && getStatus() == IndexerStatusMessage.IDLING && idleCheckTime >= LuceneConfig.TIME_IDLING_BEFORE_FLUSH)
+                                ? "Forcing index flush."
+                                : "Flushing index after idle timer.") + " It's been " + (System.currentTimeMillis() - flushTimer) + "ms since last flush. PATH: "
+                                + getPath().toString());
+                        IndexerStatusMessage status = getStatus();
+                        setStatus(IndexerStatusMessage.FLUSHING);
+                        Thread.sleep(500);
+                        flushTimer = System.currentTimeMillis();
+                        Logger.info(getClass(), "Flushing "+changeBatch+" index changes");
+                        flushIndex();
+                        changeBatch = 0;
+                        setStatus(status);
+                        clearSkipped = true;
+                    }
+
+                    if(clearSkipped && changeBatch == 0 && revisionKeyQueue.size() == 0) {
+                        clearSkipped = false;
+                        Pair<ReturnResult, Long> pair = revisions.getRevisionsWaitingIndexing();
+                        if(pair.getRight() != null && pair.getRight() > 0) {
+                            Logger.info(getClass(), "Clearing revisions that have been requested but not indexed since idle mode has been reached. PATH: "+getPath().toString());
+                            revisions.clearPartlyIndexed();
+                        }
                     }
                 }
 
@@ -262,7 +307,7 @@ public class RevisionIndexer extends Indexer {
                     RevisionKey key = getNextKey();
                     if(!revisionKeyQueue.offer(key)) {
                         clearIndexing(key);
-                        Thread.sleep(2000);
+                        Thread.sleep(1000);
                     }
                 } catch(InterruptedException ie) {
                     Thread.currentThread().interrupt();
@@ -270,10 +315,6 @@ public class RevisionIndexer extends Indexer {
                 }
             }
             return true;
-        }
-
-        private RevisionKey getNextKey() {
-            return revisions.getNextForIndexing();
         }
     }
 
@@ -479,7 +520,12 @@ public class RevisionIndexer extends Indexer {
                     while(getStatus() == IndexerStatusMessage.FLUSHING) {
                         Thread.sleep(100);
                     }
-                    RevisionKey key = revisionKeyQueue.poll();
+                    RevisionKey key = null;
+                    if(LOW_PERFORMANCE) {
+                        key = getNextKey();
+                    } else {
+                        key = revisionKeyQueue.poll();
+                    }
                     if(key != null) {
                         if(getStatus() != IndexerStatusMessage.STOP && getStatus() != IndexerStatusMessage.FLUSHING) {
                             setStatus(IndexerStatusMessage.PROCESSING);

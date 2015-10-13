@@ -144,12 +144,6 @@ public class IndexerComponent {
         threadPool.submit(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                /*List<RevisionableEntity> entities = em.createQuery(
-                        "SELECT e FROM RevisionableEntity e WHERE e.type " +
-                                "IN ('"+ConfigurationType.PUBLICATION+"','"+ConfigurationType.SERIES+"','"+ConfigurationType.STUDY+"')", RevisionableEntity.class).getResultList();*/
-
-                /*List<RevisionableEntity> entities = em.createQuery("SELECT e FROM RevisionableEntity e", RevisionableEntity.class).getResultList();*/
-
                 // Stop the current indexer and clear index
                 IndexerCommand command = RevisionIndexerCommand.stop();
                 manager.getIndexDirectory(command.getPath(), true).clearIndex();
@@ -158,39 +152,11 @@ public class IndexerComponent {
 
                 // Clear indexing info from all revisions
                 revisions.clearAll();
-                /*int current = 0;
-                long timeSpent = 0L;
-                for(RevisionableEntity entity : entities) {
-                    long startTime = System.currentTimeMillis();
-                    current++;
-                    List<Integer> nos = revisions.getAllRevisionNumbers(entity.getId());
-                    for(Integer no : nos) {
-                        command = RevisionIndexerCommand.index(entity.getId(), no);
-                        commandRepository.addIndexerCommand(command);
-                        commandAdded(command);
-                    }
-                    long endTime = System.currentTimeMillis();
-                    timeSpent += (endTime - startTime);
-                    if(current % 1000 == 0) {
-                        Logger.info(getClass(),"1000 revision index commands added to the queue in "+timeSpent+"ms. Still "+(entities.size()-current)+" commands to add.");
-                        timeSpent = 0L;
-                    }
-                }*/
+
                 return true;
             }
         });
     }
-
-    /*public synchronized void addCommand(IndexerCommand command) {
-        commandRepository.addIndexerCommand(command);
-        if(handlers.containsKey(command.getPath())) {
-            if(handlers.get(command.getPath()).isDone()) {
-                startIndexer(command.getPath());
-            }
-        } else {
-            startIndexer(command.getPath());
-        }
-    }*/
 
     public synchronized void commandAdded(IndexerCommand command) {
         if(handlers.containsKey(command.getPath().getType())) {
