@@ -1,0 +1,53 @@
+GUI-Käännökset
+=============
+
+Tekstien esittäminen GUI:lla käyttää aina L10N.js-skriptiä joka on alustettu
+osaksi MetkaJS-globaalia objektia. L10N sisältää funktiot käännösten
+lisäämiselle yleiseen käännöslistaan (put), käännöksen hakemiselle
+käännöslistasta (get), käännöksen pomiminen annetusta objetista annetulla
+parametrinimellä (localize), annetun propertynimen tarkastaminen
+tekstisisällön varalta (containsText), objectin annetun propertynimen
+tarkastaminen käännöstiedon varalta (hasTranslate) ja objektin varmistaminen
+käännösobjektiksi (isTranslate). Näistä get- ja localize-functiot käyttävät
+skriptin alusta löytyvää 'locale' tietoa jota vaihtamalla voidaan vaihtaa
+käyttöliittymän kieli niiltä osin kuin käännökset löytyvät. Käännökset on
+annettu aina joko pelkkinä teksteinä tai &-merkillä alkavilla propertynimillä
+jotka sisältävät objektin. Näissä käännösobjekteissa tulee aina olla property
+'default' joka sisältää tekstin jota käytetään halutun kielen käännösten
+puuttuessa.
+
+put- ja get-funktiot ovat pääasiassa varsinaisiin GUI-käännöksiin liittyviä, kun
+taas localize-funktio on vahvasti GUI-konfiguraatioissa sekä
+Data-konfiguraatioissa olevien tekstien käsittelyä varten (yleensä valintalistat
+ja 'title' propertyt). Referenssien takana olevista arvoista haetaan
+automaattisesti 'locale'-propertyssä määritellyn kielen mukaiset arvot, eli nämä
+tekstit käännetään palvelimella eikä käyttöliittymässä.
+
+containstText-, hasTranslation- ja isTranslation-funktiot ovat apufunktioita
+joita käytetään L10N-skriptin sisällä mutta jotka ovat käytettävissä myös
+muualla jos tarvetta on.
+
+--
+
+Käyttöliittymässä olevien vakioteksien käännökset löytyvät uiLocalization.js
+tiedostosta. Käännökset on jaoteltu osajoukkoihin käyttäen sisäkkäisiä objekteja
+ja näihin voidaan viitata käännöstekstiä haettaessa pisteellä erotellulla
+avaimella (esim. topmenu.expert antaa eksperttihaun linkkitekstin).
+
+Objektirakenteen tulee aina päättyä joko pelkkään tekstiin tai käännösobjektiin.
+
+--
+
+Joitakin tekstejä on saatettu määritellä suoraan javascript-tiedostoihin kun
+sivun sisällön konfiguraatiota on rakennettu sen sijaan että teksti olisi
+sijoitettu uiLocalization-rakenteeseen ja haettu konfiguraatioon (yleensä
+title-kenttään) käyttäen MetkaJS.l10n.get(...) rakennetta. Jos tällaisia
+tekstejä täytyy muuttaa niin on järkevää siirtää varsinainen teksti
+uiLocalization-rakenteeseen ja hakea se mainitulla get-funktiolla. Ellei
+käännettävän tekstin avain ole yksiselitteinen (kuten esim. mainitut topmenu
+arvot) täytyy avain joka tapauksessa käydä tarkastamassa varsinaisesta
+javascript-koodista joka tekstin asettaa. Jos arvo ei muutu yksiselitteistä
+uiLocalization-tiedoston käännöstä muuttamalla on kyseessä todennäköisesti
+teksti joka on epähuomiossa jätetty javascript-tiedostossa sijaitsevaan
+konfiguraatioon tai muuhun tekstin asettavaan koodiin sellaisenaan, jolloin
+se kannattaa muuttaa käyttämään uiLocalization-menetelmää.
