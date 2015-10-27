@@ -81,7 +81,7 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         // The query is send to a recursive method that searches it for queries enclosed in S{ }S
         // If it finds any it calls itself with that subquery
         // This is continued for as long as there are subqueries
-        Query query = new Query(0, request.getQuery().length());
+        Query query = new Query(TagType.ROOT, 0, request.getQuery().length());
         findQueries(request.getQuery(), query);
 
         // After that the queries are performed in a depth first manner
@@ -147,15 +147,23 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
                     if(replc.length() > 1) {
                         replc += " ";
                     }
-                    replc += rr.getId();
+                    switch(sq.tag) {
+                        case KEY:
+                            replc += rr.getId()+"-"+rr.getNo();
+                            break;
+                        case ID:
+                            replc += rr.getId();
+                            break;
+                    }
+
                 }
                 replc += ")";
-                String newQry = qryStr.substring(0, sq.start+difference-2);
+                String newQry = qryStr.substring(0, sq.start+difference-sq.tag.getL());
                 newQry += replc;
-                newQry += qryStr.substring(sq.end+difference+2);
+                newQry += qryStr.substring(sq.end+difference+sq.tag.getL());
                 qryStr = newQry;
 
-                difference += (replc.length()-4) - (sq.end-sq.start);
+                difference += (replc.length()-(sq.tag.getL()*2)) - (sq.end-sq.start);
             }
         }
         return performSearch(qryStr);
@@ -208,52 +216,103 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         savedSearch.removeExpertSearch(id);
     }
 
+    private enum TagType {
+        ROOT("", "", 0),
+        KEY(":KEY\\{", "}KEY(?=\\s|\\z)", 4),
+        ID(":ID\\{", "}ID(?=\\s|\\z)", 3);
+
+        private final String start;
+        private final String end;
+        private final int l;
+
+        TagType(String start, String end, int l) {
+            this.start = start;
+            this.end = end;
+            this.l = l;
+        }
+
+        public String getStart() {
+            return start;
+        }
+
+        public String getEnd() {
+            return end;
+        }
+
+        public int getL() {
+            return l;
+        }
+    }
+
+    private static List<TagType> tags = new ArrayList<>();
+
+    static {
+        tags.add(TagType.KEY);
+        tags.add(TagType.ID);
+    }
     private static String pStart = ":S\\{";
     private static String pEnd = "}S(?=\\s|\\z)";
 
     private void findQueries(String qry, Query query) {
-        Pattern p = Pattern.compile(pStart);
+        for(TagType tag : tags) {
+            Pattern p = Pattern.compile(tag.start);
 
-        Matcher starts = p.matcher(qry);
-        p = Pattern.compile(pEnd);
-        Matcher ends = p.matcher(qry);
-        List<Integer> is = new ArrayList<Integer>();
-        List<Integer> ie = new ArrayList<Integer>();
-        while(starts.find()) {
-            is.add(starts.end());
-        }
-        while(ends.find()) {
-            ie.add(ends.start());
-        }
-
-        int depth = 0;
-        int rs = 0;
-        for(int i=0; i<qry.length(); i++) {
-            if(is.contains(i)) {
-                depth++;
-                if(depth == 1) {
-                    rs = i;
-                }
+            Matcher starts = p.matcher(qry);
+            p = Pattern.compile(tag.end);
+            Matcher ends = p.matcher(qry);
+            List<Integer> is = new ArrayList<Integer>();
+            List<Integer> ie = new ArrayList<Integer>();
+            while(starts.find()) {
+                is.add(starts.end());
             }
-            if(ie.contains(i)) {
-                depth--;
-                if(depth == 0) {
-                    Query subquery = new Query(rs, i);
-                    query.queries.add(subquery);
-                    findQueries(qry.substring(rs, i), subquery);
+            while(ends.find()) {
+                ie.add(ends.start());
+            }
+
+            int depth = 0;
+            int rs = 0;
+            for(int i=0; i<qry.length(); i++) {
+                if(is.contains(i)) {
+                    depth++;
+                    if(depth == 1) {
+                        rs = i;
+                    }
+                }
+                if(ie.contains(i)) {
+                    depth--;
+                    if(depth == 0) {
+                        boolean addQuery = true;
+                        for(Query q : query.queries) {
+                            if(q.start < rs && q.end > i) {
+                                addQuery = false;
+                                break;
+                            }
+                        }
+                        if(addQuery) {
+                            Query subquery = new Query(tag, rs, i);
+                            query.queries.add(subquery);
+                            findQueries(qry.substring(rs, i), subquery);
+                        }
+                    }
                 }
             }
         }
     }
 
     private static class Query {
+        private final TagType tag;
         private final int start;
         private final int end;
         private final List<Query> queries = new ArrayList<>();
 
-        public Query(int start, int end) {
+        public Query(TagType tag, int start, int end) {
+            this.tag = tag;
             this.start = start;
             this.end = end;
+        }
+
+        public TagType getTag() {
+            return tag;
         }
 
         public int getStart() {

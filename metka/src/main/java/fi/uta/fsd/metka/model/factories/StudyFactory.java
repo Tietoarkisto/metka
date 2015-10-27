@@ -123,7 +123,7 @@ public class StudyFactory extends DataFactory {
 
         // Create studyid field. studyid_prefix and studyid_number were redundant and were removed
         list = configuration.getRootSelectionList(Lists.ID_PREFIX_LIST);
-        data.dataField(ValueDataFieldCall.set(Fields.STUDYID, new Value(list.getDef()+studyNumber), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
+        data.dataField(ValueDataFieldCall.set(Fields.STUDYID, new Value(list.getDef() + studyNumber), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
 
         // submissionid, this is required information for creating a new study
         data.dataField(ValueDataFieldCall.set("submissionid", new Value(submissionid), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
@@ -155,6 +155,9 @@ public class StudyFactory extends DataFactory {
             Pair<StatusCode, ContainerDataField> containerPair = data.dataField(ContainerDataFieldCall.get(Fields.AUTHORS));
             if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
                 for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
+                    if(row.getRemoved()) {
+                        continue;
+                    }
                     Pair<StatusCode, ValueDataField> typePair = row.dataField(ValueDataFieldCall.get(Fields.AUTHORTYPE));
                     if(typePair.getLeft() != StatusCode.FIELD_FOUND || !typePair.getRight().valueForEquals(Language.DEFAULT, "1")) {
                         // Type needs to be set and equal value "1" (person author)
@@ -181,12 +184,28 @@ public class StudyFactory extends DataFactory {
             String ver = version.get(l)+" ";
             containerPair = data.dataField(ContainerDataFieldCall.get(Fields.DATAVERSIONS));
             if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-                DataRow row = containerPair.getRight().getRowsFor(Language.DEFAULT).get(containerPair.getRight().getRowsFor(Language.DEFAULT).size()-1);
-                Pair<StatusCode, ValueDataField> versionPair = row.dataField(ValueDataFieldCall.get(Fields.DATAVERSION));
-                if(versionPair.getLeft() == StatusCode.FIELD_FOUND && versionPair.getRight().hasValueFor(Language.DEFAULT)) {
-                    ver += versionPair.getRight().getActualValueFor(Language.DEFAULT);
-                } else {
+                DataRow row = null;
+                int i = containerPair.getRight().getRowsFor(Language.DEFAULT).size()-1;
+
+                do {
+                    row = containerPair.getRight().getRowsFor(Language.DEFAULT).get(i);
+                    if(!row.getRemoved()) {
+                        break;
+                    }
+                    row = null;
+                    i--;
+                } while(i >= 0);
+
+
+                if(row == null) {
                     ver += "0.0";
+                } else {
+                    Pair<StatusCode, ValueDataField> versionPair = row.dataField(ValueDataFieldCall.get(Fields.DATAVERSION));
+                    if(versionPair.getLeft() == StatusCode.FIELD_FOUND && versionPair.getRight().hasValueFor(Language.DEFAULT)) {
+                        ver += versionPair.getRight().getActualValueFor(Language.DEFAULT);
+                    } else {
+                        ver += "0.0";
+                    }
                 }
             } else {
                 ver += "0.0";
@@ -196,13 +215,28 @@ public class StudyFactory extends DataFactory {
 
             containerPair = data.dataField(ContainerDataFieldCall.get(Fields.DESCVERSIONS));
             if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(l)) {
-                DataRow row = containerPair.getRight().getRowsFor(l).get(containerPair.getRight().getRowsFor(l).size()-1);
-                Pair<StatusCode, ValueDataField> versionPair = row.dataField(ValueDataFieldCall.get(Fields.DESCVERSION));
-                if(versionPair.getLeft() == StatusCode.FIELD_FOUND && versionPair.getRight().hasValueFor(l)) {
-                    ver += versionPair.getRight().getActualValueFor(l);
-                } else {
+                DataRow row = null;
+                int i = containerPair.getRight().getRowsFor(l).size()-1;
+                do {
+                    row = containerPair.getRight().getRowsFor(l).get(i);
+                    if(!row.getRemoved()) {
+                        break;
+                    }
+                    row = null;
+                    i--;
+                } while (i >= 0);
+
+                if(row == null) {
                     ver += "0.0";
+                } else {
+                    Pair<StatusCode, ValueDataField> versionPair = row.dataField(ValueDataFieldCall.get(Fields.DESCVERSION));
+                    if(versionPair.getLeft() == StatusCode.FIELD_FOUND && versionPair.getRight().hasValueFor(l)) {
+                        ver += versionPair.getRight().getActualValueFor(l);
+                    } else {
+                        ver += "0.0";
+                    }
                 }
+
             } else {
                 ver += "0.0";
             }
@@ -220,6 +254,9 @@ public class StudyFactory extends DataFactory {
             containerPair = data.dataField(ContainerDataFieldCall.get(Fields.COLLECTORS));
             if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
                 for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
+                    if(row.getRemoved()) {
+                        continue;
+                    }
                     String coll = "";
                     Pair<StatusCode, ValueDataField> typePair = row.dataField(ValueDataFieldCall.get(Fields.AUTHORTYPE));
                     // Need type to continue
@@ -272,6 +309,9 @@ public class StudyFactory extends DataFactory {
             containerPair = data.dataField(ContainerDataFieldCall.get(Fields.PRODUCERS));
             if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
                 for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
+                    if(row.getRemoved()) {
+                        continue;
+                    }
                     String prod = "";
                     ReferenceOption org = references.getCurrentFieldOption(l, data, configuration, "producers."+row.getRowId()+"."+Fields.PRODUCERORGANISATION, true);
                     ReferenceOption ag = references.getCurrentFieldOption(l, data, configuration, "producers."+row.getRowId()+"."+Fields.PRODUCERAGENCY, true);
@@ -314,7 +354,7 @@ public class StudyFactory extends DataFactory {
                 biblcit += " Yhteiskuntatieteellinen tietoarkisto "+distributor.get(l);
             }
 
-            // URN from DIP package (this is still unclear how it's formed
+            // URN from DIP package
             containerPair = data.dataField(ContainerDataFieldCall.get(Fields.PACKAGES));
             if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
                 for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
