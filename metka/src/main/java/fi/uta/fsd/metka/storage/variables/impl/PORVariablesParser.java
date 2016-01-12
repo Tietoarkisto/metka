@@ -192,39 +192,6 @@ class PORVariablesParser implements VariablesParser {
                 Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(variableRevision.getKey().getId().toString());
                 remove.remove(dataPair.getRight().getKey(), info);
             }
-
-            /*// Remove from variables container
-            if(variablesContainer != null) {
-                // See that respective rows are removed from STUDY_VARIABLES
-                //    Remove from variables list
-                ReferenceRow reference = variablesContainer.getReferenceIncludingValue(variableRevision.getKey().asPartialKey()).getRight();
-                if(reference != null) {
-                    StatusCode status = variablesContainer.removeReference(reference.getRowId(), variablesData.getChanges(), info).getLeft();
-                    if(status == StatusCode.ROW_CHANGE || status == StatusCode.ROW_REMOVED) {
-                        result = resultCheck(result, ParseResult.REVISION_CHANGES);
-                    }
-                }
-            }
-*/
-            // Remove from groups
-            /*if(variableGroups != null) {
-                for(DataRow row : variableGroups.getRowsFor(Language.DEFAULT)) {
-                    ReferenceContainerDataField varGroupVars = row.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS)).getRight();
-                    if(varGroupVars != null) {
-                        // See that respective rows are removed from VARGROUPVARS
-                        //    Remove from variables list
-                        ReferenceRow reference = varGroupVars.getReferenceWithValue(variableRevision.getKey().getId().toString()).getRight();
-                        if(reference != null) {
-                            StatusCode status = varGroupVars.removeReference(reference.getRowId(), variablesData.getChanges(), info).getLeft();
-                            if(status == StatusCode.ROW_CHANGE || status == StatusCode.ROW_REMOVED) {
-                                result = resultCheck(result, ParseResult.REVISION_CHANGES);
-                            }
-                            // Since variable should always be only in one group at a time we can break out.
-                            break;
-                        }
-                    }
-                }
-            }*/
         }
 
         // We need an updated variables data in case removals have changed it

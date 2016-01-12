@@ -131,6 +131,10 @@
 			"text": "Aineistoa ei löydetty"
 		}]
 	}, {
+		"key": "REVISION_NOT_FOUND",
+		"title": "ERROR",
+		"text": "Revisiota ei löydetty"
+	}, {
 		"key": "INCORRECT_TYPE_FOR_OPERATION",
 		"title": "ERROR",
 		"text": "Annettu arvo oli väärää tyyppiä",

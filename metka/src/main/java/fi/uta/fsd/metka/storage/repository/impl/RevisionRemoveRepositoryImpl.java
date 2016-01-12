@@ -231,7 +231,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         // TODO: What do we do about study errors and binder pages in this case?
 
-        finalizeLogicalRemoval(data, info);
+        finalizeLogicalRemoval(data, info, isCascadeRemove);
 
         result = RemoveResult.SUCCESS_LOGICAL;
         messenger.sendAmqpMessage(messenger.FD_REMOVE, new RevisionPayload(data));
@@ -538,7 +538,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         revisions.updateRevisionData(study);
     }
 
-    private void finalizeLogicalRemoval(RevisionData data, DateTimeUserPair info) {
+    private void finalizeLogicalRemoval(RevisionData data, DateTimeUserPair info, boolean isCascade) {
         // TODO: Generalize this and other respective cases with configuration analysis
         // Since we don't have a mapping object for references we need to do this by type for now.
         // It might be handy to do some processing of data configurations when they are saved and to form a reference web from them.
@@ -551,20 +551,22 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 break;
             }
             case STUDY_VARIABLES: {
-                Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
-                if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-                    Pair<ReturnResult, RevisionData> revPair = revisions.getRevisionData(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
-                    if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
-                        RevisionData study = revPair.getRight();
-                        Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES));
-                        if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
-                            fieldPair = data.dataField(ValueDataFieldCall.get(Fields.LANGUAGE));
-                            if(fieldPair.getLeft() == StatusCode.FIELD_FOUND) {
-                                String varLang = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
-                                Pair<StatusCode, DataRow> rowPair = conPair.getRight().getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(varLang));
-                                if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
-                                    conPair.getRight().removeRow(rowPair.getRight().getRowId(), study.getChanges(), info);
-                                    revisions.updateRevisionData(study);
+                if(!isCascade) {
+                    Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
+                    if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+                        Pair<ReturnResult, RevisionData> revPair = revisions.getRevisionData(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+                        if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
+                            RevisionData study = revPair.getRight();
+                            Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES));
+                            if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
+                                fieldPair = data.dataField(ValueDataFieldCall.get(Fields.LANGUAGE));
+                                if(fieldPair.getLeft() == StatusCode.FIELD_FOUND) {
+                                    String varLang = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
+                                    Pair<StatusCode, DataRow> rowPair = conPair.getRight().getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(varLang));
+                                    if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
+                                        conPair.getRight().removeRow(rowPair.getRight().getRowId(), study.getChanges(), info);
+                                        revisions.updateRevisionData(study);
+                                    }
                                 }
                             }
                         }
@@ -573,63 +575,67 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 break;
             }
             case STUDY_ATTACHMENT: {
-                ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
-                if(field == null || !field.hasValueFor(Language.DEFAULT)) {
-                    break;
+                if(!isCascade) {
+                    ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
+                    if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+                        break;
+                    }
+                    String value = field.getActualValueFor(Language.DEFAULT);
+                    RevisionData study = null;
+                    if(value.split("-").length > 1) {
+                        study = revisions.getRevisionData(Long.parseLong(value.split("-")[0]), Integer.parseInt(value.split("-")[1])).getRight();
+                    } else {
+                        study = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
+                    }
+                    if(study == null) {
+                        break;
+                    }
+                    messenger.sendAmqpMessage(messenger.FB_FILE_REMOVAL, new FileRemovalPayload(data, study));
                 }
-                String value = field.getActualValueFor(Language.DEFAULT);
-                RevisionData study = null;
-                if(value.split("-").length > 1) {
-                    study = revisions.getRevisionData(Long.parseLong(value.split("-")[0]), Integer.parseInt(value.split("-")[1])).getRight();
-                } else {
-                    study = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
-                }
-                if(study == null) {
-                    break;
-                }
-                messenger.sendAmqpMessage(messenger.FB_FILE_REMOVAL, new FileRemovalPayload(data, study));
                 break;
             }
             case STUDY_VARIABLE: {
-                ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
-                if(field == null || !field.hasValueFor(Language.DEFAULT)) {
-                    return;
-                }
+                if(!isCascade) {
+                    ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+                    if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+                        return;
+                    }
 
-                RevisionData variables = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
-                if(variables == null) {
-                    return;
-                }
+                    RevisionData variables = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
+                    if(variables == null) {
+                        return;
+                    }
 
-                ReferenceContainerDataField container = variables.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
-                if(container == null || !container.hasValidRows()) {
-                    return;
-                }
+                    ReferenceContainerDataField container = variables.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
+                    if(container == null || !container.hasValidRows()) {
+                        return;
+                    }
 
-                ReferenceRow row = container.getReferenceWithValue(data.getKey().asCongregateKey()).getRight();
-                if(row == null) {
-                    return;
-                }
-                container.removeReference(row.getRowId(), variables.getChanges(), info);
+                    ReferenceRow row = container.getReferenceWithValue(data.getKey().asCongregateKey()).getRight();
+                    if(row == null) {
+                        return;
+                    }
+                    container.removeReference(row.getRowId(), variables.getChanges(), info);
 
-                ContainerDataField variableGroups = variables.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS)).getRight();
-                if(variableGroups != null) {
-                    for(DataRow dataRow : variableGroups.getRowsFor(Language.DEFAULT)) {
-                        container = dataRow.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS)).getRight();
-                        if(container != null) {
-                            // See that respective rows are removed from VARGROUPVARS
-                            //    Remove from variables list
-                            ReferenceRow reference = container.getReferenceIncludingValue(data.getKey().asPartialKey()).getRight();
-                            if(reference != null) {
-                                container.removeReference(reference.getRowId(), variables.getChanges(), info).getLeft();
-                                // Since variable should always be only in one group at a time we can break out.
-                                break;
+                    ContainerDataField variableGroups = variables.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS)).getRight();
+                    if(variableGroups != null) {
+                        for(DataRow dataRow : variableGroups.getRowsFor(Language.DEFAULT)) {
+                            container = dataRow.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS)).getRight();
+                            if(container != null) {
+                                // See that respective rows are removed from VARGROUPVARS
+                                //    Remove from variables list
+                                ReferenceRow reference = container.getReferenceIncludingValue(data.getKey().asPartialKey()).getRight();
+                                if(reference != null) {
+                                    container.removeReference(reference.getRowId(), variables.getChanges(), info).getLeft();
+                                    // Since variable should always be only in one group at a time we can break out.
+                                    break;
+                                }
                             }
                         }
                     }
-                }
 
-                revisions.updateRevisionData(variables);
+                    revisions.updateRevisionData(variables);
+                }
                 break;
             }
             default: {
