@@ -39,6 +39,10 @@ define(function (require) {
                 },
                 defaultLang: "DEFAULT",
                 ignoreTranslate: true,
+                isReadOnly: function() {
+                    //overrides inherited readonly state
+                    return false;
+                },
                 dataConf: {
                     selectionLists: {
                         language_list: {
