@@ -109,7 +109,9 @@ public interface RevisionRepository {
 
     @Transactional(readOnly = false) void indexRevision(RevisionKey key);
     @Transactional(readOnly = false) void indexRevisions(RevisionKey key);
-    @Transactional(readOnly = false) void removeRevision(RevisionKey key);
+    @Transactional(readOnly = false) void removeRevisionFromIndex(RevisionKey key);
+
+    @Transactional(readOnly = false)  ReturnResult removeRevision(RevisionKey key);
 
     void sendStudyErrorMessageIfNeeded(RevisionData revision, Configuration configuration);
 

@@ -28,6 +28,7 @@
 
 package fi.uta.fsd.metka.storage.repository.impl;
 
+import com.rabbitmq.client.AMQP;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
@@ -251,6 +252,23 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     }
 
     @Override
+    @Caching(evict={
+            @CacheEvict(value = "revision-cache", key = "#key"),
+            @CacheEvict(value="info-cache", key="#key.id")
+    })
+    public ReturnResult removeRevision(RevisionKey key) {
+        RevisionEntity entity = em.find(RevisionEntity.class, fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+        if (entity == null) {
+            return ReturnResult.REVISION_NOT_FOUND;
+        }
+
+        em.remove(entity);
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
+
+    }
+
+    @Override
     public Pair<ReturnResult, String> getStudyFileDirectory(long id) {
         StudyEntity study = em.find(StudyEntity.class, id);
         if(study == null) {
@@ -320,7 +338,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     }
 
     @Override
-    public void removeRevision(RevisionKey key) {
+    public void removeRevisionFromIndex(RevisionKey key) {
         IndexerCommand command = RevisionIndexerCommand.remove(key);
         commandRepository.addIndexerCommand(command);
         indexer.commandAdded(command);

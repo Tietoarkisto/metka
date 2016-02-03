@@ -360,6 +360,7 @@ class PORVariablesParser implements VariablesParser {
             target.getReferences().add(newRow);
             ChangeUtil.insertChange(changeMap, target, newRow);
         } else {
+            row.setRemoved(false);
             target.getReferences().add(row);
         }
 
