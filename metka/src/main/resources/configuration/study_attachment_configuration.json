@@ -298,7 +298,13 @@
 			"type": "FIELD",
 			"content": "variables"
 		}]
-	}, {
+	},{
+		"type": "REMOVE_DRAFT",
+		"targets": [{
+			"type":"FIELD",
+			"content":"variables"
+		}]
+	},{
 		"type": "RESTORE",
 		"targets": [{
 			"type": "FIELD",

@@ -87,7 +87,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
      */
     @JsonIgnore public Pair<StatusCode, ReferenceRow> getReferenceWithValue(String value) {
         for(ReferenceRow reference : references) {
-            if(reference.valueEquals(value)) {
+            if(reference.valueEquals(value) && !reference.getRemoved()) {
                 return new ImmutablePair<>(StatusCode.ROW_FOUND, reference);
             }
         }
@@ -103,7 +103,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
      */
     @JsonIgnore public Pair<StatusCode, ReferenceRow> getReferenceIncludingValue(String value) {
         for(ReferenceRow reference : references) {
-            if(reference.valueContaints(value)) {
+            if(reference.valueContaints(value) && !reference.getRemoved()) {
                 return new ImmutablePair<>(StatusCode.ROW_FOUND, reference);
             }
         }
@@ -213,17 +213,21 @@ public class ReferenceContainerDataField extends RowContainerDataField {
      */
     @JsonIgnore
     public void replaceRow(Integer rowId, ReferenceRow newRow, Map<String, Change> changeMap) {
-        for(ListIterator<ReferenceRow> i = references.listIterator(); i.hasNext();) {
+        ListIterator<ReferenceRow> i = references.listIterator();
+        boolean scheduleForRemoval = false;
+        while(i.hasNext()) {
             ReferenceRow row = i.next();
             if(row.getRowId() == rowId) {
-                removeReference(rowId, changeMap, DateTimeUserPair.build());
-                i.add(newRow);
-                ContainerChange cc = (ContainerChange)changeMap.get(getKey());
-                cc.put(new RowChange(newRow.getRowId()));
+                scheduleForRemoval = true;
                 break;
             }
         }
+        i.add(newRow);
+        if (scheduleForRemoval) removeReference(rowId, changeMap, DateTimeUserPair.build());
+        ContainerChange cc = (ContainerChange)changeMap.get(getKey());
+        cc.put(new RowChange(newRow.getRowId()));
     }
+
 
     @Override
     public void initParents(DataFieldContainer parent) {

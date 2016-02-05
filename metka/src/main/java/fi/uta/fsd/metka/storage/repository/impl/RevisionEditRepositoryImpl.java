@@ -251,9 +251,11 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             }
             case STUDY_VARIABLES: {
                 finalizeStudyVariablesEdit(result, data, info);
+                break;
             }
             case STUDY_VARIABLE: {
                 finalizeStudyVariableEdit(result, data, info);
+                break;
             }
         }
     }
@@ -286,6 +288,32 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
 
         files.replaceRow(row.getRowId(), ReferenceRow.build(files, new Value(data.getKey().asCongregateKey()), info), study.getChanges());
         revisions.updateRevisionData(study);
+
+        ContainerDataField variablesContainer = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES)).getRight();
+
+        if(variablesContainer == null || !variablesContainer.hasValidRows()) {
+            return;
+        }
+
+        DataRow variablesRow = variablesContainer.getRowWithFieldIncludingValue(Language.DEFAULT,Fields.VARIABLESFILE,new Value(data.getKey().getId().toString())).getRight();
+
+        if(variablesRow == null) {
+            return;
+        }
+
+        ValueDataField variablesField = variablesRow.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+
+        if (variablesField == null) {
+            return;
+        }
+
+        RevisionData variables = revisions.getRevisionData(variablesField.getActualValueFor(Language.DEFAULT)).getRight();
+
+        if(variables == null || variables.getState() != RevisionState.DRAFT) {
+            return;
+        }
+
+        updateAttachmentVariablesLink(variables,data,info);
     }
 
     private void finalizeStudyVariablesEdit(ReturnResult result, RevisionData data, DateTimeUserPair info) {
@@ -353,9 +381,19 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
         }
 
         // If attachment has had new revisions then update the file-field
-        if(!field.valueForEquals(Language.DEFAULT, attachment.getKey().asCongregateKey())) {
-            data.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(attachment.getKey().asCongregateKey()), Language.DEFAULT).setInfo(info).setChangeMap(data.getChanges()));
-            revisions.updateRevisionData(data);
+        updateAttachmentVariablesLink(data,attachment,info);
+    }
+
+    private void updateAttachmentVariablesLink(RevisionData variables,RevisionData attachment, DateTimeUserPair info) {
+        ValueDataField files = variables.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
+        if(files == null || !files.hasValueFor(Language.DEFAULT)) {
+            // Something weird has happened but this is not the place to react to it, just return
+            return;
+        }
+
+        if(!files.valueForEquals(Language.DEFAULT, attachment.getKey().asCongregateKey())) {
+            variables.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(attachment.getKey().asCongregateKey()), Language.DEFAULT).setInfo(info).setChangeMap(variables.getChanges()));
+            revisions.updateRevisionData(variables);
         }
     }
 
@@ -370,22 +408,42 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return;
         }
 
-        RevisionData variablesData = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
-        if(variablesData == null || variablesData.getState() != RevisionState.DRAFT) {
+        RevisionData variables = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
+        if(variables == null || variables.getState() != RevisionState.DRAFT) {
             return;
         }
 
-        ReferenceContainerDataField variables = variablesData.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
-        if(variables == null || !variables.hasValidRows()) {
+        ReferenceContainerDataField container = variables.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(container == null || !container.hasValidRows()) {
             return;
         }
 
-        ReferenceRow row = variables.getReferenceIncludingValue(data.getKey().asPartialKey()).getRight();
+        ReferenceRow row = container.getReferenceIncludingValue(data.getKey().asPartialKey()).getRight();
         if(row == null) {
             return;
         }
 
-        variables.replaceRow(row.getRowId(), ReferenceRow.build(variables, new Value(data.getKey().asCongregateKey()), info), variablesData.getChanges());
-        revisions.updateRevisionData(variablesData);
+        container.replaceRow(row.getRowId(), ReferenceRow.build(container, new Value(data.getKey().asCongregateKey()), info),
+                variables.getChanges());
+
+        ContainerDataField variableGroups = variables.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS)).getRight();
+        if(variableGroups != null) {
+            for(DataRow dataRow : variableGroups.getRowsFor(Language.DEFAULT)) {
+                container = dataRow.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS)).getRight();
+                if(container != null) {
+                    // See that respective rows are removed from VARGROUPVARS
+                    //    Remove from variables list
+                    ReferenceRow reference = container.getReferenceIncludingValue(data.getKey().asPartialKey()).getRight();
+                    if(reference != null) {
+                        container.replaceRow(reference.getRowId(), ReferenceRow.build(container, new Value(data.getKey().asCongregateKey()), info),
+                                variables.getChanges());
+                        // Since variable should always be only in one group at a time we can break out.
+                        break;
+                    }
+                }
+            }
+        }
+
+        revisions.updateRevisionData(variables);
     }
 }

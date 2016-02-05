@@ -45,7 +45,6 @@ import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -59,7 +58,6 @@ import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -84,6 +82,12 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
     @Autowired
     private RevisionRepository revisions;
+
+    @Autowired
+    private RevisionRestoreRepository restore;
+
+    @Autowired
+    private RevisionableRepository revisionables;
 
     @Autowired
     private ConfigurationRepository configurations;
@@ -155,15 +159,15 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         if(revision == null) {
             Logger.error(getClass(), "Draft revision with key "+data.getKey()+" was slated for removal but was not found from database.");
         } else {
-            em.remove(revision);
+            revisions.removeRevision(revision.getKey().toModelKey());
         }
 
         if(revInfo != null && revInfo.getApproved() == null) {
-            removeRevisionable(data.getKey().getId());
+            revisionables.removeRevisionable(data.getKey().getId());
             finalizeFinalRevisionRemoval(data, info);
             result = RemoveResult.SUCCESS_REVISIONABLE;
         } else {
-            updateRevisionableRevisionNumber(data.getKey().getId());
+            revisionables.updateRevisionableRevisionNumber(data.getKey().getId());
             finalizeDraftRemoval(data, info);
             result = RemoveResult.SUCCESS_DRAFT;
         }
@@ -172,16 +176,6 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         return OperationResponse.build(result);
     }
 
-    @CacheEvict(value="info-cache", key="#id")
-    private void removeRevisionable(Long id) {
-        em.remove(em.find(RevisionableEntity.class, id));
-    }
-
-    @CacheEvict(value="info-cache", key="#id")
-    private void updateRevisionableRevisionNumber(Long id) {
-        RevisionableEntity entity = em.find(RevisionableEntity.class, id);
-        entity.setLatestRevisionNo(entity.getCurApprovedNo());
-    }
 
     @Override
     public OperationResponse removeLogical(RevisionKey key, DateTimeUserPair info, boolean isCascadeRemove) {
@@ -219,7 +213,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return response;
         }
 
-        if(logicallyRemoveRevisionable(info, data.getKey().getId())) {
+        if(revisionables.logicallyRemoveRevisionable(info, data.getKey().getId())) {
             return OperationResponse.build(RemoveResult.ALREADY_REMOVED);
         }
 
@@ -239,21 +233,6 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         return OperationResponse.build(result);
     }
 
-    @CacheEvict(value="info-cache", key="#id")
-    private boolean logicallyRemoveRevisionable(DateTimeUserPair info, Long id) {
-        RevisionableEntity entity = em.find(RevisionableEntity.class, id);
-
-        //this needs to be checked so that restore-cascade can work appropriately.
-        if (entity.getRemoved()) {
-            return true;
-        }
-
-        entity.setRemoved(true);
-        entity.setRemovalDate(info.getTime());
-        entity.setRemovedBy(info.getUser());
-        return false;
-    }
-
     private void finalizeFinalRevisionRemoval(RevisionData data, DateTimeUserPair info) {
         switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT: {
@@ -266,6 +245,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             }
             case STUDY_VARIABLE: {
                 finalizeFinalStudyVariableRevisionRemoval(data, info);
+                break;
             }
             default: {
                 break;
@@ -321,7 +301,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 Pair<StatusCode, ReferenceContainerDataField> conPair = variables.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES));
                 if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
                     Pair<StatusCode, ReferenceRow> rowPair = conPair.getRight().getReferenceIncludingValue(data.getKey().asPartialKey());
-                    if(rowPair.getLeft() == StatusCode.ROW_FOUND && !rowPair.getRight().getRemoved()) {
+                    if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
                         conPair.getRight().removeReference(rowPair.getRight().getRowId(), variables.getChanges(), info);
                     }
                 }
@@ -359,7 +339,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 Pair<StatusCode, ReferenceContainerDataField> conPair = study.dataField(ReferenceContainerDataFieldCall.get(Fields.FILES));
                 if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
                     Pair<StatusCode, ReferenceRow> rowPair = conPair.getRight().getReferenceIncludingValue(data.getKey().asPartialKey());
-                    if(rowPair.getLeft() == StatusCode.ROW_FOUND && !rowPair.getRight().getRemoved()) {
+                    if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
                         conPair.getRight().removeReference(rowPair.getRight().getRowId(), study.getChanges(), info);
                         revisions.updateRevisionData(study);
                     }
@@ -398,11 +378,15 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         checkStudyAttachmentStudy(data, info, revisionNos);
 
-        checkStudyAttachmentVariables(data, info, revisionNos);
+        checkStudyAttachmentStudyVariables(data, info, revisionNos);
+
+        checkStudyAttachmentVariables(data,info);
     }
 
-    private void checkStudyAttachmentStudy(RevisionData data, DateTimeUserPair info, List<Integer> revisionNos) {ValueDataField field = data.dataField(
-            ValueDataFieldCall.get(Fields.STUDY)).getRight();
+    private void checkStudyAttachmentStudy(RevisionData attachment, DateTimeUserPair info, List<Integer> revisionNos) {
+
+        ValueDataField field = attachment.dataField(ValueDataFieldCall.get(Fields.STUDY)).getRight();
+
         if(field == null || !field.hasValueFor(Language.DEFAULT)) {
             return;
         }
@@ -417,25 +401,34 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return;
         }
 
-        ReferenceRow row = container.getReferenceWithValue(data.getKey().asCongregateKey()).getRight();
+        ReferenceRow row = container.getReferenceWithValue(attachment.getKey().asCongregateKey()).getRight();
         if(row == null) {
             return;
         }
 
-        container.replaceRow(row.getRowId(), ReferenceRow.build(container, new Value(data.getKey().getId() + "-" + revisionNos.get(revisionNos.size() - 1)), info),
+        container.replaceRow(row.getRowId(), ReferenceRow.build(container, new Value(attachment.getKey().getId() + "-" + revisionNos.get(revisionNos.size() - 1)), info),
                 study.getChanges());
         revisions.updateRevisionData(study);
     }
 
-    private void checkStudyAttachmentVariables(RevisionData data, DateTimeUserPair info, List<Integer> revisionNos) {
-        ValueDataField field = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
-        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
-            // Something weird has happened but this is not the place to react to it, just return
+    private void checkStudyAttachmentStudyVariables(RevisionData data, DateTimeUserPair info, List<Integer> revisionNos) {
+
+        ValueDataField variablesField = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+
+        if (variablesField == null) {
             return;
         }
 
-        RevisionData variables = revisions.getRevisionData(field.getActualValueFor(Language.DEFAULT)).getRight();
-        if(variables == null || variables.getState() != RevisionState.DRAFT) {
+        RevisionData variables = revisions.getRevisionData(variablesField.getActualValueFor(Language.DEFAULT)).getRight();
+
+
+        if(variables == null) {
+            return;
+        }
+
+        //if attachment reference is not changed , return
+        if(variables.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT)
+                .equals(data.getKey().getId() + "-" + revisionNos.get(revisionNos.size() - 1))) {
             return;
         }
 
@@ -443,6 +436,30 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 .setInfo(info)
                 .setChangeMap(variables.getChanges()));
         revisions.updateRevisionData(variables);
+    }
+
+    private void checkStudyAttachmentVariables(RevisionData data,DateTimeUserPair info) {
+
+        ValueDataField variablesField = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
+
+        if (variablesField == null) {
+            return;
+        }
+
+        RevisionData variables = revisions.getRevisionData(variablesField.getActualValueFor(Language.DEFAULT)).getRight();
+
+        if(variables == null) {
+            return;
+        }
+
+        ReferenceContainerDataField variablesContainer = variables.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
+
+        List<ReferenceRow> varRows = variablesContainer.getReferences();
+
+        for (ReferenceRow row : varRows) {
+            restore.restore(Long.parseLong(row.getActualValue().split("-")[0]));
+        }
+
     }
 
     private void finalizeStudyVariableDraftRemoval(RevisionData data, DateTimeUserPair info) {
@@ -483,7 +500,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                     //    Remove from variables list
                     ReferenceRow reference = container.getReferenceIncludingValue(data.getKey().asPartialKey()).getRight();
                     if(reference != null) {
-                        container.replaceRow(row.getRowId(), ReferenceRow.build(container, new Value(data.getKey().getId() + "-" + revisionNos.get(revisionNos.size() - 1)), info),
+                        container.replaceRow(reference.getRowId(), ReferenceRow.build(container, new Value(data.getKey().getId() + "-" + revisionNos.get(revisionNos.size() - 1)), info),
                                 variables.getChanges());
                         // Since variable should always be only in one group at a time we can break out.
                         break;
@@ -731,7 +748,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 // TODO: In case of study we should check that references pointing to this study will get removed from revisions (from which point is the question).
             case SUCCESS_DRAFT:
                 // One remove operation should be enough for both of these since there should only be one affected document
-                revisions.removeRevision(key);
+                revisions.removeRevisionFromIndex(key);
                 break;
             case SUCCESS_LOGICAL:
                 // In this case we need to reindex all affected documents instead

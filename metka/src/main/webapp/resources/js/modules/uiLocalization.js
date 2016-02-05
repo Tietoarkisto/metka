@@ -481,6 +481,12 @@ define(function (require) {
                             "&STUDY": {
                                 "default": "aineistolta"
                             },
+                            "&STUDY_VARIABLES": {
+                                "default": "aineistomuuttujilta"
+                            },
+                            "&STUDY_VARIABLE": {
+                                "default": "muuttujalta"
+                            },
                             "&STUDY_ATTACHMENT": {
                                 "default": "aineistoliitteistä"
                             },

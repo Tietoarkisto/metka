@@ -98,7 +98,7 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         ResultList<RevisionResult> results = collectResults(queryResults.getRight());
         if(results.getResults().size() > LuceneConfig.MAX_RETURNED_RESULTS) {
             results.getResults().removeAll(results.getResults().subList(LuceneConfig.MAX_RETURNED_RESULTS, results.getResults().size()));
-            response.setResults(results);;
+            response.setResults(results);
             response.setResult(ReturnResult.RESULT_SET_TOO_LARGE);
         } else {
             response.setResults(results);
