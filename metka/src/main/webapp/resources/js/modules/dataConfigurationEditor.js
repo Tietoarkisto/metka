@@ -251,6 +251,7 @@ define(function(require) {
         }, {
             type: "CANCEL"
         }];
+        modalOptions.title = "Konfiguraatio";
         modalOptions.content = [{
             type: "TAB",
             title: "Perustiedot",
@@ -610,6 +611,36 @@ define(function(require) {
                                     function update(value) {
                                         $elem.toggle(value && value !== 'REFERENCECONTAINER');
                                         if(value && value !== 'REFERENCECONTAINER') {
+                                            empty(options);
+                                        }
+                                    }
+                                    var $elem = this;
+
+                                    update(data(options)("field_type").getByLang("DEFAULT"));
+
+                                    onChange(options, update, "field_type");
+                                }
+                            },
+                            field_exact: {
+                                preCreate: function(options) {
+                                    function update(value) {
+                                        $elem.toggle(value && (value === 'STRING' || value === 'RICHTEXT'));
+                                        if(value && (value === 'STRING' || value === 'RICHTEXT')) {
+                                            empty(options);
+                                        }
+                                    }
+                                    var $elem = this;
+
+                                    update(data(options)("field_type").getByLang("DEFAULT"));
+
+                                    onChange(options, update, "field_type");
+                                }
+                            },
+                            field_bidirectional: {
+                                preCreate: function(options) {
+                                    function update(value) {
+                                        $elem.toggle(value && value === 'REFERENCECONTAINER');
+                                        if(value && value === 'REFERENCECONTAINER') {
                                             empty(options);
                                         }
                                     }

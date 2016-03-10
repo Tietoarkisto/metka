@@ -508,7 +508,7 @@ define(function(require) {
             },
             field_bidirectional: {
                 key: "field_bidirectional",
-                type: "BOOLEAN",
+                type: "STRING",
                 subfield: true
             },
             field_indexName: {
