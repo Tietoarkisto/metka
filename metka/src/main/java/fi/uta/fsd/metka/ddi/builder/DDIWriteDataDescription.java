@@ -69,7 +69,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
         }
 
         // Get variables data for given language
-        Pair<ReturnResult, RevisionData> revisionDataPair = revisions.getRevisionData(valueFieldPair.getRight().getActualValueFor(language));
+        Pair<ReturnResult, RevisionData> revisionDataPair = revisions.getRevisionData(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
         if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(),
                     "Couldn't find expected variables revision with id: " + valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));

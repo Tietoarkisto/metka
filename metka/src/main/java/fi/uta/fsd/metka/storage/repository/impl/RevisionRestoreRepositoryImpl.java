@@ -80,20 +80,22 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
     private Cascader cascader;
 
     @Override
+    @CacheEvict(value="info-cache", key="#id")
     public RemoveResult restore(Long id) {
-        return restore(id,null);
+        return this.restore(id,null);
     }
 
+    @Override
     @CacheEvict(value="info-cache", key="#id")
     public RemoveResult restore(Long id, LocalDateTime dt) {
-        Pair<ReturnResult, RevisionableInfo> pair = revisions.getRevisionableInfo(id);
-        if(pair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
+        RevisionableEntity entity = em.find(RevisionableEntity.class, id);
+
+        if(entity == null) {
             return RemoveResult.NOT_FOUND;
         }
-        if(!pair.getRight().getRemoved()) {
+        if(!entity.getRemoved()) {
             return RemoveResult.NOT_REMOVED;
         }
-        RevisionableEntity entity = em.find(RevisionableEntity.class, id);
 
         if (dt != null) {
             if (!dt.equals(entity.getRemovalDate())) {

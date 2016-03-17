@@ -8,7 +8,7 @@
 		<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js"></script>
         <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js"></script>
 		<script>
-        var secret = "QS5rcU5BMVU4MlkvbG9Xdm45cXd0L2JibFRVM09hOEY2ZzRSZ2RQODh4aklUY1l1c3p1MFdMUWM4Y3ZXdjVHeXR1dk1UUFdmVzNxcmxCaFZOMmNnZC8";
+        var secret = "cDZjb3NjamFSRW1QTEpXem5jS0pQbFlRSXlHLjNVeS9tTjhLbC51LksvLjFuLkMwTkhqeS9sVHZUWGN3Y1J0OXRGQnpjS1RYMktOTTJWMGNrbTJ6YS4";
 
         function Tester() {
             function call(url, request, success) {
@@ -211,6 +211,38 @@
                         rsp = response
                     });
                     return rsp;
+                },
+                collectReferenceOptions: function() {
+                    var reqUrl = "/metka/api/collectReferenceOptions";
+                    var request = {
+                        "request": {
+                            "root": {
+                                "reference": {
+                                    "type": "JSON",
+                                    "target": "language_descriptions",
+                                    "valuePath": "code",
+                                    "titlePath": "text"
+                                }
+                            }
+                        },
+                        "authentication": secret
+                    };
+                    call(reqUrl,request, function(response) {
+                        alert(response.result);
+                    })
+                },
+                getConfiguration: function() {
+                    var reqUrl = "/metka/api/getConfiguration";
+                    var request = {
+                        "key": {
+                            type: $('#configurationType').val(),
+                            version: $('#configurationVersion').val()
+                        },
+                        "authentication": secret
+                    };
+                    call(reqUrl, request,function(response) {
+                        alert(response.result);
+                    })
                 }
             }
         }
@@ -361,6 +393,10 @@
                 <input type="button" value="Muokkaa" onclick="Tester().revisionEdit()" />
             </div>
             <div>
+                <h3>Collectreferenceoptions</h3>
+                <input type="button" value="Kerää" onclick="Tester().collectReferenceOptions()" />
+            </div>
+            <div>
                 <h3>View</h3>
                 <input type="button" value="Lataa TransferData" onclick="Tester().revisionView()" />
             </div>
@@ -392,6 +428,23 @@
                 <input type="button" value="Luo Julkaisu" onclick="testRevisionable('PUBLICATION')"/>
 
             </div>
+        </div>
+        <div>
+            <h2>Konfiguraation haku</h2>
+            <p>Konfiguraatiotyyppi</p>
+            <select type="text" id="configurationType">
+                <option value="BINDER_PAGE">Mappi</option>
+                <option value="PUBLICATION">Julkaisu</option>
+                <option value="SERIES">Sarja</option>
+                <option value="STUDY" selected="selected">Aineisto</option>
+                <option value="STUDY_ATTACHMENT">Aineistoliite</option>
+                <option value="STUDY_ERROR">Aineistovirhe</option>
+                <option value="STUDY_VARIABLE">Aineistomuuttuja</option>
+                <option value="STUDY_VARIABLES">Aineistomuuttujat</option>
+            </select>
+            <p>Konfiguraatioversio</p>
+            <input type="number" id="configurationVersion">
+            <input type="button" value="Hae konfiguraatio" onclick="Tester().getConfiguration()">
         </div>
 	</body>
 </html>

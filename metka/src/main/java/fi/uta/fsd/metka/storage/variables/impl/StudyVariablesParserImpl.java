@@ -186,6 +186,12 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             updateVariables = true;
         }
 
+        fieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+        if (fieldPair.getRight() == null || !fieldPair.getRight().hasValueFor(Language.DEFAULT) || !fieldPair.getRight().valueForEquals(Language.DEFAULT, variablesData.getKey().getId().toString())) {
+            attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(variablesData.getKey().getId().toString()), Language.DEFAULT));
+            updateVariables = true;
+        }
+
         if(!AuthenticationUtil.isHandler(variablesData)) {
             variablesData.setHandler(AuthenticationUtil.getUserName());
             updateVariables = true;
