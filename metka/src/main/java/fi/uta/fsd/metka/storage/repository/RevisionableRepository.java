@@ -39,4 +39,6 @@ public interface RevisionableRepository {
     @Transactional(readOnly = false) boolean logicallyRemoveRevisionable(DateTimeUserPair info, Long id);
 
     @Transactional(readOnly = false) void updateRevisionableRevisionNumber(Long id);
+
+    long[] getAllRevisionableIds();
 }

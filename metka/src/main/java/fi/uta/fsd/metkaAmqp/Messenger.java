@@ -79,6 +79,7 @@ public class Messenger {
     public final MetkaMessageType<RevisionPayload> FD_RELEASE;
     public final MetkaMessageType<RevisionPayload> FD_RESTORE;
     public final MetkaMessageType<ProcessPayload> FE_START;
+    public final MetkaMessageType<RevisionPayload> FF_ALERT;
 
     @Autowired
     public Messenger(JSONUtil json) {
@@ -99,6 +100,7 @@ public class Messenger {
         FD_RELEASE = new MetkaMessageType<>("D", "RELEASE", new RevisionFactory());
         FD_RESTORE = new MetkaMessageType<>("D", "RESTORE", new RevisionFactory());
         FE_START = new MetkaMessageType<>("E", "START", new ProcessFactory());
+        FF_ALERT = new MetkaMessageType<>("F", "ALERT", new RevisionFactory());
     }
 
     public <T extends PayloadObject> void sendAmqpMessage(MetkaMessageType<T> type, T payload) {
