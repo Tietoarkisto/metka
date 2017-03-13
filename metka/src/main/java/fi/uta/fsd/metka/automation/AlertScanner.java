@@ -50,9 +50,8 @@ public class AlertScanner {
     static Session getMailSession;
     static MimeMessage generateMailMessage;
 
-    @Scheduled(cron="${email.cron}")
+    @Scheduled(cron="${trigger.cron}")
     public void run() throws MessagingException {
-        List<Pair<ReturnResult, RevisionData>> list = new LinkedList<>();
         long[] ids = revisionableRepository.getAllRevisionableIds();
         Calendar today = Calendar.getInstance();
         for (int i = 0; i < ids.length; i++) {
@@ -63,14 +62,14 @@ public class AlertScanner {
                 if (today.get(Calendar.DAY_OF_MONTH) == Integer.parseInt(triggerDateArray[2])
                         && today.get(Calendar.MONTH) + 1 == Integer.parseInt(triggerDateArray[1])
                         && today.get(Calendar.YEAR) == Integer.parseInt(triggerDateArray[0])) {
-                    sendEmailAlert(pair.getRight());
+                    //sendEmailAlert(pair.getRight());
                     sendAMQPAlert(pair.getRight());
                 }
             }
         }
     }
 
-    public void sendEmailAlert(RevisionData revision) throws MessagingException {
+    private void sendEmailAlert(RevisionData revision) throws MessagingException {
         PasswordAuthentication authenticator = new PasswordAuthentication(senderAddress, senderPassword);
         ValueDataField triggerTarget = (ValueDataField) revision.getField("triggerpro");
         Map<String, DataField> fields = new TreeMap<>(revision.getFields());
@@ -102,7 +101,7 @@ public class AlertScanner {
         transport.close();
     }
 
-    public void sendAMQPAlert(RevisionData revision){
+    private void sendAMQPAlert(RevisionData revision){
         messenger.sendAmqpMessage(messenger.FB_CONTRACT_TRIGGER, new ContractTriggerPayload(revision));
     }
 
