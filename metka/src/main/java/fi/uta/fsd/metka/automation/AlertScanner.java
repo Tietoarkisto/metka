@@ -62,6 +62,7 @@ public class AlertScanner {
                 if (today.get(Calendar.DAY_OF_MONTH) == Integer.parseInt(triggerDateArray[2])
                         && today.get(Calendar.MONTH) + 1 == Integer.parseInt(triggerDateArray[1])
                         && today.get(Calendar.YEAR) == Integer.parseInt(triggerDateArray[0])) {
+                    // Jos tarvitaan sähköpostiherätteitä
                     //sendEmailAlert(pair.getRight());
                     sendAMQPAlert(pair.getRight());
                 }
