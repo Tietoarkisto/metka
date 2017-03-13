@@ -70,6 +70,7 @@ public class Messenger {
     public final MetkaMessageType<FileMissingPayload> FB_FILES_MISSING;
     public final MetkaMessageType<VersionChangePayload> FB_VERSION_CHANGES;
     public final MetkaMessageType<FileRemovalPayload> FB_FILE_REMOVAL;
+    public final MetkaMessageType<ContractTriggerPayload> FB_CONTRACT_TRIGGER;
     public final MetkaMessageType<RevisionPayload> FD_CREATE;
     public final MetkaMessageType<RevisionPayload> FD_UPDATE;
     public final MetkaMessageType<RevisionPayload> FD_REMOVE;
@@ -79,6 +80,7 @@ public class Messenger {
     public final MetkaMessageType<RevisionPayload> FD_RELEASE;
     public final MetkaMessageType<RevisionPayload> FD_RESTORE;
     public final MetkaMessageType<ProcessPayload> FE_START;
+    public final MetkaMessageType<RevisionPayload> FF_ALERT;
 
     @Autowired
     public Messenger(JSONUtil json) {
@@ -90,6 +92,7 @@ public class Messenger {
         FB_FILES_MISSING = new MetkaMessageType<>("B", "FILES_MISSING", new FileMissingFactory());
         FB_VERSION_CHANGES = new MetkaMessageType<>("B", "VERSION_CHANGES", new VersionChangeFactory(json));
         FB_FILE_REMOVAL = new MetkaMessageType<>("B", "FILE_REMOVAL", new FileRemovalFactory());
+        FB_CONTRACT_TRIGGER = new MetkaMessageType<>("B", "CONTRACT_TRIGGER", new ContractTriggerFactory());
         FD_CREATE = new MetkaMessageType<>("D", "CREATE", new RevisionFactory());
         FD_UPDATE = new MetkaMessageType<>("D", "UPDATE", new RevisionFactory());
         FD_REMOVE = new MetkaMessageType<>("D", "REMOVE", new RevisionFactory());
@@ -99,6 +102,7 @@ public class Messenger {
         FD_RELEASE = new MetkaMessageType<>("D", "RELEASE", new RevisionFactory());
         FD_RESTORE = new MetkaMessageType<>("D", "RESTORE", new RevisionFactory());
         FE_START = new MetkaMessageType<>("E", "START", new ProcessFactory());
+        FF_ALERT = new MetkaMessageType<>("F", "ALERT", new RevisionFactory());
     }
 
     public <T extends PayloadObject> void sendAmqpMessage(MetkaMessageType<T> type, T payload) {

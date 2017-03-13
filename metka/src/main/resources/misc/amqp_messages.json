@@ -51,6 +51,10 @@
             "exchange": "",
             "event": "file_removals_approved"
         }, {
+            "key": "CONTRACT_TRIGGER",
+            "exchange": "",
+            "event": "contract_triggerdate_reached"
+        }, {
             "key": "",
             "exchange": "",
             "event": ""

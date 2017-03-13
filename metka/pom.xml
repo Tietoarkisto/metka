@@ -209,7 +209,16 @@
             <artifactId>persistence-api</artifactId>
             <version>1.0.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>javax.mail-api</artifactId>
+            <version>LATEST</version>
+        </dependency>
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>

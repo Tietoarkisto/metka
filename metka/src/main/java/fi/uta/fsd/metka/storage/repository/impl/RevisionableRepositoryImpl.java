@@ -31,14 +31,20 @@ package fi.uta.fsd.metka.storage.repository.impl;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.RevisionableRepository;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
 public class RevisionableRepositoryImpl implements RevisionableRepository {
+
+    @Autowired
+    private JSONUtil json;
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -69,4 +75,12 @@ public class RevisionableRepositoryImpl implements RevisionableRepository {
         return false;
     }
 
+    public long[] getAllRevisionableIds(){
+        List<RevisionableEntity> list = em.createQuery("SELECT r from RevisionableEntity r").getResultList();
+        long[] ids = new long[list.size()];
+        for (int i = 0; i < list.size(); i++){
+            ids[i] = list.get(i).getId();
+        }
+        return ids;
+    }
 }
