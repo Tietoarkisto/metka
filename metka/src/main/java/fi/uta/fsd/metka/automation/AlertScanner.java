@@ -40,11 +40,23 @@ public class AlertScanner {
     @Autowired
     Messenger messenger;
 
-    @Value("${email.user}")
+    @Value("${email.sender.address}")
     String senderAddress;
 
-    @Value("${email.password}")
+    @Value("${email.sender.password}")
     String senderPassword;
+
+    @Value("${email.smtp.port}")
+    String smtpPort;
+
+    @Value("${email.smtp.address}")
+    String smtpAddr;
+
+    @Value("${email.smtp.auth}")
+    String smtpAuth;
+
+    @Value("${email.triggers.send}")
+    String triggersActive;
 
     static Properties mailServerProperties;
     static Session getMailSession;
@@ -62,8 +74,9 @@ public class AlertScanner {
                 if (today.get(Calendar.DAY_OF_MONTH) == Integer.parseInt(triggerDateArray[2])
                         && today.get(Calendar.MONTH) + 1 == Integer.parseInt(triggerDateArray[1])
                         && today.get(Calendar.YEAR) == Integer.parseInt(triggerDateArray[0])) {
-                    // Jos tarvitaan sähköpostiherätteitä
-                    //sendEmailAlert(pair.getRight());
+                    if (Boolean.parseBoolean(triggersActive)){
+                        sendEmailAlert(pair.getRight());
+                    }
                     sendAMQPAlert(pair.getRight());
                 }
             }
@@ -76,24 +89,23 @@ public class AlertScanner {
         Map<String, DataField> fields = new TreeMap<>(revision.getFields());
         String mailto = triggerTarget.getActualValueFor(Language.DEFAULT);
         mailServerProperties = System.getProperties();
-        mailServerProperties.put("mail.smtp.port", "587");
-        mailServerProperties.put("mail.smtp.auth", "false");
+        mailServerProperties.put("mail.smtp.port", smtpPort);
+        mailServerProperties.put("mail.smtp.auth", smtpAuth);
         mailServerProperties.put("mail.smtp.starttls.enable", "true");
 
         ValueDataField field = (ValueDataField)fields.get("title");
 
         getMailSession = Session.getDefaultInstance(mailServerProperties, null);
         generateMailMessage = new MimeMessage(getMailSession);
-        generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(/*mailto"testi.juuso.visma@gmail.com"*/"qweqwe"));
+        generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(mailto));
         generateMailMessage.setSubject("Metka aineiston heräte");
         generateMailMessage.setContent("Title: " + field.getActualValueFor(Language.DEFAULT) +
                 "<br>Abstract: " + ((ValueDataField)fields.get("abstract")).getActualValueFor(Language.DEFAULT) +
                 "<br>URL: localhost:8080/metka/web/revision/view/" + revision.getConfiguration().getType().toValue() + "/" +
-                revision.getKey().getId().toString() + "/" + revision.getKey().getNo().toString() +
-                "<br>jotain muuta", "text/html");
+                revision.getKey().getId().toString() + "/" + revision.getKey().getNo().toString(), "text/html");
 
         Transport transport = getMailSession.getTransport("smtp");
-        transport.connect("smtp.gmail.com", authenticator.getUserName(), authenticator.getPassword());
+        transport.connect(smtpAddr, authenticator.getUserName(), authenticator.getPassword());
         try {
             transport.sendMessage(generateMailMessage,generateMailMessage.getAllRecipients());
         } catch (SendFailedException ex){
