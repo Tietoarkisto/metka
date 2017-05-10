@@ -46,7 +46,9 @@ import fi.uta.fsd.metka.model.guiconfiguration.FieldDescription;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 public class ContainerDeserializer extends ObjectDeserializer<Container> {
 
@@ -91,6 +93,14 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
         if(readOnly != null && readOnly.getNodeType() == JsonNodeType.BOOLEAN) {
             con.setReadOnly(readOnly.booleanValue());
         }
+        // Set permissions
+        JsonNode permissions = node.get("permissions");
+        if(permissions != null && permissions.getNodeType() == JsonNodeType.ARRAY) {
+            for (JsonNode permission: permissions){
+                con.getPermissions().add(permission.textValue());
+            }
+        }
+
 
         // set important
         if(con.getType() == ContainerType.SECTION || con.getType() == ContainerType.CELL) {
