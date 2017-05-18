@@ -126,7 +126,7 @@ public class ReferencePathHandler {
     private void handleRevisionableStep(ReferencePath step, List<ReferenceOption> options, Language language, boolean returnFirst) {
         if(StringUtils.hasText(step.getValue())) {
             Long start = System.currentTimeMillis();
-            Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(Long.parseLong(step.getValue()));
+            Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(Long.parseLong(step.getValue().split("-")[0]));
             if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND || (infoPair.getRight().getRemoved() && step.getReference().getIgnoreRemoved())) {
                 return;
             }
