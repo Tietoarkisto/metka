@@ -125,7 +125,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
 
         if(qry.contains("key.language:")) {
             qry = qry.substring(qry.indexOf("key.language:")+"key.language:".length());
-            String[] split = qry.split("\\s");
+            String[] split = qry.split("\\s|\\)");
             if(split.length > 0) {
                 return Language.fromValue(split[0]);
             }
