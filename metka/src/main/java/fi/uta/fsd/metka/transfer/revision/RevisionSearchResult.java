@@ -32,6 +32,7 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.UIRevisionState;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
+import org.joda.time.LocalDateTime;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,12 +43,14 @@ public class RevisionSearchResult {
         searchResult.setId(data.getKey().getId());
         searchResult.setNo(data.getKey().getNo());
         searchResult.setState((info.getRemoved()) ? UIRevisionState.REMOVED : UIRevisionState.fromRevisionState(data.getState()));
+        searchResult.setPublishDate(data.getSaved() != null ? data.getSaved().getTime() : null);
         searchResult.setType(data.getConfiguration().getType());
         return searchResult;
     }
 
     private Long id;
     private Integer no;
+    private LocalDateTime publishDate;
     private UIRevisionState state;
     private ConfigurationType type;
     private final Map<String, String> values = new HashMap<>();
@@ -67,6 +70,15 @@ public class RevisionSearchResult {
     public void setNo(Integer no) {
         this.no = no;
     }
+
+    public LocalDateTime getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(LocalDateTime publishDate) {
+        this.publishDate = publishDate;
+    }
+
 
     public ConfigurationType getType() {
         return type;

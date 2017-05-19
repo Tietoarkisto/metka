@@ -236,12 +236,15 @@ define(function (require) {
                                     .append(response.rows.map(function (row) {
                                         return $('<tr>')
                                             .append((function () {
+                                                var publishDate = new Date(row.publishDate);
+                                                if (publishDate.getFullYear() === 1970)
+                                                    publishDate = null;
                                                 var items = [
                                                     $('<a>', {
                                                         href: require('./url')('view', row),
                                                         text: row.no
                                                     }),
-                                                        row.state === 'DRAFT' ? MetkaJS.L10N.get('general.DRAFT') : row.state,
+                                                    publishDate !== null ? publishDate.getDate() + "." + parseInt(publishDate.getMonth()+1) + "." + publishDate.getFullYear() : "",
                                                     $('<input>', {
                                                         type: 'radio',
                                                         name: 'beginGrp',
