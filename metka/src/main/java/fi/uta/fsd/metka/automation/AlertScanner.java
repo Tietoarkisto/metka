@@ -71,7 +71,7 @@ public class AlertScanner {
             if (pair.getRight().getField("triggerdate") != null && pair.getRight().getField("triggerpro") != null) {
                 ValueDataField triggerdate = (ValueDataField) pair.getRight().getField("triggerdate");
                 String[] triggerDateArray = triggerdate.getActualValueFor(Language.DEFAULT).split("-");
-                if (today.get(Calendar.DAY_OF_MONTH) == Integer.parseInt(triggerDateArray[2])
+                if (triggerDateArray.length > 1 && today.get(Calendar.DAY_OF_MONTH) == Integer.parseInt(triggerDateArray[2])
                         && today.get(Calendar.MONTH) + 1 == Integer.parseInt(triggerDateArray[1])
                         && today.get(Calendar.YEAR) == Integer.parseInt(triggerDateArray[0])) {
                     if (Boolean.parseBoolean(triggersActive)){
