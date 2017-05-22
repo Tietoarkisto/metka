@@ -109,11 +109,11 @@ define(function (require) {
                 .click(function () {
                     var o = options;
                     function checkRadioGroups() {
-                        var beginVal = $('input[name="beginGrp"]:checked').val();
-                        var endVal = $('input[name="endGrp"]:checked').val();
+                        var beginVal = parseInt($('input[name="beginGrp"]:checked').val());
+                        var endVal = parseInt($('input[name="endGrp"]:checked').val())
                         if (beginVal) {
                             $('input[name="endGrp"]').each(function () {
-                                if ($(this).val() <= beginVal) {
+                                if (parseInt($(this).val()) <= beginVal) {
                                     $(this).attr('disabled', true);
                                 } else {
                                     $(this).attr('disabled', false);
@@ -122,7 +122,7 @@ define(function (require) {
                         }
                         if (endVal) {
                             $('input[name="beginGrp"]').each(function () {
-                                if ($(this).val() >= endVal) {
+                                if (parseInt($(this).val()) >= endVal) {
                                     $(this).attr('disabled', true);
                                 } else {
                                     $(this).attr('disabled', false);
