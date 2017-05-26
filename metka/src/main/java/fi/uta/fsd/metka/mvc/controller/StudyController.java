@@ -31,6 +31,7 @@ package fi.uta.fsd.metka.mvc.controller;
 import codebook25.CodeBookDocument;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import fi.uta.fsd.metka.ddi.MetkaXmlOptions;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.services.StudyService;
@@ -75,7 +76,7 @@ public class StudyController {
             return response;
         }
         response.setResult(pair.getLeft());
-        response.setContent(pair.getRight().toString());
+        response.setContent(pair.getRight().xmlText(MetkaXmlOptions.DDI_EXPORT_XML_OPTIONS));
         response.setKey(request.getKey());
         response.setLanguage(request.getLanguage() == Language.DEFAULT ? "fi" : request.getLanguage().toValue());
         return response;

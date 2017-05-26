@@ -79,7 +79,7 @@ public class CodebookReader {
             return ReturnResult.OPERATION_FAIL;
         }
         CodeBookType codeBook = document.getCodeBook();
-        Language docLang = Language.fromValue(codeBook.getXmlLang().toLowerCase());
+        Language docLang = codeBook.getXmlLang() == null ? Language.DEFAULT : Language.fromValue(codeBook.getXmlLang().toLowerCase());
 
         DateTimeUserPair info = DateTimeUserPair.build();
 

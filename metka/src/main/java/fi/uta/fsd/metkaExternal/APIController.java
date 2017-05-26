@@ -30,6 +30,7 @@ package fi.uta.fsd.metkaExternal;
 
 import codebook25.CodeBookDocument;
 import fi.uta.fsd.Logger;
+import fi.uta.fsd.metka.ddi.MetkaXmlOptions;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.mvc.services.*;
 import fi.uta.fsd.metka.storage.repository.APIRepository;
@@ -120,7 +121,7 @@ public class APIController {
 
         Pair<ReturnResult, CodeBookDocument> pair = studies.exportDDI(request.getKey(), request.getLanguage());
 
-        return APIExportDDIResponse.success(pair.getLeft(), pair.getRight().toString());
+        return APIExportDDIResponse.success(pair.getLeft(), pair.getRight().xmlText(MetkaXmlOptions.DDI_EXPORT_XML_OPTIONS));
     }
 
     @RequestMapping(value = "importDDI", method = RequestMethod.POST)

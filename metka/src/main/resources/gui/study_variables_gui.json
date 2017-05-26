@@ -153,6 +153,7 @@
                                         "showReferenceSaveInfo": true,
                                         "showReferenceState": true,
                                         "displayHeader": true,
+                                        "rowsPerPage": 10,
                                         "columnFields": [
                                             "varlabel"
                                         ]

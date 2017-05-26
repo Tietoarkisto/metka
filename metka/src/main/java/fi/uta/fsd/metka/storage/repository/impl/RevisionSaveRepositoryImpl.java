@@ -823,6 +823,15 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             this.key = key;
         }
 
+        /**
+         * Saves changes to single RevisionData.
+         *
+         * @param configuration    Configuration of the RevisionData being handled. This is needed for SELECTION fields, REFERENCEs etc.
+         * @param transferData     TransferData
+         * @param revisionData     RevisionFata
+         * @return Pair            changesAndErrors pair. Left value indicates the operation has changed revision data,
+         *                         right value indicates that errors were marked somewhere while saving the data
+         */
         private MutablePair<Boolean, Boolean> saveFields(Configuration configuration, TransferData transferData, RevisionData revisionData) {
             MutablePair<Boolean, Boolean> result = new MutablePair<>(false, false);
             // Loop through all fields, skip fields that are irrelevant or checked later and call correct methods to save DataFields
@@ -835,8 +844,11 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     // No need to process further, subfields are handled when their containers are processed
                     continue;
                 }
+                // Save field, a pair of operation status and boolean marking if there is errors is being returned
                 Pair<StatusCode, Boolean> saveResult = saveField(field, configuration, transferData, revisionData, revisionData.getChanges());
+                // If saving field returns "field changed" status, mark changes-flag of result to true
                 if (saveResult.getLeft() == StatusCode.FIELD_CHANGED && !result.getLeft()) result.setLeft(true);
+                // If saving field returns an error flag, set it also on the result flag
                 if (saveResult.getRight() && !result.getRight()) result.setRight(true);
             }
 

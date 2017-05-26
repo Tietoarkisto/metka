@@ -265,6 +265,7 @@ class PORVariablesParser implements VariablesParser {
                 // Merge variable to variable revision
                 ParseResult mergeResult = parser.mergeToData(variableData, variable);
                 if(mergeResult == ParseResult.REVISION_CHANGES) {
+                    variableData.setSaved(DateTimeUserPair.build());
                     ReturnResult updateResult = revisions.updateRevisionData(variableData);
                     if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                         Logger.error(getClass(), "Could not update revision data for "+variableData.toString()+" with result "+updateResult);

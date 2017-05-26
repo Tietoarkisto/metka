@@ -150,6 +150,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
         // Do cascade
         for(Operation operation : configuration.getCascade()) {
+            Logger.debug(this.getClass(),"Cascading operation " + operation.getType() + " for " + transferData.getKey().getId().toString());
             if(!(operation.getType() == OperationType.APPROVE || operation.getType() == OperationType.ALL)) {
                 continue;
             }
@@ -183,7 +184,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             Set<Language> changesIn = hasChanges(data, configuration);
 
             // No changes in this revision, remove it instead
-            if(changesIn.isEmpty()) {
+            if(changesIn.isEmpty() && transferData.getState().getSaved() == null) {
                 remove.removeDraft(transferData.getKey(), info);
                 return new ImmutablePair<>(OperationResponse.build(ReturnResult.NO_CHANGES), transferData);
             }
@@ -397,6 +398,11 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      */
     private void checkValueForChanges(Set<Language> changesIn, ValueDataField valueField, Configuration configuration) {
         Field fieldConf = configuration.getField(valueField.getKey());
+
+        if (fieldConf == null) {
+            //configuration error
+            return;
+        }
 
         if(!fieldConf.getTranslatable() && !changesIn.contains(Language.DEFAULT)) {
             // field is not translatable, no need to check other than DEFAULT

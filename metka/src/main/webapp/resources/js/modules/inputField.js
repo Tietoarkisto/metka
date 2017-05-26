@@ -95,6 +95,8 @@ define(function (require) {
                                 ['insert', ['link']],
                                 ['misc', ['fullscreen', 'codeview']]
                             ],
+                            htmlMode:false,
+                            mode:"text/xhtml",
                             onblur: function(contents, $editable) {
                                 require('./data')(options).setByLang(lang, $(this).html());
                             },

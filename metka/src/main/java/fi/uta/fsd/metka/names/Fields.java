@@ -111,7 +111,7 @@ public final class Fields {
     public static final String RELATEDMATERIAL = "relatedmaterial";
     public static final String PUBLICATIONCOMMENTS = "publicationcomments";
     public static final String PUBLICATIONCOMMENT = "publicationcomment";
-    public static final String STUDIES = "studies";
+    public static final String RELATEDSTUDIES = "relatedstudies";
     public static final String PUBLICATIONS = "publications";
     public static final String PUBLICATIONRELPUBL = "publicationrelpubl";
     public static final String PIDDDI = "pidddi";
@@ -149,12 +149,12 @@ public final class Fields {
     public static final String COLLMODEOTHER = "collmodeother";
     public static final String COLLMODEVOCAB = "collmodevocab";
     public static final String COLLMODEVOCABURI = "collmodevocaburi";
-    public static final String INSTRUMENTS = "instuments";
-    public static final String INSTRUMENT = "instument";
-    public static final String INSTRUMENTURI = "instumenturi";
-    public static final String INSTRUMENTOTHER = "instumentother";
-    public static final String INSTRUMENTVOCAB = "instumentvocab";
-    public static final String INSTRUMENTVOCABURI = "instumentvocaburi";
+    public static final String INSTRUMENTS = "instruments";
+    public static final String INSTRUMENT = "instrument";
+    public static final String INSTRUMENTURI = "instrumenturi";
+    public static final String INSTRUMENTOTHER = "instrumentother";
+    public static final String INSTRUMENTVOCAB = "instrumentvocab";
+    public static final String INSTRUMENTVOCABURI = "instrumentvocaburi";
     public static final String TIMEPERIOD = "timeperiod";
     public static final String TIMEPERIODTEXT = "timeperiodtext";
     public static final String TIMEPERIODEVENT = "timeperiodevent";
