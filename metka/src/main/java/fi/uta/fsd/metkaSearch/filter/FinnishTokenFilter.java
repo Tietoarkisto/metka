@@ -28,6 +28,7 @@
 
 package fi.uta.fsd.metkaSearch.filter;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metkaSearch.iterator.WordBasesIterator;
 import fi.uta.fsd.metkaSearch.voikko.VoikkoFactory;
 import org.apache.lucene.analysis.TokenFilter;
@@ -84,7 +85,11 @@ public final class FinnishTokenFilter extends TokenFilter {
             return true;
         }
 
-        formWordQueue();
+        try {
+            formWordQueue();
+        } catch (IllegalArgumentException e) {
+            Logger.error(getClass(), "Could not parse term " + termAttr, e);
+        }
 
         return true;
     }

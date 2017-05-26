@@ -1243,7 +1243,8 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
             fillTextType(othr.addNewRelMat(), field, language);
         }
 
-        Pair<StatusCode, ReferenceContainerDataField> referenceContainerPair = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.STUDIES));
+        // Add related studies (studyID + study name)
+        Pair<StatusCode, ReferenceContainerDataField> referenceContainerPair = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.RELATEDSTUDIES));
         if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && !referenceContainerPair.getRight().getReferences().isEmpty()) {
             for(ReferenceRow row : referenceContainerPair.getRight().getReferences()) {
                 if(row.getRemoved() || !row.hasValue()) {
@@ -1272,6 +1273,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
             }
         }
 
+        // Add related publications (publications -> publicationrelpubl)
         referenceContainerPair = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.PUBLICATIONS));
         if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && !referenceContainerPair.getRight().getReferences().isEmpty()) {
             for(ReferenceRow row : referenceContainerPair.getRight().getReferences()) {
