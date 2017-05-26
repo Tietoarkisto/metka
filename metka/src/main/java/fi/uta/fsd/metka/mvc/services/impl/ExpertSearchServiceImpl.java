@@ -73,8 +73,8 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         }
 
         // Subquery support
-        // For now subqueries are denoted by enclosing them within SUB{ }SUB
-        // For now subqueries are really simple, only supporting key.id matching (or rather they will return a grouped key.id result to be used with a field)
+        // For now subqueries are denoted by enclosing them within <TAG>{}<TAG> where tag is an indicator of the value set of returned results
+        // Currently subqueries support key.id: ID{}ID and key: KEY{}KEY
         // Later on more complex subqueries might be supported to allow for freely selected return parameters for example
 
         // Subquery process is really simple

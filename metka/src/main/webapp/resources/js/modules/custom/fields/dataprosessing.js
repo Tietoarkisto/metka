@@ -36,9 +36,11 @@ define(function (require) {
             preCreate: function (options) {
                 var $elem = this;
 
+                //show if datakind is qualitative
                 var curVal = require('./../../data')(options)("datakind").getByLang("DEFAULT");
                 $elem.toggle(curVal && curVal === '2');
 
+                //assign listener on datakind change.
                 options.$events.on('data-changed-{key}-{lang}'.supplant({
                                 key: "datakind",
                                 lang: "DEFAULT"
