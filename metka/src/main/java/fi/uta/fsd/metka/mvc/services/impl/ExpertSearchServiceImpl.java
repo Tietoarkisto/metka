@@ -87,13 +87,12 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         // After that the queries are performed in a depth first manner
         Pair<ReturnResult, ResultList<RevisionResult>> queryResults = performQuery(request.getQuery(), query);
 
-        Logger.info(getClass(), "QUERY: " + request.getQuery() + " | Results: " + queryResults.getRight().getResults().size());
-
         if(queryResults.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             Logger.error(ExpertSearchServiceImpl.class, "Search failed with the result "+queryResults.getLeft()+". Query was: "+request.getQuery());
             response.setResult(queryResults.getLeft());
             return response;
         }
+        Logger.info(getClass(), "QUERY: " + request.getQuery() + " | Results: " + queryResults.getRight().getResults().size());
 
         ResultList<RevisionResult> results = collectResults(queryResults.getRight());
         if(results.getResults().size() > LuceneConfig.MAX_RETURNED_RESULTS) {
