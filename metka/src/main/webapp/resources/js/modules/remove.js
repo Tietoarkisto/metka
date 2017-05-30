@@ -35,9 +35,17 @@ define(function (require) {
         return function () {
             // A bit of a workaround, getting the correct ids to be shown
             var id = options.data.key.id;
-            if (options.data.fields.studyid != null && options.data.fields.studyid.values[options.defaultLang].original.startsWith("FSD")){ id = options.data.fields.studyid.values[options.defaultLang].original };
-            if (options.data.fields.binderid != null && options.data.fields.binderid.values[options.defaultLang].original.startsWith("FSD")){ id = options.data.fields.binderid.values[options.defaultLang].original };
-            if (options.data.fields.publicationid != null){ id = options.data.fields.publicationid.values[options.defaultLang].original };
+            switch (options.data.configuration.type) {
+                case "STUDY":
+                    id = options.data.fields.studyid.values[options.defaultLang].original || options.data.fields.studyid.values[options.defaultLang].current
+                    break;
+                case "BINDER_PAGE":
+                    id = options.data.fields.binderid.values[options.defaultLang].original || options.data.fields.binderid.values[options.defaultLang].current
+                    break;
+                case "PUBLICATION":
+                    id = options.data.fields.publicationid.values[options.defaultLang].original || options.data.fields.publicationid.values[options.defaultLang].current;
+                    break;
+            }
             var operationType = options.data.state.uiState === 'DRAFT' ? 'draft' : 'logical';
             require('./modal')($.extend(true, require('./optionsBase')(), {
                 title: MetkaJS.L10N.get('confirmation.remove.revision.title'),
