@@ -2,18 +2,16 @@ package fi.uta.fsd.metka.automation;
 
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionableRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaAmqp.Messenger;
+import fi.uta.fsd.metkaAmqp.payloads.ApprovalDelayedPayload;
 import fi.uta.fsd.metkaAmqp.payloads.ContractTriggerPayload;
-import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
-import fi.uta.fsd.metkaAmqp.payloads.TestPayload;
-import org.apache.commons.lang3.tuple.Pair;
+import fi.uta.fsd.metkaAmqp.payloads.ErrorTriggerPayload;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -65,22 +63,40 @@ public class AlertScanner {
     @Scheduled(cron="${trigger.cron}")
     public void run() throws MessagingException {
         long[] ids = revisionableRepository.getAllRevisionableIds();
-        Calendar today = Calendar.getInstance();
+        LocalDate today = new LocalDate();
         for (int i = 0; i < ids.length; i++) {
-            Pair<ReturnResult, RevisionData> pair = revisionRepository.getRevisionData(Long.toString(ids[i]));
-            if (pair.getRight().getField("triggerdate") != null && pair.getRight().getField("triggerpro") != null) {
-                ValueDataField triggerdate = (ValueDataField) pair.getRight().getField("triggerdate");
-                String[] triggerDateArray = triggerdate.getActualValueFor(Language.DEFAULT).split("-");
-                if (triggerDateArray.length > 1 && today.get(Calendar.DAY_OF_MONTH) == Integer.parseInt(triggerDateArray[2])
-                        && today.get(Calendar.MONTH) + 1 == Integer.parseInt(triggerDateArray[1])
-                        && today.get(Calendar.YEAR) == Integer.parseInt(triggerDateArray[0])) {
+            RevisionData data = revisionRepository.getRevisionData(Long.toString(ids[i])).getRight();
+            if (data.getField("triggerdate") != null && data.getField("triggerpro") != null) {
+                if (today.toString().equals(((ValueDataField)data.getField("triggerdate")).getActualValueFor(Language.DEFAULT))) {
                     if (Boolean.parseBoolean(triggersActive)){
-                        sendEmailAlert(pair.getRight());
+                        sendEmailAlert(data);
                     }
-                    sendAMQPAlert(pair.getRight());
+                    sendAMQPAlert(data, "B7");
+                }
+            }
+            if (data.getField("errortriggerdate") != null && data.getField("errortriggerpro") != null){
+                if (today.toString().equals(((ValueDataField)data.getField("errortriggerdate")).getActualValueFor(Language.DEFAULT))) {
+                    if (Boolean.parseBoolean(triggersActive)){
+                        sendEmailAlert(data);
+                    }
+                    sendAMQPAlert(data, "B8");
+                }
+            }
+            if (data.getSaved() != null && data.getState().toString().equals("DRAFT") && data.getConfiguration().getType().toValue().equals("STUDY")){
+                if (today.minusDays(100).equals(data.getSaved().getTime().toLocalDate())) {
+                    sendAMQPAlert(data, "threshold-100");
+                } else if (today.minusDays(200).equals(data.getSaved().getTime().toLocalDate())){
+                    sendAMQPAlert(data, "threshold-200");
+                } else if (today.minusDays(300).equals(data.getSaved().getTime().toLocalDate())){
+                    sendAMQPAlert(data, "threshold-300");
+                } else if (today.minusDays(400).equals(data.getSaved().getTime().toLocalDate())){
+                    sendAMQPAlert(data, "threshold-400");
+                } else if (today.minusDays(500).equals(data.getSaved().getTime().toLocalDate())){
+                    sendAMQPAlert(data, "threshold-500");
                 }
             }
         }
+
     }
 
     private void sendEmailAlert(RevisionData revision) throws MessagingException {
@@ -114,8 +130,13 @@ public class AlertScanner {
         transport.close();
     }
 
-    private void sendAMQPAlert(RevisionData revision){
-        messenger.sendAmqpMessage(messenger.FB_CONTRACT_TRIGGER, new ContractTriggerPayload(revision));
+    private void sendAMQPAlert(RevisionData revision, String alertCode){
+        if (alertCode.equals("B7")) {
+            messenger.sendAmqpMessage(messenger.FB_CONTRACT_TRIGGER, new ContractTriggerPayload(revision));
+        } else if (alertCode.equals("B8")){
+            messenger.sendAmqpMessage(messenger.FB_ERROR_TRIGGER, new ErrorTriggerPayload(revision));
+        } else if (alertCode.contains("threshold")){
+            messenger.sendAmqpMessage(messenger.FB_APPROVAL_DELAYED, new ApprovalDelayedPayload(revision, alertCode));
+        }
     }
-
 }

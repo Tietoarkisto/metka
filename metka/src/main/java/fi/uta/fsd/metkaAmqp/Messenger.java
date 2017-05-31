@@ -71,6 +71,8 @@ public class Messenger {
     public final MetkaMessageType<VersionChangePayload> FB_VERSION_CHANGES;
     public final MetkaMessageType<FileRemovalPayload> FB_FILE_REMOVAL;
     public final MetkaMessageType<ContractTriggerPayload> FB_CONTRACT_TRIGGER;
+    public final MetkaMessageType<ErrorTriggerPayload> FB_ERROR_TRIGGER;
+    public final MetkaMessageType<ApprovalDelayedPayload> FB_APPROVAL_DELAYED;
     public final MetkaMessageType<RevisionPayload> FD_CREATE;
     public final MetkaMessageType<RevisionPayload> FD_UPDATE;
     public final MetkaMessageType<RevisionPayload> FD_REMOVE;
@@ -93,6 +95,8 @@ public class Messenger {
         FB_VERSION_CHANGES = new MetkaMessageType<>("B", "VERSION_CHANGES", new VersionChangeFactory(json));
         FB_FILE_REMOVAL = new MetkaMessageType<>("B", "FILE_REMOVAL", new FileRemovalFactory());
         FB_CONTRACT_TRIGGER = new MetkaMessageType<>("B", "CONTRACT_TRIGGER", new ContractTriggerFactory());
+        FB_ERROR_TRIGGER = new MetkaMessageType<>("B", "ERROR_TRIGGER", new ErrorTriggerFactory());
+        FB_APPROVAL_DELAYED = new MetkaMessageType<>("B", "APPROVAL_DELAYED", new ApprovalDelayedFactory());
         FD_CREATE = new MetkaMessageType<>("D", "CREATE", new RevisionFactory());
         FD_UPDATE = new MetkaMessageType<>("D", "UPDATE", new RevisionFactory());
         FD_REMOVE = new MetkaMessageType<>("D", "REMOVE", new RevisionFactory());

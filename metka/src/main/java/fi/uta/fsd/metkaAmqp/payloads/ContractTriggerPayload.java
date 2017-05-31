@@ -9,17 +9,26 @@ import fi.uta.fsd.metka.model.data.container.ValueDataField;
  * juuso.korhonen@visma.com
  */
 public class ContractTriggerPayload extends StudyPayload {
-    private final RevisionData trigger;
+    private final String triggerDate;
+    private final String triggerPro;
+    private final String label;
 
     public ContractTriggerPayload(RevisionData study) {
         super(study);
-        this.trigger = study;
+        this.triggerDate = ((ValueDataField)study.getField("triggerdate")).getActualValueFor(Language.DEFAULT);
+        this.triggerPro = ((ValueDataField)study.getField("triggerpro")).getActualValueFor(Language.DEFAULT);
+        this.label = ((ValueDataField)study.getField("triggerlabel")).getActualValueFor(Language.DEFAULT);
     }
 
-    public String getTriggerDate() { return ((ValueDataField)trigger.getField("triggerdate")).getActualValueFor(Language.DEFAULT); }
+    public String getTriggerDate() {
+        return this.triggerDate;
+    }
 
-    public String getReceiver() { return ((ValueDataField)trigger.getField("triggerpro")).getActualValueFor(Language.DEFAULT); }
+    public String getReceiver() {
+        return this.triggerPro;
+    }
 
-    public String getLabel() { return ((ValueDataField)trigger.getField("triggerlabel")).getActualValueFor(Language.DEFAULT); }
-
+    public String getLabel() {
+        return this.label;
+    }
 }
