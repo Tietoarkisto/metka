@@ -285,6 +285,19 @@ public class APIController {
         return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
 
+    @RequestMapping(value = "createAndSaveRevision", method = RequestMethod.POST)
+    public @ResponseBody APIRevisionOperationResponse createAndSave(@RequestBody APITransferDataRequest request){
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            messenger.sendAmqpMessage(messenger.FA_AUDIT, AuditPayload.deny("API-käyttäjä ["+request.getAuthentication()+"] yritti tallentaa revision ["+request.getTransferData().getKey().asCongregateKey()+"] ilman tarvittavia oikeuksia"));
+            return APIRevisionOperationResponse.authFail();
+        }
+        if(request.getTransferData() == null) {
+            return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
+        RevisionDataResponse response = revisions.createAndSave(request.getTransferData());
+        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+    }
+
     @RequestMapping(value = "approveRevision", method = RequestMethod.POST)
     public @ResponseBody APIRevisionOperationResponse approveRevision(@RequestBody APITransferDataRequest request) {
         // Authenticate using API key mechanism
@@ -310,7 +323,8 @@ public class APIController {
         if(request.getKey() == null || request.getKey().getId() == null || request.getKey().getNo() == null) {
             return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
         }
-        RevisionDataResponse response = revisions.remove(request.getKey(), null);
+        Boolean draft = revisions.view(request.getKey().getId(), request.getKey().getNo()).getData().getState().getUiState().toString().equals("DRAFT");
+        RevisionDataResponse response = revisions.remove(request.getKey(), draft);
 
         return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
@@ -326,7 +340,14 @@ public class APIController {
             return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
         }
         RevisionDataResponse response = revisions.create(request.getRequest());
-
-        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+        if(response.getResult().getResult().equals(ReturnResult.REVISION_CREATED.name())) {
+            RevisionDataResponse claimResponse = revisions.claimRevision(response.getData().getKey());
+            if(claimResponse.getResult().getResult().equals(ReturnResult.REVISION_UPDATE_SUCCESSFUL.name())) {
+                claimResponse.setResult(response.getResult());
+                return APIRevisionOperationResponse.success(claimResponse.getResult().getResult(), claimResponse);
+            } else {
+                return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+            }
+        } else return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
 }

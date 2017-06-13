@@ -29,12 +29,14 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.model.transfer.TransferData;
+import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
 import fi.uta.fsd.metka.search.RevisionSearch;
 import fi.uta.fsd.metka.storage.repository.*;
@@ -50,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Contains operations common for all revisions like save and approve.
@@ -175,6 +178,26 @@ public class RevisionServiceImpl implements RevisionService {
     @Override public RevisionDataResponse save(TransferData transferData) {
         Pair<ReturnResult, TransferData> operationResult = save.saveRevision(transferData, null);
         return getResponse(OperationResponse.build(operationResult.getLeft()), operationResult.getRight());
+    }
+
+    @Override public RevisionDataResponse createAndSave(TransferData transferData) {
+        if (transferData.getKey() == null || transferData.getKey().getId() == null){
+            RevisionCreateRequest createRequest = new RevisionCreateRequest();
+            for (Map.Entry<String, TransferField> entry : transferData.getFields().entrySet()){
+                createRequest.getParameters().put(entry.getKey(), entry.getValue().getValueFor(Language.DEFAULT).getValue());
+            }
+            createRequest.setType(transferData.getConfiguration().getType());
+            Pair<ReturnResult, RevisionData> createOperationResult = create.create(createRequest);
+            if (!createOperationResult.getLeft().equals(ReturnResult.REVISION_CREATED)){
+                return getResponse(OperationResponse.build(createOperationResult.getLeft()), transferData);
+            }
+            claimRevision(createOperationResult.getRight().getKey());
+            TransferData newData = new TransferData(createOperationResult.getRight().getKey(), transferData.getConfiguration());
+            newData.getFields().putAll(transferData.getFields());
+            transferData = newData;
+        }
+        Pair<ReturnResult, TransferData> saveOperationResult = save.saveRevision(transferData, null);
+        return getResponse(OperationResponse.build(saveOperationResult.getLeft()), saveOperationResult.getRight());
     }
 
     @Override public RevisionDataResponse approve(TransferData transferData) {

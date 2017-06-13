@@ -10,10 +10,23 @@
 			"default": "1",
 			"options": [
 				{
-                    "title": "Kvantitatiivinen",
+					"title": "Kvantitatiivinen",
 					"value": "1"
 				}, {
-                    "title": "Kvalitatiivinen",
+					"title": "Kvalitatiivinen",
+					"value": "2"
+				}
+			]
+		},"juuso_test_list": {
+			"key": "juuso_test_list",
+			"type": "VALUE",
+			"default": "1",
+			"options": [
+				{
+					"title": "valinta 1",
+					"value": "1"
+				}, {
+					"title": "valinta 2",
 					"value": "2"
 				}
 			]
@@ -995,6 +1008,28 @@
 			"immutable": true,
 			"type": "DATE",
 			"editable": false
+		},
+		"juuso_kentta": {
+			"key": "juuso_kentta",
+			"translatable": false,
+			"type": "CONTAINER",
+			"subfields":[
+				"juus_alikentta","juus_alikentta2"
+			]
+		},
+		"juus_alikentta":
+		{
+			"key":"juus_alikentta",
+			"type":"SELECTION",
+			"selectionList":"juuso_test_list",
+			"subfield":true
+		},
+		"juus_alikentta2":
+		{
+			"key":"juus_alikentta2",
+			"type":"SELECTION",
+			"selectionList":"juuso_test_list",
+			"subfield":true
 		},
 		"anonymization": {
 			"key": "anonymization",

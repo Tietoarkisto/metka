@@ -56,6 +56,9 @@ public interface RevisionService {
             "and hasPermission(#transferData, '" + PermissionCheck.Values.IS_HANDLER + "')")
     RevisionDataResponse save(TransferData transferData);
 
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') ")
+    RevisionDataResponse createAndSave(TransferData transferData);
+
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_APPROVE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#transferData, '" + PermissionCheck.Values.IS_HANDLER + "')")
     RevisionDataResponse approve(TransferData transferData);
