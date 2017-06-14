@@ -154,6 +154,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     @Cacheable(value = "revision-cache", key = "#key")
     public Pair<ReturnResult, RevisionData> getRevisionData(RevisionKey key) {
         RevisionEntity entity = em.find(RevisionEntity.class, fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+
         if(entity == null) {
             // Didn't found entity
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
@@ -167,6 +168,37 @@ public class RevisionRepositoryImpl implements RevisionRepository {
 
         return pair;
     }
+
+    @Override
+    public Pair<ReturnResult, RevisionData> getAndLockRevisionData(String key) {
+        RevisionableEntity revisionableEntity = em.find(RevisionableEntity.class, Long.parseLong(key));
+        if(revisionableEntity == null) {
+            return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
+        }
+        if(revisionableEntity.getLatestRevisionNo() == null) {
+            // This is a serious error
+            return new ImmutablePair<>(ReturnResult.NO_REVISION_FOR_REVISIONABLE, null);
+        }
+        if(revisionableEntity.getCurApprovedNo() == null) {
+            // This is not a serious problem since approved revision
+            return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
+        }
+        RevisionEntity revisionEntity = em.find(RevisionEntity.class, fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(revisionableEntity.latestRevisionKey().toModelKey()));
+        em.lock(revisionEntity, LockModeType.PESSIMISTIC_WRITE);
+        if(revisionEntity == null) {
+            // Didn't found entity
+            return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
+        }
+        Pair<ReturnResult, RevisionData> pair = getRevisionDataFromEntity(revisionEntity);
+        // Sanity check
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            Logger.error(getClass(), "Couldn't get revision data from "+revisionEntity.toString());
+            return pair;
+        }
+
+        return pair;
+    }
+
 
     private Pair<ReturnResult, RevisionData> getRevisionDataFromEntity(RevisionEntity revision) {
         // Sanity check
