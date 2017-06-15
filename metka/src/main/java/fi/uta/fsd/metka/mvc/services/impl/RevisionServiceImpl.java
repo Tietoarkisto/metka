@@ -30,6 +30,7 @@ package fi.uta.fsd.metka.mvc.services.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.enums.TransferFieldType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
@@ -184,7 +185,9 @@ public class RevisionServiceImpl implements RevisionService {
         if (transferData.getKey() == null || transferData.getKey().getId() == null){
             RevisionCreateRequest createRequest = new RevisionCreateRequest();
             for (Map.Entry<String, TransferField> entry : transferData.getFields().entrySet()){
-                createRequest.getParameters().put(entry.getKey(), entry.getValue().getValueFor(Language.DEFAULT).getValue());
+                // Mandatory values for creating revisions are always of the type "VALUE"
+                if(entry.getValue().getType().equals(TransferFieldType.VALUE))
+                    createRequest.getParameters().put(entry.getKey(), entry.getValue().getValueFor(Language.DEFAULT).getValue());
             }
             createRequest.setType(transferData.getConfiguration().getType());
             Pair<ReturnResult, RevisionData> createOperationResult = create.create(createRequest);
