@@ -64,6 +64,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Performs a removal to given transfer data if possible
@@ -349,10 +350,12 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         }
 
         // Remove the associated file as well
-        String path = ((ValueDataField)data.getField(Fields.FILE)).getActualValueFor(Language.DEFAULT);
-        File file = new File(path);
-        if (file.exists() && file.isFile()){
-            file.delete();
+        if (data.getField(Fields.FILE) != null) {
+            String path = ((ValueDataField) data.getField(Fields.FILE)).getActualValueFor(Language.DEFAULT);
+            File file = new File(path);
+            if (file.exists() && file.isFile()) {
+                file.delete();
+            }
         }
 
         // TODO: Remove link from study variables if it still exists
@@ -372,10 +375,42 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 finalizeStudyVariableDraftRemoval(data, info);
                 break;
             }
+            case STUDY: {
+                finalizeStudyDraftRemoval(data, info);
+                break;
+            }
             default: {
                 break;
             }
         }
+    }
+
+    private void finalizeStudyDraftRemoval(RevisionData data, DateTimeUserPair info){
+        // Ensure the files' states are as they were before creating the draft
+        checkFileStates(data, info);
+    }
+
+    private void checkFileStates(RevisionData data, DateTimeUserPair info){
+        ReferenceContainerDataField files = (ReferenceContainerDataField)data.getField(Fields.FILES);
+        Pair<ReturnResult, RevisionData> latestPair = revisions.getRevisionData(data.getKey().getId().toString(), true);
+        if (!latestPair.getLeft().equals(ReturnResult.REVISION_FOUND))
+            return;
+        List<ReferenceRow> latestFiles = ((ReferenceContainerDataField) latestPair.getRight().getField(Fields.FILES)).getReferences();
+        for (ReferenceRow row: files.getReferences()){
+            String fileId = row.getActualValue();
+            for (ReferenceRow latestRow: latestFiles){
+                if (fileId.split("-")[0].equals(latestRow.getActualValue().split("-")[0])){
+                    if (latestRow.getRemoved() && !row.getRemoved()){
+                        remove(new RevisionKey(Long.parseLong(fileId.split("-")[0]), Integer.parseInt(fileId.split("-")[1])), info);
+                    }
+                    else if (!latestRow.getRemoved() && row.getRemoved()){
+                        restore.restore(Long.parseLong(fileId.split("-")[0]));
+                    }
+                }
+            }
+        }
+
+
     }
 
     private void finalizeStudyAttachmentDraftRemoval(RevisionData data, DateTimeUserPair info) {
