@@ -62,6 +62,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -345,6 +346,13 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                     }
                 }
             }
+        }
+
+        // Remove the associated file as well
+        String path = ((ValueDataField)data.getField(Fields.FILE)).getActualValueFor(Language.DEFAULT);
+        File file = new File(path);
+        if (file.exists() && file.isFile()){
+            file.delete();
         }
 
         // TODO: Remove link from study variables if it still exists
