@@ -49,13 +49,16 @@ import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
+import fi.uta.fsd.metka.storage.restrictions.ValidateResult;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metkaAmqp.Messenger;
 import fi.uta.fsd.metkaAmqp.payloads.FileMissingPayload;
 import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
+import org.apache.commons.codec.language.bm.Lang;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.*;
 import org.joda.time.LocalDate;
@@ -124,6 +127,16 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
         // NOTICE: Validation for save is not really required at the moment.
         // If save validation is required at some point then uncomment this part and implement validation for transfer data
+
+        for (Operation operation: configPair.getRight().getRestrictions()){
+            if(!(operation.getType() == OperationType.SAVE ||operation.getType() == OperationType.ALL)){
+                continue;
+            }
+            ValidateResult vr = validator.validate(revision, operation.getTargets(), configuration);
+            if (!vr.getResult()){
+                return new ImmutablePair<>(ReturnResult.RESTRICTION_VALIDATION_FAILURE, transferData);
+            }
+        }
         /*
         // Do validation
         for(Operation operation : configPair.getRight().getRestrictions()) {
