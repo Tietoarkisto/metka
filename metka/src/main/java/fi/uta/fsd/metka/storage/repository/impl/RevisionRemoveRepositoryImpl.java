@@ -64,7 +64,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Performs a removal to given transfer data if possible
@@ -158,6 +157,10 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         }
 
         RevisionEntity revision = em.find(RevisionEntity.class, fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(data.getKey()));
+        RevisionData revisionData = revisions.getRevisionData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo()).getRight();
+        if (revisionData != null && revisionData.getConfiguration().getType().equals(ConfigurationType.STUDY)) {
+            checkFileStates(revisions.getRevisionData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo()).getRight(), info);
+        }
         if(revision == null) {
             Logger.error(getClass(), "Draft revision with key "+data.getKey()+" was slated for removal but was not found from database.");
         } else {
@@ -375,19 +378,10 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 finalizeStudyVariableDraftRemoval(data, info);
                 break;
             }
-            case STUDY: {
-                finalizeStudyDraftRemoval(data, info);
-                break;
-            }
             default: {
                 break;
             }
         }
-    }
-
-    private void finalizeStudyDraftRemoval(RevisionData data, DateTimeUserPair info){
-        // Ensure the files' states are as they were before creating the draft
-        checkFileStates(data, info);
     }
 
     private void checkFileStates(RevisionData data, DateTimeUserPair info){
@@ -395,22 +389,18 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         Pair<ReturnResult, RevisionData> latestPair = revisions.getRevisionData(data.getKey().getId().toString(), true);
         if (!latestPair.getLeft().equals(ReturnResult.REVISION_FOUND))
             return;
-        List<ReferenceRow> latestFiles = ((ReferenceContainerDataField) latestPair.getRight().getField(Fields.FILES)).getReferences();
-        for (ReferenceRow row: files.getReferences()){
+        for (ReferenceRow row: files.getReferences()) {
             String fileId = row.getActualValue();
-            for (ReferenceRow latestRow: latestFiles){
-                if (fileId.split("-")[0].equals(latestRow.getActualValue().split("-")[0])){
-                    if (latestRow.getRemoved() && !row.getRemoved()){
-                        remove(new RevisionKey(Long.parseLong(fileId.split("-")[0]), Integer.parseInt(fileId.split("-")[1])), info);
-                    }
-                    else if (!latestRow.getRemoved() && row.getRemoved()){
-                        restore.restore(Long.parseLong(fileId.split("-")[0]));
-                    }
+            Pair<ReturnResult, RevisionableInfo> currAttachment = revisions.getRevisionableInfo(Long.parseLong(fileId.split("-")[0]));
+            if (((ValueDataField) latestPair.getRight().getField(Fields.APPROVED_FILES)).getCurrentFor(Language.DEFAULT).getActualValue().contains(fileId.split("-")[0]) && currAttachment.getRight().getRemoved()) {
+                restore.restore(Long.parseLong(fileId.split("-")[0]));
+            } else if (!((ValueDataField) latestPair.getRight().getField(Fields.APPROVED_FILES)).getCurrentFor(Language.DEFAULT).getActualValue().contains(fileId.split("-")[0]) && !currAttachment.getRight().getRemoved()) {
+                if (currAttachment.getRight().getApproved() != currAttachment.getRight().getCurrent()){
+                    removeDraft(new RevisionKey(Long.parseLong(fileId.split("-")[0]), Integer.parseInt(fileId.split("-")[1])), info);
                 }
+                remove(new RevisionKey(Long.parseLong(fileId.split("-")[0]), Integer.parseInt(fileId.split("-")[1])), info);
             }
         }
-
-
     }
 
     private void finalizeStudyAttachmentDraftRemoval(RevisionData data, DateTimeUserPair info) {
