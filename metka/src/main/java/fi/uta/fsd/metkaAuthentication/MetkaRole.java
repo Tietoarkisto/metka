@@ -298,6 +298,7 @@ public final class MetkaRole implements Comparable<MetkaRole> {
                     .grant(Permission.CAN_FORCE_RELEASE_REVISION)
                     .grant(Permission.CAN_REMOVE_REVISION)
                     .grant(Permission.CAN_RESTORE_REVISION)
+                    .grant(Permission.CAN_REVERT_REVISION)
                     .grant(Permission.CAN_REMOVE_STUDY_VERSIONS)
                     .grant(Permission.CAN_UPLOAD_CONFIGURATIONS)
                     .grant(Permission.CAN_UPLOAD_JSON)

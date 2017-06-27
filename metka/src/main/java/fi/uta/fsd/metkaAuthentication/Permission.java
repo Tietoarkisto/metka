@@ -46,6 +46,7 @@ public  enum Permission {
     CAN_FORCE_RELEASE_REVISION(Values.CAN_FORCE_RELEASE_REVISION),
     CAN_REMOVE_REVISION(Values.CAN_REMOVE_REVISION),
     CAN_RESTORE_REVISION(Values.CAN_RESTORE_REVISION),
+    CAN_REVERT_REVISION(Values.CAN_REVERT_REVISION),
 
     // Binder
     CAN_VIEW_BINDER_PAGES(Values.CAN_VIEW_BINDER_PAGES),
@@ -118,6 +119,7 @@ public  enum Permission {
         public static final String CAN_FORCE_RELEASE_REVISION = "canForceReleaseRevision";
         public static final String CAN_REMOVE_REVISION = "canRemoveRevision";
         public static final String CAN_RESTORE_REVISION = "canRestoreRevision";
+        public static final String CAN_REVERT_REVISION = "canRevertRevision";
 
         // Binder
         public static final String CAN_VIEW_BINDER_PAGES = "canViewBinderPages";

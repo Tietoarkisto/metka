@@ -220,6 +220,9 @@ define(function (require) {
                 "&remove": {
                     "default": "Poista"
                 },
+                "&revert": {
+                    "default": "Palauta"
+                },
                 "&no": {
                     "default": "Ei"
                 },
@@ -254,6 +257,9 @@ define(function (require) {
                     "&original": {
                         "default": "Alkuperäinen"
                     },
+                    "&current":{
+                        "default": "Nykyinen"
+                    },
                     "&title": {
                         "default": "Revisioiden vertailu (revisio {0} -> revisio {1})"
                     }
@@ -269,6 +275,9 @@ define(function (require) {
                 },
                 "&revisions": {
                     "default": "Revisiot"
+                },
+                "&revert": {
+                    "default": "Palauta edellinen revisio"
                 }
             },
 

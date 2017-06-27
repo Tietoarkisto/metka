@@ -406,6 +406,7 @@ define(function (require) {
                                                         title: entry.title
                                                     });
                                                 });
+                                                options.dataConf.selectionLists.dataConfigType_list.options = options.dataConf.selectionLists.dataConfigType_list.options.sort();
                                             }
                                         });
                                     }

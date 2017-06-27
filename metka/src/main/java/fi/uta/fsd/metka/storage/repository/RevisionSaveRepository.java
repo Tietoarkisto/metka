@@ -44,4 +44,14 @@ public interface RevisionSaveRepository {
      *      (like REVISION_NOT_FOUND, SERIALIZATION_FAILED etc.) right value is the provided TransferData including any possible field errors
      */
     public Pair<ReturnResult, TransferData> saveRevision(TransferData transferData, DateTimeUserPair info);
+
+    /**
+     * Copy the fields of a revision into an another one and save.
+     * @param sourceData Data to be copied into targetData
+     * @param targetData Data to be overwritten
+     * @param info DateTimeUserPair for the operation
+     * @return Pair<ReturnResult, TransferData> Left value is a ReturnResult telling about actual operation errors
+     *      (like REVISION_NOT_FOUND, SERIALIZATION_FAILED etc.) right value is the provided TransferData including any possible field errors
+     */
+    public Pair<ReturnResult, TransferData> copyAndSaveRevision(TransferData sourceData, TransferData targetData, DateTimeUserPair info);
 }

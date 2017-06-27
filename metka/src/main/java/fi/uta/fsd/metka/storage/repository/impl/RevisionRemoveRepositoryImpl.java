@@ -392,9 +392,13 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         for (ReferenceRow row: files.getReferences()) {
             String fileId = row.getActualValue();
             Pair<ReturnResult, RevisionableInfo> currAttachment = revisions.getRevisionableInfo(Long.parseLong(fileId.split("-")[0]));
-            if (((ValueDataField) latestPair.getRight().getField(Fields.APPROVED_FILES)).getCurrentFor(Language.DEFAULT).getActualValue().contains(fileId.split("-")[0]) && currAttachment.getRight().getRemoved()) {
+            ValueDataField field = (ValueDataField) latestPair.getRight().getField(Fields.APPROVED_FILES);
+            if (field == null){
+                continue;
+            }
+            if (field.getCurrentFor(Language.DEFAULT).getActualValue().contains(fileId.split("-")[0]) && currAttachment.getRight().getRemoved()) {
                 restore.restore(Long.parseLong(fileId.split("-")[0]));
-            } else if (!((ValueDataField) latestPair.getRight().getField(Fields.APPROVED_FILES)).getCurrentFor(Language.DEFAULT).getActualValue().contains(fileId.split("-")[0]) && !currAttachment.getRight().getRemoved()) {
+            } else if (!field.getCurrentFor(Language.DEFAULT).getActualValue().contains(fileId.split("-")[0]) && !currAttachment.getRight().getRemoved()) {
                 if (currAttachment.getRight().getApproved() != currAttachment.getRight().getCurrent()){
                     removeDraft(new RevisionKey(Long.parseLong(fileId.split("-")[0]), Integer.parseInt(fileId.split("-")[1])), info);
                 }

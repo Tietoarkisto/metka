@@ -304,6 +304,97 @@ define(function (require) {
                     require('./server')('/revision/ajax/restore', request);
                 });
         },
+        REVERTCONFIRM: function (options) {
+            options.title = MetkaJS.L10N.get('general.buttons.revert');
+        },
+        REVERT: function (options){
+            this
+                .click(function() {
+                    var $this = $(this);
+                    console.log(options);
+                    var $table = $('<table class="table">')
+                        .append($('<thead>')
+                            .append($('<tr>')
+                                .append((function () {
+                                    var arr = [
+                                        'general.revision',
+                                        'general.revision.publishDate',
+                                        ''
+                                    ];
+
+                                    return arr.map(function (entry) {
+                                        return $('<th>')
+                                            .text(MetkaJS.L10N.get(entry));
+                                    });
+                                }))));
+                    require('./modal')($.extend(true, require('./optionsBase')(), {
+                        title: MetkaJS.L10N.get('general.revision.revert'),
+                        body: $table,
+                        //large: false,
+                        buttons: [{
+                            type: 'REVERTCONFIRM',
+                            create: function() {
+                                options.title = MetkaJS.L10N.get('general.buttons.revert');
+                                this
+                                    .attr('id', 'revertRevision')
+                                    .click(function() {
+                                        var request = {
+                                            data: JSON.stringify({
+                                                targetNo: parseInt($('input[name="revertRadio"]:checked').val()),
+                                                key: options.data.key
+                                            }),
+                                            success: function(response) {
+                                                console.log(options, "done");
+                                                options.$events.trigger('refresh.metka');
+                                                require('./assignUrl')('view', {
+                                                    id: response.data.key.id,
+                                                    no: response.data.key.no
+                                                });
+                                            }
+                                        };
+                                        require('./server')('/revision/ajax/revert', request);
+                                        // Ajax-kutsu
+                                    })
+                            }
+                        }, {
+                            type: 'DISMISS'
+                        }]
+                    }));
+                    require('./server')('/revision/revisionHistory', {
+                        data: JSON.stringify({
+                            id: options.data.key.id
+                        }),
+                        success: function(response){
+                            $table
+                                .append($('<tbody>')
+                                    .append(response.rows.map(function(row){
+                                        return $('<tr>')
+                                            .append((function(){
+                                                var publishDate = new Date(row.publishDate);
+                                                if (publishDate.getFullYear() === 1970)
+                                                    publishDate = null;
+                                                var items = [
+                                                    $('<a>', {
+                                                        href: require('./url')('view', row),
+                                                        text: row.no
+                                                    }),
+                                                    publishDate !== null ? publishDate.getDate() + "." + parseInt(publishDate.getMonth()+1) + "."+ publishDate.getFullYear() : "",
+                                                    $('<input>', {
+                                                        type: 'radio',
+                                                        name: 'revertRadio',
+                                                        value: row.no
+                                                    })
+                                                ];
+                                                return items.map(function(entry){
+                                                    return $('<td>')
+                                                        .append(entry)
+                                                });
+                                            }))
+                                    })));
+                        }
+                    })
+                })
+        },
         SAVE: function (options) {
             this
                 .click(require('./save')(options, function (response) {

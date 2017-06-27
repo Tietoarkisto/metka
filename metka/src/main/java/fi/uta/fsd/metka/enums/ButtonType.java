@@ -38,6 +38,7 @@ public enum ButtonType {
     BEGIN_EDIT,
     RELEASE,
     RESTORE,
+    REVERT,
     SEARCH,
     ADD,
     RESET,

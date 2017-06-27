@@ -70,6 +70,9 @@ public interface RevisionService {
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_RESTORE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     RevisionDataResponse restore(RevisionKey key);
 
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
+    RevisionDataResponse revert(RevisionKey key, Integer targetRevision);
+
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_PERFORM_SEARCH +"', '" + PermissionCheck.Values.PERMISSION + "')")
     @Transactional(readOnly = true) RevisionSearchResponse search(RevisionSearchRequest request);
 

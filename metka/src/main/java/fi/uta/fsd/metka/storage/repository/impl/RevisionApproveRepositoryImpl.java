@@ -34,6 +34,7 @@ import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.change.ValueChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.ApproveInfo;
@@ -181,6 +182,31 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         // that has changed in this revision).
         // If revision has no changed content for given language then that language doesn't need updated approval information.
         if(result == ReturnResult.OPERATION_SUCCESSFUL) {
+            if (data.getConfiguration().getType().equals(ConfigurationType.STUDY)) {
+                ReferenceContainerDataField files = (ReferenceContainerDataField) data.getField(Fields.FILES);
+                String approvedFiles = "";
+                if (files != null) {
+                    for (ReferenceRow file : files.getReferences()) {
+                        Pair<ReturnResult, RevisionableInfo> attachmentInfo = revisions.getRevisionableInfo(Long.parseLong(file.getReference().getValue().split("-")[0]));
+                        if (!attachmentInfo.getLeft().equals(ReturnResult.REVISIONABLE_FOUND)) {
+                            continue;
+                        }
+                        if (!attachmentInfo.getRight().getRemoved() && !approvedFiles.contains(file.getReference().getValue().split("-")[0])) {
+                            if (!approvedFiles.equals("")) {
+                                approvedFiles += ",";
+                            }
+                            approvedFiles += file.getReference().getValue().split("-")[0];
+                        }
+                    }
+                }
+                data.putChange(new ValueChange(Fields.APPROVED_FILES));
+                if (data.getField(Fields.APPROVED_FILES) != null) {
+                    ((ValueDataField) data.getField(Fields.APPROVED_FILES)).setCurrentFor(Language.DEFAULT, new ValueContainer(null, new Value(approvedFiles)));
+                } else {
+                    data.getFields().put(Fields.APPROVED_FILES, new ValueDataField(Fields.APPROVED_FILES));
+                    ((ValueDataField) data.getField(Fields.APPROVED_FILES)).setCurrentFor(Language.DEFAULT, new ValueContainer(null, new Value(approvedFiles)));
+                }
+            }
             Set<Language> changesIn = hasChanges(data, configuration);
 
             // No changes in this revision, remove it instead
@@ -382,9 +408,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         }
 
         for(ReferenceRow row : container.getReferences()) {
-            if(row.getUnapproved() || row.getRemoved()) {
+            // TODO: More reliable monitoring on reference changes?
+            // We need to be able to revert back to a revision.
+            // Therefore we need to be able to tell which reference targets were removed or approved
+            // during which revision.
+            //if(row.getUnapproved() || row.getRemoved()) {
                 changesIn.add(Language.DEFAULT);
-            }
+            //}
         }
     }
 

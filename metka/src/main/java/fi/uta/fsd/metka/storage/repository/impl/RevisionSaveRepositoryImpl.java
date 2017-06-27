@@ -48,17 +48,17 @@ import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.repository.*;
+import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
-import fi.uta.fsd.metka.storage.restrictions.ValidateResult;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metkaAmqp.Messenger;
 import fi.uta.fsd.metkaAmqp.payloads.FileMissingPayload;
 import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
-import org.apache.commons.codec.language.bm.Lang;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.*;
 import org.joda.time.LocalDate;
@@ -81,10 +81,19 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     private RevisionRepository revisions;
 
     @Autowired
+    private RevisionRestoreRepository restore;
+
+    @Autowired
+    private RevisionRemoveRepository remove;
+
+    @Autowired
     private StudyVariablesParser parser;
 
     @Autowired
     private ReferenceService references;
+
+    @Autowired
+    private RevisionEditRepository edit;
 
     @Autowired
     private RestrictionValidator validator;
@@ -100,7 +109,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         if(info == null) {
             info = DateTimeUserPair.build();
         }
-        Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(transferData.getKey().asCongregateKey());
+        Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(transferData.getKey().getId().toString());
         if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "Couldn't find Revision " + transferData.getKey().toString() + " while saving.");
             return new ImmutablePair<>(revisionPair.getLeft(), transferData);
@@ -128,11 +137,12 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         // NOTICE: Validation for save is not really required at the moment.
         // If save validation is required at some point then uncomment this part and implement validation for transfer data
 
+        /* TESTATESSA EI TOIMINUTKAAN TOIVOTULLA TAVALLA - kommentoidaan toistaiseksi.
         for (Operation operation: configPair.getRight().getRestrictions()){
             if(!(operation.getType() == OperationType.SAVE ||operation.getType() == OperationType.ALL)){
                 continue;
             }
-            ValidateResult vr = validator.validate(revision, operation.getTargets(), configuration);
+            ValidateResult vr = validator.validateTransferData(revision, operation.getTargets(), configuration);
             if (!vr.getResult()){
                 return new ImmutablePair<>(ReturnResult.RESTRICTION_VALIDATION_FAILURE, transferData);
             }
@@ -771,6 +781,107 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
     private static ParseResult resultCheck(ParseResult result, ParseResult def) {
         return result != ParseResult.REVISION_CHANGES ? def : result;
+    }
+
+    public Pair<ReturnResult, TransferData> copyAndSaveRevision(TransferData targetData, TransferData newData, DateTimeUserPair info){
+        // remove fields from newData
+        for (TransferField field : newData.getFields().values()){
+            switch(field.getType()){
+                case VALUE:
+                    for(TransferValue value: field.getValues().values()){
+                        value.setCurrent(null);
+                    }
+                    break;
+                case CONTAINER:
+                case REFERENCECONTAINER:
+                    if (field.getKey().equals("studyvariables")||field.getKey().equals("files"))
+                        break;
+                    for(Map.Entry<Language,List<TransferRow>> rows: field.getRows().entrySet()){
+                        for (TransferRow row : rows.getValue()){
+                            row.setRemoved(true);
+                        }
+                    }
+                    break;
+            }
+        }
+        for (TransferField field: targetData.getFields().values()){
+            switch (field.getType()){
+                case VALUE:
+                    setCurrentValues(field);
+                    newData.addField(field);
+                    break;
+                case CONTAINER:
+                case REFERENCECONTAINER:
+                    if (field.getKey().equals(Fields.STUDYVARIABLES)||field.getKey().equals(Fields.FILES))
+                        break;
+                    setCurrentValues(field);
+                    newData.addField(field);
+                    for (Map.Entry<Language, List<TransferRow>> langRows: field.getRows().entrySet()){
+                        for (TransferRow row: langRows.getValue()) {
+                            if (!row.getRemoved()) {
+                                row.setRowId(null);
+                                row.setRemoved(false);
+                                newData.getField(field.getKey()).addRowFor(langRows.getKey(), row);
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        handleFiles(targetData.getField(Fields.APPROVED_FILES), newData.getField(Fields.FILES));
+        Pair<ReturnResult,TransferData> returnResult = saveRevision(newData, info);
+        return returnResult;
+    }
+
+    private void handleFiles(TransferField sourceApprovedFiles, TransferField targetFiles){
+        String approvedFilesString = "";
+        if (sourceApprovedFiles != null){
+            approvedFilesString = sourceApprovedFiles.getValueFor(Language.DEFAULT).getCurrent();
+        }
+        for (TransferRow row: targetFiles.getRowsFor(Language.DEFAULT)){
+            Pair<ReturnResult, RevisionableInfo> attachmentInfoPair = revisions.getRevisionableInfo(Long.parseLong(row.getValue().split("-")[0]));
+            if (!attachmentInfoPair.getLeft().equals(ReturnResult.REVISIONABLE_FOUND)){
+                continue;
+            }
+            if (attachmentInfoPair.getRight().getRemoved() && approvedFilesString.contains(row.getValue().split("-")[0])){
+                RemoveResult restoreResult = restore.restore(Long.parseLong(row.getValue().split("-")[0]));
+                if (restoreResult.equals(RemoveResult.SUCCESS_RESTORE)){
+                    edit.edit(new RevisionKey(Long.parseLong(row.getValue().split("-")[0]), Integer.parseInt(row.getValue().split("-")[1])), null);
+                }
+            } else if (!attachmentInfoPair.getRight().getRemoved() && !approvedFilesString.contains(row.getValue().split("-")[0])) {
+                OperationResponse removeResponse;
+                if (attachmentInfoPair.getRight().getCurrent() != attachmentInfoPair.getRight().getApproved()){
+                    removeResponse = remove.removeDraft(new RevisionKey(attachmentInfoPair.getRight().getId(), attachmentInfoPair.getRight().getCurrent()), null);
+                    if (!removeResponse.equals(RemoveResult.SUCCESS_DRAFT)){
+                        continue;
+                    }
+                }
+                removeResponse = remove.removeLogical(new RevisionKey(attachmentInfoPair.getRight().getId(), attachmentInfoPair.getRight().getApproved()), null, false);
+            }
+        }
+    }
+
+    private void setCurrentValues(TransferField field) {
+        if (field.getType().equals(TransferFieldType.VALUE)){
+            if (field.getKey().equals(Fields.APPROVED_FILES)) {
+                return;
+            }
+            for (TransferValue value : field.getValues().values()) {
+                if (!value.hasCurrent()) {
+                        value.setCurrent(value.getOriginal());
+                        value.setOriginal(null);
+                }
+            }
+            return;
+        }
+        for(List<TransferRow> langRows: field.getRows().values()){
+            for (TransferRow row : langRows){
+                for (TransferField innerField: row.getFields().values()){
+                    setCurrentValues(innerField);
+                }
+            }
+        }
+        return;
     }
 
     /*private void parseVariableFile(RevisionData attachment, RevisionData study, Language varLang, DateTimeUserPair info, MutablePair<Boolean, Boolean> changesAndErrors) {

@@ -240,6 +240,24 @@ public class RevisionServiceImpl implements RevisionService {
         return response;
     }
 
+    @Override public RevisionDataResponse revert(RevisionKey key, Integer targetRevision){
+        Pair<OperationResponse, RevisionData> newPair = edit.edit(key, null);
+        if (!newPair.getLeft().getResult().equals("REVISION_CREATED")){
+            return getResponseGUI(newPair.getLeft(), newPair.getRight());
+        }
+        Pair<ReturnResult, RevisionData> targetPair = revisions.getRevisionData(key.getId(), targetRevision);
+        if (!targetPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
+            return getResponseGUI(newPair.getLeft(), newPair.getRight());
+        }
+
+        Pair<ReturnResult, RevisionableInfo> newInfo = revisions.getRevisionableInfo(newPair.getRight().getKey().getId());
+        Pair<ReturnResult, RevisionableInfo> targetInfo = revisions.getRevisionableInfo(newPair.getRight().getKey().getId());
+        if (!newInfo.getLeft().equals(ReturnResult.REVISIONABLE_FOUND) && !targetInfo.getLeft().equals(ReturnResult.REVISIONABLE_FOUND))
+            return getResponseGUI(newPair.getLeft(), newPair.getRight());
+        Pair<ReturnResult, TransferData> result = save.copyAndSaveRevision(TransferData.buildFromRevisionData(targetPair.getRight(), targetInfo.getRight()), TransferData.buildFromRevisionData(newPair.getRight(), newInfo.getRight()), null);
+        return getResponseGUI(newPair.getLeft(), newPair.getRight());
+    }
+
     @Override public RevisionSearchResponse search(RevisionSearchRequest request) {
         RevisionSearchResponse response = new RevisionSearchResponse();
 

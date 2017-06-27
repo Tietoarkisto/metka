@@ -55,6 +55,14 @@
             "exchange": "",
             "event": "contract_triggerdate_reached"
         }, {
+            "key": "ERROR_TRIGGER",
+            "exchange": "",
+            "event": "error_triggerdate_reached"
+        }, {
+            "key": "APPROVAL_DELAYED",
+            "exchange": "",
+            "event": "approval_delayed"
+        }, {
             "key": "",
             "exchange": "",
             "event": ""

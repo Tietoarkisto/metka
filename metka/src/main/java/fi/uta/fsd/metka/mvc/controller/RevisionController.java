@@ -106,6 +106,19 @@ public class RevisionController {
         return revisions.restore(key);
     }
 
+    /**
+     * Creates a new revision for a revisionable and copies the fields of the target revision to it,
+     * effectively "reverting" it.
+     * @param key
+     * @param targetNo
+     * @return
+     */
+    @RequestMapping(value="ajax/revert", method = RequestMethod.POST)
+    public @ResponseBody RevisionDataResponse revert(@RequestBody RevisionRevertRequest revertRequest){
+        RevisionDataResponse response = revisions.revert(revertRequest.getKey(), revertRequest.getTargetNo());
+        return response;
+    }
+
     @RequestMapping(value="ajax/save", method = RequestMethod.POST)
     public @ResponseBody RevisionDataResponse save(@RequestBody TransferData transferData) {
         RevisionDataResponse response = revisions.save(transferData);

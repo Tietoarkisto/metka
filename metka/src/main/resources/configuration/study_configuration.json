@@ -1210,6 +1210,19 @@
 			"editable": false,
 			"type": "STRING"
 		},
+		"approved_files": {
+			"key": "approved_files",
+			"type": "STRING",
+			"translatable": true,
+			"immutable": false,
+			"subfield": false,
+			"editable": true,
+			"writable": true,
+			"indexed": false,
+			"indexName": null,
+			"generalSearch": false,
+			"exact": false
+		},
 		"notes": {
 			"key": "notes",
 			"translatable": false,
