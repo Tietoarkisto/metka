@@ -40,17 +40,24 @@ import fi.uta.fsd.metka.model.access.enums.ConfigCheck;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.container.DataField;
+import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.ApproveInfo;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.model.interfaces.ModelBase;
+import fi.uta.fsd.metka.model.transfer.TransferData;
+import fi.uta.fsd.metka.model.transfer.TransferField;
+import fi.uta.fsd.metka.model.transfer.TransferRow;
+import fi.uta.fsd.metka.model.transfer.TransferValue;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 /**
  * Specification and documentation is found from uml/data/uml_json_data.graphml
@@ -245,5 +252,61 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
             default:
                 return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
+    }
+
+    public static RevisionData buildFromTransferData(TransferData data){
+        RevisionData revisionData = new RevisionData(new RevisionKey(data.getKey().getId(), data.getKey().getNo()), new ConfigurationKey(data.getConfiguration().getType(), data.getConfiguration().getVersion()));
+        // Fields
+        for (TransferField field : data.getFields().values()){
+            switch (field.getType()){
+                case VALUE:
+                    ValueDataField newValueField = new ValueDataField(field.getKey());
+                    for (Map.Entry<Language, TransferValue> value : field.getValues().entrySet()){
+                        if (value.getValue().getOriginal() != null) {
+                            newValueField.setOriginalFor(value.getKey(), new ValueContainer(null, value.getValue().originalAsValue()));
+                        }
+                        if (value.getValue().getCurrent() != null) {
+                            newValueField.setCurrentFor(value.getKey(), new ValueContainer(null, value.getValue().currentAsValue()));
+                        }
+                    }
+                    revisionData.getFields().put(field.getKey(), newValueField);
+                    break;
+                case CONTAINER:
+                    ContainerDataField newContainerField = new ContainerDataField(field.getKey(), 0);
+                    for (Map.Entry<Language, List<TransferRow>> langRows : field.getRows().entrySet()) {
+                        List<DataRow> newLangContainerRows = new ArrayList<>();
+                        for (TransferRow row : langRows.getValue()){
+                            DataRow newContainerRow = new DataRow(row.getKey(),newContainerField.getNewRowId());
+                            for (Map.Entry<String, TransferField> rowField : row.getFields().entrySet()){
+                                ValueDataField rowValueField = new ValueDataField(rowField.getKey());
+                                for (Map.Entry<Language, TransferValue> rowValue : rowField.getValue().getValues().entrySet()){
+                                    if (rowValueField.getOriginalFor(rowValue.getKey()) != null) {
+                                        rowValueField.setOriginalFor(rowValue.getKey(), new ValueContainer(null, rowValue.getValue().originalAsValue()));
+                                    }
+                                    if (rowValueField.getCurrentFor(rowValue.getKey()) != null) {
+                                        rowValueField.setCurrentFor(rowValue.getKey(), new ValueContainer(null, rowValue.getValue().currentAsValue()));
+                                    }
+                                }
+                                newContainerRow.getFields().put(rowValueField.getKey(), rowValueField);
+                            }
+                            newLangContainerRows.add(newContainerRow);
+                        }
+                        newContainerField.getRows().put(langRows.getKey(), newLangContainerRows);
+                    }
+                    revisionData.getFields().put(newContainerField.getKey(), newContainerField);
+                    break;
+                case REFERENCECONTAINER:
+                    ReferenceContainerDataField newReferenceContainerField = new ReferenceContainerDataField(field.getKey(), 0);
+                    for (List<TransferRow> rows : field.getRows().values()){
+                        for (TransferRow row : rows){
+                            ReferenceRow referenceRow = new ReferenceRow(row.getKey(), newReferenceContainerField.getNewRowId(), new Value(row.getValue()));
+                            newReferenceContainerField.getReferences().add(referenceRow);
+                        }
+                    }
+                    revisionData.getFields().put(newReferenceContainerField.getKey(), newReferenceContainerField);
+                    break;
+            }
+        }
+        return revisionData;
     }
 }

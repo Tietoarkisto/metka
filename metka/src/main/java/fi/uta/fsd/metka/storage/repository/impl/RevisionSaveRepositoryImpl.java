@@ -53,6 +53,7 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
+import fi.uta.fsd.metka.storage.restrictions.ValidateResult;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metkaAmqp.Messenger;
@@ -131,37 +132,20 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             Logger.error(getClass(), "Couldn't find configuration "+revision.getConfiguration().toString()+" while saving "+revision.toString());
             return new ImmutablePair<>(configPair.getLeft(), transferData);
         }
-
+        RevisionData data = RevisionData.buildFromTransferData(transferData);
+        data.setParent(revision.getParent());
         Configuration configuration = configPair.getRight();
         ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
-        // NOTICE: Validation for save is not really required at the moment.
-        // If save validation is required at some point then uncomment this part and implement validation for transfer data
 
-        /* TESTATESSA EI TOIMINUTKAAN TOIVOTULLA TAVALLA - kommentoidaan toistaiseksi.
         for (Operation operation: configPair.getRight().getRestrictions()){
             if(!(operation.getType() == OperationType.SAVE ||operation.getType() == OperationType.ALL)){
                 continue;
             }
-            ValidateResult vr = validator.validateTransferData(revision, operation.getTargets(), configuration);
+            ValidateResult vr = validator.validate(data, operation.getTargets(), configuration);
             if (!vr.getResult()){
                 return new ImmutablePair<>(ReturnResult.RESTRICTION_VALIDATION_FAILURE, transferData);
             }
         }
-        /*
-        // Do validation
-        for(Operation operation : configPair.getRight().getRestrictions()) {
-            if(!(operation.getType() == OperationType.SAVE || operation.getType() == OperationType.ALL)) {
-                continue;
-            }
-            if(!validator.validate(transferData, operation.getTargets(), configPair.getRight())) {
-                result = ReturnResult.RESTRICTION_VALIDATION_FAILURE;
-                break;
-            }
-        }
-        // If validation fails then halt the whole process
-        if(result != ReturnResult.OPERATION_SUCCESSFUL) {
-            return new ImmutablePair<>(result, transferData);
-        }*/
 
         // NOTICE: Cascade is not really a valid SAVE operation since the user modifies only one form at a time.
         // When some practical use for SAVE cascade is thought of then it can be added here
@@ -789,7 +773,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             switch(field.getType()){
                 case VALUE:
                     for(TransferValue value: field.getValues().values()){
-                        value.setCurrent(null);
+                        value.setCurrent("");
                     }
                     break;
                 case CONTAINER:
@@ -808,7 +792,13 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             switch (field.getType()){
                 case VALUE:
                     setCurrentValues(field);
-                    newData.addField(field);
+                    if (newData.hasField(field.getKey())){
+                        for (Map.Entry<Language, TransferValue> langValues : field.getValues().entrySet()){
+                            newData.getField(field.getKey()).getValueFor(langValues.getKey()).setCurrent(field.getValueFor(langValues.getKey()).getCurrent());
+                        }
+                    } else {
+                        newData.addField(field);
+                    }
                     break;
                 case CONTAINER:
                 case REFERENCECONTAINER:
@@ -828,7 +818,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     break;
             }
         }
-        handleFiles(targetData.getField(Fields.APPROVED_FILES), newData.getField(Fields.FILES));
+        if (newData.getField(Fields.FILES) != null) {
+            handleFiles(targetData.getField(Fields.APPROVED_FILES), newData.getField(Fields.FILES));
+        }
         Pair<ReturnResult,TransferData> returnResult = saveRevision(newData, info);
         return returnResult;
     }
@@ -863,13 +855,14 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
     private void setCurrentValues(TransferField field) {
         if (field.getType().equals(TransferFieldType.VALUE)){
+            // This is set elsewhere
             if (field.getKey().equals(Fields.APPROVED_FILES)) {
                 return;
             }
             for (TransferValue value : field.getValues().values()) {
-                if (!value.hasCurrent()) {
-                        value.setCurrent(value.getOriginal());
-                        value.setOriginal(null);
+                if (value.getCurrent() == null) {
+                    value.setCurrent(value.getOriginal());
+                    value.setOriginal(null);
                 }
             }
             return;

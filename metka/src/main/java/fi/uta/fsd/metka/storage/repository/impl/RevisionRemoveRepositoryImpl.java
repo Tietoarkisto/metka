@@ -386,6 +386,8 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
     private void checkFileStates(RevisionData data, DateTimeUserPair info){
         ReferenceContainerDataField files = (ReferenceContainerDataField)data.getField(Fields.FILES);
+        if (files == null)
+            return;
         Pair<ReturnResult, RevisionData> latestPair = revisions.getRevisionData(data.getKey().getId().toString(), true);
         if (!latestPair.getLeft().equals(ReturnResult.REVISION_FOUND))
             return;
