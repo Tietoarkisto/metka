@@ -123,6 +123,8 @@ define(function(require) {
                 }, {
                     value: "APPROVE"
                 }, {
+                    value: "EDIT"
+                }, {
                     value: "REMOVE"
                 }, {
                     value: "REMOVE_LOGICAL"
