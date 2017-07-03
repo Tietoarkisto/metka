@@ -7,10 +7,12 @@ import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionableRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaAmqp.Messenger;
 import fi.uta.fsd.metkaAmqp.payloads.ApprovalDelayedPayload;
 import fi.uta.fsd.metkaAmqp.payloads.ContractTriggerPayload;
 import fi.uta.fsd.metkaAmqp.payloads.ErrorTriggerPayload;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,7 +67,11 @@ public class AlertScanner {
         long[] ids = revisionableRepository.getAllRevisionableIds();
         LocalDate today = new LocalDate();
         for (int i = 0; i < ids.length; i++) {
-            RevisionData data = revisionRepository.getRevisionData(Long.toString(ids[i])).getRight();
+            Pair<ReturnResult, RevisionData> dataPair = revisionRepository.getRevisionData(Long.toString(ids[i]));
+            if(!dataPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
+                continue;
+            }
+            RevisionData data = dataPair.getRight();
             if (data.getField("triggerdate") != null && data.getField("triggerpro") != null) {
                 if (today.toString().equals(((ValueDataField)data.getField("triggerdate")).getActualValueFor(Language.DEFAULT))) {
                     if (Boolean.parseBoolean(triggersActive)){
