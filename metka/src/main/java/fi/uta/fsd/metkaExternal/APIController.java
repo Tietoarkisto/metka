@@ -300,13 +300,13 @@ public class APIController {
     }
 
     @RequestMapping(value = "massCreateFiles", method = RequestMethod.POST)
-    public @ResponseBody APIRevisionOperationResponse massCreateFiles(@RequestBody APIMassTransferDataRequest request){
+    public @ResponseBody APIMassRevisionOperationResponse massCreateFiles(@RequestBody APIMassTransferDataRequest request){
         if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
             messenger.sendAmqpMessage(messenger.FA_AUDIT, AuditPayload.deny("API-käyttäjä ["+request.getAuthentication()+"] yritti tallentaa useita tiedostoja ilman tarvittavia oikeuksia"));
-            return APIRevisionOperationResponse.authFail();
+            return APIMassRevisionOperationResponse.authFail();
         }
-        RevisionDataResponse response = revisions.massCreateFiles(request.getTransferData());
-        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+        MassRevisionDataResponse response = revisions.massCreateFiles(request.getTransferData());
+        return APIMassRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
 
     @RequestMapping(value = "approveRevision", method = RequestMethod.POST)

@@ -52,6 +52,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -203,10 +204,22 @@ public class RevisionServiceImpl implements RevisionService {
         return getResponse(OperationResponse.build(saveOperationResult.getLeft()), saveOperationResult.getRight());
     }
 
-    @Override public RevisionDataResponse massCreateFiles(List<TransferData> transferDatas){
-        RevisionDataResponse response = new RevisionDataResponse();
+    @Override public MassRevisionDataResponse massCreateFiles(List<TransferData> transferDatas){
+        MassRevisionDataResponse response = new MassRevisionDataResponse();
         for (TransferData transferData: transferDatas){
-            response = createAndSave(transferData);
+            RevisionDataResponse revisionDataResponse = createAndSave(transferData);
+            if (response.getData() == null) {
+                response.setConfiguration(revisionDataResponse.getConfiguration());
+                response.setGui(revisionDataResponse.getGui());
+                response.setResult(revisionDataResponse.getResult());
+                response.setData(new LinkedList<TransferData>());
+                response.getData().add(revisionDataResponse.getData());
+            } else {
+                response.getData().add(revisionDataResponse.getData());
+                if (!revisionDataResponse.getResult().equals(ReturnResult.OPERATION_SUCCESSFUL)){
+                    response.setResult(revisionDataResponse.getResult());
+                }
+            }
         }
         return response;
     }

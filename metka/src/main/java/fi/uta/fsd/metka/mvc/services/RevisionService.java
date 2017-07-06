@@ -62,7 +62,7 @@ public interface RevisionService {
     RevisionDataResponse createAndSave(TransferData transferData);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') ")
-    RevisionDataResponse massCreateFiles(List<TransferData> transferDatas);
+    MassRevisionDataResponse massCreateFiles(List<TransferData> transferDatas);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_APPROVE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#transferData, '" + PermissionCheck.Values.IS_HANDLER + "')")
