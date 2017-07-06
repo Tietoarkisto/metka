@@ -183,10 +183,9 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             // This is not a serious problem since approved revision
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
         }
-        RevisionEntity revisionEntity = em.find(RevisionEntity.class, fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(revisionableEntity.latestRevisionKey().toModelKey()));
-        em.lock(revisionEntity, LockModeType.PESSIMISTIC_WRITE);
+        RevisionEntity revisionEntity = em.find(RevisionEntity.class, revisionableEntity.latestRevisionKey());
         if(revisionEntity == null) {
-            // Didn't found entity
+            // Didn't find entity
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
         }
         Pair<ReturnResult, RevisionData> pair = getRevisionDataFromEntity(revisionEntity);

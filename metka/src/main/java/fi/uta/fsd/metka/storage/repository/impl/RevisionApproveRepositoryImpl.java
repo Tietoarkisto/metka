@@ -344,7 +344,9 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     private void checkContainerForChanges(Set<Language> changesIn, ContainerDataField container, Configuration configuration) {
         Field fieldConf = configuration.getField(container.getKey());
-
+        if (fieldConf == null){
+            return;
+        }
         if(!fieldConf.getTranslatable()) {
             // Container is not translatable, check only DEFAULT rows
             checkContainerForChangesIn(changesIn, container, configuration, Language.DEFAULT);
