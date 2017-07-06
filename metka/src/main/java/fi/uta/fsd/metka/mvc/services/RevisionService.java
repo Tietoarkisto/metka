@@ -38,6 +38,8 @@ import fi.uta.fsd.metkaAuthentication.PermissionCheck;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
 @Transactional(noRollbackFor = {NumberFormatException.class})
 public interface RevisionService {
@@ -58,6 +60,9 @@ public interface RevisionService {
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') ")
     RevisionDataResponse createAndSave(TransferData transferData);
+
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') ")
+    RevisionDataResponse massCreateFiles(List<TransferData> transferDatas);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_APPROVE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#transferData, '" + PermissionCheck.Values.IS_HANDLER + "')")

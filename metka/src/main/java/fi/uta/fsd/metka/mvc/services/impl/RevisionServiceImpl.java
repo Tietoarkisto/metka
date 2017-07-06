@@ -203,6 +203,14 @@ public class RevisionServiceImpl implements RevisionService {
         return getResponse(OperationResponse.build(saveOperationResult.getLeft()), saveOperationResult.getRight());
     }
 
+    @Override public RevisionDataResponse massCreateFiles(List<TransferData> transferDatas){
+        RevisionDataResponse response = new RevisionDataResponse();
+        for (TransferData transferData: transferDatas){
+            response = createAndSave(transferData);
+        }
+        return response;
+    }
+
     @Override public RevisionDataResponse approve(TransferData transferData) {
         Pair<ReturnResult, TransferData> savePair = save.saveRevision(transferData, null);
         String result = savePair.getLeft().name();
@@ -240,6 +248,13 @@ public class RevisionServiceImpl implements RevisionService {
         return response;
     }
 
+    /**
+     * Creates a new revision for a revisionable and copies the fields of the target revision to it,
+     * effectively "reverting" it.
+     * @param key
+     * @param targetRevision
+     * @return
+     */
     @Override public RevisionDataResponse revert(RevisionKey key, Integer targetRevision){
         Pair<OperationResponse, RevisionData> newPair = edit.edit(key, null);
         if (!newPair.getLeft().getResult().equals("REVISION_CREATED")){

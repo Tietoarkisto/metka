@@ -32,6 +32,7 @@ import codebook25.CodeBookDocument;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.ddi.MetkaXmlOptions;
 import fi.uta.fsd.metka.model.general.RevisionKey;
+import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.services.*;
 import fi.uta.fsd.metka.storage.repository.APIRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -295,6 +296,16 @@ public class APIController {
             return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
         }
         RevisionDataResponse response = revisions.createAndSave(request.getTransferData());
+        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+    }
+
+    @RequestMapping(value = "massCreateFiles", method = RequestMethod.POST)
+    public @ResponseBody APIRevisionOperationResponse massCreateFiles(@RequestBody APIMassTransferDataRequest request){
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            messenger.sendAmqpMessage(messenger.FA_AUDIT, AuditPayload.deny("API-käyttäjä ["+request.getAuthentication()+"] yritti tallentaa useita tiedostoja ilman tarvittavia oikeuksia"));
+            return APIRevisionOperationResponse.authFail();
+        }
+        RevisionDataResponse response = revisions.massCreateFiles(request.getTransferData());
         return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
 
