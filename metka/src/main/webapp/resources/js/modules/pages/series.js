@@ -46,7 +46,11 @@ define(function (require) {
                     key: 'seriesabbr',
                     exactValue: true
                 },
-                'seriesname'
+                {
+                    key: 'seriesname',
+                    exactValue: true,
+                    addWildcard: true
+                }
             ], 'seriesresults', 'DEFAULT');
 
             $.extend(options, {

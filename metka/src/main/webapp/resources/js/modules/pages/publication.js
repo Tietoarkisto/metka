@@ -60,12 +60,17 @@ define(function (require) {
                 'publicationyear',
                 {
                     key: 'studyname',
-                    rename: 'studies.studytitle'
+                    rename: 'studies.studytitle',
+                    exactValue: true,
+                    addParens: true,
+                    addWildcard: true
                 },
                 {
                     key: 'seriesname',
                     rename: 'series.seriesname',
-                    exactValue: true
+                    exactValue: true,
+                    addParens: true,
+                    addWildcard: true
                 },
                 {
                     key: 'lastname',
@@ -75,8 +80,17 @@ define(function (require) {
                     key: 'firstname',
                     rename: 'publicationauthors.firstname'
                 },
-                'publicationtitle',
-                'publicationrelpubl',
+                {
+                    key: 'publicationtitle',
+                    exactValue: true,
+                    addParens: true,
+                    addWildcard: true
+                },{
+                    key: 'publicationrelpubl',
+                    exactValue: true,
+                    addParens: true,
+                    addWildcard: true
+                },
                 {
                     key: 'publicationlanguage',
                     exactValue: true

@@ -52,7 +52,10 @@ define(function (require) {
             }, {
                 key: 'findBinderDescription',
                 rename: 'description',
-                exactValue: true
+                exactValue: true,
+                addWildcard: true,
+                addParens: true
+
             }], 'pages', 'DEFAULT');
 
         function view(requestOptions) {

@@ -60,7 +60,12 @@ define(function (require) {
                 success: function (response) {
                     var importFromConfiguration = [
                         'submissionid',
-                        'title',
+                        {
+                            key: 'title',
+                            exactValue: true,
+                            addParens: true,
+                            addWildcard: true
+                        },
                         {
                             key: 'producerrole',
                             rename: 'producers.producerrole',
@@ -90,7 +95,12 @@ define(function (require) {
                             key: 'packageurn',
                             rename: 'packages.packageurn'
                         },
-                        'abstract',
+                        {
+                            key: 'abstract',
+                            exactValue: true,
+                            addParens: true,
+                            addWildcard: true
+                        },
                         {
                             key: 'topictop',
                             rename: 'topics.topictop',
@@ -130,13 +140,22 @@ define(function (require) {
                         'studyid',
                         {
                             key: 'author',
-                            rename: 'authors.author'
+                            rename: 'authors.author',
+                            exactValue: true,
+                            addParens: true,
+                            addWildcard: true
                         }, {
                             key: 'authororganization',
-                            rename: 'authors.organisation'
+                            rename: 'authors.organisation',
+                            exactValue: true,
+                            addParens: true,
+                            addWildcard: true
                         }, {
                             key: 'producername',
-                            rename: 'producers.organisation'
+                            rename: 'producers.organisation',
+                            exactValue: true,
+                            addParens: true,
+                            addWildcard: true
                         }, {
                             key: 'series',
                             exactValue: true
@@ -159,7 +178,6 @@ define(function (require) {
                             rename: 'collectors.author'
                         }
                     ].concat(importFromConfiguration), 'studyresults', 'DEFAULT');
-
                     if (resultParser(response.result).getResult() === 'CONFIGURATION_FOUND') {
                         $.extend(true, options, {
                             header: MetkaJS.L10N.get('type.STUDY.search'),
