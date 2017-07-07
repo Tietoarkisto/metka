@@ -54,11 +54,16 @@ define(function (require) {
         CLAIM: function (options) {
             this
                 .click(function () {
+                    $(".modal-footer").find("button").attr('disabled', 'disabled');
                     require('./server')('/revision/ajax/claim', {
                         data: JSON.stringify(options.data.key),
                         success: function (response) {
+                            $(".modal-footer").find("button").removeAttr('disabled');
                             $.extend(options.data, response.data);
                             options.$events.trigger('refresh.metka');
+                        },
+                        error: function() {
+                            $(".modal-footer").find("button").removeAttr('disabled');
                         }
                     });
                 });
@@ -93,6 +98,7 @@ define(function (require) {
         },
         EDIT: function (options) {
             this.click(require('./formAction')('edit')(options, function (response) {
+                $(".modal-footer").find("button").removeAttr('disabled');
                 $.extend(options.data, response.data);
                 options.$events.trigger('refresh.metka');
                 history.replaceState(undefined, '', require('./url')('view'));
@@ -267,6 +273,10 @@ define(function (require) {
                                     })));
 
                             checkRadioGroups();
+                            $(".modal-footer").find("button").removeAttr('disabled');
+                        },
+                        error: function() {
+                            $(".modal-footer").find("button").removeAttr('disabled');
                         }
                     });
                 });
@@ -280,12 +290,17 @@ define(function (require) {
         RELEASE: function (options) {
             this
                 .click(function () {
+                    $(".modal-footer").find("button").attr('disabled', 'disabled');
                     var $this = $(this);
                     require('./server')('/revision/ajax/release', {
                         data: JSON.stringify(options.data.key),
                         success: function (response) {
+                            $(".modal-footer").find("button").removeAttr('disabled');
                             $.extend(options.data, response.data);
                             options.$events.trigger('refresh.metka');
+                        },
+                        error: function (){
+                            $(".modal-footer").find("button").removeAttr('disabled');
                         }
                     });
                 });
@@ -293,12 +308,17 @@ define(function (require) {
         RESTORE: function (options) {
             this
                 .click(function () {
+                    $(".modal-footer").find("button").attr('disabled', 'disabled');
                     var $this = $(this);
                     var request = $.extend({
                         data: JSON.stringify(options.data.key),
                         success: function (response) {
+                            $(".modal-footer").find("button").removeAttr('disabled');
                             $.extend(options.data, response.data);
                             options.$events.trigger('refresh.metka');
+                        },
+                        error: function () {
+                            $(".modal-footer").find("button").removeAttr('disabled');
                         }
                     }, options.request);
                     require('./server')('/revision/ajax/restore', request);
@@ -338,18 +358,21 @@ define(function (require) {
                                 this
                                     .attr('id', 'revertRevision')
                                     .click(function() {
+                                        $(".modal-footer").find("button").attr('disabled', 'disabled');
                                         var request = {
                                             data: JSON.stringify({
                                                 targetNo: parseInt($('input[name="revertRadio"]:checked').val()),
                                                 key: options.data.key
                                             }),
                                             success: function(response) {
-                                                console.log(options, "done");
+                                                $(".modal-footer").find("button").removeAttr('disabled');
                                                 options.$events.trigger('refresh.metka');
                                                 require('./assignUrl')('view', {
                                                     id: response.data.key.id,
                                                     no: response.data.key.no
                                                 });
+                                            }, error: function() {
+                                                $(".modal-footer").find("button").removeAttr('disabled');
                                             }
                                         };
                                         require('./server')('/revision/ajax/revert', request);
@@ -398,6 +421,7 @@ define(function (require) {
         SAVE: function (options) {
             this
                 .click(require('./save')(options, function (response) {
+                    $(".modal-footer").find("button").removeAttr('disabled');
                     $.extend(options.data, response.data);
                     options.$events.trigger('refresh.metka');
                 }));

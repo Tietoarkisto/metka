@@ -63,9 +63,11 @@ define(function (require) {
                     create: function () {
                         this
                             .click(function () {
+                                $(".modal-footer").find("button").attr('disabled', 'disabled');
                                 require('./server')('remove', {
                                     data: JSON.stringify(options.data.key),
                                     success: function (response) {
+                                        $(".modal-footer").find("button").removeAttr('disabled');
                                         var success = $.extend({
                                             SUCCESS_LOGICAL: function () {
                                                 require('./assignUrl')('view');
@@ -83,6 +85,9 @@ define(function (require) {
                                         };
 
                                         success(response);
+                                    },
+                                    error: function() {
+                                        $(".modal-footer").find("button").removeAttr('disabled');
                                     }
                                 });
                             });
