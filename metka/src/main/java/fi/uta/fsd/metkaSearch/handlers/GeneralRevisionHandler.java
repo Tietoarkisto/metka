@@ -442,6 +442,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 // Convert value to correct number format (integer or long, or just stick with long for everything) and index as correct number field
                 try {
                     document.indexIntegerField(root + field.getIndexAs(), Long.parseLong(saved.getActualValueFor(inputLang)), false, field.getGeneralSearch());
+                    document.indexIntegerField(root + field.getIndexAs() + ".text", Long.parseLong(saved.getActualValueFor(inputLang)), false, field.getGeneralSearch());
                 } catch(NumberFormatException nfe) {
                     Logger.debug(getClass(), "Skipping field "+field.getKey()+" since value is not INTEGER and search would not find it");
                 }
@@ -455,7 +456,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 }
                 break;
             case SELECTION:
-                indexSelectionField(field, saved, document, root, path, config, data, language);
+                indexSelectionField(field, saved, document, root, path, config, data, language, fieldContainer);
                 break;
             case REFERENCE:
                 indexReferenceField(field, saved, document, root, path, data, config, language);
@@ -482,7 +483,7 @@ class GeneralRevisionHandler implements RevisionHandler {
      * @return Boolean telling if the indexing was successful. False should mean that the whole document is abandoned
      */
     private void indexSelectionField(Field field, ValueDataField saved, IndexerDocument document, String root, Step path,
-            Configuration config, RevisionData data, Language language) {
+            Configuration config, RevisionData data, Language language, DataFieldContainer fieldContainer) {
         // If field is not translatable we are going to use DEFAULT as the indexing language, this needs to be detected in indexText methods too
         // We have to check this here instead of some more revisions method since we have to pass actual requested language on to other methods
         Language inputLang = field.getTranslatable() ? language : Language.DEFAULT;
@@ -503,6 +504,11 @@ class GeneralRevisionHandler implements RevisionHandler {
                 // Index the title to the actual field and the value to field.value field. Index only the default language from title
                 Option option = list.getOptionWithValue(saved.getActualValueFor(inputLang));
                 if(option != null) {
+                    // Index the freetext-option, assuming every list has only one freetext option.
+                    if (list.getFreeText().size() > 0 && option.getValue().equals(list.getFreeText().get(0))){
+                        ValueDataField freeTextField = (ValueDataField)fieldContainer.getField(list.getFreeTextKey());
+                        document.indexText(inputLang, config.getField(list.getFreeTextKey()), root, freeTextField.getActualValueFor(language), field.getGeneralSearch());
+                    }
                     document.indexText(inputLang, field, root, option.getTitleFor(inputLang), field.getGeneralSearch());
                     document.indexKeywordField(root + field.getIndexAs() + ".value", option.getValue());
                 } else {
