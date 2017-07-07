@@ -276,6 +276,8 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
                     for (Map.Entry<Language, List<TransferRow>> langRows : field.getRows().entrySet()) {
                         List<DataRow> newLangContainerRows = new ArrayList<>();
                         for (TransferRow row : langRows.getValue()){
+                            if (row.getRemoved())
+                                continue;
                             DataRow newContainerRow = new DataRow(row.getKey(),newContainerField.getNewRowId());
                             for (Map.Entry<String, TransferField> rowField : row.getFields().entrySet()){
                                 ValueDataField rowValueField = new ValueDataField(rowField.getKey());

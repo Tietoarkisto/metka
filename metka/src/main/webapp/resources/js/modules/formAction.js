@@ -35,40 +35,43 @@ define(function (require) {
         return function (options, onSuccess, successConditions, operation) {
             return function () {
                 (function clearErrors(fields) {
-                    $.each(fields, function (key, field) {
-                        if(!field) {
-                            return;
-                        }
-                        if (field.errors) {
-                            field.errors.length = 0
-                        }
-                        if (field.values) {
-                            $.each(field.values, function (lang, value) {
-                                if (value && value.errors) {
-                                    value.errors.length = 0
-                                }
-                            });
-                        }
-                        if (field.rows) {
-                            $.each(field.rows, function (lang, rows) {
-                                rows.forEach(function (row) {
-                                    if (row.errors) {
-                                        row.errors.length = 0
-                                    }
-                                    if (row.fields) {
-                                        clearErrors(row.fields);
+                    if (fields != null) {
+                        $.each(fields, function (key, field) {
+                            if (!field) {
+                                return;
+                            }
+                            if (field.errors) {
+                                field.errors.length = 0
+                            }
+                            if (field.values) {
+                                $.each(field.values, function (lang, value) {
+                                    if (value && value.errors) {
+                                        value.errors.length = 0
                                     }
                                 });
-                            });
-                        }
-                    });
+                            }
+                            if (field.rows) {
+                                $.each(field.rows, function (lang, rows) {
+                                    rows.forEach(function (row) {
+                                        if (row.errors) {
+                                            row.errors.length = 0
+                                        }
+                                        if (row.fields) {
+                                            clearErrors(row.fields);
+                                        }
+                                    });
+                                });
+                            }
+                        });
+                    }
                 })(options.data.fields);
-
+                $(".modal-footer").find("button").attr('disabled', 'disabled');
                 var that = this;
 
                 require('./server')(url, {
                     data: JSON.stringify(options.data),
                     success: function (response) {
+                        $(".modal-footer").find("button").removeAttr('disabled');
 
                         var isExpectedResult = successConditions ? successConditions.some(function (condition) {
                             return condition === resultParser(response.result).getResult();
@@ -79,6 +82,9 @@ define(function (require) {
                                 onSuccess.call(that, response);
                             }
                         });
+                    },
+                    error: function(response) {
+                        $(".modal-footer").find("button").removeAttr('disabled');
                     }
                 });
             };
