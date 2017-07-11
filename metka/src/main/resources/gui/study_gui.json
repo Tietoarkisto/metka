@@ -2320,6 +2320,15 @@
             "canRestoreRevision"
         ]
     }, {
+        "title": "Palauta edellinen revisio",
+        "type": "REVERT",
+        "states": [
+            "APPROVED"
+        ],
+        "permissions": [
+            "canRevertRevision"
+        ]
+    }, {
         "title": "Aloita muokkaus",
         "type": "BEGIN_EDIT",
         "hasHandler": false,
