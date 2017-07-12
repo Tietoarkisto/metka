@@ -46,12 +46,15 @@ import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.*;
+import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedRequest;
+import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedResponse;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -369,6 +372,24 @@ public class RevisionServiceImpl implements RevisionService {
         }
         response.setContent(result.getRight());
         response.setKey(key);
+        return response;
+    }
+
+    @Override
+    public RevisionableLogicallyRemovedResponse revisionablesLogicallyRemoved(RevisionableLogicallyRemovedRequest request) {
+
+        RevisionableLogicallyRemovedResponse response = new RevisionableLogicallyRemovedResponse();
+        try {
+            List<Long> ids = new ArrayList<>();
+            for(String key : request.getValues()) {
+                ids.add(Long.parseLong(key.split("-")[0]));
+            }
+
+            response.getValues().addAll(revisions.getRevisionablesLogicallyRemoved(ids));
+            response.setResult(ReturnResult.OPERATION_SUCCESSFUL);
+        } catch (NumberFormatException nfe) {
+            response.setResult(ReturnResult.PARAMETERS_MISSING);
+        }
         return response;
     }
 }

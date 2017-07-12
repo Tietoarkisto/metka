@@ -28,7 +28,6 @@
 
 package fi.uta.fsd.metka.storage.repository.impl;
 
-import com.rabbitmq.client.AMQP;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
@@ -108,6 +107,20 @@ public class RevisionRepositoryImpl implements RevisionRepository {
                 entity.getCurApprovedNo(), entity.getLatestRevisionNo(),
                 entity.getRemoved(), entity.getRemovalDate(), entity.getRemovedBy());
         return new ImmutablePair<>(ReturnResult.REVISIONABLE_FOUND, info);
+    }
+
+    @Override
+    public List<Pair<Long,Boolean>> getRevisionablesLogicallyRemoved(List<Long> ids) {
+        List<Object[]> intermediateResults =  em.createQuery("SELECT r.id, r.removed FROM RevisionableEntity r WHERE r.id in :ids", Object[].class)
+                .setParameter("ids", ids)
+                .getResultList();
+
+        List<Pair<Long,Boolean>> results = new ArrayList<>();
+        for(Object[] pair : intermediateResults) {
+            results.add(new ImmutablePair<>((Long) pair[0],(Boolean) pair[1]));
+        }
+
+        return results;
     }
 
     @Override

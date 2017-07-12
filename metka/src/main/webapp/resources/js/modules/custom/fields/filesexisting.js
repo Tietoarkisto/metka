@@ -55,6 +55,13 @@ define(function (require) {
             require('./../../revisionModal')(options, requestOptions, 'STUDY_ATTACHMENT', partialRefresh, options.field.key, true);
         }
 
+        function sendRefresh(options, row) {
+            setTimeout(function(){ options.$events.trigger('container-{key}-{lang}-push'.supplant({
+                key: options.field.key,
+                lang: options.defaultLang
+            }), [row])},0);
+        }
+
         return {
             preCreate: function(options) {
                 delete options.field.displayType;
@@ -98,32 +105,28 @@ define(function (require) {
              * @return boolean Return true if normal container redraw should be skipped
              */
             onRedraw: function($tbody, options, lang, $thead) {
+                function mapRow(row) {
+                    var transferRow = rowsMapped.find(function(r){return r.id === row.key});
+                    if(!row.value) {
+                        sendRefresh(options,transferRow.transferRow);
+                    }
+                }
+
                 require('./../../data')(options).removeRows('DEFAULT');
                 var rows = require('./../../data')(options)("files").getByLang(options.defaultLang);
-                if(rows) {
-                    (function processNextRow(i) {
-                        if(i < rows.length) {
-                            var transferRow = rows[i++];
-                            if(transferRow.removed) {
-                                processNextRow(i);
-                                return;
-                            }
-                            require('./../../server')('/references/referenceStatus/{value}', transferRow, {
-                                method: 'GET',
-                                success: function(response) {
-                                    if(response.exists && !response.removed) {
-                                        options.$events.trigger('container-{key}-{lang}-push'.supplant({
-                                            key: options.field.key,
-                                            lang: options.defaultLang
-                                        }), [transferRow]);
-                                    } else if(response.result === "REVISIONABLE_NOT_FOUND") {
-                                        transferRow.removed = true;
-                                    }
-                                    processNextRow(i);
-                                }
-                            });
+                var rowsMapped = rows
+                    .filter(function(row){return !row.removed})
+                    .map(function(row) {return {transferRow: row, id: parseInt(row.value.split("-")[0])}});
+
+                if(rowsMapped) {
+
+                    require('./../../server')('/revision/revisionablesLogicallyRemoved', {
+                        method: 'POST',
+                        data: JSON.stringify({values:rowsMapped.map(function(row){return row.id})}),
+                        success: function (response) {
+                            response.values.forEach(mapRow)
                         }
-                    })(0);
+                    });
                 }
                 return true;
             }
