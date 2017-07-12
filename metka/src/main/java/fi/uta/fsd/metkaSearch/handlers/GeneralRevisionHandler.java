@@ -54,6 +54,8 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
+
 import static org.apache.lucene.document.Field.Store.YES;
 import static org.apache.lucene.search.BooleanClause.Occur.MUST;
 
@@ -505,7 +507,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 Option option = list.getOptionWithValue(saved.getActualValueFor(inputLang));
                 if(option != null) {
                     // Index the freetext-option, assuming every list has only one freetext option.
-                    if (list.getFreeText().size() > 0 && option.getValue().equals(list.getFreeText().get(0))){
+                    if (list.getFreeText().size() > 0 && list.getFreeText().contains(option.getValue())){
                         ValueDataField freeTextField = (ValueDataField)fieldContainer.getField(list.getFreeTextKey());
                         document.indexText(inputLang, config.getField(list.getFreeTextKey()), root, freeTextField.getActualValueFor(language), field.getGeneralSearch());
                     }
@@ -518,6 +520,11 @@ class GeneralRevisionHandler implements RevisionHandler {
                 break;
             case REFERENCE:
                 indexReferenceField(field, saved, document, root, path, data, config, language);
+                ReferenceOption refOption = references.getCurrentFieldOption(language, data, config, path.printPath(), true);
+                if (list.getFreeText().size() > 0 && list.getFreeText().contains(refOption.getValue())){
+                    ValueDataField freeTextField = (ValueDataField)fieldContainer.getField(list.getFreeTextKey());
+                    document.indexText(inputLang, config.getField(list.getFreeTextKey()), root, freeTextField.getActualValueFor(language), field.getGeneralSearch());
+                }
                 return;
         }
 
