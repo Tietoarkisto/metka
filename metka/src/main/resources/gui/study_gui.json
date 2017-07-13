@@ -2154,6 +2154,7 @@
                         "showReferenceSaveInfo": true,
                         "showReferenceState": true,
                         "disableRemoval": true,
+                        "rowsPerPage": 10,
                         "columnFields": [
                             "filepath",
                             "filedescription",

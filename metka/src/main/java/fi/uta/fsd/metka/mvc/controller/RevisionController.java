@@ -35,8 +35,11 @@ import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.*;
+import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedRequest;
+import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedResponse;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -201,5 +204,15 @@ public class RevisionController {
         ModelUtil.initRevisionModel(model, type, id, no);
 
         return AuthenticationUtil.getModelName("page", model);
+    }
+
+    /*
+    * Gets a list of revisionable ids or revision keys,
+    * and returns a list of pairs consisting of revision id/key => logically removed (boolean)
+    * */
+    @RequestMapping(value = "revisionablesLogicallyRemoved", method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody RevisionableLogicallyRemovedResponse revisionablesLogicallyRemoved(@RequestBody RevisionableLogicallyRemovedRequest request) {
+        return revisions.revisionablesLogicallyRemoved(request);
     }
 }

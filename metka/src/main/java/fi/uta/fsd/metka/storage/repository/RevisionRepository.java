@@ -52,6 +52,8 @@ public interface RevisionRepository {
      */
     Pair<ReturnResult, RevisionableInfo> getRevisionableInfo(Long id);
 
+    List<Pair<Long,Boolean>> getRevisionablesLogicallyRemoved(List<Long> ids);
+
     /**
      * Returns the revision data with given id and number.
      * Forwards the call to revision key variant with null type.

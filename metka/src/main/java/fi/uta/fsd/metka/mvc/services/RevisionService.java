@@ -33,6 +33,8 @@ import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.transfer.revision.*;
+import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedRequest;
+import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedResponse;
 import fi.uta.fsd.metkaAuthentication.Permission;
 import fi.uta.fsd.metkaAuthentication.PermissionCheck;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -103,4 +105,6 @@ public interface RevisionService {
     @Transactional(readOnly = true) RevisionDataResponse adjacentRevision(AdjacentRevisionRequest request);
 
     @Transactional(readOnly = true) RevisionExportResponse exportRevision(RevisionKey key);
+
+    @Transactional(readOnly = true) RevisionableLogicallyRemovedResponse revisionablesLogicallyRemoved(RevisionableLogicallyRemovedRequest request);
 }
