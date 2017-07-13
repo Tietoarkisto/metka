@@ -98,10 +98,14 @@ define(function (require) {
 
                 require('./../../data')(options).removeRows('DEFAULT');
                 var rows = require('./../../data')(options)("files").getByLang(options.defaultLang);
+
+                if (!rows) {
+                    return true;
+                }
+
                 var rowsMapped = rows
                     .filter(function(row){return !row.removed})
                     .map(function(row) {return {transferRow: row, id: parseInt(row.value.split("-")[0])}});
-                console.log("existing:",rowsMapped);
 
                 if(rowsMapped) {
 
