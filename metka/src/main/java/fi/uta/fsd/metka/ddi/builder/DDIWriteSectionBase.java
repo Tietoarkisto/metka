@@ -28,8 +28,9 @@
 
 package fi.uta.fsd.metka.ddi.builder;
 
-import codebook25.CodeBookType;
-import codebook25.SimpleTextAndDateType;
+import codebook25.*;
+import fi.uta.fsd.metka.ddi.nodevisitor.DDIWriteCodebookNodeVisitor;
+import fi.uta.fsd.metka.ddi.nodevisitor.DDIWriteXhtmlNodeVisitor;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.ReferenceType;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
@@ -48,10 +49,13 @@ import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferencePath;
 import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.*;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities;
+import org.jsoup.nodes.Node;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -193,9 +197,37 @@ abstract class DDIWriteSectionBase {
     }
 
     protected <T extends XmlObject> T fillTextType(T att, String value) {
-        XmlCursor xmlCursor = att.newCursor();
-        xmlCursor.setTextValue(value);
-        xmlCursor.dispose();
+
+        Document doc = Jsoup.parse(value);
+        doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+        doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
+
+        List<Node> childNodes = doc.body().childNodes();
+
+        if ( childNodes.size() == 1 && "#text".equals(childNodes.get(0).nodeName())) {
+            // only text, parse as plaintext.
+            XmlCursor cursor = att.newCursor();
+            cursor.setTextValue(value);
+            cursor.dispose();
+            return att;
+        }
+
+        // rich text handling
+        try {
+            // try parsing as codebook's own document.
+            for (Node child : childNodes) {
+                child.traverse(new DDIWriteCodebookNodeVisitor(att));
+            }
+        } catch(Exception ee) {
+            // if that fails, remove previously written and parse again as xhtml
+            XmlCursor cursor = att.newCursor();
+            cursor.removeXmlContents();
+            cursor.dispose();
+            for (Node child : childNodes) {
+                child.traverse(new DDIWriteXhtmlNodeVisitor(att));
+            }
+        }
+
         return att;
     }
 
