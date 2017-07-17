@@ -398,7 +398,11 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             if (field == null){
                 continue;
             }
-            if (field.getCurrentFor(Language.DEFAULT).getActualValue().contains(fileId.split("-")[0]) && currAttachment.getRight().getRemoved()) {
+            String value = field.getCurrentFor(Language.DEFAULT).getActualValue();
+            if (value == null ||currAttachment.getLeft().equals(ReturnResult.REVISIONABLE_NOT_FOUND)){
+                continue;
+            }
+            if (value.contains(fileId.split("-")[0]) && currAttachment.getRight().getRemoved()) {
                 restore.restore(Long.parseLong(fileId.split("-")[0]));
             } else if (!field.getCurrentFor(Language.DEFAULT).getActualValue().contains(fileId.split("-")[0]) && !currAttachment.getRight().getRemoved()) {
                 if (currAttachment.getRight().getApproved() != currAttachment.getRight().getCurrent()){
