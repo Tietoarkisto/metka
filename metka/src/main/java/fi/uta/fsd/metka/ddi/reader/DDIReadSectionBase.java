@@ -30,6 +30,7 @@ package fi.uta.fsd.metka.ddi.reader;
 
 import codebook25.AbstractTextType;
 import codebook25.CodeBookType;
+import fi.uta.fsd.metka.ddi.nodevisitor.DDIReadNodeVisitor;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
@@ -49,8 +50,13 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities;
+import org.jsoup.nodes.Node;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Map;
 
 abstract class DDIReadSectionBase {
@@ -141,9 +147,27 @@ abstract class DDIReadSectionBase {
 
     protected <T extends XmlObject> String getText(T att) {
         if(att == null) return "";
-        XmlCursor xmlCursor = att.newCursor();
-        String value = xmlCursor.getTextValue();
-        xmlCursor.dispose();
-        return value == null ? "" : value;
+
+        Document doc = Jsoup.parse(att.xmlText());
+        doc.outputSettings().syntax(Document.OutputSettings.Syntax.html);
+        doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
+
+        List<Node> childNodes = doc.body().childNodes();
+
+        if ( childNodes.size() == 1 && "#text".equals(childNodes.get(0).nodeName())) {
+            // only text, parse as plaintext.
+            XmlCursor cursor = att.newCursor();
+            String value = cursor.getTextValue();
+            cursor.dispose();
+            return value == null ? "" : value;
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (Node child : childNodes) {
+                child.traverse(new DDIReadNodeVisitor());
+                child.html(sb);
+            }
+            return sb.toString();
+        }
     }
+
 }

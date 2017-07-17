@@ -26,25 +26,55 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.ddi;
+package fi.uta.fsd.metka.ddi.nodevisitor;
 
-import org.apache.xmlbeans.XmlOptions;
+import codebook25.*;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.xmlbeans.XmlObject;
+import org.w3.x1999.xhtml.*;
+import org.w3.x1999.xhtml.DivType;
+import org.w3.x1999.xhtml.PType;
 
-public class MetkaXmlOptions {
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-    public static final XmlOptions DDI_EXPORT_XML_OPTIONS =
-            buildMetkaDDIExportXmlOptions();
+public class DDIWriteXhtmlNodeVisitor extends AbstractDDIWriteNodeVisitor {
 
-    private static final XmlOptions buildMetkaDDIExportXmlOptions()
-    {
-        XmlOptions xmlOptions = new XmlOptions();
-        xmlOptions.setSaveCDataEntityCountThreshold(100);
-        xmlOptions.setSaveCDataLengthThreshold(100);
-        xmlOptions.put( XmlOptions.SAVE_INNER );
-        xmlOptions.put( XmlOptions.SAVE_PRETTY_PRINT );
-        xmlOptions.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
-        xmlOptions.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
+    public DDIWriteXhtmlNodeVisitor(XmlObject stt) {
+        super(stt, new Class[] {
+                StringType.class,
+                SimpleTextType.class,
 
-        return xmlOptions;
+                PType.class,
+                DivType.class,
+                BrType.class,
+                SpanType.class,
+                AType.class,
+                InlPresType.class,
+                LiType.class,
+                UlType.class,
+                OlType.class
+        });
+    }
+
+    protected void _callAddMethod(Class<?> clazz, String capitalizedTagName) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        // in xmlbeans adding methods are appended with "2" so try that first
+        Method method;
+        String addMethodName = "addNew";
+
+        capitalizedTagName = convertTagnameIfNecessary(capitalizedTagName);
+        try {
+            method = clazz.getMethod(StringUtils.join(addMethodName , capitalizedTagName , "2"));
+        } catch (NoSuchMethodException e) {
+            // if no xhtml specific method is found, use without appending "2".
+            method = clazz.getMethod(StringUtils.join(addMethodName , capitalizedTagName));
+        }
+        Class<?> returnType = method.getReturnType();
+        Object value = method.invoke(this.stack.peek());
+        this.stack.push((XmlObject) returnType.cast(value));
+    }
+
+    private String convertTagnameIfNecessary(String tagName) {
+        return tagName;
     }
 }

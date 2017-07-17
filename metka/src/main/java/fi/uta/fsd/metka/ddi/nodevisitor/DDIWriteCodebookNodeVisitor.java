@@ -26,25 +26,51 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.ddi;
+package fi.uta.fsd.metka.ddi.nodevisitor;
 
-import org.apache.xmlbeans.XmlOptions;
+import codebook25.*;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.xmlbeans.XmlObject;
 
-public class MetkaXmlOptions {
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-    public static final XmlOptions DDI_EXPORT_XML_OPTIONS =
-            buildMetkaDDIExportXmlOptions();
+public class DDIWriteCodebookNodeVisitor extends AbstractDDIWriteNodeVisitor {
 
-    private static final XmlOptions buildMetkaDDIExportXmlOptions()
-    {
-        XmlOptions xmlOptions = new XmlOptions();
-        xmlOptions.setSaveCDataEntityCountThreshold(100);
-        xmlOptions.setSaveCDataLengthThreshold(100);
-        xmlOptions.put( XmlOptions.SAVE_INNER );
-        xmlOptions.put( XmlOptions.SAVE_PRETTY_PRINT );
-        xmlOptions.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
-        xmlOptions.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
+    public DDIWriteCodebookNodeVisitor(XmlObject stt) {
+        super(stt, new Class[]{
+                StringType.class,
+                SimpleTextType.class,
 
-        return xmlOptions;
+                PType.class,
+                EmphType.class,
+                HiType.class,
+                ListType.class,
+
+            });
+    }
+
+    protected void _callAddMethod(Class<?> clazz, String capitalizedTagName) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        String addMethodName = "addNew";
+
+        capitalizedTagName = convertTagnameIfNecessary(capitalizedTagName);
+        Method method = clazz.getMethod(StringUtils.join(addMethodName , capitalizedTagName));
+
+        Class<?> returnType = method.getReturnType();
+        Object value = method.invoke(this.stack.peek());
+        this.stack.push((XmlObject) returnType.cast(value));
+    }
+
+    private String convertTagnameIfNecessary(String tagName) {
+        switch (tagName) {
+            case "Ul":
+                return "List";
+            case "Ol":
+                return "List";
+            case "Li":
+                return "Itm";
+            default:
+                return tagName;
+        }
     }
 }

@@ -26,25 +26,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-package fi.uta.fsd.metka.ddi;
+package fi.uta.fsd.metka.ddi.nodevisitor;
 
-import org.apache.xmlbeans.XmlOptions;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.NodeVisitor;
 
-public class MetkaXmlOptions {
+public class DDIReadNodeVisitor implements NodeVisitor {
 
-    public static final XmlOptions DDI_EXPORT_XML_OPTIONS =
-            buildMetkaDDIExportXmlOptions();
+    @Override
+    public void head(Node node, int i) {
+        if (node instanceof Element) {
+            Element element = ((Element) node);
+            String tag = element.tagName();
+            if (tag.contains(":")) {
+                element.tagName(tag.split(":")[1]);
+            }
+        }
+    }
 
-    private static final XmlOptions buildMetkaDDIExportXmlOptions()
-    {
-        XmlOptions xmlOptions = new XmlOptions();
-        xmlOptions.setSaveCDataEntityCountThreshold(100);
-        xmlOptions.setSaveCDataLengthThreshold(100);
-        xmlOptions.put( XmlOptions.SAVE_INNER );
-        xmlOptions.put( XmlOptions.SAVE_PRETTY_PRINT );
-        xmlOptions.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
-        xmlOptions.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
+    @Override
+    public void tail(Node node, int i) {
 
-        return xmlOptions;
     }
 }
