@@ -71,9 +71,11 @@ define(function (require) {
         BEGIN_EDIT: function (options) {
             this
                 .click(function () {
+                    $(".modal-footer").find("button").attr('disabled', 'disabled');
                     require('./server')('/revision/ajax/beginEdit', {
                         data: JSON.stringify(options.data.key),
                         success: function (response) {
+                            $(".modal-footer").find("button").removeAttr('disabled');
                             if(resultParser(response.result).getResult() === 'REVISION_UPDATE_SUCCESSFUL') {
                                 $.extend(options.data, response.data);
                                 options.$events.trigger('refresh.metka');
@@ -82,6 +84,9 @@ define(function (require) {
                                     require('./assignUrl')('view');
                                 });
                             }
+                        },
+                        error: function() {
+                            $(".modal-footer").find("button").removeAttr('disabled');
                         }
                     });
                 });
