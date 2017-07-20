@@ -44,6 +44,7 @@ public class TransferValue {
     private String current = null;
     private String original = null;
     private final List<FieldError> errors = new ArrayList<>();
+    private TransferData extendedData = null;
 
     public String getCurrent() {
         return current;
@@ -64,6 +65,15 @@ public class TransferValue {
     public List<FieldError> getErrors() {
         return errors;
     }
+
+    public TransferData getExtendedData() {
+        return extendedData;
+    }
+
+    public void setExtendedData(TransferData data) {
+        this.extendedData = data;
+    }
+
 
     @JsonIgnore public boolean hasOriginal() {
         return StringUtils.hasText(original);

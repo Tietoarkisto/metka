@@ -50,6 +50,10 @@ public interface RevisionService {
 
     @Transactional(readOnly = true) RevisionDataResponse view(Long id, Integer no);
 
+    @Transactional(readOnly = true) RevisionDataResponse fullView(Long id);
+
+    @Transactional(readOnly = true) RevisionDataResponse fullView(Long id, Integer no);
+
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_CREATE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     RevisionDataResponse create(RevisionCreateRequest request);
 

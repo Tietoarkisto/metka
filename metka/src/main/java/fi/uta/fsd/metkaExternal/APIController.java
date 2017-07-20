@@ -209,6 +209,26 @@ public class APIController {
         return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
 
+    @RequestMapping(value = "fullViewRevision", method = RequestMethod.POST)
+    public @ResponseBody APIRevisionOperationResponse fullViewRevision(@RequestBody APIRevisionKeyRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication())) {
+            return APIRevisionOperationResponse.authFail();
+        }
+
+        if(request.getKey() == null || request.getKey().getId() == null) {
+            return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
+        }
+        RevisionDataResponse response;
+        if(request.getKey().getNo() == null) {
+            response = revisions.fullView(request.getKey().getId());
+        } else {
+            response = revisions.fullView(request.getKey().getId(), request.getKey().getNo());
+        }
+
+        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+    }
+
     @RequestMapping(value = "editRevision", method = RequestMethod.POST)
     public @ResponseBody APIRevisionOperationResponse editRevision(@RequestBody APIRevisionKeyRequest request) {
         // Authenticate using API key mechanism

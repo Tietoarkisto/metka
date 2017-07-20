@@ -28,16 +28,17 @@
 
 package fi.uta.fsd.metka.mvc.services.impl;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.TransferFieldType;
+import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
+import fi.uta.fsd.metka.model.transfer.TransferRow;
+import fi.uta.fsd.metka.model.transfer.TransferValue;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
 import fi.uta.fsd.metka.search.RevisionSearch;
 import fi.uta.fsd.metka.storage.repository.*;
@@ -106,9 +107,8 @@ public class RevisionServiceImpl implements RevisionService {
         return response;
     }
 
-    private RevisionDataResponse getResponseData(OperationResponse finalResult, RevisionData data) {
+    private RevisionDataResponse getResponseData(OperationResponse finalResult, RevisionData data, Boolean fullTransferData) {
         RevisionDataResponse response = getResponse(finalResult, null);
-
         if(data == null) {
             return response;
         }
@@ -118,13 +118,16 @@ public class RevisionServiceImpl implements RevisionService {
             response.setResult(OperationResponse.build(infoPair.getLeft()));
             return response;
         }
-
-        response.setData(TransferData.buildFromRevisionData(data, infoPair.getRight()));
+        TransferData transferData = TransferData.buildFromRevisionData(data, infoPair.getRight());
+        if (fullTransferData) {
+            fetchTransferDataReferences(transferData, null, true);
+        }
+        response.setData(transferData);
         return response;
     }
 
-    private RevisionDataResponse getResponseConfiguration(OperationResponse finalResult, RevisionData data) {
-        RevisionDataResponse response = getResponseData(finalResult, data);
+    private RevisionDataResponse getResponseConfiguration(OperationResponse finalResult, RevisionData data, Boolean fullTransferData) {
+        RevisionDataResponse response = getResponseData(finalResult, data, fullTransferData);
 
         if(data == null) {
             return response;
@@ -140,8 +143,8 @@ public class RevisionServiceImpl implements RevisionService {
         return response;
     }
 
-    private RevisionDataResponse getResponseGUI(OperationResponse finalResult, RevisionData data) {
-        RevisionDataResponse response = getResponseConfiguration(finalResult, data);
+    private RevisionDataResponse getResponseGUI(OperationResponse finalResult, RevisionData data, Boolean fullTransferData) {
+        RevisionDataResponse response = getResponseConfiguration(finalResult, data, fullTransferData);
 
         if(data == null) {
             return response;
@@ -159,12 +162,189 @@ public class RevisionServiceImpl implements RevisionService {
 
     @Override public RevisionDataResponse view(Long id) {
         Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(id.toString());
-        return getResponseGUI(OperationResponse.build(dataPair.getRight() != null ? ReturnResult.VIEW_SUCCESSFUL.name() : dataPair.getLeft().name()), dataPair.getRight());
+        return getResponseGUI(OperationResponse.build(dataPair.getRight() != null ? ReturnResult.VIEW_SUCCESSFUL.name() : dataPair.getLeft().name()), dataPair.getRight(), false);
     }
 
     @Override public RevisionDataResponse view(Long id, Integer no) {
         Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(id, no);
-        return getResponseGUI(OperationResponse.build(dataPair.getRight() != null ? ReturnResult.VIEW_SUCCESSFUL.name() : dataPair.getLeft().name()), dataPair.getRight());
+        return getResponseGUI(OperationResponse.build(dataPair.getRight() != null ? ReturnResult.VIEW_SUCCESSFUL.name() : dataPair.getLeft().name()), dataPair.getRight(), false);
+    }
+
+    @Override public RevisionDataResponse fullView(Long id) {
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(id.toString());
+        return getResponseGUI(OperationResponse.build(dataPair.getRight() != null ? ReturnResult.VIEW_SUCCESSFUL.name() : dataPair.getLeft().name()), dataPair.getRight(), true);
+    }
+
+    @Override public RevisionDataResponse fullView(Long id, Integer no) {
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(id, no);
+        return getResponseGUI(OperationResponse.build(dataPair.getRight() != null ? ReturnResult.VIEW_SUCCESSFUL.name() : dataPair.getLeft().name()), dataPair.getRight(), true);
+    }
+
+    private void fetchTransferDataReferences(TransferData data, List<String> fetchedRefs, Boolean root) {
+        if (root){
+            fetchedRefs = new LinkedList<>();
+            fetchedRefs.add(data.getKey().getId().toString());
+        }
+        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
+        if (!configPair.getLeft().equals(ReturnResult.CONFIGURATION_FOUND)){
+            return;
+        }
+        List<String> currList = fetchedRefs;
+        for (TransferField field : data.getFields().values()){
+            fetchedRefs = new LinkedList<>(currList);
+            switch(field.getType()){
+                case REFERENCECONTAINER:
+                    handleFetchReferenceContainer(field, fetchedRefs);
+                    break;
+                case CONTAINER:
+                    handleFetchContainer(field, fetchedRefs, configPair.getRight());
+                    break;
+                case VALUE:
+                    if (configPair.getRight().getField(field.getKey()) == null) {
+                        continue;
+                    }
+                    if(!configPair.getRight().getField(field.getKey()).getType().equals(FieldType.REFERENCE) && !configPair.getRight().getField(field.getKey()).getType().equals(FieldType.SELECTION)) {
+                        continue;
+                    }
+                    if (configPair.getRight().getField(field.getKey()).getType().equals(FieldType.REFERENCE)) {
+                        handleFetchField(field, fetchedRefs, configPair.getRight());
+                    } else if (configPair.getRight().getField(field.getKey()).getType().equals(FieldType.SELECTION)){
+                        handleSelectionField(field, fetchedRefs, configPair.getRight());
+                    }
+                    break;
+            }
+        }
+    }
+
+
+    private void handleFetchReferenceContainer(TransferField field, List<String> fetchedRefs){
+        List<String> currList = fetchedRefs;
+        for (List<TransferRow> langRows : field.getRows().values()){
+            for (TransferRow row : langRows){
+                fetchedRefs = new LinkedList<>(currList);
+                if (!fetchedRefs.contains(row.getValue())){
+                    fetchedRefs.add(row.getValue().split("-")[0]);
+                    Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(row.getValue());
+                    if (!revisionPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
+                        continue;
+                    }
+                    Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(Long.parseLong(row.getValue().split("-")[0]));
+                    if (!infoPair.getLeft().equals(ReturnResult.REVISIONABLE_FOUND)){
+                        continue;
+                    }
+                    TransferData refData = TransferData.buildFromRevisionData(revisionPair.getRight(), infoPair.getRight());
+                    fetchTransferDataReferences(refData, fetchedRefs, false);
+                    row.setExtendedData(refData);
+                }
+            }
+        }
+    }
+
+    private void handleFetchContainer(TransferField field, List<String> fetchedRefs, Configuration configuration){
+        List<String> currList = fetchedRefs;
+        for (List<TransferRow> langRows : field.getRows().values()){
+            for (TransferRow row : langRows){
+                for (TransferField rowField : row.getFields().values()){
+                    fetchedRefs = new LinkedList<>(currList);
+                    switch(rowField.getType()){
+                        case REFERENCECONTAINER:
+                            handleFetchReferenceContainer(rowField, fetchedRefs);
+                            break;
+                        case CONTAINER:
+                            handleFetchContainer(rowField, fetchedRefs, configuration);
+                            break;
+                        case VALUE:
+                            if (configuration.getField(field.getKey()) == null) {
+                                continue;
+                            }
+                            if (!configuration.getField(field.getKey()).getType().equals(FieldType.REFERENCE) && !configuration.getField(field.getKey()).getType().equals(FieldType.SELECTION)){
+                                continue;
+                            }
+                            if (configuration.getField(field.getKey()).getType().equals(FieldType.REFERENCE)) {
+                                handleFetchField(field, fetchedRefs, configuration);
+                            } else if (configuration.getField(field.getKey()).getType().equals(FieldType.SELECTION)){
+                                handleSelectionField(field, fetchedRefs, configuration);
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void handleFetchField(TransferField field, List<String> fetchedRefs, Configuration configuration) {
+        List<String> currList = fetchedRefs;
+        switch(configuration.getReference(configuration.getField(field.getKey()).getReference()).getType()){
+            case REVISION:
+                for (TransferValue value : field.getValues().values()) {
+                    fetchedRefs = new LinkedList<>(currList);
+                    if (fetchedRefs.contains(value.getValue())){
+                        continue;
+                    }
+                    fetchedRefs.add(value.getValue().split("-")[0]);
+                    Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(value.getValue());
+                    if (!revisionPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
+                        continue;
+                    }
+                    Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(Long.parseLong(value.getValue().split("-")[0]));
+                    if (!infoPair.getLeft().equals(ReturnResult.REVISIONABLE_FOUND)){
+                        continue;
+                    }
+                    TransferData refData = TransferData.buildFromRevisionData(revisionPair.getRight(), infoPair.getRight());
+                    fetchTransferDataReferences(refData, fetchedRefs, false);
+                    value.setExtendedData(refData);
+                }
+                break;
+            case REVISIONABLE:
+                for (TransferValue value : field.getValues().values()){
+                    fetchedRefs = new LinkedList<>(currList);
+                    if (fetchedRefs.contains(value.getValue())){
+                        continue;
+                    }
+                    fetchedRefs.add(value.getValue());
+                    Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(value.getValue());
+                    if (!revisionPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
+                        continue;
+                    }
+                    Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(Long.parseLong(value.getValue().split("-")[0]));
+                    if (!infoPair.getLeft().equals(ReturnResult.REVISIONABLE_FOUND)){
+                        continue;
+                    }
+                    TransferData refData = TransferData.buildFromRevisionData(revisionPair.getRight(), infoPair.getRight());
+                    fetchTransferDataReferences(refData, fetchedRefs, false);
+                    value.setExtendedData(refData);
+                }
+                break;
+        }
+    }
+
+    private void handleSelectionField(TransferField field, List<String> fetchedRefs, Configuration configuration) {
+        List<String> currList = fetchedRefs;
+        SelectionList list = configuration.getSelectionList(configuration.getField(field.getKey()).getSelectionList());
+        if (!list.getType().equals(SelectionListType.REFERENCE)){
+            return;
+        }
+        if (!configuration.getReference(list.getReference()).getType().equals(ReferenceType.REVISION) && !configuration.getReference(list.getReference()).getType().equals(ReferenceType.REVISIONABLE)){
+            return;
+        }
+        for (TransferValue value : field.getValues().values()){
+            fetchedRefs = new LinkedList<>(currList);
+            if (fetchedRefs.contains(value.getValue())){
+                continue;
+            }
+            fetchedRefs.add(value.getValue().split("-")[0]);
+            Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(value.getValue().split("-")[0]);
+            if (!revisionPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
+                continue;
+            }
+            Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(Long.parseLong(value.getValue().split("-")[0]));
+            if (!infoPair.getLeft().equals(ReturnResult.REVISIONABLE_FOUND)){
+                continue;
+            }
+            TransferData refData = TransferData.buildFromRevisionData(revisionPair.getRight(), infoPair.getRight());
+            fetchTransferDataReferences(refData, fetchedRefs, false);
+            value.setExtendedData(refData);
+        }
     }
 
     @Override public RevisionDataResponse create(RevisionCreateRequest request) {
@@ -177,7 +357,7 @@ public class RevisionServiceImpl implements RevisionService {
 
     @Override public RevisionDataResponse edit(RevisionKey key) {
         Pair<OperationResponse, RevisionData> operationResult = edit.edit(key, null);
-        return getResponseGUI(operationResult.getLeft(), operationResult.getRight());
+        return getResponseGUI(operationResult.getLeft(), operationResult.getRight(), false);
     }
 
     @Override public RevisionDataResponse save(TransferData transferData) {
@@ -274,19 +454,19 @@ public class RevisionServiceImpl implements RevisionService {
     @Override public RevisionDataResponse revert(RevisionKey key, Integer targetRevision){
         Pair<OperationResponse, RevisionData> newPair = edit.edit(key, null);
         if (!newPair.getLeft().getResult().equals("REVISION_CREATED")){
-            return getResponseGUI(newPair.getLeft(), newPair.getRight());
+            return getResponseGUI(newPair.getLeft(), newPair.getRight(), false);
         }
         Pair<ReturnResult, RevisionData> targetPair = revisions.getRevisionData(key.getId(), targetRevision);
         if (!targetPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
-            return getResponseGUI(newPair.getLeft(), newPair.getRight());
+            return getResponseGUI(newPair.getLeft(), newPair.getRight(), false);
         }
 
         Pair<ReturnResult, RevisionableInfo> newInfo = revisions.getRevisionableInfo(newPair.getRight().getKey().getId());
         Pair<ReturnResult, RevisionableInfo> targetInfo = revisions.getRevisionableInfo(newPair.getRight().getKey().getId());
         if (!newInfo.getLeft().equals(ReturnResult.REVISIONABLE_FOUND) && !targetInfo.getLeft().equals(ReturnResult.REVISIONABLE_FOUND))
-            return getResponseGUI(newPair.getLeft(), newPair.getRight());
+            return getResponseGUI(newPair.getLeft(), newPair.getRight(), false);
         Pair<ReturnResult, TransferData> result = save.copyAndSaveRevision(TransferData.buildFromRevisionData(targetPair.getRight(), targetInfo.getRight()), TransferData.buildFromRevisionData(newPair.getRight(), newInfo.getRight()), null);
-        return getResponseGUI(newPair.getLeft(), newPair.getRight());
+        return getResponseGUI(newPair.getLeft(), newPair.getRight(), false);
     }
 
     @Override public RevisionSearchResponse search(RevisionSearchRequest request) {
@@ -352,7 +532,7 @@ public class RevisionServiceImpl implements RevisionService {
     @Override
     public RevisionDataResponse adjacentRevision(AdjacentRevisionRequest request) {
         Pair<ReturnResult, RevisionData> pair = revisions.getAdjacentRevision(request);
-        return getResponseData(OperationResponse.build(pair.getRight() != null ? ReturnResult.REVISION_FOUND.name() : pair.getLeft().name()), pair.getRight());
+        return getResponseData(OperationResponse.build(pair.getRight() != null ? ReturnResult.REVISION_FOUND.name() : pair.getLeft().name()), pair.getRight(), false);
     }
 
     @Override

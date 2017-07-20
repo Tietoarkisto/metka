@@ -55,6 +55,8 @@ public class TransferRow implements TransferFieldContainer {
     private final List<FieldError> errors = new ArrayList<>();
     private Boolean removed;
     private Boolean unapproved;
+    private TransferData extendedData = null;
+
     @JsonIgnore private Object info; // Provide access point for info object used on client side but don't process it further
 
     @JsonCreator
@@ -120,6 +122,14 @@ public class TransferRow implements TransferFieldContainer {
 
     public void setInfo(Object info) {
         this.info = info;
+    }
+
+    public TransferData getExtendedData() {
+        return extendedData;
+    }
+
+    public void setExtendedData(TransferData data) {
+        this.extendedData = data;
     }
 
     @JsonIgnore
