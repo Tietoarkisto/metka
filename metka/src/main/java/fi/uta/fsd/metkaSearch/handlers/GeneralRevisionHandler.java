@@ -221,6 +221,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 Logger.debug(getClass(), "Indexed base fields in "+(System.currentTimeMillis()-start)+"ms");
             }
 
+            document.indexKeywordField("state.latest", data.getLatest().toString(), YES);
             // Index the actual fields
             start = System.currentTimeMillis();
             indexFields(data, document, "", new Step("", null), config, language);

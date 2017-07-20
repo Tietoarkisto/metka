@@ -141,7 +141,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             RevisionData newData = new RevisionData(keyPair.getRight(), configPair.getRight().getKey());
             newData.setState(RevisionState.DRAFT);
             copyDataToNewRevision(data, newData);
-
+            newData.setLatest("draft");
             ReturnResult update = revisions.updateRevisionData(newData);
             if(update != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 return new ImmutablePair<>(OperationResponse.build(update), data);

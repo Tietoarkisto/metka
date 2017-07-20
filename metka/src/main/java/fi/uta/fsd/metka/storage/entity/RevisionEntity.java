@@ -71,6 +71,9 @@ public class RevisionEntity {
     @Column(name = "INDEX_STATUS")
     private String indexStatus;
 
+    @Column(name = "LATEST")
+    private String latest;
+
     public RevisionEntity() {
     }
 
@@ -124,6 +127,14 @@ public class RevisionEntity {
 
     public void setIndexStatus(String indexStatus) {
         this.indexStatus = indexStatus;
+    }
+
+    public String getLatest() {
+        return latest;
+    }
+
+    public void setLatest(String latest) {
+        this.latest = latest;
     }
 
     @Override

@@ -226,13 +226,22 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             }
 
             data.setState(RevisionState.APPROVED);
+            data.setLatest("approved");
             data.setHandler("");
             Pair<SerializationResults, String> string = json.serialize(data);
             if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
                 Logger.error(getClass(), "Couldn't serialize data "+data.toString()+", halting approval process");
                 return new ImmutablePair<>(OperationResponse.build(ReturnResult.OPERATION_FAIL), transferData);
             }
-
+            Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(data.getKey().getId());
+            if (infoPair.getLeft().equals(ReturnResult.REVISIONABLE_FOUND)){
+                Pair<ReturnResult, RevisionData> oldLatestPair = revisions.getRevisionData(data.getKey().getId(), infoPair.getRight().getApproved());
+                if (oldLatestPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
+                    RevisionData oldLatestData = oldLatestPair.getRight();
+                    oldLatestData.setLatest("false");
+                    revisions.updateRevisionData(oldLatestData);
+                }
+            }
             ReturnResult updateResult = revisions.updateRevisionData(data);
 
             if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {

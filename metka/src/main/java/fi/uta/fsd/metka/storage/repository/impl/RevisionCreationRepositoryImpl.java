@@ -123,6 +123,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         }
 
         revision.setData(string.getRight());
+        revision.setLatest("draft");
         em.merge(revision);
 
         revisionable.setLatestRevisionNo(revision.getKey().getRevisionNo());

@@ -73,7 +73,6 @@ public interface RevisionRepository {
     Pair<ReturnResult, RevisionData> getRevisionData(String key);
     Pair<ReturnResult, RevisionData> getRevisionData(String key, boolean approveOnly);
     Pair<ReturnResult, RevisionData> getRevisionData(RevisionKey key);
-    Pair<ReturnResult, RevisionData> getAndLockRevisionData(String key);
 
     /*
      * Returns a revision number for given id.

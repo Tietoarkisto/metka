@@ -67,6 +67,7 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
     // Class
     private final RevisionKey key;
     private final ConfigurationKey configuration;
+    private String latest = "false";
     private final Map<String, Change> changes = new HashMap<>();
     private final Map<String, DataField> fields = new HashMap<>();
     private RevisionState state;
@@ -89,6 +90,14 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
     @Override
     public ConfigurationKey getConfiguration() {
         return configuration;
+    }
+
+    public String getLatest() {
+        return latest;
+    }
+
+    public void setLatest(String latest) {
+        this.latest = latest;
     }
 
     public Map<String, Change> getChanges() {
