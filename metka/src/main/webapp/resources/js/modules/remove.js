@@ -37,10 +37,10 @@ define(function (require) {
             var id = options.data.key.id;
             switch (options.data.configuration.type) {
                 case "STUDY":
-                    id = options.data.fields.studyid.values[options.defaultLang].original || options.data.fields.studyid.values[options.defaultLang].current
+                    id = options.data.fields.studyid.values[options.defaultLang].original || options.data.fields.studyid.values[options.defaultLang].current;
                     break;
                 case "BINDER_PAGE":
-                    id = options.data.fields.binderid.values[options.defaultLang].original || options.data.fields.binderid.values[options.defaultLang].current
+                    id = options.data.fields.studyid.values[options.defaultLang].original || options.data.fields.studyid.values[options.defaultLang].current;
                     break;
                 case "PUBLICATION":
                     id = options.data.fields.publicationid.values[options.defaultLang].original || options.data.fields.publicationid.values[options.defaultLang].current;
