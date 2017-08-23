@@ -180,6 +180,7 @@ class GeneralRevisionHandler implements RevisionHandler {
             document.indexKeywordField("key.language", language.toValue(), YES, true);
             if(info.getRemoved()) {
                 document.indexKeywordField("state.removed", "true", YES);
+                if (info.getRemovedAt() != null)
                 document.indexKeywordField("state.removed.time", info.getRemovedAt().toString(), YES);
                 document.indexKeywordField("state.removed.user", info.getRemovedBy(), YES);
 
