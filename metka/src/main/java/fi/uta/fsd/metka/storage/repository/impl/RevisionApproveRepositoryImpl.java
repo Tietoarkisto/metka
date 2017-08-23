@@ -421,10 +421,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             Double currVersionNo;
             if (descversions.hasRows()) {
                 for (TransferRow row : descversions.getRows().get(Language.DEFAULT)) {
+                    if (row.getField("descversion") == null){
+                        continue;
+                    }
                     try {
                         currVersionNo = Double.parseDouble(row.getField("descversion").getValueFor(Language.DEFAULT).getValue());
                     } catch (NumberFormatException ex) {
-                        continue;
+                        currVersionNo = 1.0;
                     }
                     if (currVersionNo > newVersionNo) {
                         newVersionNo = currVersionNo;
