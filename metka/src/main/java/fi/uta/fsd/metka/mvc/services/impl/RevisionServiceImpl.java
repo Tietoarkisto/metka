@@ -329,7 +329,7 @@ public class RevisionServiceImpl implements RevisionService {
         }
         for (TransferValue value : field.getValues().values()){
             fetchedRefs = new LinkedList<>(currList);
-            if (fetchedRefs.contains(value.getValue())){
+            if (fetchedRefs.contains(value.getValue()) ||!value.hasValue()){
                 continue;
             }
             fetchedRefs.add(value.getValue().split("-")[0]);

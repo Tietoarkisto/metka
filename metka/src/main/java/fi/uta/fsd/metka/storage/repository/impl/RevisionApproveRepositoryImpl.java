@@ -40,6 +40,9 @@ import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.ApproveInfo;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferData;
+import fi.uta.fsd.metka.model.transfer.TransferField;
+import fi.uta.fsd.metka.model.transfer.TransferRow;
+import fi.uta.fsd.metka.model.transfer.TransferValue;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
@@ -54,13 +57,22 @@ import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metkaAmqp.Messenger;
 import fi.uta.fsd.metkaAmqp.payloads.*;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
+import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
+import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 // TODO: at the moment does mostly DEFAULT language approval for restrictions
@@ -90,6 +102,12 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     @Autowired
     private SearcherComponent searcher;
+
+    @Autowired
+    private RevisionEditRepository edit;
+
+    @Autowired
+    private RevisionSaveRepository save;
 
     @Override
     public Pair<OperationResponse, TransferData> approve(TransferData transferData, DateTimeUserPair info) {
@@ -268,6 +286,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             case STUDY_ERROR:
                 finalizeStudyErrorApproval(revision, configuration);
                 return ReturnResult.OPERATION_SUCCESSFUL;
+            case PUBLICATION:
+                try {
+                    return finalizePublicationApproval(revision, info);
+                } catch (QueryNodeException e) {
+                    e.printStackTrace();
+                    return ReturnResult.MALFORMED_QUERY;
+                }
             default:
                 return ReturnResult.OPERATION_SUCCESSFUL;
         }
@@ -312,6 +337,167 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      */
     private void finalizeStudyErrorApproval(RevisionData revision, Configuration configuration) {
         revisions.sendStudyErrorMessageIfNeeded(revision, configuration);
+    }
+
+    /**
+     * Special case check for publications.
+     * Handles descversions of studies related to the approved publication.
+     * @param revision StudyError revision data
+     * @return Always returns OPERATION_SUCCESSFUL
+     */
+    private ReturnResult finalizePublicationApproval(RevisionData revision, DateTimeUserPair info) throws QueryNodeException {
+        List<Long> handled = new ArrayList<>();
+        // Iterate through related studies
+        ReferenceContainerDataField studies = (ReferenceContainerDataField) revision.getField("studies");
+        for (ReferenceRow reference : studies.getReferences()){
+            if (!handled.contains(Long.parseLong(reference.getActualValue()))) {
+                Pair<ReturnResult, RevisionData> studyPair = revisions.getRevisionData(reference.getActualValue());
+                if (!studyPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
+                    continue;
+                }
+                handleDescVersion(studyPair.getRight(), info);
+                handled.add(studyPair.getRight().getKey().getId());
+            }
+        }
+
+        // Iterate through related series
+        ReferenceContainerDataField series = (ReferenceContainerDataField) revision.getField("series");
+        for (ReferenceRow reference : series.getReferences()){
+            Pair<ReturnResult, RevisionData> seriesPair = revisions.getRevisionData(reference.getReference().getValue());
+            if (!seriesPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
+                continue;
+            }
+            // Query for studies with the found series
+            ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build("+key.configuration.type:STUDY +series:"+reference.getReference().getValue()+" +state.removed:FALSE", configurations);
+            ResultList<RevisionResult> seriesStudiesResult = searcher.executeSearch(command);
+            for (RevisionResult result: seriesStudiesResult.getResults()){
+                if (!handled.contains(result.getId())){
+                    Pair<ReturnResult, RevisionData> studyPair = revisions.getRevisionData(result.getId().toString());
+                    if (!studyPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
+                        continue;
+                    }
+                    handleDescVersion(studyPair.getRight(), info);
+                    handled.add(studyPair.getRight().getKey().getId());
+                }
+            }
+        }
+        return ReturnResult.OPERATION_SUCCESSFUL;
+    }
+
+    /**
+     * Adds a new descversion for a revision given as the parameter. If the revision is
+     * APPROVED, create a new DRAFT, add a descrevision and approve the revision.
+     * if the revision is already a DRAFT, only add a descrevision and save.
+     * @param revision RevisionData of the revision being handled
+     * @param info Date and User information for the ongoing publication approval operation.
+     */
+    private void handleDescVersion(RevisionData revision, DateTimeUserPair info){
+        Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(revision.getKey().getId());
+        if (!infoPair.getLeft().equals(ReturnResult.REVISIONABLE_FOUND)){
+            return;
+        }
+        if (revision.getState().equals(RevisionState.DRAFT)){
+            TransferData transferData = TransferData.buildFromRevisionData(revision, infoPair.getRight());
+            TransferField descversions = null;
+            if (transferData.hasField("descversions")){
+                descversions = transferData.getField("descversions");
+            } else {
+                descversions = new TransferField("descversions", TransferFieldType.CONTAINER);
+                transferData.getFields().put("descversions", descversions);
+            }
+            TransferRow newRow = new TransferRow("descversions");
+
+            TransferField newField = new TransferField("versionlabeldesc", TransferFieldType.VALUE);
+            newField.getValues().put(Language.DEFAULT, new TransferValue());
+            newField.getValueFor(Language.DEFAULT).setCurrent("23");
+            newRow.addField(newField);
+
+            newField = new TransferField("versionpro", TransferFieldType.VALUE);
+            newField.getValues().put(Language.DEFAULT, new TransferValue());
+            newField.getValueFor(Language.DEFAULT).setCurrent(info.getUser());
+            newRow.addField(newField);
+
+            Double newVersionNo = 0.0;
+            Double currVersionNo;
+            if (descversions.hasRows()) {
+                for (TransferRow row : descversions.getRows().get(Language.DEFAULT)) {
+                    try {
+                        currVersionNo = Double.parseDouble(row.getField("descversion").getValueFor(Language.DEFAULT).getValue());
+                    } catch (NumberFormatException ex) {
+                        continue;
+                    }
+                    if (currVersionNo > newVersionNo) {
+                        newVersionNo = currVersionNo;
+                    }
+                }
+            }
+            newVersionNo = newVersionNo + 0.1;
+            newField = new TransferField("descversion", TransferFieldType.VALUE);
+            newField.getValues().put(Language.DEFAULT, new TransferValue());
+            newField.getValueFor(Language.DEFAULT).setCurrent(BigDecimal.valueOf(newVersionNo).setScale(1, RoundingMode.DOWN).toString());
+            newRow.addField(newField);
+
+            newField = new TransferField("versiondate", TransferFieldType.VALUE);
+            newField.getValues().put(Language.DEFAULT, new TransferValue());
+            newField.getValueFor(Language.DEFAULT).setCurrent(info.getTime().toString(DateTimeFormat.forPattern("yyyy-MM-dd")));
+            newRow.addField(newField);
+
+            descversions.addRowFor(Language.DEFAULT, newRow);
+            save.saveRevision(transferData, info);
+        } else if (revision.getState().equals(RevisionState.APPROVED)) {
+            Pair<OperationResponse, RevisionData> editPair = edit.edit(revision.getKey(), info);
+            TransferData transferData = TransferData.buildFromRevisionData(editPair.getRight(), infoPair.getRight());
+            TransferField descversions = null;
+            if (transferData.hasField("descversions")){
+                descversions = transferData.getField("descversions");
+            } else {
+                descversions = new TransferField("descversions", TransferFieldType.CONTAINER);
+                transferData.getFields().put("descversions", descversions);
+            }
+            TransferRow newRow = new TransferRow("descversions");
+
+            TransferField newField = new TransferField("versionlabeldesc", TransferFieldType.VALUE);
+            newField.getValues().put(Language.DEFAULT, new TransferValue());
+            newField.getValueFor(Language.DEFAULT).setCurrent("23");
+            newRow.addField(newField);
+
+            newField = new TransferField("versionpro", TransferFieldType.VALUE);
+            newField.getValues().put(Language.DEFAULT, new TransferValue());
+            newField.getValueFor(Language.DEFAULT).setCurrent(info.getUser());
+            newRow.addField(newField);
+
+            Double newVersionNo = 0.0;
+            Double currVersionNo;
+            if (descversions.hasRows()) {
+                for (TransferRow row : descversions.getRows().get(Language.DEFAULT)) {
+                    if (row.getField("descversion") == null){
+                        continue;
+                    }
+                    try {
+                        currVersionNo = Double.parseDouble(row.getField("descversion").getValueFor(Language.DEFAULT).getValue());
+                    } catch (NumberFormatException ex) {
+                        currVersionNo = 1.0;
+                    }
+                    if (currVersionNo > newVersionNo) {
+                        newVersionNo = currVersionNo;
+                    }
+                }
+            }
+            newVersionNo = newVersionNo + 0.1;
+            newField = new TransferField("descversion", TransferFieldType.VALUE);
+            newField.getValues().put(Language.DEFAULT, new TransferValue());
+            newField.getValueFor(Language.DEFAULT).setCurrent(BigDecimal.valueOf(newVersionNo).setScale(1, RoundingMode.DOWN).toString());
+            newRow.addField(newField);
+
+            newField = new TransferField("versiondate", TransferFieldType.VALUE);
+            newField.getValues().put(Language.DEFAULT, new TransferValue());
+            newField.getValueFor(Language.DEFAULT).setCurrent(info.getTime().toString(DateTimeFormat.forPattern("yyyy-MM-dd")));
+            newRow.addField(newField);
+
+            descversions.addRowFor(Language.DEFAULT, newRow);
+            save.saveRevision(transferData, info);
+            approve(transferData, info);
+        }
     }
 
     /**
