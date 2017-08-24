@@ -287,12 +287,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 finalizeStudyErrorApproval(revision, configuration);
                 return ReturnResult.OPERATION_SUCCESSFUL;
             case PUBLICATION:
-                try {
-                    return finalizePublicationApproval(revision, info);
-                } catch (QueryNodeException e) {
-                    e.printStackTrace();
-                    return ReturnResult.MALFORMED_QUERY;
-                }
+                return finalizePublicationApproval(revision, info);
             default:
                 return ReturnResult.OPERATION_SUCCESSFUL;
         }
@@ -345,7 +340,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      * @param revision StudyError revision data
      * @return Always returns OPERATION_SUCCESSFUL
      */
-    private ReturnResult finalizePublicationApproval(RevisionData revision, DateTimeUserPair info) throws QueryNodeException {
+    private ReturnResult finalizePublicationApproval(RevisionData revision, DateTimeUserPair info) {
         List<Long> handled = new ArrayList<>();
         // Iterate through related studies
         ReferenceContainerDataField studies = (ReferenceContainerDataField) revision.getField("studies");
@@ -368,7 +363,12 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 continue;
             }
             // Query for studies with the found series
-            ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build("+key.configuration.type:STUDY +series:"+reference.getReference().getValue()+" +state.removed:FALSE", configurations);
+            ExpertRevisionSearchCommand command = null;
+            try {
+                command = ExpertRevisionSearchCommand.build("+key.configuration.type:STUDY +series:"+reference.getReference().getValue()+" +state.removed:FALSE", configurations);
+            } catch (QueryNodeException e) {
+                continue;
+            }
             ResultList<RevisionResult> seriesStudiesResult = searcher.executeSearch(command);
             for (RevisionResult result: seriesStudiesResult.getResults()){
                 if (!handled.contains(result.getId())){

@@ -724,11 +724,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 break;
             }
             case PUBLICATION:
-                try {
-                    finalizePublicationRemoval(data, info);
-                } catch (QueryNodeException e) {
-                    return;
-                }
+                finalizePublicationRemoval(data, info);
                 break;
             default: {
                 break;
@@ -736,7 +732,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         }
     }
 
-    private void finalizePublicationRemoval(RevisionData revision, DateTimeUserPair info) throws QueryNodeException {
+    private void finalizePublicationRemoval(RevisionData revision, DateTimeUserPair info) {
         List<Long> handled = new ArrayList<>();
         // Iterate through related studies
         ReferenceContainerDataField studies = (ReferenceContainerDataField) revision.getField("studies");
@@ -759,7 +755,12 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 continue;
             }
             // Query for studies with the found series
-            ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build("+key.configuration.type:STUDY +series:"+reference.getReference().getValue()+" +state.removed:FALSE", configurations);
+            ExpertRevisionSearchCommand command = null;
+            try {
+                command = ExpertRevisionSearchCommand.build("+key.configuration.type:STUDY +series:"+reference.getReference().getValue()+" +state.removed:FALSE", configurations);
+            } catch (QueryNodeException e) {
+                continue;
+            }
             ResultList<RevisionResult> seriesStudiesResult = searcher.executeSearch(command);
             for (RevisionResult result: seriesStudiesResult.getResults()){
                 if (!handled.contains(result.getId())){
