@@ -44,6 +44,7 @@ public class DDIWriteXhtmlNodeVisitor extends AbstractDDIWriteNodeVisitor {
         super(stt, new Class[] {
                 StringType.class,
                 SimpleTextType.class,
+                ConceptualTextType.class,
 
                 PType.class,
                 DivType.class,

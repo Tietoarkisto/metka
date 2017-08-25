@@ -780,21 +780,19 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
     }
 
     private void addStudyInfoSumDescNation(SumDscrType sumDscr, ContainerDataField container) {
-        String path = "countries.";
-        for (DataRow row : container.getRowsFor(Language.DEFAULT)) {
+        for (DataRow row : container.getRowsFor(language)) {
             if (row.getRemoved()) {
                 continue;
             }
-            // TODO: Country is not a reference anymore
-            String rowPath = path + row.getRowId() + ".";
-            String country = getReferenceTitle(rowPath+Fields.COUNTRY);
-            if(!StringUtils.hasText(country)) {
-                continue;
-            }
-            NationType n = fillTextType(sumDscr.addNewNation(), country);
-            String abbr = getReferenceTitle(rowPath+Fields.COUNTRYABBR);
-            if(abbr != null) {
-                n.setAbbr(abbr);
+
+            Pair<StatusCode,ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.COUNTRY));
+            if (valueFieldPair.getLeft() != StatusCode.FIELD_FOUND && !valueFieldPair.getRight().hasValueFor(language)) return;
+
+            NationType n = fillTextType(sumDscr.addNewNation(), valueFieldPair,language);
+
+            valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.COUNTRYABBR));
+            if (valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().hasValueFor(language)) {
+                n.setAbbr(valueFieldPair.getValue().getActualValueFor(language));
             }
         }
     }
