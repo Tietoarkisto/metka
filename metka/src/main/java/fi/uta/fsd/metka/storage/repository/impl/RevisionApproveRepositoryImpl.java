@@ -66,6 +66,7 @@ import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -108,6 +109,9 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     @Autowired
     private RevisionSaveRepository save;
+
+    @Autowired
+    private EhCacheCacheManager cacheManager;
 
     @Override
     public Pair<OperationResponse, TransferData> approve(TransferData transferData, DateTimeUserPair info) {
@@ -268,6 +272,10 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
             messenger.sendAmqpMessage(messenger.FD_APPROVE, new RevisionPayload(data));
             //revisions.indexRevision(data.getKey());
+
+            // We need to clear the cache in order to keep cache vs db integrity over large transactions.
+            cacheManager.getCache("revision-cache").clear();
+
             return new ImmutablePair<>(OperationResponse.build(ReturnResult.OPERATION_SUCCESSFUL), TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE));
         } else {
             return new ImmutablePair<>(OperationResponse.build(result), transferData);

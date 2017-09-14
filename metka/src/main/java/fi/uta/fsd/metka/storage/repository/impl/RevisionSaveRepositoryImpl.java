@@ -60,14 +60,22 @@ import fi.uta.fsd.metkaAmqp.Messenger;
 import fi.uta.fsd.metkaAmqp.payloads.FileMissingPayload;
 import fi.uta.fsd.metkaAmqp.payloads.RevisionPayload;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
+import fi.uta.fsd.metkaSearch.SearcherComponent;
+import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
+import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.*;
+import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
@@ -104,6 +112,12 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
     @Autowired
     private Messenger messenger;
+
+    @Autowired
+    private SearcherComponent searcher;
+
+    @Autowired
+    private EhCacheCacheManager cacheManager;
 
     @Override
     public Pair<ReturnResult, TransferData> saveRevision(TransferData transferData, DateTimeUserPair info) {
@@ -169,6 +183,8 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
         // Only finalize if there have been changes
         finalizeSave(revision, transferData, configuration, info, changesAndErrors);
+
+        cacheManager.getCache("revision-cache").clear();
 
         if(changesAndErrors.getLeft()) {
             // Set revision save info
@@ -464,6 +480,25 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 return false;
             }
 
+            File currFile = new File(destLoc);
+            if (currFile.exists()){
+                // If a file attachment with the same name already exists, back that file up
+                // and set this file as the new file for that attachment
+                if (transfer.hasField("file") && destLoc.equals(transfer.getField("file").getValueFor(Language.DEFAULT).getOriginal())){
+                    File backupFile = new File(currFile.getParent() + "/" + info.getTime().toString(DateTimeFormat.forPattern("HHmmss_ddMMyyyy")) + "_" + currFile.getName());
+                    try {
+                        if (currFile.exists()) {
+                            Files.move(currFile.toPath(), backupFile.toPath(), StandardCopyOption.ATOMIC_MOVE);
+                        }
+                    } catch (IOException ex){
+                        return false;
+                    }
+                } else {
+                    handleAlreadyExists(revision, destLoc, path);
+                    return false;
+                }
+            }
+
             ValueDataField variablesField = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES)).getRight();
             if(variablesField != null && variablesField.hasValueFor(Language.DEFAULT)) {
                 if(!fileIsVarFile(FilenameUtils.getName(path))) {
@@ -573,6 +608,38 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
 
         return false;
+    }
+
+    private void handleAlreadyExists(RevisionData revision, String destLoc, String path){
+        ExpertRevisionSearchCommand command;
+        try {
+             command = ExpertRevisionSearchCommand.build("+key.configuration.type:STUDY_ATTACHMENT +file:\""+destLoc+"\"", configurations);
+        } catch (QueryNodeException ex){
+            return;
+        }
+        ResultList<RevisionResult> results = searcher.executeSearch(command);
+        // The only results should be revisions of a single revisionable
+        Long id;
+        if (results.getResults().size() > 0) {
+            id = results.getResults().get(0).getId();
+        }
+        else { return; }
+        Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(id.toString());
+        if (!revisionPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
+            return;
+        }
+
+        Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(id);
+        if (!infoPair.getLeft().equals(ReturnResult.REVISIONABLE_FOUND)){
+            return;
+        }
+        TransferData tf = TransferData.buildFromRevisionData(revisionPair.getRight(), infoPair.getRight());
+        TransferField newpathField = new TransferField("newpath", TransferFieldType.VALUE);
+        newpathField.getValues().put(Language.DEFAULT, new TransferValue());
+        newpathField.getValueFor(Language.DEFAULT).setCurrent(path);
+        tf.getFields().put("newpath", newpathField);
+        remove.remove(revision.getKey(), DateTimeUserPair.build());
+        saveRevision(tf, DateTimeUserPair.build());
     }
 
     private void checkDip(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {

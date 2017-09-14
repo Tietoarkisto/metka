@@ -68,6 +68,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -110,6 +111,9 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     private RestrictionValidator validator;
 
     @Autowired
+    private RevisionHandlerRepository claim;
+
+    @Autowired
     private Cascader cascader;
 
     @Autowired
@@ -126,6 +130,9 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
     @Autowired
     private RevisionApproveRepository approve;
+
+    @Autowired
+    private EhCacheCacheManager cacheManager;
 
     @Override
     public OperationResponse remove(RevisionKey key, DateTimeUserPair info) {
@@ -203,6 +210,10 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         }
         messenger.sendAmqpMessage(messenger.FD_REMOVE, new RevisionPayload(data));
         addRemoveIndexCommand(data.getKey(), result);
+
+        // We need to clear the cache in order to keep cache vs db integrity over large transactions.
+        cacheManager.getCache("revision-cache").clear();
+
         return OperationResponse.build(result);
     }
 
@@ -260,6 +271,10 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         result = RemoveResult.SUCCESS_LOGICAL;
         messenger.sendAmqpMessage(messenger.FD_REMOVE, new RevisionPayload(data));
         addRemoveIndexCommand(data.getKey(), result);
+
+        // We need to clear the cache in order to keep cache vs db integrity over large transactions.
+        cacheManager.getCache("revision-cache").clear();
+
         return OperationResponse.build(result);
     }
 

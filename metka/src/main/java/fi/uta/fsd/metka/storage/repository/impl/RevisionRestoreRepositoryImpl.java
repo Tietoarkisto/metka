@@ -64,6 +64,7 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -106,6 +107,9 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
 
     @Autowired
     private RevisionApproveRepository approve;
+
+    @Autowired
+    private EhCacheCacheManager cacheManager;
 
     @Override
     @CacheEvict(value="info-cache", key="#id")
@@ -161,6 +165,9 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
                 revisions.indexRevision(revPair.getRight().getKey());
             }
         }
+
+        // We need to clear the cache in order to keep cache vs db integrity over large transactions.
+        cacheManager.getCache("revision-cache").clear();
 
         messenger.sendAmqpMessage(messenger.FD_RESTORE, new RevisionPayload(data));
 

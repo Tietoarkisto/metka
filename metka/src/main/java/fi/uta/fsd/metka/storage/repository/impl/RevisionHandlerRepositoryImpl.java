@@ -46,6 +46,7 @@ import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -64,6 +65,9 @@ public class RevisionHandlerRepositoryImpl implements RevisionHandlerRepository 
     @Autowired
     private Cascader cascader;
 
+    @Autowired
+    EhCacheCacheManager cacheManager;
+
     @Override
     public Pair<ReturnResult, TransferData> beginEditing(RevisionKey key) {
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key);
@@ -81,6 +85,9 @@ public class RevisionHandlerRepositoryImpl implements RevisionHandlerRepository 
         if (result != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
             return new ImmutablePair<>(result, null);
         }
+
+        // We need to clear the cache in order to keep cache vs db integrity over large transactions.
+        cacheManager.getCache("revision-cache").clear();
 
         // For now let's assume that these just work
         return finalizeChange(data, OperationType.BEGIN_EDIT);
@@ -114,6 +121,9 @@ public class RevisionHandlerRepositoryImpl implements RevisionHandlerRepository 
                 return new ImmutablePair<>(result, null);
             }
         }
+
+        // We need to clear the cache in order to keep cache vs db integrity over large transactions.
+        cacheManager.getCache("revision-cache").clear();
 
         return finalizeChange(data, clear ? OperationType.RELEASE : OperationType.CLAIM);
     }
