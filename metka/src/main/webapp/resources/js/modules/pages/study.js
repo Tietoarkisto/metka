@@ -151,6 +151,13 @@ define(function (require) {
                             addParens: true,
                             addWildcard: true
                         }, {
+                            key: 'handler',
+                            addParens: true,
+                            exactValue: true,
+                            addWildcard: true,
+                            rename: 'state.draft.handler'
+
+                        }, {
                             key: 'producername',
                             rename: 'producers.organisation',
                             exactValue: true,
