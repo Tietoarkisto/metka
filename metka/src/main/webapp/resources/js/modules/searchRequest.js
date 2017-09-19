@@ -88,10 +88,14 @@ define(function(require) {
                 if (searchOptions.addParens) {
                     value = '(' + value + ')';
                 }
-                if(searchOptions.useSubquery) {
-                    value = 'S{'+useSubquery.supplant({
+                if(searchOptions.useSubquery === "id") {
+                    value = 'ID{'+useSubquery.supplant({
                         value: value
-                    })+'}S'
+                    })+'}ID'
+                } else if (searchOptions.useSubquery === "key") {
+                    value = 'KEY{'+useSubquery.supplant({
+                        value: value
+                    })+'}KEY'
                 }
                 requestData.values[searchOptions.rename || key] = value;
             });
