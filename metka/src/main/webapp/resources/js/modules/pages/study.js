@@ -46,7 +46,7 @@ define(function (require) {
                     exactValue: false
                 }, {
                     key: 'findstudyid',
-                    rename: 'studyid',
+                    rename: 'study',
                     exactValue: true
                 }
             ], 'studyerrors', 'DEFAULT', 'error');
