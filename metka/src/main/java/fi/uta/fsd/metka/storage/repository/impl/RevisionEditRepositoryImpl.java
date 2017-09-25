@@ -56,6 +56,7 @@ import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -79,6 +80,9 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
 
     @Autowired
     private Messenger messenger;
+
+    @Autowired
+    private EhCacheCacheManager cacheManager;
 
     @Override
     public Pair<OperationResponse, RevisionData> edit(RevisionKey key, DateTimeUserPair info) {
@@ -191,6 +195,9 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
         }
 
         finalizeRevisionEdit(result, data, info);
+
+        // We need to clear the cache in order to keep cache vs db integrity over large transactions.
+        cacheManager.getCache("revision-cache").clear();
 
         return new ImmutablePair<>(OperationResponse.build(result), data);
     }

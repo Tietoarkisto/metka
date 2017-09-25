@@ -157,12 +157,12 @@ define(function (require) {
                 }
             }),
             success: function(response) {
-                if(resultParser(response.result).getResult() !== 'OPERATION_SUCCESSFUL' || !response.rows.length || response.rows.length == 0) {
+                if(resultParser(response.result).getResult() !== 'OPERATION_SUCCESSFUL' || !response.results.results.length || response.results.results.length == 0) {
                     error();
                 } else {
                     require('./assignUrl')('view', {
                         PAGE: 'STUDY',
-                        id: response.rows[0].id,
+                        id: response.results.results[0].id,
                         no: ''
                     });
                 }

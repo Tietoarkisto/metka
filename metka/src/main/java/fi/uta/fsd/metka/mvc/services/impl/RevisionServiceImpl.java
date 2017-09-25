@@ -49,6 +49,7 @@ import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.*;
 import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedRequest;
 import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedResponse;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.Pair;
@@ -329,7 +330,7 @@ public class RevisionServiceImpl implements RevisionService {
         }
         for (TransferValue value : field.getValues().values()){
             fetchedRefs = new LinkedList<>(currList);
-            if (fetchedRefs.contains(value.getValue())){
+            if (fetchedRefs.contains(value.getValue()) ||!value.hasValue()){
                 continue;
             }
             fetchedRefs.add(value.getValue().split("-")[0]);
@@ -372,6 +373,10 @@ public class RevisionServiceImpl implements RevisionService {
                 // Mandatory values for creating revisions are always of the type "VALUE"
                 if(entry.getValue().getType().equals(TransferFieldType.VALUE))
                     createRequest.getParameters().put(entry.getKey(), entry.getValue().getValueFor(Language.DEFAULT).getValue());
+            }
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(transferData.getField("study").getValueFor(Language.DEFAULT).getValue());
+            if (!AuthenticationUtil.isHandler(dataPair.getRight())){
+                return getResponse(OperationResponse.build(ReturnResult.WRONG_USER), transferData);
             }
             createRequest.setType(transferData.getConfiguration().getType());
             Pair<ReturnResult, RevisionData> createOperationResult = create.create(createRequest);

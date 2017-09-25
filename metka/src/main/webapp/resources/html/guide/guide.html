@@ -544,6 +544,23 @@ osien välillä</td>
 
 <br>
 
+<h2>Subqueryt</h2>
+
+Metkassa on toteutettu kaksi tagia subqueryjen tekemiseen:
+
+<ul>
+    <li>ID{...}ID haetaan lista id-arvoja</li>
+    <li>KEY{...}KEY haetaan lista kokonaisia revision key -arvoja</li>
+</ul>
+
+Use case -esimerkkejä:
+<ul>
+    <li>+series:ID{key.configuration.type:series and seriesname:/Sarjan otsikko/}ID palauttaa aineiston, johon liittyy subqyeryn määrittelemä sarja</li>
+    <li>+studyvariables.variables:KEY{key.configuration.type:STUDY_VARIABLES AND varfileid:daF00000_eka_muuttuja_pois1_toinen}KEY palauttaa aineiston, johon liittyy subqueryn määrittelemä muuttujajoukko</li>
+</ul>
+
+<br>
+
 <h2>Tee eksperttihaku</h2>
 
 <strong>Eksperttihaku</strong> &gt; Kirjoita <strong>Hakulause</strong>

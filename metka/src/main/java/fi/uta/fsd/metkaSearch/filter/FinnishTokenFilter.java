@@ -101,8 +101,20 @@ public final class FinnishTokenFilter extends TokenFilter {
 
         for (Analysis result : results) {
             String wordbases = result.get("WORDBASES");
-            if (wordbases != null)
+            if (wordbases != null) {
+                // Ugly fix for Voikko errors while indexing.
+                if (wordbases.length() > wordbases.indexOf(')') + 1 && wordbases.charAt(wordbases.indexOf(')') + 1) != '+') {
+                    wordbases = wordbases.substring(0, wordbases.indexOf(')') + 1) + '+' + wordbases.substring(wordbases.indexOf(')') + 1, wordbases.length());
+                }
+                int index = wordbases.indexOf(')');
+                while(index >= 0){
+                    if (wordbases.length() > index + 1 && wordbases.charAt(index + 1) != '+'){
+                        wordbases = wordbases.substring(0, index + 1) + '+' + wordbases.substring(index + 1, wordbases.length());
+                    }
+                    index = wordbases.indexOf(')', index + 1);
+                }
                 wordbasesList.add(wordbases);
+            }
         }
     }
 

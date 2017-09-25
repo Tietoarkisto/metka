@@ -135,6 +135,26 @@ public class Configuration implements ModelBase {
         return references.get(key);
     }
 
+    public Boolean hasDuplicateKeys(){
+        List<String> keys = new ArrayList<>();
+        keys.addAll(references.keySet());
+        keys.addAll(selectionLists.keySet());
+        keys.addAll(fields.keySet());
+        keys.addAll(namedTargets.keySet());
+        Integer i;
+        for (String key : keys){
+            i = 0;
+            for (String key2 : keys){
+                if (key.equals(key2)){
+                    i++;
+                    if (i > 1)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

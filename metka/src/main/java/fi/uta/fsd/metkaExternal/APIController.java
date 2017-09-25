@@ -326,6 +326,9 @@ public class APIController {
             return APIMassRevisionOperationResponse.authFail();
         }
         MassRevisionDataResponse response = revisions.massCreateFiles(request.getTransferData());
+        if (response.getResult().equals(ReturnResult.WRONG_USER)){
+            return APIMassRevisionOperationResponse.authFail();
+        }
         return APIMassRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
 

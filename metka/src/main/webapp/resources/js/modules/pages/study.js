@@ -46,7 +46,7 @@ define(function (require) {
                     exactValue: false
                 }, {
                     key: 'findstudyid',
-                    rename: 'studyid',
+                    rename: 'study',
                     exactValue: true
                 }
             ], 'studyerrors', 'DEFAULT', 'error');
@@ -150,6 +150,13 @@ define(function (require) {
                             exactValue: true,
                             addParens: true,
                             addWildcard: true
+                        }, {
+                            key: 'handler',
+                            addParens: true,
+                            exactValue: true,
+                            addWildcard: true,
+                            rename: 'state.draft.handler'
+
                         }, {
                             key: 'producername',
                             rename: 'producers.organisation',
