@@ -42,9 +42,9 @@
     }, {
       "key": "PRODPLAC_ADDRESS",
       "&text": {
-        "default": "Yhteiskuntatieteellinen tietoarkisto <br>33014 TAMPEREEN YLIOPISTO <br>+358 40 190 1432 <br>",
-        "en": "Finnish Social Science Data Archive (FSD) <br>FI-33014 University of Tampere <br>FINLAND <br>+358 40 190 1432 <br>",
-        "sv": "Finlands samhällsvetenskapliga dataarkiv (FSD) <br>FI-33014 Tammerfors universitet <br>+358 40 190 1432 <br>"
+        "default": "Yhteiskuntatieteellinen tietoarkisto, 33014 TAMPEREEN YLIOPISTO, +358 40 190 1432",
+        "en": "Finnish Social Science Data Archive (FSD), FI-33014 University of Tampere, FINLAND, +358 40 190 1432",
+        "sv": "Finlands samhällsvetenskapliga dataarkiv (FSD), FI-33014 Tammerfors universitet, +358 40 190 1432"
       }
     }, {
       "key": "HOLDINGS",

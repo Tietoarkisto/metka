@@ -79,7 +79,7 @@ public abstract class AbstractDDIWriteNodeVisitor implements NodeVisitor {
             }
 
             // allowed classes is missing a class to parse
-            throw new UnsupportedOperationException("Could not find allowed class to parse" + tagName);
+            throw new UnsupportedOperationException("Could not find allowed class to parse " + tagName);
 
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new UnsupportedOperationException("Could not parse tag " + tagName);

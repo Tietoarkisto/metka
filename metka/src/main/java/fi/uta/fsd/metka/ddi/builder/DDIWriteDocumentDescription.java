@@ -245,9 +245,10 @@ class DDIWriteDocumentDescription extends DDIWriteSectionBase {
                 if(dataRow.getRemoved()) {
                     continue;
                 }
-                Pair<StatusCode, ValueDataField> valueFieldPair = dataRow.dataField( ValueDataFieldCall.get(Fields.VERSIONDATE));
-                if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().valueForEquals(language, "1.0")) {
-                    LocalDate localDate = LocalDate.parse(valueFieldPair.getRight().getActualValueFor(language));
+                Pair<StatusCode, ValueDataField> versionPair = dataRow.dataField( ValueDataFieldCall.get(Fields.DESCVERSION));
+                Pair<StatusCode, ValueDataField> versionDatePair = dataRow.dataField( ValueDataFieldCall.get(Fields.VERSIONDATE));
+                if(versionPair.getLeft() == StatusCode.FIELD_FOUND && versionDatePair.getLeft() == StatusCode.FIELD_FOUND && versionPair.getRight().valueForEquals(language, "1.0")) {
+                    LocalDate localDate = LocalDate.parse(versionDatePair.getRight().getActualValueFor(language));
                     SimpleTextAndDateType stadt = prodStmtType.addNewProdDate();
                     stadt.setDate(DATE_TIME_FORMATTER.print(localDate));
                 }
