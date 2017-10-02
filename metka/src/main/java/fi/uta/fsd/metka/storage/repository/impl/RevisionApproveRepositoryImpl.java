@@ -358,7 +358,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 if (!studyPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
                     continue;
                 }
-                handleDescVersion(studyPair.getRight(), info);
+                handleStudyPublication(studyPair.getRight(), revision, info);
                 handled.add(studyPair.getRight().getKey().getId());
             }
         }
@@ -384,7 +384,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                     if (!studyPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
                         continue;
                     }
-                    handleDescVersion(studyPair.getRight(), info);
+                    handleStudyPublication(studyPair.getRight(), revision, info);
                     handled.add(studyPair.getRight().getKey().getId());
                 }
             }
@@ -393,13 +393,15 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     }
 
     /**
-     * Adds a new descversion for a revision given as the parameter. If the revision is
-     * APPROVED, create a new DRAFT, add a descrevision and approve the revision.
-     * if the revision is already a DRAFT, only add a descrevision and save.
-     * @param revision RevisionData of the revision being handled
+     * Handles a study linked to the publication to be approved. This includes adding the missing reference
+     * and raising the descversion by 0.1.
+     * If the study is APPROVED, create a new DRAFT, handle the revision and approve the revision.
+     * if the study is already a DRAFT, only handle the revision and save.
+     * @param revision RevisionData of the study linked to the publication
+     * @param publication RevisionData of the publication being approved
      * @param info Date and User information for the ongoing publication approval operation.
      */
-    private void handleDescVersion(RevisionData revision, DateTimeUserPair info){
+    private void handleStudyPublication(RevisionData revision, RevisionData publication, DateTimeUserPair info){
         Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(revision.getKey().getId());
         if (!infoPair.getLeft().equals(ReturnResult.REVISIONABLE_FOUND)){
             return;
@@ -454,6 +456,25 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             newRow.addField(newField);
 
             descversions.addRowFor(Language.DEFAULT, newRow);
+
+            Boolean referenceExists = false;
+            // Add the publication reference to the study
+            TransferField publications = transferData.getField("publications");
+            if (publications == null){
+                publications = new TransferField("publications", TransferFieldType.REFERENCECONTAINER);
+                transferData.addField(publications);
+            } else {
+                for (TransferRow row : publications.getRowsFor(Language.DEFAULT)) {
+                    if (row.getValue().equals(publication.getKey().getId().toString())) {
+                        referenceExists = true;
+                    }
+                }
+            }
+            if (!referenceExists){
+                TransferRow newPublicationRow = new TransferRow("publications");
+                newPublicationRow.setValue(publication.getKey().getId().toString());
+                publications.addRowFor(Language.DEFAULT, newPublicationRow);
+            }
             save.saveRevision(transferData, info);
         } else if (revision.getState().equals(RevisionState.APPROVED)) {
             Pair<OperationResponse, RevisionData> editPair = edit.edit(revision.getKey(), info);
@@ -506,6 +527,25 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             newRow.addField(newField);
 
             descversions.addRowFor(Language.DEFAULT, newRow);
+
+            Boolean referenceExists = false;
+            // Add the publication reference to the study
+            TransferField publications = transferData.getField("publications");
+            if (publications == null){
+                publications = new TransferField("publications", TransferFieldType.REFERENCECONTAINER);
+                transferData.addField(publications);
+            } else {
+                for (TransferRow row : publications.getRowsFor(Language.DEFAULT)) {
+                    if (row.getValue().equals(publication.getKey().getId().toString())) {
+                        referenceExists = true;
+                    }
+                }
+            }
+            if (!referenceExists){
+                TransferRow newPublicationRow = new TransferRow("publications");
+                newPublicationRow.setValue(publication.getKey().getId().toString());
+                publications.addRowFor(Language.DEFAULT, newPublicationRow);
+            }
             save.saveRevision(transferData, info);
             approve(transferData, info);
         }
