@@ -363,7 +363,7 @@ define(function(require) {
                     "reference_target",
                     "reference_valuePath",
                     "reference_titlePath",
-                    "reference_approveOnly",
+                    "reference_approvedOnly",
                     "reference_ignoreRemoved"
                 ]
             },
@@ -394,8 +394,8 @@ define(function(require) {
                 type: "STRING",
                 subfield: true
             },
-            reference_approveOnly: {
-                key: "reference_approveOnly",
+            reference_approvedOnly: {
+                key: "reference_approvedOnly",
                 type: "BOOLEAN",
                 subfield: true
             },

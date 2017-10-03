@@ -134,9 +134,9 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     }
 
     @Override
-    public Pair<ReturnResult, RevisionData> getRevisionData(String key, boolean approveOnly) {
+    public Pair<ReturnResult, RevisionData> getRevisionData(String key, boolean approvedOnly) {
         if(!key.contains("-")) {
-            return getLatestRevisionForId(Long.parseLong(key), approveOnly);
+            return getLatestRevisionForId(Long.parseLong(key), approvedOnly);
         }
         return getRevisionData(Long.parseLong(key.split("-")[0]), Integer.parseInt(key.split("-")[1]));
     }

@@ -71,7 +71,7 @@ public interface RevisionRepository {
      * @return
      */
     Pair<ReturnResult, RevisionData> getRevisionData(String key);
-    Pair<ReturnResult, RevisionData> getRevisionData(String key, boolean approveOnly);
+    Pair<ReturnResult, RevisionData> getRevisionData(String key, boolean approvedOnly);
     Pair<ReturnResult, RevisionData> getRevisionData(RevisionKey key);
 
     /*

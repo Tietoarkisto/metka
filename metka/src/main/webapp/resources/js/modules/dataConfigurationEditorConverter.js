@@ -234,7 +234,7 @@ define(function(require) {
                     target: "reference_target",
                     valuePath: "reference_valuePath",
                     titlePath: "reference_titlePath",
-                    approveOnly: "reference_approveOnly",
+                    approvedOnly: "reference_approvedOnly",
                     ignoreRemoved: "reference_ignoreRemoved"
                 }
             }

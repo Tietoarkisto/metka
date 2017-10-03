@@ -88,7 +88,7 @@ define(function(require) {
         reference_titlePath: {
             title: "Polku tekstiin"
         },
-        reference_approveOnly: {
+        reference_approvedOnly: {
             title: "Vain hyväksytyt"
         },
         reference_ignoreRemoved: {
@@ -547,7 +547,7 @@ define(function(require) {
                                     onChange(options, update, "reference_type");
                                 }
                             },
-                            reference_approveOnly: {
+                            reference_approvedOnly: {
                                 preCreate: function(options) {
                                     function update(value) {
                                         $elem.toggle(value && (value === 'REVISIONABLE' || value === 'REVISION'));
@@ -880,7 +880,7 @@ define(function(require) {
             reference_titlePath: {
                 horizontal: true
             },
-            reference_approveOnly: {
+            reference_approvedOnly: {
                 horizontal: true
             },
             reference_ignoreRemoved: {
