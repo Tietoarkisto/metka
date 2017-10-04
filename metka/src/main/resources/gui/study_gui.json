@@ -1843,7 +1843,8 @@
                                     "type": "CELL",
                                     "title": "Vastausprosentti",
                                     "field": {
-                                        "key": "resprate"
+                                        "key": "resprate",
+                                        "displayType": "CUSTOM_JS"
                                     }
                                 }
                             ]
