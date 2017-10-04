@@ -30,7 +30,7 @@ define(function (require) {
     'use strict';
 
     return require('./../../organizationAddon')({
-        "title": "Yksikkö ↳ Osastot",
+        "title": MetkaJS.L10N.get("other.organizationsubtitle"),
         "options": {
             "disable_properties": true,
             "disable_collapse": true

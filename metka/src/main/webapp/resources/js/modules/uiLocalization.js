@@ -136,6 +136,9 @@ define(function (require) {
                 },
                 "&search": {
                     "default": "Muuttujahaku"
+                },
+                "&edit": {
+                    "default": "Muokkaa muuttujaaDONED"
                 }
             },
             "STUDY_ATTACHMENT": {
@@ -182,6 +185,9 @@ define(function (require) {
                     "default": "Rivejä: {length}"
                 }
             },
+            "&name": {
+                "default": "NimiDONED"
+            },
 
             "downloadInfo": {
                 "&currentlyDownloading": {
@@ -195,6 +201,15 @@ define(function (require) {
                 },
                 "&addSeries": {
                     "default": "Lisää sarja"
+                },
+                "&addStudy": {
+                    "default": "Lisää aineisto"
+                },
+                "&addPublication": {
+                    "default": "Lisää julkaisu"
+                },
+                "&addBinder": {
+                    "default": "Lisää aineisto mappiin"
                 },
                 "&cancel": {
                     "default": "Peruuta"
@@ -231,6 +246,14 @@ define(function (require) {
                 },
                 "&addGroup": {
                     "default": "Lisää ryhmä"
+                }
+            },
+            "vargroups": {
+                "&grouptexts": {
+                    "default": "Ryhmän tekstitDONED"
+                },
+                "&groupname": {
+                    "default": "Ryhmän nimiDONED"
                 }
             },
 
@@ -374,6 +397,18 @@ define(function (require) {
                 "&title": {
                     "default": "Hakutulos"
                 },
+                "&plural": {
+                    "default": "Hakutulokset"
+                },
+                "&studysearch":{
+                    "default": "Aineistohaun tulokset"
+                },
+                "&publicationsearch": {
+                    "default": "Julkaisuhaun tulokset"
+                },
+                "&seriessearch": {
+                    "default": "Sarjahaun tulokset"
+                },
                 "&amount": {
                     "default": "Hakutuloksia: {length}"
                 },
@@ -391,7 +426,293 @@ define(function (require) {
                         "default": "Poistettu"
                     }
                 }
+            },
+            "coltitle": {
+                "&title": {
+                    "default": "Otsikko"
+                },
+                "&state": {
+                    "default": "Tila"
+                },
+                "&name": {
+                    "default": "Nimi"
+                },
+                "&revisionnumber": {
+                    "default": "Revisio"
+                },
+                "&type": {
+                    "default": "Tyyppi"
+                },
+                "&studyid": {
+                    "default": "Aineistonumero"
+                },
+                "&studyname": {
+                    "default": "Aineiston nimi"
+                },
+                "&studytype": {
+                    "default": "Laatu"
+                },
+                "&studyright": {
+                    "default": "Käyttöoikeus"
+                },
+                "&studyerrorsscore": {
+                    "default": "Virhepisteet"
+                },
+                "&language": {
+                    "default": "Kieli"
+                },
+                "&publicationnumber": {
+                    "default": "Julkaisun numero"
+                },
+                "&seriesresultsabbr": {
+                    "default": "Lyhenne"
+                },
+                "&seriesresultsname": {
+                    "default": "Nimi"
+                },
+                "&seriesresultsstate": {
+                    "default": "Tila"
+                },
+                "&binderid": {
+                    "default": "Mappinumero"
+                },
+                "&binderdescription": {
+                    "default": "Mapitettu aineisto"
+                },
+                "&authors": {
+                    "default": "Tekijät"
+                },
+                "&series": {
+                    "default": "Sarja"
+                },
+                "&datakind": {
+                    "default": "datakind"
+                },
+                "&termsofuse": {
+                    "default": "Käyttöoikeus"
+                }
+            },
+            "saved": {
+                "&saved": {
+                    "default": "Tallennetut haut"
+                },
+                "&save": {
+                    "default": "Tallenna haku"
+                }
+
+            },
+            "&expression": {
+                "default": "Hakulause"
+            },
+            "study": {
+                "&studysearch": {
+                    "default": "Aineistohaku"
+                },
+                "&errorsearch": {
+                    "default": "Virheelliset"
+                },
+                "&errors": {
+                    "default": "Virheet"
+                },
+                "&studyid": {
+                    "default": "Aineiston numero"
+                },
+                "&submissionid": {
+                    "default": "Hankinta-aineistonumero"
+                },
+                "&title": {
+                    "default": "Aineiston nimi"
+                },
+                "&author": {
+                    "default": "Tekijän nimi"
+                },
+                "&authororganization": {
+                    "default": "Tekijän organisaatio"
+                },
+                "&producername": {
+                    "default": "Tuottajan nimi"
+                },
+                "&producerrole": {
+                    "default": "Tuottajan rooli"
+                },
+                "&series": {
+                    "default": "Sarjan nimi"
+                },
+                "&datakind": {
+                    "default": "Aineiston laatu"
+                },
+                "&anonymization": {
+                    "default": "Anonymisointi"
+                },
+                "&securityissues": {
+                    "default": "Tietosuoja"
+                },
+                "&publication": {
+                    "default": "Julkaisu"
+                },
+                "&aipcomplete": {
+                    "default": "Valmis-päivämäärä"
+                },
+                "&termsofuse": {
+                    "default": "Ehto 1: käyttöoikeus"
+                },
+                "&newtermsofuse": {
+                    "default": "Käyttöehto muutospvm jälkeen"
+                },
+                "&termsofusechangedate": {
+                    "default": "Käyttöehdon muutospvm"
+                },
+                "&agreementtype": {
+                    "default": "Arkistointisopimuksen tapa"
+                },
+                "&depositorytype": {
+                    "default": "Luovuttajan tyyppi"
+                },
+                "&handler": {
+                    "default": "Käsittelijä"
+                },
+                "&packageurn": {
+                    "default": "URN-tunniste"
+                },
+                "&abstract": {
+                    "default": "Abstrakti"
+                },
+                "&topictop": {
+                    "default": "Pääala"
+                },
+                "&topic": {
+                    "default": "Tieteenala"
+                },
+                "&timeperiod": {
+                    "default": "Ajallinen kattavuus"
+                },
+                "&colltime": {
+                    "default": "Aineistonkeruun ajankohta"
+                },
+                "&country": {
+                    "default": "Maa"
+                },
+                "&collector": {
+                    "default": "Aineiston kerääjän nimi"
+                },
+                "&analysisunit": {
+                    "default": "Havainto/aineistoyksikkö"
+                },
+                "&timemethod": {
+                    "default": "Aikaulottuvuus"
+                },
+                "&sampproc": {
+                    "default": "Otantamenetelmä"
+                },
+                "&collmode": {
+                    "default": "Keruumenetelmä"
+                },
+                "&errorscore": {
+                    "default": "Pisteet"
+                }
+            },
+            "studyvariables": {
+                "&variablessearch":{
+                    "default": "Muuttujajoukot"
+                },
+                "&variablesearch":{
+                    "default": "Muuttujat"
+                },
+                "&variablestudyid":{
+                    "default": "Aineistonumero"
+                },
+                "&variablelabel":{
+                    "default": "Muuttujan selite"
+                },
+                "&variableqstnlit":{
+                    "default": "Kysymysteksti"
+                },
+                "&variablevaluelabel":{
+                    "default": "Arvon selite"
+                },
+                "&variablelanguage":{
+                    "default": "Muuttujan kieli"
+                },
+                "&variablesstudyid":{
+                    "default": "Aineistonumero"
+                },
+                "&variableslanguage":{
+                    "default": "Muuttujajoukon kieli"
+                }
+            },
+            "publication": {
+                "&publicationid": {
+                    "default": "Julkaisu id-nro"
+                },
+                "&studies": {
+                    "default": "/ Aineiston numerot"
+                },
+                "&publicationfirstsaved": {
+                    "default": "Julkaisun lisäyspvm"
+                },
+                "&savedAt": {
+                    "default": "Viimeisin muutospvm"
+                },
+                "&publicationyear": {
+                    "default": "Julkaisuvuosi"
+                },
+                "&studyname": {
+                    "default": "Aineiston nimi"
+                },
+                "&seriesname": {
+                    "default": "Sarjan nimi"
+                },
+                "&lastname": {
+                    "default": "Tekijän sukunimi"
+                },
+                "&firstname": {
+                    "default": "Etunimi"
+                },
+                "&publicationtitle": {
+                    "default": "Julkaisun otsikko"
+                },
+                "&publicationrelpubl": {
+                    "default": "relPubl"
+                },
+                "&publicationlanguage": {
+                    "default": "Julkaisun kieli"
+                },
+                "&publicationpublic": {
+                    "default": "Voiko julkaista"
+                },
+                "&savedBy": {
+                    "default": "Käsitteljä"
+                }
+            },
+            "series": {
+                "&seriesid": {
+                    "default": "ID"
+                },
+                "&seriesabbr": {
+                    "default": "Lyhenne"
+                },
+                "&seriesname": {
+                    "default": "Nimi"
+                }
+            },
+            "binder": {
+                "&title": {
+                    "default": "Mapitukset"
+                },
+                "&studyid": {
+                    "default": "Aineistonro"
+                },
+                "&binderid": {
+                    "default": "Mappinro"
+                },
+                "&studytitle": {
+                    "default": "Aineiston nimi"
+                },
+                "&binderdescription": {
+                    "default": "Mapitettu aineisto"
+                }
             }
+
         },
 
         "settings": {
@@ -424,12 +745,301 @@ define(function (require) {
                         "default": "Lataa Json tiedosto"
                     }
                 }
+            },
+            "reports": {
+                "&title": {
+                    "default": "Raportit"
+                },
+                "&download": {
+                    "default": "Lataa raportti"
+                }
+            },
+            "indexing": {
+                "&title": {
+                    "default": "Indeksointi"
+                },
+                "&commandsqueue": {
+                    "default": "Indeksikomentoja jonossa: "
+                },
+                "&notindexed": {
+                    "default": "Indeksoimattomia revisioita: "
+                },
+                "&indexeverything": {
+                    "default": "Uudelleenindeksoi kaikki"
+                },
+                "&closeindexers": {
+                    "default": "Sammuta indekserit"
+                },
+                "&refresh": {
+                    "default": "Päivitä"
+                }
+            },
+            "configuration": {
+                "&title": {
+                    "default": "Konfiguraatiotiedostot"
+                },
+                "&dataconf": {
+                    "default": "Data konfiguraatiot"
+                },
+                "&edit": {
+                    "default": "Muokkaa"
+                },
+                "&configuration": {
+                    "default": "Konfiguraatio"
+                },
+                "&keys": {
+                    "default": "Avaimet"
+                },
+                "&guiconf": {
+                    "default": "GUI konfiguraatiot"
+                },
+                "&json": {
+                    "default": "JSON"
+                },
+                "editor": {
+                    "&title": {
+                        "default": "Konfiguraatio"
+                    },
+                    "general": {
+                        "&title": {
+                            "default": "Perustiedot"
+                        },
+                        "&key": {
+                            "default": "Avain"
+                        },
+                        "&type": {
+                            "default": "Tyyppi"
+                        },
+                        "&version": {
+                            "default": "Versio"
+                        },
+                        "&idfield": {
+                            "default": "ID-kenttä"
+                        }
+                    },
+                    "selectionlists": {
+                        "&title": {
+                            "default": "Valintalistat"
+                        },
+                        "&key": {
+                            "default": "Avain"
+                        },
+                        "&type": {
+                            "default": "Tyyppi"
+                        },
+                        "&default": {
+                            "default": "Vakioarvo"
+                        },
+                        "&includeempty": {
+                            "default": "Lisää tyhjä valinta"
+                        },
+                        "&freetextvalues": {
+                            "default": "Vapaatekstivalinnat"
+                        },
+                        "&freetext": {
+                            "default": "Vapaatekstiarvo"
+                        },
+                        "&freetextkey": {
+                            "default": "Vapaatekstikenttä"
+                        },
+                        "&sublistkey": {
+                            "default": "Alilistan avain"
+                        },
+                        "&reference": {
+                            "default": "Viittaus"
+                        },
+                        "&options": {
+                            "default": "Arvot"
+                        },
+                        "&optionvalue": {
+                            "default": "Arvo"
+                        },
+                        "&optiontitledefault": {
+                            "default": "Teksti, Suomi"
+                        },
+                        "&optiontitleen": {
+                            "default": "Teksti, Englanti"
+                        },
+                        "&optiontitlesv": {
+                            "default": "Teksti, Ruotsi"
+                        }
+                    },
+                    "reference": {
+                        "&title": {
+                            "default": "Viittaukset"
+                        },
+                        "&key": {
+                            "default": "Viittausavain"
+                        },
+                        "&type": {
+                            "default": "Viittaustyyppi"
+                        },
+                        "&target": {
+                            "default": "Viittauksen kohde"
+                        },
+                        "&valuepath": {
+                            "default": "Polku arvoon"
+                        },
+                        "&titlepath": {
+                            "default": "Polku tekstiin"
+                        },
+                        "&approvedonly": {
+                            "default": "Vain hyväksytyt"
+                        },
+                        "&ignoreremoved": {
+                            "default": "Ohita poistetut"
+                        }
+                    },
+                    "field": {
+                        "&title": {
+                            "default": "Kentät"
+                        },
+                        "&key": {
+                            "default": "Kenttäavain"
+                        },
+                        "&type": {
+                            "default": "Kenttätyyppi"
+                        },
+                        "&translatable": {
+                            "default": "Käännettävyys"
+                        },
+                        "&immutable": {
+                            "default": "Muuttumaton"
+                        },
+                        "&selectionlist": {
+                            "default": "Valintalista"
+                        },
+                        "&subfields": {
+                            "default": "Alikentät"
+                        },
+                        "&subfieldkey": {
+                            "default": "Alikentän avain"
+                        },
+                        "&subfield": {
+                            "default": "On alikenttä"
+                        },
+                        "&ref": {
+                            "default": "Viitteen avain"
+                        },
+                        "&editable": {
+                            "default": "Muokattavissa"
+                        },
+                        "&writable": {
+                            "default": "Tallennettavissa"
+                        },
+                        "&indexed": {
+                            "default": "Indeksoidaan"
+                        },
+                        "&generalsearch": {
+                            "default": "Yleiseen hakuun"
+                        },
+                        "&exact": {
+                            "default": "Tarkka haku"
+                        },
+                        "&bidirectional": {
+                            "default": "Kaksisuuntainen"
+                        },
+                        "&indexname": {
+                            "default": "Indeksinimi"
+                        },
+                        "&fixedorder": {
+                            "default": "Muuttumaton järjestys"
+                        },
+                        "&removepermissions": {
+                            "default": "Poisto-oikeudet"
+                        },
+                        "&permission": {
+                            "default": "Oikeus"
+                        }
+                    },
+                    "restrictions": {
+                        "&title": {
+                            "default": "Rajoitteet"
+                        },
+                        "&namedrestrictions": {
+                            "default": "Nimetyt rajoitteet"
+                        },
+                        "&operations": {
+                            "default": "Operaatiot"
+                        },
+                        "&operationtype": {
+                            "default": "Operaation tyyppi"
+                        },
+                        "&namedtargetname": {
+                            "default": "Nimetyn kohteen nimi"
+                        },
+                        "&targettype": {
+                            "default": "Kohteen tyyppi"
+                        },
+                        "&targetcontent": {
+                            "default": "Kohteen sisältö"
+                        },
+                        "&targets": {
+                            "default": "Kohdelista"
+                        },
+                        "&checks": {
+                            "default": "Kohteen tarkistukset"
+                        },
+                        "&checkconditiontype": {
+                            "default": "Vaatimuksen tyyppi"
+                        },
+                        "&checkconditiontargettype": {
+                            "default": "Vaatimuksen kohteen tyyppi"
+                        },
+                        "&checkconditiontargetcontent": {
+                            "default": "Vaatimuksen kohteen sisältö"
+                        },
+                        "&restrictiontargets": {
+                            "default": "Vaatimusta rajoittavat kohteet"
+                        }
+                    },
+                    "&cascade": {
+                        "default": "Sarjoitukset"
+                    }
+                }
+            },
+            "api": {
+                "&title": {
+                    "default": "API"
+                },
+                "&adduser": {
+                    "default": "Lisää käyttäjä"
+                },
+                "&name": {
+                    "default": "Nimi"
+                },
+                "&role": {
+                    "default": "Rooli"
+                },
+                "&addbutton": {
+                    "default": "Lisää käyttäjä"
+                },
+                "&users": {
+                    "default": "Käyttäjät"
+                },
+                "&user": {
+                    "default": "Käyttäjä"
+                },
+                "&lastlogin": {
+                    "default": "Viimeksi kirjautunut"
+                },
+                "&createdby": {
+                    "default": "Luoja"
+                }
             }
         },
 
         "dialog": {
             "waitDialog": {
                 "title": "Toimintoa suoritetaan..."
+            }
+        },
+        "other": {
+            "&organizationsubtitle": {
+                "default": "Yksikkö ↳ Osastot"
+            },
+            "&agencysubtitle": {
+                "default": "Organisaatio ↳ Yksiköt ↳ Osastot"
             }
         },
 

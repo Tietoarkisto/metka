@@ -84,25 +84,25 @@ define(function (require) {
                 header: MetkaJS.L10N.get('type.STUDY_VARIABLES.search'),
                 fieldTitles: {
                     variablesstudyid: {
-                        "title": "Aineistonumero"
+                        "title": MetkaJS.L10N.get("search.coltitle.studyid")
                     },
                     variablesstudytitle: {
-                        "title": "Aineisto"
+                        "title": MetkaJS.L10N.get("type.STUDY.title")
                     },
                     variableslanguage: {
-                        "title": "Kieli"
+                        "title": MetkaJS.L10N.get("search.coltitle.language")
                     },
                     variablestudyid: {
-                        "title": "Aineistonumero"
+                        "title": MetkaJS.L10N.get("search.coltitle.studyid")
                     },
                     variablestudytitle: {
-                        "title": "Aineisto"
+                        "title": MetkaJS.L10N.get("type.STUDY.title")
                     },
                     variablelanguage: {
-                        "title": "Kieli"
+                        "title": MetkaJS.L10N.get("search.coltitle.language")
                     },
                     variablevarlabel: {
-                        "title": "Muuttuja"
+                        "title": MetkaJS.L10N.get("type.STUDY_VARIABLE.title")
                     }
                 },
                 dataConf: {
@@ -286,7 +286,7 @@ define(function (require) {
                 },
                 content: [{
                     type: "TAB",
-                    title: "Muuttujajoukot",
+                    title: MetkaJS.L10N.get("search.studyvariables.variablessearch"),
                     content: [
                         variablesBooleans.column,
                     {
@@ -296,7 +296,7 @@ define(function (require) {
                             "type": "ROW",
                             "cells": [{
                                 "type": "CELL",
-                                "title": "Aineistonumero",
+                                "title": MetkaJS.L10N.get("search.studyvariables.variablesstudyid"),
                                 "horizontal": true,
                                 "field": {
                                     "key": "findvariablesstudyid"
@@ -306,7 +306,7 @@ define(function (require) {
                             "type": "ROW",
                             "cells": [{
                                 "type": "CELL",
-                                "title": "Muuttujajoukon kieli",
+                                "title": MetkaJS.L10N.get("search.studyvariables.variableslanguage"),
                                 "horizontal": true,
                                 "field": {
                                     "key": "findvariableslanguage"
@@ -331,7 +331,7 @@ define(function (require) {
                             type: "ROW",
                             cells: [{
                                 type: "CELL",
-                                title: "Muuttujajoukot",
+                                title: MetkaJS.L10N.get("search.studyvariables.variablessearch"),
                                 readOnly: true,
                                 field: {
                                     showRowAmount: true,
@@ -356,7 +356,7 @@ define(function (require) {
                     }]
                 }, {
                     type: "TAB",
-                    title: "Muuttujat",
+                    title: MetkaJS.L10N.get("search.studyvariables.variablesearch"),
                     content: [
                         variableBooleans.column,
                     {
@@ -366,7 +366,7 @@ define(function (require) {
                             "type": "ROW",
                             "cells": [{
                                 "type": "CELL",
-                                "title": "Aineistonumero",
+                                "title": MetkaJS.L10N.get("search.studyvariables.variablestudyid"),
                                 "horizontal": true,
                                 "field": {
                                     "key": "findvariablestudyid"
@@ -376,7 +376,7 @@ define(function (require) {
                             "type": "ROW",
                             "cells": [{
                                 "type": "CELL",
-                                "title": "Muuttujan selite",
+                                "title": MetkaJS.L10N.get("search.studyvariables.variablelabel"),
                                 "horizontal": true,
                                 "field": {
                                     "key": "findvariablevarlabel"
@@ -386,7 +386,7 @@ define(function (require) {
                             "type": "ROW",
                             "cells": [{
                                 "type": "CELL",
-                                "title": "Kysymysteksti",
+                                "title": MetkaJS.L10N.get("search.studyvariables.variableqstnlit"),
                                 "horizontal": true,
                                 "field": {
                                     "key": "findvariableqstnlit"
@@ -396,7 +396,7 @@ define(function (require) {
                             "type": "ROW",
                             "cells": [{
                                 "type": "CELL",
-                                "title": "Arvon selite",
+                                "title": MetkaJS.L10N.get("search.studyvariables.variablevaluelabel"),
                                 "horizontal": true,
                                 "field": {
                                     "key": "findvariablevaluelabel"
@@ -406,7 +406,7 @@ define(function (require) {
                             "type": "ROW",
                             "cells": [{
                                 "type": "CELL",
-                                "title": "Muuttujan kieli",
+                                "title": MetkaJS.L10N.get("search.studyvariables.variablelanguage"),
                                 "horizontal": true,
                                 "field": {
                                     "key": "findvariablelanguage"
@@ -431,7 +431,7 @@ define(function (require) {
                             type: "ROW",
                             cells: [{
                                 type: "CELL",
-                                title: "Muuttujat",
+                                title: MetkaJS.L10N.get("search.studyvariables.variablesearch"),
                                 readOnly: true,
                                 field: {
                                     showRowAmount: true,

@@ -49,7 +49,7 @@ define(function (require) {
         return $.extend(true
         , {}
         , require('./../../organizationAddon')({
-            "title": "Organisaatio ↳ Yksiköt ↳ Osastot",
+            "title": MetkaJS.L10N.get("other.agencysubtitle"),
             "options": {
                 "disable_properties": true,
                 "disable_collapse": true

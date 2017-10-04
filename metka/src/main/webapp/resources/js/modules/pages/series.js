@@ -126,13 +126,13 @@ define(function (require) {
                 },
                 fieldTitles: {
                     "seriesresultsabbr": {
-                        "title": "Lyhenne"
+                        "title": MetkaJS.L10N.get("search.coltitle.seriesresultsabbr")
                     },
                     "seriesresultsname": {
-                        "title": "Nimi"
+                        "title": MetkaJS.L10N.get("search.coltitle.seriesresultsname")
                     },
                     "state": {
-                        "title": "Tila"
+                        "title": MetkaJS.L10N.get("search.coltitle.seriesresultsstate")
                     }
                 },
                 content: [
@@ -145,7 +145,7 @@ define(function (require) {
                                 "contentType": "BUTTON",
                                 "button": {
                                     "&title": {
-                                        "default": "Lisää uusi"
+                                        "default": MetkaJS.L10N.get("general.buttons.addSeries")
                                     },
                                     "permissions": [
                                         "canCreateRevision"
@@ -181,7 +181,7 @@ define(function (require) {
                                 "cells": [
                                     {
                                         "type": "CELL",
-                                        "title": "ID",
+                                        "title": MetkaJS.L10N.get('search.series.seriesid'),
                                         "colspan": 2,
                                         "field": {
                                             "displayType": "INTEGER",
@@ -196,7 +196,7 @@ define(function (require) {
                                 "cells": [
                                     {
                                         "type": "CELL",
-                                        "title": "Lyhenne",
+                                        "title": MetkaJS.L10N.get('search.series.seriesabbr'),
                                         "colspan": 2,
                                         "field": {
                                             "key": "seriesabbr"
@@ -210,7 +210,7 @@ define(function (require) {
                                 "cells": [
                                     {
                                         "type": "CELL",
-                                        "title": "Nimi",
+                                        "title": MetkaJS.L10N.get('search.series.seriesname'),
                                         "colspan": 2,
                                         "field": {
                                             "displayType": "STRING",
@@ -244,7 +244,7 @@ define(function (require) {
                             "type": "ROW",
                             "cells": [{
                                 "type": "CELL",
-                                "title": "Julkaisuhaun tulokset",
+                                "title": MetkaJS.L10N.get("search.result.seriessearch"),
                                 "colspan": 1,
                                 "readOnly": true,
                                 "field": {

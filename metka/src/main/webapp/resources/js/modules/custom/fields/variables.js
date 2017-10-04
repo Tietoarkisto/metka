@@ -43,7 +43,7 @@ define(function (require) {
                         id: transferRow.value.split("-")[0],
                         no: transferRow.value.split("-")[1]
                     };
-                    require('./../../revisionModal')(options, requestOptions, 'STUDY_VARIABLE', partialRefresh, options.field.key, true, 'Muokkaa muuttujaa');
+                    require('./../../revisionModal')(options, requestOptions, 'STUDY_VARIABLE', partialRefresh, options.field.key, true, MetkaJS.L10N.get("type.STUDY_VARIABLE.edit"));
                 }
             }
         };

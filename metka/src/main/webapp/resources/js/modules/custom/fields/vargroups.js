@@ -35,7 +35,7 @@ define(function (require) {
                 type: 'ROW',
                 cells: [{
                     "type": "CELL",
-                    "title": "Ryhmän nimi",
+                    "title": MetkaJS.L10N.get("general.vargroups.groupname"),
                     "field": {
                         "key": "vargrouptitle"
                     }
@@ -44,7 +44,7 @@ define(function (require) {
                 type: 'ROW',
                 cells: [{
                     "type": "CELL",
-                    "title": "Ryhmän tekstit",
+                    "title": MetkaJS.L10N.get("general.vargroups.grouptexts"),
                     "field": {
                         "key": "vargrouptexts",
                         "displayHeader": false,
@@ -121,7 +121,7 @@ define(function (require) {
                                                     id: node.transferRow.value.split("-")[0],
                                                     no: node.transferRow.value.split("-")[1]
                                                 };
-                                                require('./../../revisionModal')(options, requestOptions, 'STUDY_VARIABLE', onChange, options.field.key, true, 'Muokkaa muuttujaa');
+                                                require('./../../revisionModal')(options, requestOptions, 'STUDY_VARIABLE', onChange, options.field.key, true, MetkaJS.L10N.get("type.STUDY_VARIABLE.edit"));
                                             } else {
                                                 rowDialog('modify', 'ok')(node.transferRow, function () {
                                                     hasChanges = true;

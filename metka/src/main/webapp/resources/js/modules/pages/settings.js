@@ -197,11 +197,11 @@ define(function (require) {
                 },
                 apiusersname: {
                     key: "apiusersname",
-                    title: "Käyttäjä"
+                    title: MetkaJS.L10N.get("settings.api.user")
                 },
                 apiusersrole: {
                     key: "apiusersrole",
-                    title: "Rooli"
+                    title: MetkaJS.L10N.get("settings.api.role")
                 },
                 apiuserssecret: {
                     key: "apiuserssecret",
@@ -209,17 +209,17 @@ define(function (require) {
                 },
                 apiusersaccess: {
                     key: "apiusersaccess",
-                    title: "Viimeksi kirjautunut"
+                    title: MetkaJS.L10N.get("settings.api.lastlogin")
                 },
                 apiuserscreated: {
                     key: "apiuserscreated",
-                    title: "Luoja"
+                    title: MetkaJS.L10N.get("settings.api.createdby")
                 }
             },
             content: [
                 {
                     type: "TAB",
-                    title: "Raportit",
+                    title: MetkaJS.L10N.get("settings.reports.title"),
                     content: [
                         {
                             type: "COLUMN",
@@ -232,7 +232,7 @@ define(function (require) {
                                             type: "CELL",
                                             contentType: "BUTTON",
                                             button: {
-                                                title: "Lataa raportti",
+                                                title: MetkaJS.L10N.get("settings.reports.download"),
                                                 create: function() {
                                                     this.click(function() {
                                                         require('./../assignUrl')('/settings/downloadReport');
@@ -248,7 +248,7 @@ define(function (require) {
                 },
                 {
                     type: "TAB",
-                    title: "Indeksointi",
+                    title: MetkaJS.L10N.get("settings.indexing.title"),
                     // TODO: Fetch index info and show
                     permissions: [
                         "canViewIndexInfo"
@@ -268,11 +268,11 @@ define(function (require) {
                                             },
                                             postCreate: function(options) {
                                                 indexCommandNumber = $(this).children().first();
-                                                indexCommandNumber.text("Indeksikomentoja jonossa: 0");
+                                                indexCommandNumber.text(MetkaJS.L10N.get("settings.indexing.commandsqueue")+ "0");
                                                 require("./../server")("/settings/openIndexCommands", {
                                                     method: "GET",
                                                     success: function(response) {
-                                                        indexCommandNumber.text("Indeksikomentoja jonossa: "+response.openCommands);
+                                                        indexCommandNumber.text(MetkaJS.L10N.get("settings.indexing.commandsqueue")+response.openCommands);
                                                     }
                                                 });
                                             }
@@ -283,11 +283,11 @@ define(function (require) {
                                             },
                                             postCreate: function(options) {
                                                 indexRevisionNumber = $(this).children().first();
-                                                indexRevisionNumber.text("Indeksoimattomia revisioita: 0");
+                                                indexRevisionNumber.text(MetkaJS.L10N.get("settings.indexing.notindexed")+"0");
                                                 require("./../server")("/settings/openIndexCommands", {
                                                     method: "GET",
                                                     success: function(response) {
-                                                        indexRevisionNumber.text("Indeksoimattomia revisioita: "+response.openCommands);
+                                                        indexRevisionNumber.text(MetkaJS.L10N.get("settings.indexing.notindexed")+response.openCommands);
                                                     }
                                                 });
                                             }
@@ -295,19 +295,19 @@ define(function (require) {
                                             type: "CELL",
                                             contentType: "BUTTON",
                                             button: {
-                                                title: "Päivitä",
+                                                title: MetkaJS.L10N.get("settings.indexing.refresh"),
                                                 create: function(options) {
                                                     this.click(function() {
                                                         require("./../server")("/settings/openIndexCommands", {
                                                             method: "GET",
                                                             success: function(response) {
-                                                                indexCommandNumber.text("Indeksikomentoja jonossa: "+response.openCommands);
+                                                                indexCommandNumber.text(MetkaJS.L10N.get("settings.indexing.commandsqueue")+response.openCommands);
                                                             }
                                                         });
                                                         require("./../server")("/settings/revisionsWaitingIndexing", {
                                                             method: "GET",
                                                             success: function(response) {
-                                                                indexRevisionNumber.text("Indeksoimattomia revisioita: "+response.openCommands);
+                                                                indexRevisionNumber.text(MetkaJS.L10N.get("settings.indexing.notindexed")+response.openCommands);
                                                             }
                                                         });
                                                     });
@@ -323,7 +323,7 @@ define(function (require) {
                                             type: "CELL",
                                             contentType: "BUTTON",
                                             button: {
-                                                title: "Uudelleenindeksoi kaikki",
+                                                title: MetkaJS.L10N.get("settings.indexing.indexeverything"),
                                                 permissions: [
                                                     "canManuallyIndexContent"
                                                 ],
@@ -349,7 +349,7 @@ define(function (require) {
                                             type: "CELL",
                                             contentType: "BUTTON",
                                             button: {
-                                                title: "Sammuta indekserit",
+                                                title: MetkaJS.L10N.get("settings.indexing.closeindexers"),
                                                 permissions: [
                                                     "canManuallyIndexContent"
                                                 ],
@@ -374,14 +374,14 @@ define(function (require) {
                 },
                 {
                     type: "TAB",
-                    title: "Konfiguraatiotiedostot",
+                    title: MetkaJS.L10N.get("settings.configuration.title"),
                     permissions: [
                         "canUploadConfigurations",
                         "canUploadJson"
                     ],
                     content: [{
                         type: "SECTION",
-                        title: "Data konfiguraatiot",
+                        title: MetkaJS.L10N.get("settings.configuration.dataconf"),
                         defaultState: "OPEN",
                         content: [{
                             type: "COLUMN",
@@ -390,7 +390,7 @@ define(function (require) {
                                 type: "ROW",
                                 cells: [{
                                     type: "CELL",
-                                    title: "Tyypit",
+                                    title: MetkaJS.L10N.get("settings.configuration.keys"),
                                     horizontal: true,
                                     field: {
                                         key: "dataConfigTypes"
@@ -437,7 +437,7 @@ define(function (require) {
                                     contentType: "BUTTON",
                                     colspan: 2,
                                     button: {
-                                        title: "Editoi",
+                                        title: MetkaJS.L10N.get("settings.configuration.edit"),
                                         create: function() {
                                             this.click(function() {
                                                 var text = require('./../data')(options)("dataConfigText").getByLang("DEFAULT");
@@ -453,7 +453,7 @@ define(function (require) {
                                 type: "ROW",
                                 cells: [{
                                     type: "CELL",
-                                    title: "Konfiguraatio",
+                                    title: MetkaJS.L10N.get("settings.configuration.configuration"),
                                     horizontal: true,
                                     colspan: 2,
                                     field: {
@@ -472,7 +472,7 @@ define(function (require) {
                                     contentType: "BUTTON",
                                     colspan: 2,
                                     button: {
-                                        title: "Tallenna",
+                                        title: MetkaJS.L10N.get("general.buttons.save"),
                                         create: function() {
                                             this.click(function() {
                                                 var request = {
@@ -493,7 +493,7 @@ define(function (require) {
                         }]
                     }, {
                         type: "SECTION",
-                        title: "GUI konfiguraatiot",
+                        title: MetkaJS.L10N.get("settings.configuration.guiconf"),
                         defaultState: "OPEN",
                         content: [{
                             type: "COLUMN",
@@ -502,7 +502,7 @@ define(function (require) {
                                 type: "ROW",
                                 cells: [{
                                     type: "CELL",
-                                    title: "Tyypit",
+                                    title: MetkaJS.L10N.get("settings.configuration.keys"),
                                     horizontal: true,
                                     field: {
                                         key: "guiConfigTypes"
@@ -545,7 +545,7 @@ define(function (require) {
                                 type: "ROW",
                                 cells: [{
                                     type: "CELL",
-                                    title: "Konfiguraatio",
+                                    title: MetkaJS.L10N.get("settings.configuration.configuration"),
                                     horizontal: true,
                                     colspan: 2,
                                     field: {
@@ -563,7 +563,7 @@ define(function (require) {
                                     contentType: "BUTTON",
                                     colspan: 2,
                                     button: {
-                                        title: "Tallenna",
+                                        title: MetkaJS.L10N.get("general.buttons.save"),
                                         create: function() {
                                             this.click(function() {
                                                 var request = {
@@ -584,7 +584,7 @@ define(function (require) {
                         }]
                     }, {
                         type: "SECTION",
-                        title: "JSON",
+                        title: MetkaJS.L10N.get("settings.configuration.json"),
                         defaultState: "OPEN",
                         content: [{
                             type: "COLUMN",
@@ -593,7 +593,7 @@ define(function (require) {
                                 type: "ROW",
                                 cells: [{
                                     type: "CELL",
-                                    title: "Avaimet",
+                                    title: MetkaJS.L10N.get("settings.configuration.keys"),
                                     horizontal: true,
                                     field: {
                                         key: "jsonKeys"
@@ -636,7 +636,7 @@ define(function (require) {
                                 type: "ROW",
                                 cells: [{
                                     type: "CELL",
-                                    title: "JSON",
+                                    title: MetkaJS.L10N.get("settings.configuration.configuration"),
                                     horizontal: true,
                                     colspan: 2,
                                     field: {
@@ -655,7 +655,7 @@ define(function (require) {
                                     contentType: "BUTTON",
                                     colspan: 2,
                                     button: {
-                                        title: "Tallenna",
+                                        title: MetkaJS.L10N.get("general.buttons.save"),
                                         create: function() {
                                             this.click(function() {
                                                 var request = {
@@ -677,20 +677,20 @@ define(function (require) {
                     }]
                 }, {
                     type: "TAB",
-                    title: "API",
+                    title: MetkaJS.L10N.get("settings.api.title"),
                     permissions: [
                         "canViewAPIUsers"
                     ],
                     content: [{
                         type: "SECTION",
-                        title: "Lisää käyttäjä",
+                        title: MetkaJS.L10N.get("settings.api.adduser"),
                         defaultState: "OPEN",
                         content: [{
                             type: "COLUMN",
                             rows: [{
                                 type: "ROW",
                                 cells: [{
-                                    title: "Nimi",
+                                    title: MetkaJS.L10N.get("settings.api.name"),
                                     type: "CELL",
                                     horizontal: true,
                                     field: {
@@ -700,7 +700,7 @@ define(function (require) {
                             }, {
                                 type: "ROW",
                                 cells: [{
-                                    title: "Rooli",
+                                    title: MetkaJS.L10N.get("settings.api.role"),
                                     type: "CELL",
                                     horizontal: true,
                                     field: {
@@ -713,7 +713,7 @@ define(function (require) {
                                     type: "CELL",
                                     contentType: "BUTTON",
                                     button: {
-                                        title: "Lisää käyttäjä",
+                                        title: MetkaJS.L10N.get("settings.api.adduser"),
                                         create: function(options) {
                                             this.click(function() {
                                                 require('./../server')("/settings/newAPIUser", {
@@ -739,7 +739,7 @@ define(function (require) {
                             type: "ROW",
                             cells: [{
                                 type: "CELL",
-                                title: "Käyttäjät",
+                                title: MetkaJS.L10N.get("settings.api.users"),
                                 readOnly: true,
                                 field: {
                                     key: "apiusers",

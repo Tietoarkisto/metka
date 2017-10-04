@@ -35,7 +35,7 @@ define(function (require) {
         var cells = {
             approved: {
                 "type": "CELL",
-                "title": "Hyväksyttyjä",
+                "title": MetkaJS.L10N.get("search.state.APPROVED"),
                 "horizontal": true,
                 "field": {
                     "displayType": "BOOLEAN",
@@ -44,7 +44,7 @@ define(function (require) {
             },
             draft: {
                 "type": "CELL",
-                "title": "Luonnoksia",
+                "title": MetkaJS.L10N.get("search.state.DRAFT"),
                 "horizontal": true,
                 "field": {
                     "displayType": "BOOLEAN",
@@ -53,7 +53,7 @@ define(function (require) {
             },
             removed: {
                 "type": "CELL",
-                "title": "Poistettuja",
+                "title": MetkaJS.L10N.get("search.state.REMOVED"),
                 "horizontal": true,
                 "field": {
                     "displayType": "BOOLEAN",

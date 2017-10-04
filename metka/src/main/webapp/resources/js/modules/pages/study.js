@@ -190,56 +190,56 @@ define(function (require) {
                             header: MetkaJS.L10N.get('type.STUDY.search'),
                             fieldTitles: {
                                 "studyid": {
-                                    "title": "Aineiston numero"
+                                    "title": MetkaJS.L10N.get("search.coltitle.studyid")
                                 },
                                 "studyname": {
-                                    "title": "Aineiston nimi"
+                                    "title": MetkaJS.L10N.get("search.coltitle.studyname")
                                 },
                                 "authors": {
-                                    "title": "Tekijät"
+                                    "title": MetkaJS.L10N.get("search.coltitle.authors")
                                 },
                                 "series": {
-                                    "title": "Sarja"
+                                    "title": MetkaJS.L10N.get("search.coltitle.series")
                                 },
                                 "datakind": {
-                                    "title": "Laatu"
+                                    "title": MetkaJS.L10N.get("search.coltitle.datakind")
                                 },
                                 "termsofuse": {
-                                    "title": "Käyttöoikeus",
+                                    "title": MetkaJS.L10N.get("search.coltitle.datakind"),
                                     exactValue: true
                                 },
                                 "state": {
-                                    "title": "Tila"
+                                    "title": MetkaJS.L10N.get("search.coltitle.state")
                                 },
                                 studyerrorsstudyid: {
-                                    title: "Aineistonumero"
+                                    title: MetkaJS.L10N.get("search.coltitle.studyid")
                                 },
                                 studyresultsid: {
-                                    title: "Aineistonumero"
+                                    title: MetkaJS.L10N.get("search.coltitle.studyid")
                                 },
                                 studyresultsdatakind: {
-                                    title: "Laatu"
+                                    title: MetkaJS.L10N.get("search.coltitle.studytype")
                                 },
                                 studyresultstermsofuse: {
-                                    title: "Käyttöoikeus"
+                                    title: MetkaJS.L10N.get("search.coltitle.studyright")
                                 },
                                 studyresultsseries: {
-                                    title: "Sarja"
+                                    title: MetkaJS.L10N.get("type.SERIES.title")
                                 },
                                 studyresultstitle: {
-                                    title: "Aineiston nimi"
+                                    title: MetkaJS.L10N.get("search.coltitle.studyname")
                                 },
                                 studyerrorsstudytitle: {
-                                    title: "Aineiston nimi"
+                                    title: MetkaJS.L10N.get("search.coltitle.studyname")
                                 },
                                 studyerrorsscore: {
-                                    title: "Virhepisteet"
+                                    title: MetkaJS.L10N.get("search.coltitle.studyerrorsscore")
                                 }
                             },
                             content: [
                                 {
                                     "type": "TAB",
-                                    "title": "Aineistohaku",
+                                    "title": MetkaJS.L10N.get("search.study.studysearch"),
                                     "hidePageButtons": true,
                                     "content": [
                                         {
@@ -251,7 +251,7 @@ define(function (require) {
                                                     "contentType": "BUTTON",
                                                     "button": {
                                                         "&title": {
-                                                            "default": "Lisää uusi"
+                                                            "default": MetkaJS.L10N.get("general.buttons.addStudy")
                                                         },
                                                         permissions: [
                                                             "canCreateRevision"
@@ -289,7 +289,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Aineiston numero",
+                                                    "title": MetkaJS.L10N.get("search.study.studyid"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -300,7 +300,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Hankinta-aineistonumero",
+                                                    "title": MetkaJS.L10N.get("search.study.submissionid"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -311,7 +311,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Aineiston nimi",
+                                                    "title": MetkaJS.L10N.get("search.study.title"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -322,7 +322,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Tekijän nimi",
+                                                    "title": MetkaJS.L10N.get("search.study.author"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -333,7 +333,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Tekijän organisaatio",
+                                                    "title": MetkaJS.L10N.get("search.study.authororganization"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -344,7 +344,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Tuottajan nimi",
+                                                    "title": MetkaJS.L10N.get("search.study.producername"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -355,7 +355,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Tuottajan rooli",
+                                                    "title": MetkaJS.L10N.get("search.study.producerrole"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -366,7 +366,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Sarjan nimi",
+                                                    "title": MetkaJS.L10N.get("search.study.series"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -377,7 +377,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Aineiston laatu",
+                                                    "title": MetkaJS.L10N.get("search.study.datakind"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -388,7 +388,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Anonymisointi",
+                                                    "title": MetkaJS.L10N.get("search.study.anonymization"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -399,7 +399,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Tietosuoja",
+                                                    "title": MetkaJS.L10N.get("search.study.securityissues"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -410,7 +410,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Julkaisu",
+                                                    "title": MetkaJS.L10N.get("search.study.publication"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -421,7 +421,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Valmis-päivämäärä",
+                                                    "title": MetkaJS.L10N.get("search.study.aipcomplete"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -432,7 +432,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Ehto 1: käyttöoikeus",
+                                                    "title": MetkaJS.L10N.get("search.study.termsofuse"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -443,7 +443,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Käyttöehto muutospvm jälkeen",
+                                                    "title": MetkaJS.L10N.get("search.study.newtermsofuse"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -454,7 +454,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Käyttöehdon muutospvm",
+                                                    "title": MetkaJS.L10N.get("search.study.termsofusechangedate"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -465,7 +465,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Arkistointisopimuksen tapa",
+                                                    "title": MetkaJS.L10N.get("search.study.agreementtype"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -476,7 +476,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Luovuttajan tyyppi",
+                                                    "title": MetkaJS.L10N.get("search.study.depositortype"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -487,7 +487,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Käsittelijä",
+                                                    "title": MetkaJS.L10N.get("search.study.handler"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -498,7 +498,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "URN-tunniste",
+                                                    "title": MetkaJS.L10N.get("search.study.packageurn"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -509,7 +509,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Abstrakti",
+                                                    "title": MetkaJS.L10N.get("search.study.abstract"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -520,7 +520,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Pääala",
+                                                    "title": MetkaJS.L10N.get("search.study.topictop"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -531,7 +531,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Tieteenala",
+                                                    "title": MetkaJS.L10N.get("search.study.topic"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -542,7 +542,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Ajallinen kattavuus",
+                                                    "title": MetkaJS.L10N.get("search.study.timeperiod"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -553,7 +553,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Aineistonkeruun ajankohta",
+                                                    "title": MetkaJS.L10N.get("search.study.colltime"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -564,7 +564,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Maa",
+                                                    "title": MetkaJS.L10N.get("search.study.country"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -575,7 +575,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Aineiston kerääjän nimi",
+                                                    "title": MetkaJS.L10N.get("search.study.collector"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -586,7 +586,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Havainto/aineistoyksikkö",
+                                                    "title": MetkaJS.L10N.get("search.study.analysisunit"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -597,7 +597,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Aikaulottuvuus",
+                                                    "title": MetkaJS.L10N.get("search.study.timemethod"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -608,7 +608,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Otantamenetelmä",
+                                                    "title": MetkaJS.L10N.get("search.study.sampproc"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -619,7 +619,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Keruumenetelmä",
+                                                    "title": MetkaJS.L10N.get("search.study.collmode"),
                                                     "horizontal": true,
                                                     "colspan": 2,
                                                     "field": {
@@ -650,7 +650,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Aineistohaun tulokset",
+                                                    "title": MetkaJS.L10N.get('search.result.studysearch'),
                                                     "colspan": 1,
                                                     "readOnly": true,
                                                     "field": {
@@ -688,7 +688,7 @@ define(function (require) {
                                 },
                                 {
                                     "type": "TAB",
-                                    "title": "Virheelliset",
+                                    "title": MetkaJS.L10N.get("search.study.errorsearch"),
                                     "hidePageButtons": true,
                                     "content": [
                                         studyErrorSearchBooleans.column,
@@ -699,7 +699,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Aineistonro",
+                                                    "title": MetkaJS.L10N.get("search.study.studyid"),
                                                     "horizontal": true,
                                                     "field": {
                                                         "key": "findstudyid"
@@ -709,7 +709,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Pisteet",
+                                                    "title": MetkaJS.L10N.get("search.study.errorscore"),
                                                     "horizontal": true,
                                                     "field": {
                                                         "key": "finderrorscore"
@@ -732,7 +732,7 @@ define(function (require) {
                                                 "type": "ROW",
                                                 "cells": [{
                                                     "type": "CELL",
-                                                    "title": "Virheet",
+                                                    "title": MetkaJS.L10N.get("search.study.errors"),
                                                     "colspan": 1,
                                                     "field": {
                                                         "key": "studyerrors",

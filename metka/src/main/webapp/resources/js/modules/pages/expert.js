@@ -49,19 +49,19 @@ define(function (require) {
                     "title" : "ID"
                 },
                 "name": {
-                    "title" : "Nimi"
+                    "title" : MetkaJS.L10N.get("search.coltitle.name")
                 },
                 "no": {
-                    "title" : "Revisio"
+                    "title" : MetkaJS.L10N.get("search.coltitle.revisionnumber")
                 },
                 "state": {
-                    "title" : "Tila"
+                    "title" : MetkaJS.L10N.get("search.coltitle.state")
                 },
                 "title": {
-                    "title" : "Otsikko"
+                    "title" : MetkaJS.L10N.get("search.coltitle.title")
                 },
                 "type": {
-                    "title" : "Tyyppi"
+                    "title" : MetkaJS.L10N.get("search.coltitle.type")
                 }
             },
             content: [
@@ -74,7 +74,7 @@ define(function (require) {
                             "cells": [
                                 {
                                     "type": "CELL",
-                                    "title": "Hakulause",
+                                    "title": MetkaJS.L10N.get("search.expression"),
                                     "colspan": 1,
                                     "field": {
                                         "displayType": "STRING",
@@ -87,7 +87,7 @@ define(function (require) {
                                 },
                                 {
                                     "type": "CELL",
-                                    "title": "Tallennetut haut",
+                                    "title": MetkaJS.L10N.get("search.saved.saved"),
                                     "colspan": 1,
                                     "readOnly": true,
                                     "field": {
@@ -139,7 +139,7 @@ define(function (require) {
                                 colspan: 1,
                                 contentType: "BUTTON",
                                 button: {
-                                    title: "Hae",
+                                    title: MetkaJS.L10N.get("general.buttons.search"),
                                     create: function(options) {
                                         this.click(function() {
                                             require('./../searchQuerySearch')(options, require('./../data')(options)('search').getByLang(options.defaultLang), "expertsearchresults").search();
@@ -152,7 +152,7 @@ define(function (require) {
                                 contentType: "BUTTON",
                                 button: {
                                     "&title": {
-                                        "default": "Tallenna haku"
+                                        "default": MetkaJS.L10N.get("search.saved.save")
                                     },
                                     create: function () {
                                         this
@@ -161,7 +161,7 @@ define(function (require) {
                                                     //title: 'Tallenna haku',
                                                     type: "ADD",
                                                     dialogTitle: {
-                                                        "ADD": "Tallenna haku"
+                                                        "ADD": MetkaJS.L10N.get("search.saved.save")
                                                     },
                                                     content: [{
                                                         type: 'COLUMN',
@@ -172,7 +172,7 @@ define(function (require) {
                                                                 "cells": [
                                                                     {
                                                                         "type": "CELL",
-                                                                        "title": "Nimi",
+                                                                        "title": MetkaJS.L10N.get("search.coltitle.name"),
                                                                         "colspan": 1,
                                                                         "field": {
                                                                             "displayType": "STRING",
@@ -185,7 +185,7 @@ define(function (require) {
                                                     }],
                                                     buttons: [{
                                                         "&title": {
-                                                            "default": 'Tallenna'
+                                                            "default": MetkaJS.L10N.get("general.buttons.save")
                                                         },
                                                         create: function () {
                                                             this
@@ -219,7 +219,7 @@ define(function (require) {
                             cells: [{
                                 type: "CELL",
                                 colspan: 2,
-                                title: "Hakutulokset",
+                                title: MetkaJS.L10N.get("search.result.plural"),
                                 readOnly: true,
                                 field: {
                                     key: "expertsearchresults",

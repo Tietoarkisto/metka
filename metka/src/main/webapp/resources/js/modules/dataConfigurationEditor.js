@@ -31,155 +31,155 @@ define(function(require) {
 
     var fieldTitles = {
         selectionLists_key: {
-            title: "Avain"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.key")
         },
         selectionLists_type: {
-            title: "Tyyppi"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.type")
         },
         selectionLists_default: {
-            title: "Vakioarvo"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.default")
         },
         selectionLists_includeEmpty: {
-            title: "Lisää tyhjä valinta"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.includeempty")
         },
         selectionLists_freeText_values: {
-            title: "Vapaatekstivalinnat"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.freetextvalues")
         },
         selectionLists_freeText: {
-            title: "Vapaatekstiarvo"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.freetext")
         },
         selectionLists_freeTextKey: {
-            title: "Vapaatekstikenttä"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.freetextkey")
         },
         selectionLists_sublistKey: {
-            title: "Alilistan avain"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.sublistkey")
         },
         selectionLists_reference: {
-            title: "Viittaus"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.reference")
         },
         selectionLists_options: {
-            title: "Arvot"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.options")
         },
         selectionLists_option_value: {
-            title: "Arvo"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.optionvalue")
         },
         selectionLists_option_title_default: {
-            title: "Teksti, Suomi"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.optiontitledefault")
         },
         selectionLists_option_title_en: {
-            title: "Teksti, Englanti"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.optiontitleen")
         },
         selectionLists_option_title_sv: {
-            title: "Teksti, Ruotsi"
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.optiontitlesv")
         },
 
         reference_key: {
-            title: "Viittausavain"
+            title: MetkaJS.L10N.get("settings.configuration.editor.reference.key")
         },
         reference_type: {
-            title: "Viittaustyyppi"
+            title: MetkaJS.L10N.get("settings.configuration.editor.reference.type")
         },
         reference_target: {
-            title: "Viittauksen kohde"
+            title: MetkaJS.L10N.get("settings.configuration.editor.reference.target")
         },
         reference_valuePath: {
-            title: "Polku arvoon"
+            title: MetkaJS.L10N.get("settings.configuration.editor.reference.valuepath")
         },
         reference_titlePath: {
-            title: "Polku tekstiin"
+            title: MetkaJS.L10N.get("settings.configuration.editor.reference.titlepath")
         },
         reference_approvedOnly: {
-            title: "Vain hyväksytyt"
+            title: MetkaJS.L10N.get("settings.configuration.editor.reference.approvedonly")
         },
         reference_ignoreRemoved: {
-            title: "Ohita poistetut"
+            title: MetkaJS.L10N.get("settings.configuration.editor.reference.ignoreremoved")
         },
 
         field_key: {
-            title: "Kenttäavain"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.key")
         },
         field_type: {
-            title: "Kenttätyyppi"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.type")
         },
         field_translatable: {
-            title: "Käännettävyys"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.translatable")
         },
         field_immutable: {
-            title: "Muuttumaton"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.immutable")
         },
         field_selectionList: {
-            title: "Valintalista"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.selectionlist")
         },
         field_subfields: {
-            title: "Alikentät"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.subfields")
         },
         field_subfield_key: {
-            title: "Alikentän avain"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.subfieldkey")
         },
         field_subfield: {
-            title: "On alikenttä"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.subfield")
         },
         field_reference: {
-            title: "Viitteen avain"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.ref")
         },
         field_editable: {
-            title: "Muokattavissa"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.editable")
         },
         field_writable: {
-            title: "Tallennettavissa"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.writable")
         },
         field_indexed: {
-            title: "Indeksoidaan"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.indexed")
         },
         field_generalSearch: {
-            title: "Yleiseen hakuun"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.generalsearch")
         },
         field_exact: {
-            title: "Tarkka haku"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.exact")
         },
         field_bidirectional: {
-            title: "Kaksisuuntainen"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.bidirectional")
         },
         field_indexName: {
-            title: "Indeksinimi"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.indexname")
         },
         field_fixedOrder: {
-            title: "Muuttumaton järjestys"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.fixedorder")
         },
         field_removePermissions: {
-            title: "Poisto-oikeudet"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.removepermissions")
         },
         field_removePermissions_permission: {
-            title: "Oikeus"
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.permission")
         },
 
         operation_type: {
-            title: "Operaation tyyppi"
+            title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.operationtype")
         },
         namedTarget_key: {
-            title: "Nimetyn kohteen nimi"
+            title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.namedtargetname")
         },
         target_type: {
-            title: "Kohteen tyyppi"
+            title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.targettype")
         },
         target_content: {
-            title: "Kohteen sisältö"
+            title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.targetcontent")
         },
         targets: {
-            title: "Kohdelista"
+            title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.targets")
         },
         checks: {
-            title: "Kohteen tarkistukset"
+            title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.checks")
         },
 
         target_check_condition_type: {
-            title: "Vaatimuksen tyyppi"
+            title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.checkconditiontype")
         },
         target_check_condition_target_type: {
-            title: "Vaatimuksen kohteen tyyppi"
+            title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.checkconditiontargettype")
         },
         target_check_condition_target_content: {
-            title: "Vaatimuksen kohteen sisältö"
+            title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.checkconditiontargetcontent")
         }
     };
 
@@ -251,14 +251,14 @@ define(function(require) {
         }, {
             type: "CANCEL"
         }];
-        modalOptions.title = "Konfiguraatio";
+        modalOptions.title = MetkaJS.L10N.get("settings.configuration.editor.title");
         modalOptions.content = [{
             type: "TAB",
-            title: "Perustiedot",
+            title: MetkaJS.L10N.get("settings.configuration.editor.general.title"),
             content: [{
                 type: "SECTION",
                 defaultState: "OPEN",
-                title: "Avain",
+                title: MetkaJS.L10N.get("settings.configuration.editor.general.key"),
                 content: [{
                     type: "COLUMN",
                     columns: 2,
@@ -266,13 +266,13 @@ define(function(require) {
                         type: "ROW",
                         cells: [{
                             type: "CELL",
-                            title: "Type",
+                            title: MetkaJS.L10N.get("settings.configuration.editor.general.type"),
                             field: {
                                 key: "key_type"
                             }
                         }, {
                             type: "CELL",
-                            title: "Version",
+                            title: MetkaJS.L10N.get("settings.configuration.editor.general.version"),
                             field: {
                                 key: "key_version"
                             }
@@ -286,7 +286,7 @@ define(function(require) {
                     type: "ROW",
                     cells: [{
                         type: "CELL",
-                        title: "ID-kenttä",
+                        title: MetkaJS.L10N.get("settings.configuration.editor.general.idfield"),
                         field: {
                             key: "displayId"
                         },
@@ -319,14 +319,14 @@ define(function(require) {
             }]
         }, {
             type: "TAB",
-            title: "Valintalistat",
+            title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.title"),
             content: [{
                 type: "COLUMN",
                 rows: [{
                     type: "ROW",
                     cells: [{
                         type: "CELL",
-                        title: "Listat",
+                        title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.title"),
                         field: {
                             key: "selectionLists",
                             columnFields: [
@@ -453,14 +453,14 @@ define(function(require) {
             }]
         }, {
             type: "TAB",
-            title: "Viittaukset",
+            title: MetkaJS.L10N.get("settings.configuration.editor.reference.title"),
             content: [{
                 type: "COLUMN",
                 rows: [{
                     type: "ROW",
                     cells: [{
                         type: "CELL",
-                        title: "Viittaukset",
+                        title: MetkaJS.L10N.get("settings.configuration.editor.reference.title"),
                         field: {
                             key: "references",
                             columnFields: [
@@ -583,14 +583,14 @@ define(function(require) {
             }]
         }, {
             type: "TAB",
-            title: "Kentät",
+            title: MetkaJS.L10N.get("settings.configuration.editor.field.title"),
             content: [{
                 type: "COLUMN",
                 rows: [{
                     type: "ROW",
                     cells: [{
                         type: "CELL",
-                        title: "Kentät",
+                        title: MetkaJS.L10N.get("settings.configuration.editor.field.title"),
                         field: {
                             key: "fields",
                             columnFields: [
@@ -743,10 +743,10 @@ define(function(require) {
             }]
         }, {
             type: "TAB",
-            title: "Rajoitteet",
+            title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.title"),
             content: [{
                 type: "SECTION",
-                title: "Nimetyt rajoitteet",
+                title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.namedrestrictions"),
                 defaultState: "OPEN",
                 content: [{
                     type: "COLUMN",
@@ -754,7 +754,7 @@ define(function(require) {
                         type: "ROW",
                         cells: [{
                             type: "CELL",
-                            title: "Nimetyt rajoitteet",
+                            title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.namedrestrictions"),
                             field: {
                                 key: "namedTargets",
                                 columnFields: [
@@ -768,7 +768,7 @@ define(function(require) {
                 }]
             }, {
                 type: "SECTION",
-                title: "Rajoitteet",
+                title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.title"),
                 defaultState: "OPEN",
                 content: [{
                     type: "COLUMN",
@@ -776,7 +776,7 @@ define(function(require) {
                         type: "ROW",
                         cells: [{
                             type: "CELL",
-                            title: "Operaatiot",
+                            title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.operations"),
                             field: {
                                 key: "restrictions",
                                 columnFields: [
@@ -789,14 +789,14 @@ define(function(require) {
             }]
         }, {
             type: "TAB",
-            title: "Sarjoitukset",
+            title: MetkaJS.L10N.get("settings.configuration.editor.cascade"),
             content: [{
                 type: "COLUMN",
                 rows: [{
                     type: "ROW",
                     cells: [{
                         type: "CELL",
-                        title: "Operaatiot",
+                        title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.operations"),
                         field: {
                             key: "cascade",
                             columnFields: [
@@ -827,7 +827,7 @@ define(function(require) {
                 },
                 subfieldConfiguration: {
                     targets: {
-                        title: "Vaatimusta rajoittavat kohteet"
+                        title: MetkaJS.L10N.get("settings.configuration.editor.restrictions.restrictiontargets")
                     }
                 }
             },

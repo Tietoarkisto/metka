@@ -275,7 +275,7 @@ define(function (require) {
                                                         "cells": [
                                                             {
                                                                 "type": "CELL",
-                                                                "title": "Nimi",
+                                                                "title": MetkaJS.L10N.get("general.name"),
                                                                 "colspan": 1,
                                                                 "field": {
                                                                     "displayType": "STRING",
@@ -296,7 +296,7 @@ define(function (require) {
                                             body: require('./../../container').call($('<div>'), containerOptions),
                                             buttons: [{
                                                 "&title": {
-                                                    "default": 'OK'
+                                                    "default": MetkaJS.L10N.get("general.buttons.ok")
                                                 },
                                                 create: function () {
                                                     this

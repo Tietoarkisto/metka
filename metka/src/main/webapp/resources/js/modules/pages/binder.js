@@ -66,16 +66,16 @@ define(function (require) {
             header: MetkaJS.L10N.get('type.BINDERS.title'),
             fieldTitles: {
                 "studyId": {
-                    "title": "Aineistonro"
+                    "title": MetkaJS.L10N.get("search.coltitle.studyid")
                 },
                 "studyTitle": {
-                    "title": "Aineiston nimi"
+                    "title": MetkaJS.L10N.get("search.coltitle.studyname")
                 },
                 "binderId": {
-                    "title": "Mappinro"
+                    "title": MetkaJS.L10N.get("search.coltitle.binderid")
                 },
                 "description": {
-                    "title": "Mapitettu aineisto"
+                    "title": MetkaJS.L10N.get("search.coltitle.binderdescription")
                 }
             },
             dialogTitles: {
@@ -182,7 +182,7 @@ define(function (require) {
                     "type": "ROW",
                     "cells": [{
                         "type": "CELL",
-                        "title": "Aineistonro",
+                        "title": MetkaJS.L10N.get("search.binder.studyid"),
                         "horizontal": true,
                         "field": {
                             "key": "findStudyId"
@@ -192,7 +192,7 @@ define(function (require) {
                     "type": "ROW",
                     "cells": [{
                         "type": "CELL",
-                        "title": "Mappinro",
+                        "title": MetkaJS.L10N.get("search.binder.binderid"),
                         "horizontal": true,
                         "field": {
                             "key": "findBinderId"
@@ -202,7 +202,7 @@ define(function (require) {
                     "type": "ROW",
                     "cells": [{
                         "type": "CELL",
-                        "title": "Aineiston nimi",
+                        "title": MetkaJS.L10N.get("search.binder.studytitle"),
                         "horizontal": true,
                         "field": {
                             "key": "findStudyTitle"
@@ -212,7 +212,7 @@ define(function (require) {
                     "type": "ROW",
                     "cells": [{
                         "type": "CELL",
-                        "title": "Mapitettu aineisto",
+                        "title": MetkaJS.L10N.get("search.binder.binderdescription"),
                         "horizontal": true,
                         "field": {
                             "key": "findBinderDescription"
@@ -235,7 +235,7 @@ define(function (require) {
                     "type": "ROW",
                     "cells": [{
                         "type": "CELL",
-                        "title": "Mapitukset",
+                        "title": MetkaJS.L10N.get("search.binder.title"),
                         "colspan": 1,
                         "readOnly": true,
                         "field": {
@@ -262,7 +262,7 @@ define(function (require) {
             data: commonSearchBooleans.initialData({}),
             buttons: [{
                 "&title": {
-                    "default": "Lisää aineisto mappiin"
+                    "default": MetkaJS.L10N.get("general.buttons.addBinder")
                 },
                 permissions: [
                     'canEditBinderPages'
