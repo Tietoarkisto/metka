@@ -33,11 +33,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.uta.fsd.metka.enums.SelectionListType;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.interfaces.ModelBase;
+import fi.uta.fsd.metkaAuthentication.Permission;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Specification and documentation is found from uml/data_config/uml_json_configuration.graphml
@@ -153,6 +151,26 @@ public class Configuration implements ModelBase {
             }
         }
         return false;
+    }
+
+    public Boolean checkPermissions(){
+        Boolean found;
+        List<Permission> permissions = Arrays.asList(Permission.values());
+        for (Field field : fields.values()){
+            for (String permission: field.getRemovePermissions()){
+                found = false;
+                for (Permission permission2 : permissions){
+                    if (permission.equals(permission2.toPermission())){
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override

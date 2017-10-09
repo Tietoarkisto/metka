@@ -148,7 +148,7 @@ public class SettingsController {
         switch(request.getType()) {
             case DATA_CONF: {
                 Pair<SerializationResults, Configuration> result = json.deserializeDataConfiguration(request.getJson());
-                if(result.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS || result.getRight().hasDuplicateKeys()) {
+                if(result.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS || result.getRight().hasDuplicateKeys() ||!result.getRight().checkPermissions()) {
                     return ReturnResult.OPERATION_FAIL;
                 }
                 ReturnResult r = service.uploadConfiguration(result.getRight());
