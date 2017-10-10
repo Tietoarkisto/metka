@@ -29,6 +29,15 @@
 define(function(require) {
     'use strict';
 
+    var fieldDefaultValues = {
+        field_translatable: true,
+        field_immutable: false,
+        field_editable: true,
+        field_writable: true,
+        field_indexed: true,
+        field_exact: false
+    };
+
     var fieldTitles = {
         selectionLists_key: {
             title: MetkaJS.L10N.get("settings.configuration.editor.selectionlists.key")
@@ -233,6 +242,10 @@ define(function(require) {
         container.rows.DEFAULT.forEach(function(row) {
             row.removed = true;
         });
+    }
+
+    function setDefault(field){
+
     }
 
     return function(configuration, callback) {
@@ -616,6 +629,10 @@ define(function(require) {
                                     }
                                     var $elem = this;
 
+                                    if (data(options)(options.field.key).getByLang("DEFAULT") == null){
+                                        data(options)(options.field.key).setByLang("DEFAULT", fieldDefaultValues[options.field.key])
+                                    }
+
                                     update(data(options)("field_type").getByLang("DEFAULT"));
 
                                     onChange(options, update, "field_type");
@@ -630,6 +647,10 @@ define(function(require) {
                                         }
                                     }
                                     var $elem = this;
+
+                                    if (data(options)(options.field.key).getByLang("DEFAULT") == null){
+                                        data(options)(options.field.key).setByLang("DEFAULT", fieldDefaultValues[options.field.key])
+                                    }
 
                                     update(data(options)("field_type").getByLang("DEFAULT"));
 
@@ -646,9 +667,34 @@ define(function(require) {
                                     }
                                     var $elem = this;
 
+                                    if (data(options)(options.field.key).getByLang("DEFAULT") == null){
+                                        data(options)(options.field.key).setByLang("DEFAULT", fieldDefaultValues[options.field.key])
+                                    }
+
                                     update(data(options)("field_type").getByLang("DEFAULT"));
 
                                     onChange(options, update, "field_type");
+                                }
+                            },
+                            field_indexed: {
+                                preCreate: function (options) {
+                                    if (data(options)(options.field.key).getByLang("DEFAULT") == null){
+                                        data(options)(options.field.key).setByLang("DEFAULT", fieldDefaultValues[options.field.key])
+                                    }
+                                }
+                            },
+                            field_editable: {
+                                preCreate: function (options) {
+                                    if (data(options)(options.field.key).getByLang("DEFAULT") == null){
+                                        data(options)(options.field.key).setByLang("DEFAULT", fieldDefaultValues[options.field.key])
+                                    }
+                                }
+                            },
+                            field_immutable: {
+                                preCreate: function (options) {
+                                    if (data(options)(options.field.key).getByLang("DEFAULT") == null){
+                                        data(options)(options.field.key).setByLang("DEFAULT", fieldDefaultValues[options.field.key])
+                                    }
                                 }
                             },
                             field_selectionList: {
