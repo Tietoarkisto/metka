@@ -43,22 +43,16 @@ define(function (require) {
                         reqOption = dataKindOptions[i]["value"]
                     }
                 }
-                if (dataKindVal === reqOption){
-                    $elem.hide();
-                } else {
-                    $elem.show();
-                }
+                options.hidden = dataKindVal === reqOption;
 
                 options.$events.on('data-changed-{key}-{lang}'.supplant({
                     key: "datakind",
                     lang: "DEFAULT"
                 }), function(e, value) {
-                    if (value === reqOption) {
-                        $elem.hide();
-                        $elem.val("");
-                    } else {
-                        $elem.show();
-                    }
+                    options.hidden = value === reqOption;
+                    options.$events.trigger('redraw-cell-{key}'.supplant({
+                        key: options.fieldOptions.key
+                    }));
                 });
             }
         }

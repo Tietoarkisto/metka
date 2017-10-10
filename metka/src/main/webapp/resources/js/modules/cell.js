@@ -49,6 +49,11 @@ define(function (require) {
                     require('./field').call($div, $.extend(options, {
                         fieldOptions: getPropertyNS(options, 'dataConf.fields', options.field.key) || {}
                     }));
+                    options.$events.register('redraw-cell-{key}'.supplant({
+                        key: options.fieldOptions.key
+                    }), function () {
+                        $div.parent().empty().append(require('./togglable').call($div, options, true))
+                    })
                 }
             }
         }
