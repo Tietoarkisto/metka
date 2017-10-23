@@ -138,7 +138,7 @@ define(function (require) {
                     "default": "Muuttujahaku"
                 },
                 "&edit": {
-                    "default": "Muokkaa muuttujaaDONED"
+                    "default": "Muokkaa muuttujaa"
                 }
             },
             "STUDY_ATTACHMENT": {
@@ -186,7 +186,7 @@ define(function (require) {
                 }
             },
             "&name": {
-                "default": "NimiDONED"
+                "default": "Nimi"
             },
 
             "downloadInfo": {
@@ -250,10 +250,10 @@ define(function (require) {
             },
             "vargroups": {
                 "&grouptexts": {
-                    "default": "Ryhmän tekstitDONED"
+                    "default": "Ryhmän tekstit"
                 },
                 "&groupname": {
-                    "default": "Ryhmän nimiDONED"
+                    "default": "Ryhmän nimi"
                 }
             },
 
