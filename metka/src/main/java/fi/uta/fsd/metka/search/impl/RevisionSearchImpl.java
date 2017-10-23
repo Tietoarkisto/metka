@@ -42,13 +42,10 @@ import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.revision.*;
-import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
-import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.*;
-import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -67,20 +64,6 @@ public class RevisionSearchImpl implements RevisionSearch {
     @Autowired
     private ConfigurationRepository configurations;
 
-    @Override
-    public Pair<ReturnResult, ResultList<RevisionResult>> search(RevisionSearchRequest request) {
-        return performBasicSearch(request);
-        /*switch(request.getType()) {
-            case SERIES:
-                return findSeries(request);
-            case STUDY:
-                return findStudies(request);
-            case PUBLICATION:
-                return findPublications(request);
-            default:
-                return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
-        }*/
-    }
 
     @Override
     public Pair<ReturnResult, List<RevisionSearchResult>> collectRevisionHistory(RevisionHistoryRequest request) {
@@ -282,27 +265,6 @@ public class RevisionSearchImpl implements RevisionSearch {
                             , field.hasCurrentFor(l) ? field.getCurrentFor(l).getActualValue() : " "));
                 }
             }
-        }
-    }
-
-    private Pair<ReturnResult, ResultList<RevisionResult>> performBasicSearch(RevisionSearchRequest request) {
-        /*Pair<ReturnResult, Configuration> configPair = configurations.findLatestConfiguration(request.getType());
-        if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            return new ImmutablePair<>(configPair.getLeft(), null);
-        }*/
-        try {
-            ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build(request, configurations);
-            ResultList<RevisionResult> results = searcher.executeSearch(command);
-            results = collectResults(results);
-            if(results.getResults().size() > LuceneConfig.MAX_RETURNED_RESULTS) {
-                results.getResults().removeAll(results.getResults().subList(LuceneConfig.MAX_RETURNED_RESULTS, results.getResults().size()));
-                return new ImmutablePair<>(ReturnResult.RESULT_SET_TOO_LARGE, results);
-            }
-            return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, results);
-        } catch(QueryNodeException qne) {
-            // Couldn't form query command
-            Logger.error(getClass(), "Exception while performing basic series search:", qne);
-            return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
         }
     }
 

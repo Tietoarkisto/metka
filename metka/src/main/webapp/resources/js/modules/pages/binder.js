@@ -47,8 +47,10 @@ define(function (require) {
                 exactValue: true
             }, {
                 key: 'findStudyTitle',
-                rename: 'studytitle',
-                exactValue: true
+                rename: 'studyid.value',
+                addParens: false,
+                exactValue:true,
+                subQuery: 'ID{+key.configuration.type:STUDY +title:{input}}ID'
             }, {
                 key: 'findBinderDescription',
                 rename: 'description',

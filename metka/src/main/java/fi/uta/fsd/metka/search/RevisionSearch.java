@@ -30,8 +30,6 @@ package fi.uta.fsd.metka.search;
 
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.*;
-import fi.uta.fsd.metkaSearch.results.ResultList;
-import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +37,6 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 public interface RevisionSearch {
-    public Pair<ReturnResult, ResultList<RevisionResult>> search(RevisionSearchRequest request);
-
     Pair<ReturnResult,List<RevisionSearchResult>> collectRevisionHistory(RevisionHistoryRequest request);
 
     List<RevisionCompareResponseRow> compareRevisions(RevisionCompareRequest request);

@@ -34,6 +34,7 @@ import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryResponse;
 import fi.uta.fsd.metka.transfer.revision.*;
 import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedRequest;
 import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedResponse;
@@ -122,7 +123,8 @@ public class RevisionController {
     }
 
     @RequestMapping(value="ajax/search", method = RequestMethod.POST)
-    public @ResponseBody RevisionSearchResponse search(@RequestBody RevisionSearchRequest searchRequest) {
+    public @ResponseBody
+    ExpertSearchQueryResponse search(@RequestBody RevisionSearchRequest searchRequest) throws Exception {
         return revisions.search(searchRequest);
     }
 

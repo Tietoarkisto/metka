@@ -45,7 +45,7 @@ define(function (require) {
                 'publicationid',
                 {
                     key: 'studies',
-                    rename: 'studies.studyid'
+                    rename: 'studies.value'
                 },
                 {
                     key: 'publicationfirstsaved',
@@ -60,17 +60,19 @@ define(function (require) {
                 'publicationyear',
                 {
                     key: 'studyname',
-                    rename: 'studies.studytitle',
+                    rename: 'studies.value',
                     exactValue: true,
                     addParens: true,
-                    addWildcard: true
+                    addWildcard: true,
+                    subQuery: "ID{+key.configuration.type:STUDY +title:{input}}ID"
                 },
                 {
                     key: 'seriesname',
-                    rename: 'series.seriesname',
+                    rename: 'series',
                     exactValue: true,
                     addParens: true,
-                    addWildcard: true
+                    addWildcard: true,
+                    subQuery: "ID{+key.configuration.type:SERIES +seriesname:{input}}ID"
                 },
                 {
                     key: 'lastname',

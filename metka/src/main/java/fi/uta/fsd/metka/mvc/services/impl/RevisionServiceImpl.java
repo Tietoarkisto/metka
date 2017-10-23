@@ -39,6 +39,7 @@ import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.model.transfer.TransferRow;
 import fi.uta.fsd.metka.model.transfer.TransferValue;
+import fi.uta.fsd.metka.mvc.services.ExpertSearchService;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
 import fi.uta.fsd.metka.search.RevisionSearch;
 import fi.uta.fsd.metka.storage.repository.*;
@@ -46,20 +47,18 @@ import fi.uta.fsd.metka.storage.repository.enums.*;
 import fi.uta.fsd.metka.storage.response.OperationResponse;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
+import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryRequest;
+import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryResponse;
 import fi.uta.fsd.metka.transfer.revision.*;
 import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedRequest;
 import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedResponse;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
-import fi.uta.fsd.metkaSearch.results.ResultList;
-import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Contains operations common for all revisions like save and approve.
@@ -67,6 +66,9 @@ import java.util.Map;
  */
 @Service
 public class RevisionServiceImpl implements RevisionService {
+
+    @Autowired
+    private ExpertSearchService expertSearch;
 
     @Autowired
     private RevisionCreationRepository create;
@@ -474,13 +476,26 @@ public class RevisionServiceImpl implements RevisionService {
         return getResponseGUI(newPair.getLeft(), newPair.getRight(), false);
     }
 
-    @Override public RevisionSearchResponse search(RevisionSearchRequest request) {
-        RevisionSearchResponse response = new RevisionSearchResponse();
+    @Override public ExpertSearchQueryResponse search(RevisionSearchRequest request) throws Exception {
+        List<String> qrys = new ArrayList<>();
 
-        Pair<ReturnResult, ResultList<RevisionResult>> result = search.search(request);
-        response.setResult(result.getLeft());
-        response.setResults(result.getRight());
+        qrys.add(((!request.isSearchApproved())?"+":"")+"state.approved:"+request.isSearchApproved());
+        qrys.add(((!request.isSearchDraft())?"+":"")+"state.draft:"+request.isSearchDraft());
+        qrys.add(((!request.isSearchRemoved())?"+":"")+"state.removed:"+request.isSearchRemoved());
+        qrys.add("+(state.latest:draft OR state.latest:approved)");
 
+        for(String key : request.getValues().keySet()) {
+            if(!StringUtils.hasText(request.getByKey(key))) {
+                continue;
+            }
+            qrys.add("+"+key+":"+request.getByKey(key));
+        }
+
+        String qryStr = StringUtils.collectionToDelimitedString(qrys, " ");
+
+        ExpertSearchQueryRequest expertSearchRequest = new ExpertSearchQueryRequest();
+        expertSearchRequest.setQuery(qryStr);
+        ExpertSearchQueryResponse response = expertSearch.performQuery(expertSearchRequest);
         return response;
     }
 
@@ -569,7 +584,10 @@ public class RevisionServiceImpl implements RevisionService {
             for(String key : request.getValues()) {
                 ids.add(Long.parseLong(key.split("-")[0]));
             }
-
+            if (ids.size() == 0) {
+                response.setResult(ReturnResult.PARAMETERS_MISSING);
+                return response;
+            }
             response.getValues().addAll(revisions.getRevisionablesLogicallyRemoved(ids));
             response.setResult(ReturnResult.OPERATION_SUCCESSFUL);
         } catch (NumberFormatException nfe) {

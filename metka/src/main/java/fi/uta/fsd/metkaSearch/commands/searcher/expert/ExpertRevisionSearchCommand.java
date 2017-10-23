@@ -32,6 +32,7 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
+import fi.uta.fsd.metka.mvc.services.ExpertSearchService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchRequest;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
@@ -47,6 +48,7 @@ import org.apache.lucene.queryparser.flexible.standard.config.NumericConfig;
 import org.apache.lucene.queryparser.flexible.standard.parser.ParseException;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.spans.SpanQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import java.text.DecimalFormat;
@@ -57,6 +59,9 @@ import static fi.uta.fsd.metka.enums.FieldType.REAL;
 
 public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<RevisionResult> {
     private final static String LANG_TOKE = "lang";
+
+    @Autowired
+    ExpertSearchService expertSearch;
 
     public static ExpertRevisionSearchCommand build(RevisionSearchRequest request, ConfigurationRepository configurations)
             throws UnsupportedOperationException, QueryNodeException {
@@ -109,7 +114,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
                 qry = qry.substring(qry.indexOf("key.configuration.type:")+"key.configuration.type:".length());
                 String[] split = qry.split("\\s");
                 if(split.length > 0) {
-                    return ConfigurationType.fromValue(split[0]);
+                    return ConfigurationType.fromValue(split[0].toUpperCase());
                 }
             }
         } catch(IllegalArgumentException e) {

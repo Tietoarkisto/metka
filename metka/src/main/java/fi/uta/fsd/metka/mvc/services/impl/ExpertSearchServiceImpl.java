@@ -217,8 +217,8 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
 
     private enum TagType {
         ROOT("", "", 0),
-        KEY(":KEY\\{", "}KEY(?=\\s|\\z)", 4),
-        ID(":ID\\{", "}ID(?=\\s|\\z)", 3);
+        KEY("KEY\\{", "}KEY", 4),
+        ID("ID\\{", "}ID", 3);
 
         private final String start;
         private final String end;

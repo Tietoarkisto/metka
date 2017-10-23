@@ -161,6 +161,17 @@ class GeneralRevisionHandler implements RevisionHandler {
         }
         RevisionableInfo info = removedInfoPair.getRight();
 
+        // Ensure all revisions have this value indexed
+        if (data.getLatest() == null){
+            if (info.getCurrent().equals(data.getKey().getNo()) && data.getState().equals(RevisionState.APPROVED)){
+                data.setLatest("approved");
+            } else if (data.getState().equals(RevisionState.DRAFT)) {
+                data.setLatest("draft");
+            } else {
+                data.setLatest("false");
+            }
+        }
+
         // Loop through languages, we index the documents once for each language
         // TODO: Should we index everything into a single document instead and let user separate based on language specific fields?
         for(Language language : Language.values()) {
@@ -194,6 +205,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 // Set state.draft field to false since this is an approved data
                 document.indexKeywordField("state.removed", "false", YES);
                 document.indexKeywordField("state.draft", "false", YES);
+                document.indexKeywordField("state.draft.handler", "", YES);
             } else if(data.getState() == RevisionState.DRAFT) {
                 // Set state.draft field to true since this is a draft data, also set current handler
                 document.indexKeywordField("state.draft", "true", YES);

@@ -32,6 +32,7 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.transfer.TransferData;
+import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryResponse;
 import fi.uta.fsd.metka.transfer.revision.*;
 import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedRequest;
 import fi.uta.fsd.metka.transfer.revisionable.RevisionableLogicallyRemovedResponse;
@@ -85,7 +86,8 @@ public interface RevisionService {
     RevisionDataResponse revert(RevisionKey key, Integer targetRevision);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_PERFORM_SEARCH +"', '" + PermissionCheck.Values.PERMISSION + "')")
-    @Transactional(readOnly = true) RevisionSearchResponse search(RevisionSearchRequest request);
+    @Transactional(readOnly = true)
+    ExpertSearchQueryResponse search(RevisionSearchRequest request) throws Exception;
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#key, '" + PermissionCheck.Values.CLAIM_REVISION + "')")

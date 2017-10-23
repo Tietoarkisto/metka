@@ -88,16 +88,16 @@ define(function(require) {
                 if (searchOptions.addParens) {
                     value = '(' + value + ')';
                 }
-                if(searchOptions.useSubquery === "id") {
-                    value = 'ID{'+useSubquery.supplant({
-                        value: value
-                    })+'}ID'
-                } else if (searchOptions.useSubquery === "key") {
-                    value = 'KEY{'+useSubquery.supplant({
-                        value: value
-                    })+'}KEY'
+                if(searchOptions.subQuery != null) {
+                    value = searchOptions.subQuery.supplant({
+                        input: value
+                    });
                 }
-                requestData.values[searchOptions.rename || key] = value;
+                if (!requestData.values[searchOptions.rename || key]) {
+                    requestData.values[searchOptions.rename || key] = value;
+                } else {
+                    requestData.values[searchOptions.rename || key] = "(" + requestData.values[searchOptions.rename || key] + " AND " + value + ")";
+                }
             });
             if(lang) {
                 requestData.values['key.language'] = lang;
