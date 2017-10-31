@@ -557,15 +557,17 @@ public class RevisionServiceImpl implements RevisionService {
 
     @Override
     public RevisionExportResponse exportRevision(RevisionKey key) {
-
+        Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(key.getId());
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key);
         RevisionExportResponse response = new RevisionExportResponse();
         response.setResult(pair.getLeft());
-        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND && infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND ) {
             // Operation was not successful
             return response;
         }
-        Pair<SerializationResults, String> result = json.serialize(pair.getRight());
+        TransferData transferData = TransferData.buildFromRevisionData(pair.getRight(), infoPair.getRight());
+        fetchTransferDataReferences(transferData, null, true);
+        Pair<SerializationResults, String> result = json.serialize(transferData);
         if(result.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
             response.setResult(ReturnResult.OPERATION_FAIL);
             return response;

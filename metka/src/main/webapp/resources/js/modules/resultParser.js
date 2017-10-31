@@ -34,6 +34,13 @@ define(function(require) {
             getResult: function() {
                 switch(typeof result) {
                     case 'object':
+                        if (result.result.toString() === "CONFIG_UPDATE_PARTIAL_FAILURE"){
+                            var resString = MetkaJS.L10N.get("returnResults.configuration.CONFIG_UPDATE_PARTIAL_FAILURE");
+                            for (var i = 0; i < result.failedRevisions.length; i++){
+                                resString += " " + result.failedRevisions[i];
+                            }
+                            return resString;
+                        }
                         return result.result;
                     default:
                         return result;

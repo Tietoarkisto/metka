@@ -34,8 +34,10 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.SettingsService;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
+import fi.uta.fsd.metka.storage.response.UploadResponse;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.settings.*;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
@@ -63,6 +65,9 @@ public class SettingsController {
 
     @Autowired
     private JSONUtil json;
+
+    @Autowired
+    private ConfigurationRepository configurations;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String settings(Model model) {
@@ -141,57 +146,56 @@ public class SettingsController {
      * @return
      */
     @RequestMapping(value = "uploadJson", method = RequestMethod.POST)
-    public @ResponseBody ReturnResult uploadJson(@RequestBody UploadJsonRequest request) {
+    public @ResponseBody UploadResponse uploadJson(@RequestBody UploadJsonRequest request) {
         if(request.getType() == null || !StringUtils.hasText(request.getJson())) {
-            return ReturnResult.PARAMETERS_MISSING;
+            return new UploadResponse(ReturnResult.PARAMETERS_MISSING);
         }
         switch(request.getType()) {
             case DATA_CONF: {
                 Pair<SerializationResults, Configuration> result = json.deserializeDataConfiguration(request.getJson());
                 if(result.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS || result.getRight().hasDuplicateKeys() ||!result.getRight().checkPermissions()) {
-                    return ReturnResult.OPERATION_FAIL;
+                    return new UploadResponse(ReturnResult.OPERATION_FAIL);
                 }
-                ReturnResult r = service.uploadConfiguration(result.getRight());
-                if(r != ReturnResult.OPERATION_SUCCESSFUL) {
-                    return r;
-                }
-                break;
+                Pair<ReturnResult, Configuration> oldConf = configurations.findLatestConfiguration(result.getRight().getKey().getType());
+                Boolean newVersion = oldConf.getRight().getKey().getVersion().equals(result.getRight().getKey().getVersion() - 1);
+                UploadResponse r = service.uploadConfiguration(result.getRight(), newVersion);
+                return r;
             }
             case GUI_CONF: {
                 Pair<SerializationResults, GUIConfiguration> result = json.deserializeGUIConfiguration(request.getJson());
                 if(result.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
-                    return ReturnResult.OPERATION_FAIL;
+                    return new UploadResponse(ReturnResult.OPERATION_FAIL);
                 }
                 ReturnResult r = service.uploadConfiguration(result.getRight());
                 if(r != ReturnResult.OPERATION_SUCCESSFUL) {
-                    return r;
+                    return new UploadResponse(r);
                 }
                 break;
             }
             case MISC: {
                 Pair<SerializationResults, JsonNode> result = json.deserializeToJsonTree(request.getJson());
                 if(result.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
-                    return ReturnResult.OPERATION_FAIL;
+                    return new UploadResponse(ReturnResult.OPERATION_FAIL);
                 }
                 JsonNode node = result.getRight().get("key");
                 if(node == null || node.getNodeType() != JsonNodeType.STRING || !StringUtils.hasText(node.textValue())) {
-                    return ReturnResult.OPERATION_FAIL;
+                    return new UploadResponse(ReturnResult.OPERATION_FAIL);
                 }
                 node = result.getRight().get("data");
                 if(node == null || node.getNodeType() != JsonNodeType.ARRAY || node.size() == 0) {
-                    return ReturnResult.OPERATION_FAIL;
+                    return new UploadResponse(ReturnResult.OPERATION_FAIL);
                 }
                 ReturnResult r = service.uploadJson(result.getRight());
                 if(r != ReturnResult.OPERATION_SUCCESSFUL) {
-                    return r;
+                    return new UploadResponse(r);
                 }
                 break;
             }
             default:
-                return ReturnResult.INCORRECT_TYPE_FOR_OPERATION;
+                return new UploadResponse(ReturnResult.INCORRECT_TYPE_FOR_OPERATION);
         }
 
-        return ReturnResult.OPERATION_SUCCESSFUL;
+        return new UploadResponse(ReturnResult.OPERATION_SUCCESSFUL);
     }
 
 

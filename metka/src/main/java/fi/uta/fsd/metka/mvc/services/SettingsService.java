@@ -33,6 +33,7 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.UploadResponse;
 import fi.uta.fsd.metka.transfer.settings.*;
 import fi.uta.fsd.metkaAuthentication.Permission;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,7 +46,7 @@ import java.util.List;
 @Transactional
 public interface SettingsService {
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_CONFIGURATIONS +"', 'PERMISSION')")
-    ReturnResult uploadConfiguration(Configuration configuration);
+    UploadResponse uploadConfiguration(Configuration configuration, Boolean newVersion);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_CONFIGURATIONS +"', 'PERMISSION')")
     ReturnResult uploadConfiguration(GUIConfiguration configuration);

@@ -141,7 +141,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             return new ImmutablePair<>(ReturnResult.WRONG_USER, transferData);
         }
 
-        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(revision.getConfiguration());
+        Pair<ReturnResult, Configuration> configPair = configurations.findLatestConfiguration(revisionPair.getRight().getConfiguration().getType());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             Logger.error(getClass(), "Couldn't find configuration "+revision.getConfiguration().toString()+" while saving "+revision.toString());
             return new ImmutablePair<>(configPair.getLeft(), transferData);
@@ -1035,6 +1035,8 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 // If saving field returns an error flag, set it also on the result flag
                 if (saveResult.getRight() && !result.getRight()) result.setRight(true);
             }
+
+            if (transferData.getConfiguration().getVersion() != configuration.getKey().getVersion()) result.setLeft(true); revisionData.getConfiguration().setVersion(configuration.getKey().getVersion());
 
             // Check bidirectional fields. This requires some custom code in certain cases.
 

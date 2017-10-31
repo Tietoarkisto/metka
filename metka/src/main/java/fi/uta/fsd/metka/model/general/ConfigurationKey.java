@@ -36,7 +36,7 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
  */
 public class ConfigurationKey {
 
-    private final Integer version;
+    private Integer version;
     private final ConfigurationType type;
 
     @JsonCreator
@@ -51,6 +51,10 @@ public class ConfigurationKey {
 
     public ConfigurationType getType() {
         return type;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     @Override

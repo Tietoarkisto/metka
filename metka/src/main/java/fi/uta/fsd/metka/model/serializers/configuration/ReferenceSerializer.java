@@ -44,7 +44,7 @@ public class ReferenceSerializer extends ObjectSerializer<Reference> {
     public void doSerialize(Reference value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 
         jgen.writeStringField("key", value.getKey());
-        jgen.writeStringField("type", value.getType().toString());
+        jgen.writeStringField("type", value.getType().toString() != null ? value.getType().toString() : "");
         if(value.getTitlePath() == null) {
             jgen.writeNullField("titlePath");
         } else {

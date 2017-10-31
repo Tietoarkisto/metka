@@ -565,7 +565,7 @@ define(function (require) {
                 "&agreementtype": {
                     "default": "Arkistointisopimuksen tapa"
                 },
-                "&depositorytype": {
+                "&depositortype": {
                     "default": "Luovuttajan tyyppi"
                 },
                 "&handler": {
@@ -1140,6 +1140,11 @@ define(function (require) {
                         }
                     }
                 }
+            }
+        },
+        "returnResults": {
+            "configuration": {
+                "CONFIG_UPDATE_PARTIAL_FAILURE": "Joitain revisioita ei voitu päivittää. Päivittämättömät revisiot: "
             }
         }
     });

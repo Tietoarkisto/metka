@@ -92,5 +92,6 @@ public enum ReturnResult {
     HAS_HANDLER,                        // Revision already has handler in a situation where null handler is required
     EXCEPTION_DURING_API_CALL,
     RESULT_SET_TOO_LARGE,
-    FILE_ALREADY_EXISTS                // Special failure condition when file move is tried to a location that already contains a file
+    FILE_ALREADY_EXISTS,                // Special failure condition when file move is tried to a location that already contains a file
+    CONFIG_UPDATE_PARTIAL_FAILURE       // Failure to save revisions with an updated data configuration
 }

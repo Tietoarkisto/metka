@@ -46,7 +46,7 @@ public class FieldSerializer extends ObjectSerializer<Field> {
     public void doSerialize(Field value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 
         jgen.writeStringField("key", value.getKey());
-        jgen.writeStringField("type", value.getType().toString());
+        jgen.writeStringField("type", value.getType() != null ? value.getType().toString() : "");
         if(!(value.getType() == FieldType.REFERENCECONTAINER || value.getType() == FieldType.REFERENCE)) {
             jgen.writeBooleanField("translatable", value.getTranslatable());
         } else {
@@ -75,15 +75,15 @@ public class FieldSerializer extends ObjectSerializer<Field> {
                 jgen.writeBooleanField("exact", false);
                 break;
             case SELECTION:
-                jgen.writeStringField("selectionList", value.getSelectionList());
+                jgen.writeStringField("selectionList", value.getSelectionList() != null ? value.getSelectionList() : "");
                 break;
             case REFERENCE:
-                jgen.writeStringField("reference", value.getReference());
+                jgen.writeStringField("reference", value.getReference() != null ? value.getReference() : "");
                 break;
             case REFERENCECONTAINER:
-                jgen.writeStringField("reference", value.getReference());
+                jgen.writeStringField("reference", value.getReference() != null ? value.getReference() : "");
                 if(StringUtils.hasText(value.getBidirectional())) {
-                    jgen.writeStringField("bidirectional", value.getBidirectional());
+                    jgen.writeStringField("bidirectional", value.getBidirectional() != null ? value.getBidirectional() : "");
                 }
                 /* FALLTHROUGH */
             case CONTAINER:

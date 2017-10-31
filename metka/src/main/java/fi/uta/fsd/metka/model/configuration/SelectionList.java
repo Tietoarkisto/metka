@@ -35,6 +35,8 @@ import fi.uta.fsd.metka.enums.SelectionListType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 /**
  * Specification and documentation is found from uml/data_config/uml_json_configuration_selection_list.graphml
  */
@@ -44,11 +46,11 @@ public class SelectionList {
     @JsonProperty("default") private String def = null;
     private final List<Option> options = new ArrayList<>();
     private SelectionListType type;
-    private String reference;
+    private String reference = "";
     private Boolean includeEmpty = true;
     private final List<String> freeText = new ArrayList<>();
-    private String freeTextKey;
-    private String sublistKey;
+    private String freeTextKey = "";
+    private String sublistKey = "";
 
     @JsonCreator
     public SelectionList(@JsonProperty("key") String key) {
@@ -141,14 +143,14 @@ public class SelectionList {
 
         SelectionList that = (SelectionList) o;
 
-        if (!key.equals(that.key)) return false;
-
-        return true;
+        return Objects.equals(key, that.key) && Objects.equals(this.getFreeTextKey(), that.getFreeTextKey()) && Objects.equals(this.getDef(), that.getDef()) && Objects.equals(this.getType(), that.getType())
+                && Objects.equals(this.getSublistKey(), that.getSublistKey()) && Objects.equals(this.getIncludeEmpty(), that.getIncludeEmpty()) && Objects.equals(this.getReference(), that.getReference())
+                && Objects.equals(this.getFreeText(), that.getFreeText()) && Objects.equals(this.getOptions(), that.getOptions());
     }
 
     @Override
     public int hashCode() {
-        return key.hashCode();
+        return Objects.hash(key, freeTextKey, def, type, sublistKey, includeEmpty, reference, freeText, options);
     }
 
     @Override

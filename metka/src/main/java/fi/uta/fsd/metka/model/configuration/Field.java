@@ -35,10 +35,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.FieldType;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Specification and documentation is found from uml/data_config/uml_json_configuration_field.graphml
@@ -59,7 +56,7 @@ public class Field {
     private Boolean indexed = true;
     private Boolean generalSearch = false;
     private Boolean exact = true;
-    private String bidirectional = "";
+    private String bidirectional = null;
     private String indexName = null;
     private Boolean fixedOrder = true;
 
@@ -213,14 +210,19 @@ public class Field {
 
         Field field = (Field) o;
 
-        if (!key.equals(field.key)) return false;
-
-        return true;
+        return Objects.equals(key, field.key) && Objects.equals(this.getSelectionList(), field.getSelectionList()) && Objects.equals(this.getReference(), field.getReference()) && Objects.equals(this.getType(), field.getType())
+                && Objects.equals(this.getIndexAs(), field.getIndexAs()) && Objects.equals(this.getEditable(), field.getEditable()) && Objects.equals(this.getTranslatable(), field.getTranslatable())
+                && Objects.equals(this.getImmutable(), field.getImmutable()) && Objects.equals(this.getGeneralSearch(), field.getGeneralSearch()) && Objects.equals(this.getExact(), field.getExact())
+                && Objects.equals(this.getBidirectional(), field.getBidirectional()) && Objects.equals(this.getFixedOrder(), field.getFixedOrder()) && Objects.equals(this.getSubfields(), field.getSubfields())
+                && Objects.equals(this.getIndexName(), field.getIndexName()) && Objects.equals(this.getMaxValues(), field.getMaxValues()) && Objects.equals(this.getRemovePermissions(), field.getRemovePermissions())
+                && Objects.equals(this.getSubfield(), field.getSubfield()) && Objects.equals(this.getWritable(), field.getWritable()) && Objects.equals(this.getIndexed(), field.getIndexed());
     }
 
     @Override
     public int hashCode() {
-        return key.hashCode();
+        return Objects.hash(key, selectionList, reference, type, indexName, editable,
+                translatable, immutable, generalSearch, exact, bidirectional,
+                fixedOrder, subfields, indexed, maxValues, removePermissions, subfield, writable);
     }
 
     @Override

@@ -34,6 +34,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.ReferenceType;
 
+import java.util.Objects;
+
 /**
  * Specification and documentation is found from uml/data_config/uml_json_configuration_reference.graphml
  * Additional specification is found from Reference specification.odt
@@ -134,14 +136,14 @@ public class Reference {
 
         Reference reference = (Reference) o;
 
-        if (!key.equals(reference.key)) return false;
-
-        return true;
+        return Objects.equals(key, reference.key) && Objects.equals(this.getValuePath(), reference.getValuePath()) && Objects.equals(this.getType(), reference.getType())
+                && Objects.equals(this.getTarget(), reference.getTarget()) && Objects.equals(this.getTitlePath(), reference.getTitlePath()) && Objects.equals(this.getApprovedOnly(), reference.getApprovedOnly())
+                && Objects.equals(this.getIgnoreRemoved(), reference.getIgnoreRemoved());
     }
 
     @Override
     public int hashCode() {
-        return key.hashCode();
+        return Objects.hash(key, valuePath, type, target, titlePath, approvedOnly, ignoreRemoved);
     }
 
     @JsonIgnore
