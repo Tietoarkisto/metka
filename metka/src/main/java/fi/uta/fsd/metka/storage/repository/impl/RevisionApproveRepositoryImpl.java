@@ -71,10 +71,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 // TODO: at the moment does mostly DEFAULT language approval for restrictions
 @Repository
@@ -288,6 +285,15 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      * @param revision    RevisionData to be finalized
      */
     private ReturnResult finalizeApproval(RevisionData revision, Configuration configuration, DateTimeUserPair info) {
+        // Check if any fields were removed from the configuration
+        Map<String, DataField> newFields = new HashMap<>();
+        for (DataField field : revision.getFields().values()){
+            if (configuration.getField(field.getKey()) != null){
+                newFields.put(field.getKey(), field);
+            }
+        }
+        revision.getFields().clear();
+        revision.getFields().putAll(newFields);
         switch(revision.getConfiguration().getType()) {
             case STUDY:
                 return finalizeStudyApproval(revision, info);

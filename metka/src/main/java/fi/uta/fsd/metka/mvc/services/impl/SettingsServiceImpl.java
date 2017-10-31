@@ -321,15 +321,15 @@ public class SettingsServiceImpl implements SettingsService {
             }
             TransferData saveData = TransferData.buildFromRevisionData(revisionData, infoPair.getRight());
             for (String changed : changedFields) {
-                if (!configuration.getField(changed).getEditable()){
+                if (configuration.getField(changed) != null && !configuration.getField(changed).getEditable()){
                     continue;
                 }
                 if (saveData.getField(changed) == null){
                     continue;
                 }
-                if (configuration.getField(changed).getType().equals(FieldType.SELECTION)){
+                if (configuration.getField(changed) != null && configuration.getField(changed).getType().equals(FieldType.SELECTION)){
                     saveData.getField(changed).getValueFor(Language.DEFAULT).setCurrent("0");
-                } else if (configuration.getField(changed).getType().equals(FieldType.REFERENCECONTAINER) ||configuration.getField(changed).getType().equals(FieldType.CONTAINER)) {
+                } else if (configuration.getField(changed) != null && (configuration.getField(changed).getType().equals(FieldType.REFERENCECONTAINER) ||configuration.getField(changed).getType().equals(FieldType.CONTAINER))) {
                     for (List<TransferRow> langRows : saveData.getField(changed).getRows().values()){
                         for (TransferRow row : langRows){
                             row.setRemoved(true);
@@ -363,28 +363,28 @@ public class SettingsServiceImpl implements SettingsService {
             return fields;
         }
         for (Field oldField: oldConf.getRight().getFields().values()){
-            Field newField =  configuration.getField(oldField.getKey());
-            if (newField.getSubfield()){
+            Field newField = configuration.getField(oldField.getKey());
+            if (newField != null && newField.getSubfield()){
                 continue;
             }
-            if (newField == null || !oldField.equals(newField)){
-                fields.add(newField.getKey());
+            if (newField == null ||!oldField.equals(newField)){
+                fields.add(oldField.getKey());
                 continue;
             }
             // Selection lists remain the same, check if the contents (in case selection list is chosen) remain the same
             if (StringUtils.hasText(newField.getSelectionList()) && !configuration.getSelectionList(newField.getSelectionList()).equals(oldConf.getRight().getSelectionList(oldField.getSelectionList()))){
-                fields.add(newField.getKey());
+                fields.add(oldField.getKey());
                 continue;
             }
             // Check references
             if (StringUtils.hasText(newField.getReference()) && !configuration.getReference(newField.getReference()).equals(oldConf.getRight().getReference(oldField.getReference()))){
-                fields.add(newField.getKey());
+                fields.add(oldField.getKey());
                 continue;
             }
             if (newField.getSubfields().size() > 0){
                 for (String subFieldKey : newField.getSubfields()){
                     if (!oldConf.getRight().getField(subFieldKey).equals(configuration.getField(subFieldKey))){
-                        fields.add(newField.getKey());
+                        fields.add(oldField.getKey());
                     }
                 }
             }
