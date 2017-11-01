@@ -37,6 +37,7 @@ define(function (require) {
             case 'STUDY_VARIABLE':
             case 'STUDY_ERROR':
             case 'BINDER_PAGE':
+            case 'STUDY_ATTACHMENT':
                 return true;
         }
     });

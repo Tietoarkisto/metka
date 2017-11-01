@@ -47,8 +47,8 @@ define(function(require) {
                     containerKey: containerKey,
                     large: !!large,
                     defaultLang: 'DEFAULT',
-                    dialogTitle: options.field ? options.field.dialogTitle : {},
-                    dialogTitles: options.dialogTitles || {}
+                    dialogTitle: options ? options.field ? options.field.dialogTitle : {} : null,
+                    dialogTitles: options ? options.dialogTitles || {} : {}
                 });
 
                 if(modalRefresh) modalOptions.$events.register('modal.refresh', modalRefresh);

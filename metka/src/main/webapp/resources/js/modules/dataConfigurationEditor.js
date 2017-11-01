@@ -244,10 +244,6 @@ define(function(require) {
         });
     }
 
-    function setDefault(field){
-
-    }
-
     return function(configuration, callback) {
 
         var modalOptions = require('./optionsBase')();

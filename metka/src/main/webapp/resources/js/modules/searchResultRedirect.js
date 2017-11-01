@@ -29,8 +29,8 @@
 define(function(require) {
     'use strict';
 
-    function viewModal(requestOptions) {
-        require('./revisionModal')(options, requestOptions, 'BINDER_PAGE', pagesSearch.search, 'pages');
+    function viewModal(requestOptions, type) {
+        require('./revisionModal')(null, requestOptions, type, false, 'pages');
     }
 
     function viewPage(requestOptions) {
@@ -56,7 +56,7 @@ define(function(require) {
 
                     if(useModal) {
                         if((typeof useModal === 'function' && useModal(response.type)) || (typeof useModal !== 'function')) {
-                            viewModal(request);
+                            viewModal(request, response.type);
                             return;
                         }
                     }
