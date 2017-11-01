@@ -83,7 +83,11 @@ define(function(require) {
                 if (searchOptions.exactValue) {
                     value = '/' + (searchOptions.addWildcard?".*":"") + value + (searchOptions.addWildcard?".*":"") + '/';
                 } else if(searchOptions.addWildcard) {
+                    // Escape regex characters in non-exact searches
+                    value = value.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, '\\$&');
                     value = "*"+value+"*";
+                } else {
+                    value = value.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, '\\$&');
                 }
                 if (searchOptions.addParens) {
                     value = '(' + value + ')';
