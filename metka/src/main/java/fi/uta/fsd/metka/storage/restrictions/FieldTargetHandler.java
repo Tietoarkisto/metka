@@ -52,11 +52,11 @@ class FieldTargetHandler {
         Field field = configuration.getField(target.getContent());
         if(field == null) {
             // Configuration error, no field with provided name
-            return new ValidateResult(false, "CONFIG", null);
+            return new ValidateResult(false, "CONFIG - NULL FIELD", target.getContent());
         }
         if(field.getSubfield() && target.getParent() == null) {
             // Something is wrong. Field is marked as a subfield but target doesn't have a parent
-            return new ValidateResult(false, "CONFIG", null);
+            return new ValidateResult(false, "CONFIG - SUBFIELD NULL PARENT", field.getKey());
         }
 
         DataField d;
