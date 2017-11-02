@@ -91,6 +91,11 @@ Colors:
     border-bottom: none;
 }
 
+.page-header-text {
+    float:left;
+    width:79%;
+}
+
 .panel-group .panel .panel .panel-heading {
     border-bottom: 1px solid;
     border-color: inherit;
