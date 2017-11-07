@@ -30,7 +30,13 @@ define(function(require) {
     'use strict';
 
     function viewModal(requestOptions, type) {
-        require('./revisionModal')(null, requestOptions, type, false, 'pages');
+        var options = options || null;
+        var pagesSearch = pagesSearch || null;
+        if (options !== null && pagesSearch !== null){
+            require('./revisionModal')(options, requestOptions, type, pagesSearch.search, 'pages');
+        } else {
+            require('./revisionModal')(null, requestOptions, type, false, 'pages');
+        }
     }
 
     function viewPage(requestOptions) {

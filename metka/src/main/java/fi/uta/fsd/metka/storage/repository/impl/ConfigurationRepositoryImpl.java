@@ -69,6 +69,12 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     @Override
     @CacheEvict(value = "data-configuration-cache", key = "#configuration.key")
     public ReturnResult insert(Configuration configuration) {
+        Pair<ReturnResult, Configuration> oldPair = findLatestConfiguration(configuration.getKey().getType());
+
+        if (oldPair.getLeft().equals(ReturnResult.CONFIGURATION_FOUND) && (oldPair.getRight().getKey().getVersion() != configuration.getKey().getVersion() && (oldPair.getRight().getKey().getVersion() + 1) != configuration.getKey().getVersion())){
+            return ReturnResult.CONFIGURATION_INVALID_VERSION;
+        }
+
         List<ConfigurationEntity> list =
                 em.createQuery(
                         "SELECT c FROM ConfigurationEntity c WHERE c.type = :type AND c.version = :version",
@@ -143,6 +149,13 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     @Override
     @CacheEvict(value = "gui-configuration-cache", key = "#configuration.key")
     public ReturnResult insert(GUIConfiguration configuration) {
+
+        Pair<ReturnResult, GUIConfiguration> oldPair = findLatestGUIConfiguration(configuration.getKey().getType());
+
+        if (oldPair.getLeft().equals(ReturnResult.CONFIGURATION_FOUND) && (oldPair.getRight().getKey().getVersion() != configuration.getKey().getVersion() && (oldPair.getRight().getKey().getVersion() + 1) != configuration.getKey().getVersion())){
+            return ReturnResult.CONFIGURATION_INVALID_VERSION;
+        }
+
         List<GUIConfigurationEntity> list =
                 em.createQuery(
                         "SELECT c FROM GUIConfigurationEntity c WHERE c.type = :type AND c.version = :version",
