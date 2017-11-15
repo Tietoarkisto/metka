@@ -51,6 +51,7 @@ public enum ReturnResult {
     CONFIGURATION_FOUND,                // Requested configuration (either data or gui) was found
     CONFIGURATION_NOT_FOUND,            // Configuration (either data or gui) was not found
     CONFIGURATION_NOT_VALID,            // Configuration had problems either during serialization or deserialization
+    CONFIGURATION_INVALID_VERSION,      // Configuration had an invalid version number (NOT the current version OR current + 1)
     DATABASE_DISCREPANCY,               // Data in the database is in a state that causes errors, operations had to be stopped
     DATABASE_INSERT_FAILED,             // Insert or merge operation failed for some reason
     DATABASE_INSERT_SUCCESS,            // Insert or update operation was successful

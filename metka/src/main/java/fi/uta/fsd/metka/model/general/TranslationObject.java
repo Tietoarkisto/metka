@@ -50,8 +50,8 @@ public class TranslationObject {
 
     @JsonIgnore
     public String getTitleFor(Language language) {
-        if(!StringUtils.hasText(texts.get(language))) {
-            return texts.get(language);
+        if(StringUtils.hasText(texts.get(language.toValue()))) {
+            return texts.get(language.toValue());
         } else {
             return texts.get("default");
         }

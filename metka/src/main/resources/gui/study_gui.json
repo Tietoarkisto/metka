@@ -8,6 +8,244 @@
             "key" : "affiliation",
             "title" : "Taustaorganisaatio"
         },
+        "abstract": {
+            "key": "abstract",
+            "title": "Tiivistelmä"
+        },
+        "agreement": {
+            "key": "agreement",
+            "title": "Arkistointisopimustieto"
+        },
+        "agreementdate": {
+            "key": "agreementdate",
+            "title": "Arkistointisopimuksen pvm"
+        },
+        "agreementfsdnotes": {
+            "key": "agreementfsdnotes",
+            "title": "Muuta kommentoitavaa"
+        },
+        "agreementnotes": {
+            "key": "agreementnotes",
+            "title": "Lisätiedot koskien arkistointisopimusta"
+        },
+        "agreementtype": {
+            "key": "agreementtype",
+            "title": "Arkistointisopimuksen tapa"
+        },
+        "alttitles": {
+            "key": "alttitles",
+            "title": "Rinnakkaiset nimet"
+        },
+        "analysis": {
+            "key": "analysis",
+            "title": "Havaintoyksiköt (kvanti) tai aineistoyksikkötyypit (kvali)"
+        },
+        "anonymization": {
+            "key": "anonymization",
+            "title": "Anonymisointi"
+        },
+        "appraisals": {
+            "key": "appraisals",
+            "title": "Arvioinnit"
+        },
+        "approved_files": {
+            "key": "approved_files",
+            "title": "Hyväksytyt tiedostoliitteet"
+        },
+        "authors": {
+            "key": "authors",
+            "title": "Aineiston tekijät"
+        },
+        "biblcit": {
+            "key": "biblcit",
+            "title": "Viittaustiedot"
+        },
+        "cbattachments": {
+            "key": "cbattachments",
+            "title": "Koodikirjan liitteet"
+        },
+        "collectors": {
+            "key": "collectors",
+            "title": "Aineiston kerääjät"
+        },
+        "collmodes": {
+            "key": "collmodes",
+            "title": "Aineiston keruumenetelmät (kvanti) tai aineistonkeruun tekniikat (kvali)"
+        },
+        "collsize": {
+            "key": "collsize",
+            "title": "Tiedostot"
+        },
+        "colltime": {
+            "key": "colltime",
+            "title": "Keräyksen ajankohdat"
+        },
+        "complete": {
+            "key": "complete",
+            "title": "Täydellisyys"
+        },
+        "countries": {
+            "key": "countries",
+            "title": "Maa, jota koskevaa tietoa aineisto sisältää"
+        },
+        "datakind": {
+            "key": "datakind",
+            "title": "Aineiston laatu"
+        },
+        "datasetnotes": {
+            "key": "datasetnotes",
+            "title": "Huomioitavaa"
+        },
+        "datasources": {
+            "key": "datasources",
+            "title": "Lähdeaineistot"
+        },
+        "depositortype": {
+            "key": "depositortype",
+            "title": "Luovuttajan tyyppi"
+        },
+        "descpublic": {
+            "key": "descpublic",
+            "title": "Aineiston kuvailun julkaisu"
+        },
+        "descversions": {
+            "key": "descversions",
+            "title": "Kuvailun versiot"
+        },
+        "dissemination": {
+            "key": "dissemination",
+            "title": "Aineiston luovutus"
+        },
+        "files": {
+            "key": "files",
+            "title": "Tiedostoliitteet"
+        },
+        "geogcovers": {
+            "key": "geogcovers",
+            "title": "Maantieteelliset alueet, jotka aineisto kattaa"
+        },
+        "instruments": {
+            "key": "instruments",
+            "title": "Keruuvälineet (kvanti) tai aineistonkeruun ohjeistukset (kvanti)"
+        },
+        "keywords": {
+            "key": "keywords",
+            "title": "Aineiston sisältöä kuvaavat asiasanat"
+        },
+        "newtermsofuse": {
+            "key": "newtermsofuse",
+            "title": "Käyttöehto muutospvm jälkeen"
+        },
+        "notes": {
+            "key": "notes",
+            "title": "Huomautukset"
+        },
+        "originallocation": {
+            "key": "originallocation",
+            "title": "Alkuperäinen sijainti"
+        },
+        "otherauthors": {
+            "key": "otherauthors",
+            "title": "Aineiston muut tekijät"
+        },
+        "othermaterials": {
+            "key": "othermaterials",
+            "title": "Linkit tietoarkiston ulkopuoliseen materiaaliin"
+        },
+        "packages": {
+            "key": "packages",
+            "title": "Tunnisteet"
+        },
+        "partitles": {
+            "key": "partitles",
+            "title": "Aineiston muunkieliset nimet"
+        },
+        "permission": {
+            "key": "permission",
+            "title": "Menettely, jos luvanantajaa ei tavoiteta tai hän ei itse voi antaa lupaa"
+        },
+        "processingnotes": {
+            "key": "processingnotes",
+            "title": "Huomautuksia prosessiin"
+        },
+        "producers": {
+            "key": "producers",
+            "title": "Aineiston tuottaneet tahot"
+        },
+        "public": {
+            "key": "public",
+            "title": "Julkaisu"
+        },
+        "publicationcomments": {
+            "key": "publicationcomments",
+            "title": "Julkaisuihin liittyviä huomioita"
+        },
+        "relatedmaterials": {
+            "key": "relatedmaterials",
+            "title": "Käytön ja kuvailun oheismateriaalit"
+        },
+        "resprate": {
+            "key": "resprate",
+            "title": "Vastausprosentti"
+        },
+        "sampprocs": {
+            "key": "sampprocs",
+            "title": "Otantamenetelmät tai aineiston valintatavat"
+        },
+        "securityissues": {
+            "key": "securityissues",
+            "title": "Tietosuoja"
+        },
+        "specialtermsofuse": {
+            "key": "specialtermsofuse",
+            "title": "Erityisehdot"
+        },
+        "termsofuse": {
+            "key": "termsofuse",
+            "title": "Ehto 1: käyttöoikeus"
+        },
+        "termsofusechangedate": {
+            "key": "termsofusechangedate",
+            "title": "Käyttöehdon muutospvm"
+        },
+        "timemethods": {
+            "key": "timemethods",
+            "title": "Tutkimuksen aikaulottuvuudet"
+        },
+        "timeperiods": {
+            "key": "timeperiods",
+            "title": "Aineiston ajallinen kattavuus"
+        },
+        "topics": {
+            "key": "topics",
+            "title": "Tieteenalat, jolle aineisto kuuluu"
+        },
+        "triggerlabel": {
+            "key": "triggerlabel",
+            "title": "Herätteen selite"
+        },
+        "universes": {
+            "key": "universes",
+            "title": "Aineiston perusjoukot/otos (kvanti) tai aineiston kohdejoukot (kvali)"
+        },
+        "varpublic": {
+            "key": "varpublic",
+            "title": "Muuttujakuvailun julkaisu"
+        },
+        "weight": {
+            "key": "weight",
+            "title": "Painokertoimet"
+        },
+        "weightyesno": {
+            "key": "weightyesno",
+            "title": "Ei painokertoimia"
+        },
+        "dataversions": {
+            "key": "dataversions",
+            "title": "Datan versiot"
+        },
+
+
         "agency": {
             "key" : "agency",
             "title" : "Yksikkö"
@@ -517,6 +755,10 @@
         "variableslanguage": {
             "key": "variableslanguage",
             "title": "Kieli"
+        },
+        "variablesfile": {
+            "key": "variablesfile",
+            "title": "Muuttujatiedosto"
         },
         "variablesfilepath": {
             "key": "variablesfilepath",

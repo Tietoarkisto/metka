@@ -32,6 +32,7 @@ public class RevisionCompareRequest {
     private Long id;
     private Integer begin;
     private Integer end;
+    private String type;
 
     public Long getId() {
         return id;
@@ -56,4 +57,8 @@ public class RevisionCompareRequest {
     public void setEnd(Integer end) {
         this.end = end;
     }
+
+    public String getType() { return type; }
+
+    public void setType(String type) { this.type = type; }
 }

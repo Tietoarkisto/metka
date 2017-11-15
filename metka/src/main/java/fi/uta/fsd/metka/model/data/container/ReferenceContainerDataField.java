@@ -214,18 +214,13 @@ public class ReferenceContainerDataField extends RowContainerDataField {
     @JsonIgnore
     public void replaceRow(Integer rowId, ReferenceRow newRow, Map<String, Change> changeMap) {
         ListIterator<ReferenceRow> i = references.listIterator();
-        boolean scheduleForRemoval = false;
         while(i.hasNext()) {
             ReferenceRow row = i.next();
             if(row.getRowId() == rowId) {
-                scheduleForRemoval = true;
+                i.set(newRow);
                 break;
             }
         }
-        i.add(newRow);
-        if (scheduleForRemoval) removeReference(rowId, changeMap, DateTimeUserPair.build());
-        ContainerChange cc = (ContainerChange)changeMap.get(getKey());
-        cc.put(new RowChange(newRow.getRowId()));
     }
 
 

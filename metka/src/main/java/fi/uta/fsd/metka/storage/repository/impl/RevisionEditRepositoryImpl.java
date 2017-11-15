@@ -293,7 +293,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return;
         }
 
-        files.replaceRow(row.getRowId(), ReferenceRow.build(files, new Value(data.getKey().asCongregateKey()), info), study.getChanges());
+        files.replaceRow(row.getRowId(), ReferenceRow.build(files, new Value(data.getKey().asCongregateKey()), row.getRowId(), info), study.getChanges());
         revisions.updateRevisionData(study);
 
         ContainerDataField variablesContainer = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES)).getRight();

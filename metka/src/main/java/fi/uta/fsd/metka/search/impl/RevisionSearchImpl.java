@@ -29,12 +29,15 @@
 package fi.uta.fsd.metka.search.impl;
 
 import fi.uta.fsd.Logger;
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.*;
 import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.search.RevisionSearch;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
@@ -125,12 +128,23 @@ public class RevisionSearchImpl implements RevisionSearch {
 
         Map<String, MutablePair<String, String>> changes = new HashMap<>();
 
+        Pair<ReturnResult, Configuration> configPair = configurations.findLatestConfiguration(ConfigurationType.fromValue(request.getType()));
+        if (!configPair.getLeft().equals(ReturnResult.CONFIGURATION_FOUND)) {
+            return new ArrayList<>();
+        }
+
+        Pair<ReturnResult, GUIConfiguration> GUIconfigPair = configurations.findLatestGUIConfiguration(ConfigurationType.fromValue(request.getType()));
+        if (!GUIconfigPair.getLeft().equals(ReturnResult.CONFIGURATION_FOUND)) {
+            return new ArrayList<>();
+        }
+
+
         for(Integer no : nos) {
             Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(request.getId(), no);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 continue;
             }
-            gatherChanges("", pair.getRight().getChanges(), pair.getRight(), changes, original);
+            gatherChanges("", pair.getRight().getChanges(), pair.getRight(), changes, original, configPair.getRight(), GUIconfigPair.getRight());
         }
 
         List<RevisionCompareResponseRow> responses = new ArrayList<>();
@@ -149,41 +163,41 @@ public class RevisionSearchImpl implements RevisionSearch {
         return responses;
     }
 
-    private void gatherChanges(String root, Map<String, Change> changeMap, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields) {
+    private void gatherChanges(String root, Map<String, Change> changeMap, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields, Configuration configuration, GUIConfiguration guiConfiguration) {
         for(String key : changeMap.keySet()) {
             Change change = changeMap.get(key);
             if(change.getType() == Change.ChangeType.CONTAINER) {
-                gatherContainerChanges(root, (ContainerChange)change, container, changes, originalFields);
+                gatherContainerChanges(root, (ContainerChange)change, container, changes, originalFields, configuration, guiConfiguration);
             } else {
-                gatherValueChanges(root, (ValueChange) change, container, changes, originalFields);
+                gatherValueChanges(root, (ValueChange) change, container, changes, originalFields, configuration, guiConfiguration);
             }
         }
     }
 
-    private void gatherContainerChanges(String root, ContainerChange change, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields) {
+    private void gatherContainerChanges(String root, ContainerChange change, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields, Configuration configuration, GUIConfiguration guiConfiguration) {
         Pair<StatusCode, ContainerDataField> containerPair = container.dataField(ContainerDataFieldCall.get(change.getKey()));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND) {
             ContainerDataField originalContainer = originalFields.dataField(ContainerDataFieldCall.get(change.getKey())).getRight();
             if(StringUtils.hasText(root)) {
-                root = root + ".";
+                root = root + " / ";
             }
-            root = root + change.getKey();
             for(Language l : Language.values()) {
-                String langKey = root+"["+l.toValue()+"].";
+
+                String langKey = root + (guiConfiguration.getFieldTitles().get(change.getKey()) != null ? guiConfiguration.getFieldTitles().get(change.getKey()).getTitle().getTitleFor(l) : change.getKey()) +" ["+l.toValue()+"] ";
                 for(RowChange rowChange : change.getRows().values()) {
                     DataRow row = containerPair.getRight().getRowWithIdFrom(l, rowChange.getRowId()).getRight();
                     if(row == null) {
                         continue;
                     }
                     DataRow origRow = (originalContainer != null) ? originalContainer.getRowWithId(row.getRowId()).getRight() : null;
-                    String rowKey = langKey + rowChange.getRowId();
+                    // Keys in brackets will be supplanted in javascript with the correct translations
+                    String rowKey = langKey + "{rowNumber} " + rowChange.getRowId();
                     if((origRow == null || origRow.getRemoved()) && row.getRemoved()) {
                         // If we don't have original row and the current row is removed then nothing of note has happened
                         if(changes.containsKey(rowKey)) {
                             // There's no difference between original row and current row
-                            // TODO: Clear possible changes related to anything inside this row since those didn't exist either in the original
-                            // This can be done by adding a 'clear' attribute to gatherChanges that tells that all possible changes from then onwards should be removed
-                            changes.remove(rowKey);
+                            // Clearing all changes from inside the container row
+                            clearContainerRowChanges(changes, rowKey);
                         }
                         continue;
                     } else if((origRow != null && !origRow.getRemoved()) && !row.getRemoved()) {
@@ -192,10 +206,11 @@ public class RevisionSearchImpl implements RevisionSearch {
                             changes.remove(rowKey);
                         }
                     } else {
-                        changes.put(rowKey, new MutablePair<>(origRow != null && !origRow.getRemoved() ? origRow.getRowId().toString() : " ", !row.getRemoved() ? row.getRowId().toString() : " "));
+                        // Keys in brackets will be supplanted in javascript with the correct translations
+                        changes.put(rowKey, new MutablePair<>(origRow != null && !origRow.getRemoved() ? origRow.getRowId().toString() : "-", !row.getRemoved() ? "{newRow}" : "{removedRow}"));
                     }
                     if(!row.getRemoved()) {
-                        gatherChanges(rowKey, rowChange.getChanges(), row, changes, origRow);
+                        gatherChanges(rowKey, rowChange.getChanges(), row, changes, origRow, configuration, guiConfiguration);
                     }
                 }
             }
@@ -207,9 +222,10 @@ public class RevisionSearchImpl implements RevisionSearch {
             }
             ReferenceContainerDataField originalContainer = originalFields.dataField(ReferenceContainerDataFieldCall.get(change.getKey())).getRight();
             if(StringUtils.hasText(root)) {
-                root = root+".";
+                root = root+" / ";
             }
-            root = root + change.getKey()+".";
+
+            root = root + (guiConfiguration.getFieldTitles().get(change.getKey()) != null ? guiConfiguration.getFieldTitles().get(change.getKey()).getTitle().getTitleFor(Language.DEFAULT) : change.getKey()) + " ";
             for(RowChange rowChange : change.getRows().values()) {
                 ReferenceRow row = referenceContainerPair.getRight().getReferenceWithId(rowChange.getRowId()).getRight();
                 if(row == null) {
@@ -217,7 +233,8 @@ public class RevisionSearchImpl implements RevisionSearch {
                 }
                 ReferenceRow origRow = (originalContainer != null) ? originalContainer.getReferenceWithId(row.getRowId()).getRight() : null;
 
-                String rowKey = root + rowChange.getRowId();
+                // Keys in brackets will be supplanted in javascript with the correct translations
+                String rowKey = root + "{rowNumber} " + rowChange.getRowId();
 
                 if((origRow == null || origRow.getRemoved()) && row.getRemoved()) {
                     // If we don't have original row and the current row is removed then nothing of note has happened
@@ -232,39 +249,64 @@ public class RevisionSearchImpl implements RevisionSearch {
                         changes.remove(rowKey);
                     }
                 } else {
-                    changes.put(rowKey, new MutablePair<>(origRow != null && !origRow.getRemoved() ? origRow.getRowId().toString() : " ", !row.getRemoved() ? row.getRowId().toString() : " "));
+                    // Keys in brackets will be supplanted in javascript with the correct translations
+                    changes.put(rowKey, new MutablePair<>(origRow != null && !origRow.getRemoved() ? origRow.getRowId().toString() : "-", !row.getRemoved() ? "{newRow}" : "{removedRow}"));
                 }
             }
         }
     }
 
     // Should terminate
-    private void gatherValueChanges(String root, ValueChange change, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields) {
+    private void gatherValueChanges(String root, ValueChange change, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields, Configuration configuration, GUIConfiguration guiConfiguration) {
         Pair<StatusCode, ValueDataField> pair = container.dataField(ValueDataFieldCall.get(change.getKey()));
         if(pair.getLeft() != StatusCode.FIELD_FOUND) {
             return;
         }
 
         if(StringUtils.hasText(root)) {
-            root = root + ".";
+            root = root + " / ";
         }
 
-        root = root + change.getKey();
+        String changeType = configuration.getField(pair.getRight().getKey()).getType().toString();
+
+        if (changeType.equals("SELECTION")){
+            changeType += "_" + configuration.getSelectionList(configuration.getField(pair.getRight().getKey()).getSelectionList()).getType().toString();
+        }
 
         ValueDataField field = pair.getRight();
 
         ValueDataField original = originalFields != null ? originalFields.dataField(ValueDataFieldCall.get(change.getKey())).getRight() : null;
 
         for(Language l : Language.values()) {
-            String langKey = root + "["+l.toValue()+"]";
+            String langKey = root + (guiConfiguration.getFieldTitles().get(change.getKey()) != null ? guiConfiguration.getFieldTitles().get(change.getKey()).getTitle().getTitleFor(l) : change.getKey()) +" ["+l.toValue()+"]";
             if(changes.containsKey(root)) {
-                changes.get(langKey).setRight(field.hasCurrentFor(l) ? field.getCurrentFor(l).getActualValue() : " ");
+                if (changeType.equals("SELECTION_VALUE")){
+                    changes.get(langKey).setRight(field.hasCurrentFor(l) ? configuration.getSelectionList(configuration.getField(field.getKey()).getSelectionList()).getOptionWithValue(field.getCurrentFor(l).getActualValue()).getTitleFor(l) : "-");
+                } else {
+                    changes.get(langKey).setRight(field.hasCurrentFor(l) ? field.getCurrentFor(l).getActualValue() : "-");
+                }
             } else {
                 if(field.hasValueFor(l)) {
-                    changes.put(langKey, new MutablePair<>(original != null && original.hasCurrentFor(l) ? original.getCurrentFor(l).getActualValue() : " "
-                            , field.hasCurrentFor(l) ? field.getCurrentFor(l).getActualValue() : " "));
+                    if (changeType.equals("SELECTION_VALUE")) {
+                        changes.put(langKey, new MutablePair<>(original != null && original.hasCurrentFor(l) ? configuration.getSelectionList(configuration.getField(field.getKey()).getSelectionList()).getOptionWithValue(original.getCurrentFor(l).getActualValue()).getTitleFor(l) : "-"
+                                , field.hasCurrentFor(l) ? configuration.getSelectionList(configuration.getField(field.getKey()).getSelectionList()).getOptionWithValue(field.getCurrentFor(l).getActualValue()).getTitleFor(l) : "-"));
+                    } else {
+                        changes.put(langKey, new MutablePair<>(original != null && original.hasCurrentFor(l) ? original.getCurrentFor(l).getActualValue() : "-"
+                                , field.hasCurrentFor(l) ? field.getCurrentFor(l).getActualValue() : "-"));
+                    }
                 }
             }
+        }
+    }
+    private void clearContainerRowChanges(Map<String, MutablePair<String, String>> changes, String rowKey){
+        List<String> cleared = new ArrayList<>();
+        for (String key : changes.keySet()){
+            if (key.contains(rowKey)){
+                cleared.add(key);
+            }
+        }
+        for (String key : cleared){
+            changes.remove(key);
         }
     }
 

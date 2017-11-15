@@ -1032,6 +1032,31 @@ define(function (require) {
         "dialog": {
             "waitDialog": {
                 "title": "Toimintoa suoritetaan..."
+            },
+            "history": {
+                "&path": {
+                    "default":"Polku"
+                },
+                "&language": {
+                    "default":"Kieli"
+                },
+                "&original": {
+                    "default":"Alkuperäinen arvo"
+                },
+                "&current": {
+                    "default":"Nykyinen arvo"
+                },
+                "compare": {
+                    "&rowId": {
+                        "default": "rivi id"
+                    },
+                    "&newRow": {
+                        "default": "Uusi rivi"
+                    },
+                    "&removedRow": {
+                        "default": "Rivi poistettu"
+                    }
+                }
             }
         },
         "other": {
@@ -1114,6 +1139,9 @@ define(function (require) {
                             },
                             "&BINDER_PAGE": {
                                 "default": "mapitukselta"
+                            },
+                            "&STUDY_ERROR": {
+                                "default": "aineistovirheeltä"
                             }
                         }
                     },

@@ -50,6 +50,12 @@ public class ReferenceRow extends ContainerRow {
         return row;
     }
 
+    public static ReferenceRow build(ReferenceContainerDataField container, Value reference, Integer rowId, DateTimeUserPair info) {
+        ReferenceRow row = new ReferenceRow(container.getKey(), rowId, reference);
+        row.setSaved(info);
+        return row;
+    }
+
     private final Value reference;
 
     @JsonCreator
