@@ -20,10 +20,66 @@
             "key" : "varlabel_col",
             "title" : "Muuttuja"
         },
-        "vargrouptext": {
-            "key" : "vargrouptext",
-            "title" : "Teksti"
-        }
+      "vargrouptext": {
+        "key" : "vargrouptext",
+        "title" : "Teksti"
+      },
+      "study": {
+        "key" : "study",
+        "title" : "Aineisto"
+      },
+      "language": {
+        "key" : "language",
+        "title" : "Kieli"
+      },
+      "file": {
+        "key" : "file",
+        "title" : "Muuttujatiedosto"
+      },
+      "filepath": {
+        "key" : "filepath",
+        "title" : "Polku muuttujatiedostoon"
+      },
+      "software": {
+        "key" : "software",
+        "title" : "Ohjelmisto"
+      },
+      "softwareversion": {
+        "key" : "softwareversion",
+        "title" : "Ohjelmistoversio"
+      },
+      "varfileid": {
+        "key" : "varfileid",
+        "title" : "Muuttujatiedoston id"
+      },
+      "varfileno": {
+        "key" : "varfileno",
+        "title" : "Muuttujatiedoston numero"
+      },
+      "varfiletype": {
+        "key" : "varfiletype",
+        "title" : "Muuttujatiedoston tyyppi"
+      },
+      "casequantity": {
+        "key" : "casequantity",
+        "title" : "Havaintojen lkm."
+      },
+      "varquantity": {
+        "key" : "varquantity",
+        "title" : "Muuttujien lkm."
+      },
+      "variables": {
+        "key" : "variables",
+        "title" : "Muuttujat"
+      },
+      "varlabel": {
+        "key" : "varlabel",
+        "title" : "Muuttuja"
+      },
+      "vargrouptext": {
+        "key" : "vargrouptext",
+        "title" : "Teksti"
+      }
     },
     "content": [
         {

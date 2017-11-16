@@ -39,6 +39,54 @@
         "studytitle": {
             "key" : "studytitle",
             "title" : "Aineiston nimi"
+        },
+        "publicationyear": {
+            "key" : "publicationyear",
+            "title" : "Julkaisuvuosi"
+        },
+        "publicationpublic": {
+            "key" : "publicationpublic",
+            "title" : "Voiko julkaista"
+        },
+        "publicationid": {
+            "key" : "publicationid",
+            "title" : "Julkaisu id-nro"
+        },
+        "publicationfirstsaved": {
+            "key" : "publicationfirstsaved",
+            "title" : "1. Tallennuspvm"
+        },
+        "publicationannouncement": {
+            "key" : "publicationannouncement",
+            "title" : "Julkaisun ilmoitustapa"
+        },
+        "publicationlanguage": {
+            "key" : "publicationlanguage",
+            "title" : "Julkaisun kieli"
+        },
+        "publicationtitle": {
+            "key" : "publicationtitle",
+            "title" : "Julkaisun otsikko"
+        },
+        "publicationrelpubl": {
+            "key" : "publicationrelpubl",
+            "title" : "relPubl-tiedot"
+        },
+        "publicationnotes": {
+            "key" : "publicationnotes",
+            "title" : "Julkaisun huomautukset"
+        },
+        "publicationauthors": {
+            "key" : "publicationauthors",
+            "title" : "Liittyvät henkilöt"
+        },
+        "publicationpids": {
+            "key" : "publicationpids",
+            "title" : "Pysyvät tunnisteet"
+        },
+        "studies": {
+            "key" : "studies",
+            "title" : "Liittyvät aineistot"
         }
     },
     "content": [

@@ -3,6 +3,24 @@
 		"type": "BINDER_PAGE",
 		"version": 1
 	},
+    "fieldTitles":{
+        "binderid": {
+            "key": "binderid",
+            "title": "Mappinumero"
+        },
+        "studyid": {
+            "key": "studyid",
+            "title": "Aineistonumero"
+        },
+        "studytitle": {
+            "key": "studytitle",
+            "title": "Aineiston nimi"
+        },
+        "description": {
+            "key": "description",
+            "title": "Kuvaus"
+        }
+    },
 	"content": [{
         "type": "COLUMN",
         "columns": 1,

@@ -3,6 +3,24 @@
 		"type": "SERIES",
 		"version": 1
 	},
+    "fieldTitles": {
+        "seriesabbr": {
+            "key": "seriesabbr",
+            "title": "Lyhenne"
+        },
+        "seriesname": {
+            "key": "seriesname",
+            "title": "Nimi"
+        },
+        "seriesdesc": {
+            "key": "seriesdesc",
+            "title": "Kuvaus"
+        },
+        "seriesnotes": {
+            "key": "seriesnotes",
+            "title": "Huomiot"
+        }
+    },
 	"content": [{
         "type": "COLUMN",
         "columns": 1,

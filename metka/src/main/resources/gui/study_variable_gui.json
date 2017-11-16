@@ -31,6 +31,74 @@
         "vartext": {
             "key" : "vartext",
             "title" : "Lisätiedot"
+        },
+        "language": {
+            "key" : "language",
+            "title" : "Kieli"
+        },
+        "varname": {
+            "key" : "varname",
+            "title" : "Nimi"
+        },
+        "varlabel": {
+            "key" : "varlabel",
+            "title" : "Selite"
+        },
+        "qstnlits": {
+            "key" : "qstnlits",
+            "title" : "Kysymystekstit"
+        },
+        "preqtxts": {
+            "key" : "preqtxts",
+            "title" : "Esitekstit"
+        },
+        "postqtxts": {
+            "key" : "postqtxts",
+            "title" : "Jälkitekstit"
+        },
+        "ivuinstrs": {
+            "key" : "ivuinstrs",
+            "title" : "Haastattelijan ohjeet"
+        },
+        "varnotes": {
+            "key" : "varnotes",
+            "title" : "Huomiot"
+        },
+        "varsecurities": {
+            "key" : "varsecurities",
+            "title" : "Tietosuoja-asiat"
+        },
+        "categories": {
+            "key" : "categories",
+            "title" : "Arvojen selitteet"
+        },
+        "statistics": {
+            "key" : "statistics",
+            "title" : "Statistiikka"
+        },
+        "statisticstype": {
+            "key" : "statisticstype",
+            "title" : "Statistiikkatyyppi"
+        },
+        "statisticsvalue": {
+            "key" : "statisticsvalue",
+            "title" : "Statistiikka-arvo"
+        },
+        "study": {
+            "key" : "study",
+            "title" : "Aineisto"
+        },
+        "variables": {
+            "key" : "variables",
+            "title" : "Muuttujajoukko"
+        },
+        "varid": {
+            "key" : "varid",
+            "title" : "Muuttujan id"
+        },
+        "varinterval": {
+            "key" : "varinterval",
+            "title" : "Statistiikka"
         }
     },
     "content": [{
