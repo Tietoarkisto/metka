@@ -34,6 +34,7 @@ import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.*;
 import fi.uta.fsd.metka.model.data.container.*;
@@ -281,18 +282,24 @@ public class RevisionSearchImpl implements RevisionSearch {
             String langKey = root + (guiConfiguration.getFieldTitles().get(change.getKey()) != null ? guiConfiguration.getFieldTitles().get(change.getKey()).getTitle().getTitleFor(l) : change.getKey()) +" ["+l.toValue()+"]";
             if(changes.containsKey(root)) {
                 if (changeType.equals("SELECTION_VALUE")){
-                    changes.get(langKey).setRight(field.hasCurrentFor(l) ? configuration.getSelectionList(configuration.getField(field.getKey()).getSelectionList()).getOptionWithValue(field.getCurrentFor(l).getActualValue()).getTitleFor(l) : "-");
+                    SelectionList list = configuration.getSelectionList(configuration.getField(field.getKey()).getSelectionList());
+                    if (list != null) {
+                        changes.get(langKey).setRight(field.hasCurrentFor(l) ? list.getOptionWithValue(field.getCurrentFor(l).getActualValue()).getTitleFor(l) : "-");
+                    }
                 } else {
                     changes.get(langKey).setRight(field.hasCurrentFor(l) ? field.getCurrentFor(l).getActualValue() : "-");
                 }
             } else {
                 if(field.hasValueFor(l)) {
                     if (changeType.equals("SELECTION_VALUE")) {
-                        changes.put(langKey, new MutablePair<>(original != null && original.hasCurrentFor(l) ? configuration.getSelectionList(configuration.getField(field.getKey()).getSelectionList()).getOptionWithValue(original.getCurrentFor(l).getActualValue()).getTitleFor(l) : "-"
-                                , field.hasCurrentFor(l) ? configuration.getSelectionList(configuration.getField(field.getKey()).getSelectionList()).getOptionWithValue(field.getCurrentFor(l).getActualValue()).getTitleFor(l) : "-"));
+                        SelectionList list = configuration.getSelectionList(configuration.getField(field.getKey()).getSelectionList());
+                        if (list != null) {
+                            changes.put(langKey, new MutablePair<>(original != null && original.hasOriginalFor(l) ? list.getOptionWithValue(original.getOriginalFor(l).getActualValue()).getTitleFor(l) : "-"
+                                    , field.hasCurrentFor(l) ? list.getOptionWithValue(field.getCurrentFor(l).getActualValue()).getTitleFor(l) : (field.hasOriginalFor(l) ? list.getOptionWithValue(field.getOriginalFor(l).getActualValue()).getTitleFor(l) : "-")));
+                        }
                     } else {
-                        changes.put(langKey, new MutablePair<>(original != null && original.hasCurrentFor(l) ? original.getCurrentFor(l).getActualValue() : "-"
-                                , field.hasCurrentFor(l) ? field.getCurrentFor(l).getActualValue() : "-"));
+                        changes.put(langKey, new MutablePair<>(original != null && original.hasOriginalFor(l) ? original.getOriginalFor(l).getActualValue() : "-"
+                                , field.hasCurrentFor(l) ? field.getCurrentFor(l).getActualValue() : (field.hasOriginalFor(l) ? field.getOriginalFor(l).getActualValue() : "-")));
                     }
                 }
             }
