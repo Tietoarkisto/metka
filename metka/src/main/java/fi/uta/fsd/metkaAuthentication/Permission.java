@@ -61,6 +61,7 @@ public  enum Permission {
     CAN_VIEW_STUDY_ERRORS(Values.CAN_VIEW_STUDY_ERRORS),
     CAN_EDIT_STUDY_ERRORS(Values.CAN_EDIT_STUDY_ERRORS),
     CAN_REMOVE_STUDY_ERRORS(Values.CAN_REMOVE_STUDY_ERRORS),
+    CAN_REMOVE_STUDY_ATTACHMENTS(Values.CAN_REMOVE_STUDY_ATTACHMENTS),
     CAN_ADD_ORGANIZATIONS(Values.CAN_ADD_ORGANIZATIONS),
 
     // Program settings permissions
@@ -134,6 +135,7 @@ public  enum Permission {
         public static final String CAN_VIEW_STUDY_ERRORS = "canViewStudyErrors";
         public static final String CAN_EDIT_STUDY_ERRORS = "canAddStudyErrors";
         public static final String CAN_REMOVE_STUDY_ERRORS = "canRemoveStudyErrors";
+        public static final String CAN_REMOVE_STUDY_ATTACHMENTS = "canRemoveStudyAttachments";
         public static final String CAN_ADD_ORGANIZATIONS = "canAddOrganizations";
 
         // Program settings permissions
