@@ -107,6 +107,7 @@ define(function (require) {
                 $.extend(options.data, response.data);
                 options.$events.trigger('refresh.metka');
                 history.replaceState(undefined, '', require('./url')('view'));
+                location.reload()
             }, [
                 'REVISION_FOUND',
                 'REVISION_CREATED'
