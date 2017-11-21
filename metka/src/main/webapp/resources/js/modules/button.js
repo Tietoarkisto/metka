@@ -46,12 +46,16 @@ define(function (require) {
             require('./isHandledByUser')(options, options.isHandledByUser, function(isHandledByUser) {
                 if(isHandledByUser) {
                     $button.toggleClass('hiddenByButtonConfiguration', !isVisible(options));
+                    // Enable allowed buttons
+                    $button.prop("disabled", "")
                 } else {
                     $button.toggleClass('hiddenByButtonConfiguration', true);
                 }
             });
         } else {
             $button.toggleClass('hiddenByButtonConfiguration', !isVisible(options));
+            // Enable allowed buttons
+            $button.prop('disabled', isVisible(options) ? '' : 'disabled')
         }
         if(options.html) {
             $button.html(options.html);
@@ -98,6 +102,8 @@ define(function (require) {
         options = options || {};
 
         var $button = $('<button type="button" class="btn">');
+        // Disabled buttons in case something takes too long
+        $button.prop('disabled', 'disabled');
 
         if(options.type && options.type === 'CUSTOM' && options.customHandler) {
             // If there is a custom handler then prevent dismiss. Each custom handler should decide for itself if it needs to close a dialog or not.
