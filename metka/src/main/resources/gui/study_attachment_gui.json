@@ -196,7 +196,7 @@
 		"isHandler": true,
 		"isHandledByUser": "study",
 		"permissions": [
-			"canRemoveRevision"
+			"canRemoveStudyAttachments"
 		],
 		"customHandler": "studyAttachmentRemove"
 	}, {
