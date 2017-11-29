@@ -61,6 +61,7 @@ define(function (require) {
                             $(".modal-footer").find("button").removeAttr('disabled');
                             $.extend(options.data, response.data);
                             options.$events.trigger('refresh.metka');
+                            location.reload();
                         },
                         error: function() {
                             $(".modal-footer").find("button").removeAttr('disabled');
@@ -79,6 +80,7 @@ define(function (require) {
                             if(resultParser(response.result).getResult() === 'REVISION_UPDATE_SUCCESSFUL') {
                                 $.extend(options.data, response.data);
                                 options.$events.trigger('refresh.metka');
+                                location.reload();
                             } else {
                                 require('./resultViewer')(response.result, 'beginEdit', function() {
                                     require('./assignUrl')('view');
@@ -306,6 +308,7 @@ define(function (require) {
                             $(".modal-footer").find("button").removeAttr('disabled');
                             $.extend(options.data, response.data);
                             options.$events.trigger('refresh.metka');
+                            location.reload();
                         },
                         error: function (){
                             $(".modal-footer").find("button").removeAttr('disabled');
