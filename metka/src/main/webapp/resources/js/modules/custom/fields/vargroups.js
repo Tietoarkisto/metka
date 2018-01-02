@@ -114,25 +114,23 @@ define(function (require) {
                                         };
                                     });
                                     var treeViewEvents = {};
-                                    if (!require('./../../isFieldDisabled')(options, options.defaultLang)) {
-                                        treeViewEvents.onClick = function (node) {
-                                            if (!node.children) {
-                                                var requestOptions = {
-                                                    id: node.transferRow.value.split("-")[0],
-                                                    no: node.transferRow.value.split("-")[1]
-                                                };
-                                                require('./../../revisionModal')(options, requestOptions, 'STUDY_VARIABLE', onChange, options.field.key, true, MetkaJS.L10N.get("type.STUDY_VARIABLE.edit"));
-                                            } else {
-                                                rowDialog('modify', 'ok')(node.transferRow, function () {
-                                                    hasChanges = true;
-                                                    onChange();
-                                                });
-                                            }
-                                        };
-                                        treeViewEvents.refresh = function() {
-                                            options.$events.trigger('refresh.metka');
+                                    treeViewEvents.onClick = function (node) {
+                                        if (!node.children) {
+                                            var requestOptions = {
+                                                id: node.transferRow.value.split("-")[0],
+                                                no: node.transferRow.value.split("-")[1]
+                                            };
+                                            require('./../../revisionModal')(options, requestOptions, 'STUDY_VARIABLE', onChange, options.field.key, true, MetkaJS.L10N.get("type.STUDY_VARIABLE.edit"));
+                                        } else {
+                                            rowDialog('modify', 'ok')(node.transferRow, function () {
+                                                hasChanges = true;
+                                                onChange();
+                                            });
                                         }
-                                    }
+                                    };
+                                    treeViewEvents.refresh = function() {
+                                        options.$events.trigger('refresh.metka');
+                                    };
                                     $elem.empty().append(require('./../../treeView')((require('./../../data')(options)('vargroups').getByLang(options.defaultLang) || []).filter(function (row) {
                                         return !row.removed && row.fields && row.fields.vargrouptitle;
                                     }).map(function (transferRow) {
@@ -166,6 +164,10 @@ define(function (require) {
                                         );
 
                                     }), treeViewEvents));
+
+                                    if (require('./../../isFieldDisabled')(options, options.defaultLang)) {
+                                        $elem.find('.glyphicon-remove-sign').remove();
+                                    }
                                 }
                             });
                         }
