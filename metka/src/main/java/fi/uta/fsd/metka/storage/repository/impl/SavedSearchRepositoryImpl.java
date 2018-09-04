@@ -70,6 +70,7 @@ public class SavedSearchRepositoryImpl implements SavedSearchRepository {
     public SavedExpertSearchItem saveExpertSearch(SavedExpertSearchItem search) {
         SavedExpertSearchEntity entity = new SavedExpertSearchEntity();
         entity.setTitle(search.getTitle());
+        entity.setDescription(search.getDescription());
         entity.setQuery(search.getQuery());
         entity.setSavedAt(new LocalDate());
         entity.setSavedBy(AuthenticationUtil.getUserName());
@@ -99,6 +100,7 @@ public class SavedSearchRepositoryImpl implements SavedSearchRepository {
         SavedExpertSearchItem item = new SavedExpertSearchItem();
         item.setId(entity.getId());
         item.setTitle(entity.getTitle());
+        item.setDescription(entity.getDescription());
         item.setQuery(entity.getQuery());
         item.setSavedAt(entity.getSavedAt().toString());
         item.setSavedBy(entity.getSavedBy());

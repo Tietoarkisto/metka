@@ -48,6 +48,9 @@ public class SavedExpertSearchEntity {
     @Column(name = "TITLE")
     private String title;
 
+    @Column(name = "DESCRIPTION")
+    private String description;
+
     @Column(name = "SAVED_BY")
     private String savedBy;
 
@@ -77,6 +80,14 @@ public class SavedExpertSearchEntity {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getSavedBy() {

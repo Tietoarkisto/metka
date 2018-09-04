@@ -52,6 +52,9 @@ define(function (require) {
                 "name": {
                     "title" : MetkaJS.L10N.get("search.coltitle.name")
                 },
+                "description": {
+                    "title" : MetkaJS.L10N.get("search.coltitle.description")
+                },
                 "no": {
                     "title" : MetkaJS.L10N.get("search.coltitle.revisionnumber")
                 },
@@ -96,7 +99,7 @@ define(function (require) {
                                         "rowsPerPage": 10,
                                         "showSaveInfo": true,
                                         "columnFields": [
-                                            "name"
+                                            "name", "description"
                                         ],
                                         onRemove: function ($row) {
                                             require('./../server')('/expert/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow'), options.defaultLang), {
@@ -181,6 +184,20 @@ define(function (require) {
                                                                         }
                                                                     }
                                                                 ]
+                                                            },
+                                                            {
+                                                                "type": "ROW",
+                                                                "cells": [
+                                                                    {
+                                                                        "type": "CELL",
+                                                                        "title": MetkaJS.L10N.get("search.coltitle.description"),
+                                                                        "colspan": 1,
+                                                                        "field": {
+                                                                            "displayType": "STRING",
+                                                                            "key": "description"
+                                                                        }
+                                                                    }
+                                                                ]
                                                             }
                                                         ]
                                                     }],
@@ -194,7 +211,8 @@ define(function (require) {
                                                                     require('./../server')('/expert/save', {
                                                                         data: JSON.stringify({
                                                                             query: require('./../data')(options)('search').getByLang(options.defaultLang),
-                                                                            title: require('./../data')(modalOptions)('title').getByLang(options.defaultLang)
+                                                                            title: require('./../data')(modalOptions)('title').getByLang(options.defaultLang),
+                                                                            description: require('./../data')(modalOptions)('description').getByLang(options.defaultLang)
                                                                         }),
                                                                         success: function(query) {
                                                                             options.$events.trigger('container-{key}-{lang}-push'.supplant({
@@ -279,6 +297,10 @@ define(function (require) {
                 },
                 fields: {
                     name: {
+                        type: "STRING",
+                        subfield: true
+                    },
+                    description: {
                         type: "STRING",
                         subfield: true
                     },

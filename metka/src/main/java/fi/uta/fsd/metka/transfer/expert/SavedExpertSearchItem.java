@@ -32,6 +32,7 @@ public class SavedExpertSearchItem {
     private Long id;
     private String query;
     private String title;
+    private String description;
     private String savedBy;
     private String savedAt;
 
@@ -57,6 +58,14 @@ public class SavedExpertSearchItem {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getSavedBy() {

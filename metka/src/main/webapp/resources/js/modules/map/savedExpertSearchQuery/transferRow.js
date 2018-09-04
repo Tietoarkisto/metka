@@ -32,6 +32,7 @@ define(function (require) {
     return function (data, lang) {
         return $.extend(require('./../object/transferRow')({
             name: data.title,
+            description: data.description,
             query: data.query,
             id: data.id
         }, lang), {

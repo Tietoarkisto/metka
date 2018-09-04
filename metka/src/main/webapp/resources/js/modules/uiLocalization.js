@@ -437,6 +437,9 @@ define(function (require) {
                 "&name": {
                     "default": "Nimi"
                 },
+                "&description": {
+                    "default": "Kuvaus"
+                },
                 "&revisionnumber": {
                     "default": "Revisio"
                 },
