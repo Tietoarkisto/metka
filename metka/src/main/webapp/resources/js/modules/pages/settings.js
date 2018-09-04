@@ -475,7 +475,6 @@ define(function (require) {
                                         title: MetkaJS.L10N.get("general.buttons.save"),
                                         create: function() {
                                             this.click(function() {
-                                                var confirmed = false;
                                                 require('./../modal')($.extend(true, require('./../optionsBase')(), {
                                                     title: MetkaJS.L10N.get('confirmation.save.configuration.title'),
                                                     body: MetkaJS.L10N.get('confirmation.save.configuration.body'),
@@ -495,17 +494,11 @@ define(function (require) {
                                                                         }
                                                                     });
                                                                 });
-                                                            var evt = new CustomEvent('saved');
-                                                            window.dispatchEvent(evt);
                                                         },
                                                         type: "YES"
                                                     },{
                                                         create: function () {
-                                                            this
-                                                                .text(MetkaJS.L10N.get('general.buttons.no'))
-                                                                .click(function () {
-                                                                    confirmed = false;
-                                                                });
+                                                            this.text(MetkaJS.L10N.get('general.buttons.no'))
                                                         },
                                                         type: "NO"
                                                     }]
