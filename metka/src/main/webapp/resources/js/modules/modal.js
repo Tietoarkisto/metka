@@ -78,6 +78,7 @@ define(function (require) {
 
             var $header = $('<div class="modal-header">')
                 .append((options.disableClose ? null : '<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>'))
+                .append('<button type="button" class="resize"><span>&#x25A2;</span></button>')
                 .append($('<h4 class="modal-title">')
                     .text(getTitle(options)));
 
@@ -114,6 +115,18 @@ define(function (require) {
             }
             return false;
         }
+
+        // Handle modal resizing to fullscreen. Disable dragging when on fullscreen.
+
+        setTimeout(function(){
+            $('.resize').unbind().click(function() {
+                var modalContent = $(this).parent().parent();
+                var modalDialog = modalContent.parent();
+                modalContent.toggleClass('modal-content-fullscreen');
+                modalDialog.toggleClass('modal-dialog-fullscreen');
+                modalContent.removeAttr('style');
+            })
+        }, 300);
 
         var content = null;
         if(!options.$events) {
