@@ -75,6 +75,13 @@ define(function (require) {
                 .append((options.disableClose ? null : '<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>'))
                 .append($('<h4 class="modal-title">')
                     .text(getTitle(options)));
+
+            // Issue #452
+            var txtBox = $body.find('.form-control:first');
+            setTimeout(function() {
+                $(txtBox).focus();
+            }, 600);
+
             content
                 .empty()
                 .toggleClass('modal-lg', !!options.large)
