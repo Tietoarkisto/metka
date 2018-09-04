@@ -1171,6 +1171,16 @@ define(function (require) {
                         }
                     }
                 }
+            },
+            "save": {
+                "configuration": {
+                    "&title": {
+                        "default": "Tämä toiminto vaatii vahvistuksen"
+                    },
+                    "&body": {
+                        "default": "Haluatko varmasti tallentaa?"
+                    }
+                }
             }
         },
         "returnResults": {

@@ -475,16 +475,41 @@ define(function (require) {
                                         title: MetkaJS.L10N.get("general.buttons.save"),
                                         create: function() {
                                             this.click(function() {
-                                                var request = {
-                                                    type: "DATA_CONF",
-                                                    json: require('./../data')(options)("dataConfigText").getByLang("DEFAULT")
-                                                };
-                                                require('./../server')("/settings/uploadJson", {
-                                                    data: JSON.stringify(request),
-                                                    success: function (response) {
-                                                        require('./../resultViewer')(response);
-                                                    }
-                                                });
+                                                var confirmed = false;
+                                                require('./../modal')($.extend(true, require('./../optionsBase')(), {
+                                                    title: MetkaJS.L10N.get('confirmation.save.configuration.title'),
+                                                    body: MetkaJS.L10N.get('confirmation.save.configuration.body'),
+                                                    buttons: [{
+                                                        create: function () {
+                                                            this
+                                                                .text(MetkaJS.L10N.get('general.buttons.yes'))
+                                                                .click(function () {
+                                                                    var request = {
+                                                                        type: "DATA_CONF",
+                                                                        json: require('./../data')(options)("dataConfigText").getByLang("DEFAULT")
+                                                                    };
+                                                                    require('./../server')("/settings/uploadJson", {
+                                                                        data: JSON.stringify(request),
+                                                                        success: function (response) {
+                                                                            require('./../resultViewer')(response);
+                                                                        }
+                                                                    });
+                                                                });
+                                                            var evt = new CustomEvent('saved');
+                                                            window.dispatchEvent(evt);
+                                                        },
+                                                        type: "YES"
+                                                    },{
+                                                        create: function () {
+                                                            this
+                                                                .text(MetkaJS.L10N.get('general.buttons.no'))
+                                                                .click(function () {
+                                                                    confirmed = false;
+                                                                });
+                                                        },
+                                                        type: "NO"
+                                                    }]
+                                                }));
                                             });
                                         }
                                     }
