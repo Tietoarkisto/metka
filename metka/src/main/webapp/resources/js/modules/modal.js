@@ -93,6 +93,7 @@ define(function (require) {
 
                                     // default behaviour dismisses modal
                                     this.attr('data-dismiss', 'modal');
+                                    this.addClass('focused');  // Issue #425
                                 });
                         })))));
 
@@ -113,6 +114,11 @@ define(function (require) {
         content = $('<div class="modal-dialog">');
         options.$events.trigger('refresh.metka');
         $modal.append(content);
+        // Issue #425
+        var focusedButton = $modal.find('.focused');
+        setTimeout(function() {
+            $(focusedButton).focus();
+        }, 500);
         /*$modal.on('show.bs.modal', function() {
             options.$events.trigger('refresh.metka');
         });*/
