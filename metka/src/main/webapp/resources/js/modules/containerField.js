@@ -82,7 +82,11 @@ define(function (require) {
                 )
             );
         }
-
+        // Issue #475
+        var authorType = $tr.find('td:eq(0)').text();
+        if (authorType === 'Organisaatio') {
+            $tr.find('td:eq(1)').empty();
+        }
         return $tr;
     }
 
@@ -399,6 +403,11 @@ define(function (require) {
                 $tr = formReferenceTR(transferRow, options, $thead, lang);
             } else {
                 $tr = formTR(transferRow, options, $thead, lang);
+                // Issue #475
+                var authorType = $tr.find('td:eq(0)').text();
+                if (authorType === 'Organisaatio') {
+                    $tr.find('td:eq(1)').empty();
+                }
             }
             $container.append($tr);
             $container.trigger('rowAppended', [$tr, options.columns]);
