@@ -106,6 +106,7 @@ define(function (require) {
                                                 method: 'GET',
                                                 success: function () {
                                                     $row.remove();
+                                                    location.reload(); // Issue #649
                                                 }
                                             });
                                         },

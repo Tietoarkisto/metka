@@ -65,6 +65,7 @@ define(function (require) {
                     fieldTitles: options.fieldTitles,
                     dialogTitle: options.field.dialogTitle,
                     dialogTitles: options.dialogTitles,
+                    title: 'Muokkaa',  // Issue #769
                     subfieldConfiguration: options.subfieldConfiguration,
                     content: [
                         {
@@ -83,7 +84,10 @@ define(function (require) {
                 if(options.prepareModal) {
                     options.prepareModal(modalOptions);
                 }
-
+                // Issue #769
+                if (modalOptions.type === 'ADD') {
+                    modalOptions.title = "Lisää";
+                }
                 require('./modal')(modalOptions);
                 //require('./modal')($.extend(true, {}, options, modalOptions));
             };

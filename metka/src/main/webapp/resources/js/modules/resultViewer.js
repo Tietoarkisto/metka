@@ -157,7 +157,17 @@ define(function (require) {
 
                     var message = resultParser.getMessage();
                     if(message) {
-                        body += "</br>"+message;
+                        if (resultParser.getResult() === 'RESTRICTION_VALIDATION_FAILURE') {  // Issue #803
+                            body += "</br>"+'Tarkista, että kaikissa kohteissa, joille on määritelty tarkastuksia,<br>on rajoitteiden vaatima sisältö!';
+                        } else if (resultParser.getResult() === 'OPERATION_SUCCESSFUL_WITH_ERRORS' && body.indexOf("suorituksen") !== -1) {  // Issue #805
+                            var partOne = body.substr(0, 11);
+                            var partTwo = body.substr(10, 44) + body.substr(54, 5).toUpperCase() + body.substr(59, 21);
+                            var partThree = body.substr(79);
+                            var extraBody = partOne + '(' + operation + ')' + partTwo + '(' + operation + ')' + partThree;
+                            body += "</br>"+ extraBody;
+                        } else {
+                            body += "</br>"+message;
+                        }
                     }
 
                     require('./modal')($.extend(true, require('./optionsBase')(), {
