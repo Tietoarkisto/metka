@@ -40,7 +40,12 @@ define(function (require) {
             } else if(options.title) {
                 return MetkaJS.L10N.get(options.title);
             } else {
-                return MetkaJS.L10N.localize(options, 'title');
+                // Issue #769 workaround
+                var newTitle = MetkaJS.L10N.localize(options, 'title');
+                if (newTitle === '[title]') {
+                    newTitle = '';
+                }
+                return newTitle;
             }
         }
 
