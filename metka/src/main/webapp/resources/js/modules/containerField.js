@@ -357,6 +357,9 @@ define(function (require) {
                 } else {
                     setOptionText(list.options);
                 }
+                if (list.key === 'reference_target_list') {
+                    $td.text(transferRow.fields.reference_target.values.DEFAULT.current);
+                }
                 break;
             }
             case 'STRING': {
