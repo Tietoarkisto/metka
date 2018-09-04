@@ -83,7 +83,45 @@ define(function (require) {
                     $('body > .wrapper > .content > .modal-footer').children().toggleClass('hiddenByTab', $li.data('hidePageButtons'));
                     sessionStorage.setItem('currentTab', $li.index());
                 });
+            // Issue #404
+            var $button = require('./button')()({
+                style: 'default',
+                title: MetkaJS.L10N.get('+'),
+                create: function () {
+                    this
+                        .click(function () {
+                            $('div.panel-heading').attr('aria-expanded', true);
+                            $('div.panel-collapse').addClass('in').attr('aria-expanded', true);
+                            $('#expandbutton').hide();
+                            $('#collapsebutton').show();
+                        });
+                }
+            });
+            $button.addClass('btn-sm').css('background-color', '#009ee0').css('color', 'white');
+            $button.attr('id', 'expandbutton');
 
+            var $button2 = require('./button')()({
+                style: 'default',
+                title: MetkaJS.L10N.get('-'),
+                create: function () {
+                    this
+                        .click(function () {
+                            $('div.panel-heading').attr('aria-expanded', false);
+                            $('div.panel-collapse').removeClass('in').attr('aria-expanded', false);
+                            $('div.panel').removeClass('panel-primary');
+                            $('div.panel').addClass('panel-default');
+                            $('#expandbutton').show();
+                            $('#collapsebutton').hide();
+                        });
+                }
+            });
+            $button2.addClass('btn-sm').css('background-color', '#009ee0').css('color', 'white');
+            $button2.attr('id', 'collapsebutton');
+            $button2.hide();
+
+            if(tabs.content[2] && tabs.title.length === 8) {
+                tabs.content[2].append($button).append($button2);
+            }
             $tabContent.append(tabs.content);
 
             this
