@@ -269,7 +269,13 @@ public class APIController {
         if(request.getKey() == null || request.getKey().getId() == null) {
             return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
         }
-        RevisionDataResponse response = revisions.claimRevision(request.getKey());
+
+        RevisionDataResponse response;
+        if(request.getKey().getNo() == null) {
+            response = revisions.claimRevision(request.getKey());
+        } else {
+            response = revisions.view(request.getKey().getId(), request.getKey().getNo());
+        }
 
         return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
     }
