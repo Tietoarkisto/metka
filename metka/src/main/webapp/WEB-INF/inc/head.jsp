@@ -9,6 +9,10 @@
 <script src="${contextPath}/lib/jquery/jquery-migrate-3.0.0.min.js"></script>
 <script src="${contextPath}/lib/jquery/jquery.bootpag.min.js"></script>
 
+<%-- jQuery-ui library --%>
+<script src="${contextPath}/lib/jquery-ui/jquery-ui.js"></script>
+<link href="${contextPath}/lib/jquery-ui/jquery-ui.css" rel="stylesheet">
+
 <jsp:include page="head/metkaJSInit.jsp" />
 
 <script src="${contextPath}/lib/js/moment-with-langs.min.js"></script>

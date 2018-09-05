@@ -34,8 +34,8 @@ define(function (require) {
             if(options.dialogTitle && MetkaJS.L10N.containsText(options.dialogTitle, options.type)) {
                 return MetkaJS.L10N.localize(options.dialogTitle, options.type);
             } else if(options.dialogTitles
-                    && options.dialogTitles[options.containerKey]
-                    && MetkaJS.L10N.containsText(options.dialogTitles[options.containerKey], options.type)) {
+                && options.dialogTitles[options.containerKey]
+                && MetkaJS.L10N.containsText(options.dialogTitles[options.containerKey], options.type)) {
                 return MetkaJS.L10N.localize(options.dialogTitles[options.containerKey], options.type);
             } else if(options.title) {
                 return MetkaJS.L10N.get(options.title);
@@ -92,6 +92,7 @@ define(function (require) {
                 .empty()
                 .toggleClass('modal-lg', !!options.large)
                 .append($('<div class="modal-content">')
+                    .draggable({handle: "div.modal-header"})
                     .append($header)
                     .append($body)
                     .append((options.disableFooter ? null : $('<div class="modal-footer">')
@@ -116,7 +117,7 @@ define(function (require) {
             return false;
         }
 
-        // Handle modal resizing to fullscreen. Disable dragging when on fullscreen.
+        // Handle modal resizing. Disable jQuery-ui draggable widget while on fullscreen.
 
         setTimeout(function(){
             $('.resize').unbind().click(function() {
@@ -125,6 +126,11 @@ define(function (require) {
                 modalContent.toggleClass('modal-content-fullscreen');
                 modalDialog.toggleClass('modal-dialog-fullscreen');
                 modalContent.removeAttr('style');
+                if(modalContent.hasClass('modal-content-fullscreen')){
+                    modalContent.draggable('disable');
+                } else {
+                    modalContent.draggable('enable');
+                }
             })
         }, 300);
 
