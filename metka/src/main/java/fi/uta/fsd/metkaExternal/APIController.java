@@ -272,9 +272,13 @@ public class APIController {
 
         RevisionDataResponse response;
         if(request.getKey().getNo() == null) {
-            response = revisions.claimRevision(request.getKey());
+            response = revisions.view(request.getKey().getId());
         } else {
             response = revisions.view(request.getKey().getId(), request.getKey().getNo());
+        }
+
+        if(response.getResult().getResult().toString() != "REVISION_NOT_FOUND"){
+            response = revisions.claimRevision(request.getKey());
         }
 
         return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
