@@ -112,6 +112,16 @@ define(function (require) {
                 var type = options.field.displayType || options.fieldOptions.type;
                 if (!type) {
                     log('field type is not set', key, options);
+                    // Issue #832
+                    require('./modal')($.extend(true, require('./optionsBase')(), {
+                        title: MetkaJS.L10N.get('alert.error.title'),
+                        body: MetkaJS.L10N.get('alert.error.reference').supplant({
+                            key: key
+                        }),
+                        buttons: [{
+                            type: 'DISMISS'
+                        }]
+                    }));
                 } else {
                     (function () {
                         if (type === 'CONTAINER' || type === 'REFERENCECONTAINER') {
