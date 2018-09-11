@@ -159,11 +159,6 @@ define(function (require) {
                                         }
                                     } else {
                                         // Do a normal single select if no shift key pressed
-                                        if(!startIndex){
-                                            startMultiselect = node;
-                                        } else {
-                                            endMultiselect = node;
-                                        }
                                         return node.children ? 'activateOne' : 'deactivateDirectoriesAndToggle';
                                     }
                                 },
@@ -253,11 +248,6 @@ define(function (require) {
                                         }
                                     } else {
                                         // Do a normal single select if no shift key pressed
-                                        if(!startIndex){
-                                            startMultiselect = node;
-                                        } else {
-                                            endMultiselect = node;
-                                        }
                                         return 'toggle';
                                     }
                                 },
