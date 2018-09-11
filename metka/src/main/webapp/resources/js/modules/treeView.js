@@ -180,7 +180,11 @@ define(function (require) {
                             var nodeText = String(node.text).replace(/\s/g,'');
                             if(varText === nodeText){
                                 // handle selection
-                                element.addClass('active');
+                                if(element.hasClass('active')){
+                                    element.toggleClass('active')
+                                } else {
+                                    element.addClass('active');
+                                }
                                 element.trigger('change');
                             }
                         });
