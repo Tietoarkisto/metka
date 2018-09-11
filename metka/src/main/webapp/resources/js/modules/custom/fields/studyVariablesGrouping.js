@@ -158,7 +158,8 @@ define(function (require) {
                                             return 'multiselect';
                                         }
                                     } else {
-                                        // Do a normal single select if no shift key pressed
+                                        startMultiselect = null;
+                                        endMultiselect = null;
                                         return node.children ? 'activateOne' : 'deactivateDirectoriesAndToggle';
                                     }
                                 },
@@ -248,6 +249,8 @@ define(function (require) {
                                         }
                                     } else {
                                         // Do a normal single select if no shift key pressed
+                                        startMultiselect = null;
+                                        endMultiselect = null;
                                         return 'toggle';
                                     }
                                 },
