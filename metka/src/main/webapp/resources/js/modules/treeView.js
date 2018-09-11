@@ -166,7 +166,28 @@ define(function (require) {
                     $this.trigger('change');
                 },
                 // Handle study variable multiselect when holding down the shift key
-                multiselect: function () {
+                leftColumnMultiselect: function () {
+                    // array of selected nodes
+                    var nodes = activeNodes();
+                    // object containing list of all HTML anchor elements on the table
+                    var elements = $div.children();
+                    // Loop trough anchor elements and compare with selected nodes
+                    Object.keys(elements).forEach(function(key) {
+                        var element = $(elements[key]);
+                        nodes.forEach(function(node) {
+                            // no unique reliable keys available for use at this point, so we use text
+                            var varText = String(element[0].text).replace(/\s/g,'');
+                            var nodeText = String(node.text).replace(/\s/g,'');
+                            if(varText === nodeText){
+                                // handle selection
+                                element.addClass('active');
+                                element.trigger('change');
+                            }
+                        });
+                    });
+                },
+                // Handle study variable multiselect when holding down the shift key
+                rightColumnMultiselect: function () {
                     // array of selected nodes
                     var nodes = activeNodes();
                     // object containing list of all HTML anchor elements on the table
