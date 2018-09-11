@@ -162,9 +162,58 @@ define(function (require) {
                                 .append($groupView
                                     .addClass('grouping-container'));
 
+                            var startMultiselect = null;
+                            var endMultiselect = null;
+
                             $variableView = require('./../../treeView')(variables, isFieldDisabled ? {} : {
-                                onClick: function () {
-                                    return 'toggle';
+                                onClick: function (node) {
+                                    // Listen for shift key press
+                                    if(event.shiftKey) {
+                                        if (!startMultiselect) {
+                                            // Select all nodes between the 1st and the 2nd clicks
+                                            startMultiselect = node;
+                                        }
+                                        if (startMultiselect && !endMultiselect && startMultiselect !== node) {
+                                            endMultiselect = node;
+                                        }
+                                        if (startMultiselect !== null && endMultiselect !== null) {
+                                            var startIndex = null;
+                                            var endIndex = null;
+                                            for (var i = 0; i < variables.length; i++) {
+                                                if (variables[i] === startMultiselect) {
+                                                    startIndex = i;
+                                                }
+                                                if (variables[i] === endMultiselect) {
+                                                    endIndex = i;
+                                                }
+                                                // Handle a selection that goes from down to up
+                                                if (startIndex > endIndex) {
+                                                    var tmpIndex = startIndex;
+                                                    startIndex = endIndex;
+                                                    endIndex = tmpIndex;
+                                                }
+
+                                                if(startIndex !== null && endIndex !== null){
+                                                    for(var i = startIndex; i <= endIndex; i++){
+                                                        var variable = variables[i];
+                                                        var isActive = {active: true};
+                                                        $.extend(variable, isActive);
+                                                    }
+                                                }
+                                            }
+                                            startMultiselect = null;
+                                            endMultiselect = null;
+                                            return 'multiselect';
+                                        }
+                                    } else {
+                                        // Do a normal single select if no shift key pressed
+                                        if(!startIndex){
+                                            startMultiselect = node;
+                                        } else {
+                                            endMultiselect = node;
+                                        }
+                                        return 'toggle';
+                                    }
                                 },
                                 onChange: function (activeItems) {
                                     transferFromVariables = arrangeInVariables = !!activeItems.length;
@@ -172,8 +221,12 @@ define(function (require) {
                                 },
                                 refresh: function() {
                                     options.$events.trigger('refresh.metka');
-                                }
+                                },
+
                             });
+
+
+
 
                             $variables
                                 .empty()
