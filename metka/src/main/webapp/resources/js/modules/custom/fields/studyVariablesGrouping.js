@@ -155,7 +155,7 @@ define(function (require) {
                                             }
                                             startMultiselect = null;
                                             endMultiselect = null;
-                                            return 'rightColumnMultiselect';
+                                            return 'multiselect';
                                         }
                                     } else {
                                         // Do a normal single select if no shift key pressed
@@ -249,7 +249,7 @@ define(function (require) {
                                             }
                                             startMultiselect = null;
                                             endMultiselect = null;
-                                            return 'leftColumnMultiselect';
+                                            return 'multiselect';
                                         }
                                     } else {
                                         // Do a normal single select if no shift key pressed
