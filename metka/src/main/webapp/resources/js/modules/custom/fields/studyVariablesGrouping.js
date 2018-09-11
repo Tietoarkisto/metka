@@ -121,14 +121,14 @@ define(function (require) {
                                 onClick: function (node) {
                                     // Listen for shift key press
                                     if(event.shiftKey) {
-                                        if (!startMultiselect) {
-                                            // Select all nodes between the 1st and the 2nd clicks
+                                        // Select all nodes left between the 1st and the 2nd clicks
+                                        if (startMultiselect === null) {
                                             startMultiselect = node;
                                         }
-                                        if (startMultiselect && !endMultiselect && startMultiselect !== node) {
+                                        if (startMultiselect !== null && endMultiselect === null && startMultiselect !== node) {
                                             endMultiselect = node;
                                         }
-                                        if (startMultiselect !== null && endMultiselect !== null) {
+                                        if (endMultiselect !== null) {
                                             var startIndex = null;
                                             var endIndex = null;
                                             for (var i = 0; i < variables.length; i++) {
@@ -139,24 +139,23 @@ define(function (require) {
                                                     endIndex = i;
                                                 }
                                                 // Handle a selection that goes from down to up
-                                                if (startIndex > endIndex) {
+                                                if (endIndex !== null && endIndex < startIndex) {
                                                     var tmpIndex = startIndex;
                                                     startIndex = endIndex;
                                                     endIndex = tmpIndex;
                                                 }
-
-                                                if(startIndex !== null && endIndex !== null){
-                                                    for(var i = startIndex; i <= endIndex; i++){
-                                                        var variable = variables[i];
-                                                        var isActive = {active: true};
-                                                        $.extend(variable, isActive);
-                                                    }
+                                            }
+                                            if(startIndex !== null && endIndex !== null){
+                                                for(var i = startIndex; i <= endIndex; i++){
+                                                    var isActive = {active: true};
+                                                    $.extend(variables[i], isActive);
                                                 }
                                             }
                                             startMultiselect = null;
                                             endMultiselect = null;
                                             return 'multiselect';
                                         }
+                                        // Do a normal single select if no shift key pressed
                                     } else {
                                         startMultiselect = null;
                                         endMultiselect = null;
@@ -211,14 +210,14 @@ define(function (require) {
                                 onClick: function (node) {
                                     // Listen for shift key press
                                     if(event.shiftKey) {
-                                        if (!startMultiselect) {
-                                            // Select all nodes between the 1st and the 2nd clicks
+                                        // Select all nodes left between the 1st and the 2nd clicks
+                                        if (startMultiselect === null) {
                                             startMultiselect = node;
                                         }
-                                        if (startMultiselect && !endMultiselect && startMultiselect !== node) {
+                                        if (startMultiselect !== null && endMultiselect === null && startMultiselect !== node) {
                                             endMultiselect = node;
                                         }
-                                        if (startMultiselect !== null && endMultiselect !== null) {
+                                        if (endMultiselect !== null) {
                                             var startIndex = null;
                                             var endIndex = null;
                                             for (var i = 0; i < variables.length; i++) {
@@ -229,28 +228,25 @@ define(function (require) {
                                                     endIndex = i;
                                                 }
                                                 // Handle a selection that goes from down to up
-                                                if (startIndex > endIndex) {
+                                                if (endIndex !== null && endIndex < startIndex) {
                                                     var tmpIndex = startIndex;
                                                     startIndex = endIndex;
                                                     endIndex = tmpIndex;
                                                 }
-
-                                                if(startIndex !== null && endIndex !== null){
-                                                    for(var i = startIndex; i <= endIndex; i++){
-                                                        var variable = variables[i];
-                                                        var isActive = {active: true};
-                                                        $.extend(variable, isActive);
-                                                    }
+                                            }
+                                            if(startIndex !== null && endIndex !== null){
+                                                for(var i = startIndex; i <= endIndex; i++){
+                                                    var isActive = {active: true};
+                                                    $.extend(variables[i], isActive);
                                                 }
                                             }
                                             startMultiselect = null;
                                             endMultiselect = null;
                                             return 'multiselect';
                                         }
-                                    } else {
                                         // Do a normal single select if no shift key pressed
+                                    } else {
                                         startMultiselect = null;
-                                        endMultiselect = null;
                                         return 'toggle';
                                     }
                                 },

@@ -165,21 +165,21 @@ define(function (require) {
                         .data('node').active = $this.hasClass('active');
                     $this.trigger('change');
                 },
-                // Handle study variable multiselect when holding down the shift key
+                // Handle study variable multiselection when holding down the shift key
                multiselect: function () {
-                    // array of selected nodes
+                    // an array including all the selected nodes
                     var nodes = activeNodes();
-                    // object containing list of all HTML anchor elements on the table
+                    // an object containing a list of all the HTML anchor elements on the table
                     var elements = $div.children();
-                    // Loop trough anchor elements and compare with selected nodes
+                    // Loop trough the anchor elements and compare with the selected nodes
                     Object.keys(elements).forEach(function(key) {
                         var element = $(elements[key]);
                         nodes.forEach(function(node) {
-                            // no unique reliable keys available for use at this point, so we use text
+                            // no reliable keys available at this point - identify by text value
                             var varText = String(element[0].text).replace(/\s/g,'');
                             var nodeText = String(node.text).replace(/\s/g,'');
                             if(varText === nodeText){
-                                // handle selection
+                                // handle class toggling to make selection visible in the DOM
                                 if(element.hasClass('active')){
                                     element.toggleClass('active')
                                 } else {
