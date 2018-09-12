@@ -182,10 +182,10 @@ define(function (require) {
                                 // handle class toggling to make selection visible in the DOM
                                 if(element.hasClass('active')){
                                     element.toggleClass('active');
+                                    delete node['active'];
                                 } else {
                                     element.addClass('active');
                                 }
-                                delete node['active'];
                                 element.trigger('change');
                             }
                         });
