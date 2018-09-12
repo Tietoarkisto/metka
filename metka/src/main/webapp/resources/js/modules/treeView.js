@@ -165,33 +165,24 @@ define(function (require) {
                         .data('node').active = $this.hasClass('active');
                     $this.trigger('change');
                 },
-                // Handle study variable multiselection when holding down the shift key
                multiselect: function () {
-                    // an array including all the selected nodes
-                    var nodes = activeNodes();
-                    // an object containing a list of all the HTML anchor elements on the table
-                    var elements = $div.children();
-                    // Loop trough the anchor elements and compare with the selected nodes
-                    Object.keys(elements).forEach(function(key) {
-                        var element = $(elements[key]);
-                        for(var i = 0; i < nodes.length; i++){
-                            var node = nodes[i];
-                            // no reliable keys available at this point - identify by text value
-                            var varText = String(element[0].text).replace(/\s/g,'');
-                            var nodeText = String(node.text).replace(/\s/g,'');
-                            if(varText === nodeText){
-                                // handle class toggling to make selection visible in the DOM
-                                if(element.hasClass('active')){
-                                    element.removeClass('active');
-                                    delete node['active'];
-                                    nodes.splice(i, 1);
-                                } else {
-                                    element.addClass('active');
-                                }
-                                element.trigger('change');
-                            }
-                        };
+                    Object.keys($div.children()).forEach(function(key) {
+                       var element = $($div.children()[key]);
+                       element.removeClass('active');
+                           for (var i = 0; i < activeNodes().length; i++) {
+                               var node = activeNodes()[i];
+                               if (String(element[0].text).replace(/\s/g, '') === String(node.text).replace(/\s/g, '')) {
+                                   if (element.hasClass('active')) {
+                                       element.removeClass('active');
+                                       $.extend(node, {active: false});
+                                   } else {
+                                       element.addClass('active');
+                                   }
+                                   element.trigger('change');
+                               }
+                           }
                     });
+
                 },
                 deactivateDirectoriesAndToggle: function () {
                     var $this = $(this);

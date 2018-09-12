@@ -57,6 +57,10 @@ define(function (require) {
             var isFieldDisabled = require('./../../isFieldDisabled')(options, options.defaultLang);
             var hasChanges;
 
+            // Nodes to start and end the study variable multiselect with
+            var startFromNode = null;
+            var endToNode = null;
+
             function onDataChange() {
                 require('./../../preloader')($variables);
                 require('./../../preloader')($groups);
@@ -121,47 +125,18 @@ define(function (require) {
                                 onClick: function (node) {
                                     // Listen for shift key press
                                     if(event.shiftKey) {
-                                        // Select all nodes left between the 1st and the 2nd clicks
-                                        if (startMultiselect === null) {
-                                            startMultiselect = node;
-                                        }
-                                        if (startMultiselect !== null && endMultiselect === null && startMultiselect !== node) {
-                                            endMultiselect = node;
-                                        }
-                                        if (endMultiselect !== null) {
-                                            var startIndex = null;
-                                            var endIndex = null;
-                                            for (var i = 0; i < variables.length; i++) {
-                                                if(variables[i].active){
-                                                    delete variables[i]['active'] ;
-                                                }
-                                                if (variables[i] === startMultiselect) {
-                                                    startIndex = i;
-                                                }
-                                                if (variables[i] === endMultiselect) {
-                                                    endIndex = i;
-                                                }
-                                                // Handle a selection that goes from down to up
-                                                if (endIndex !== null && endIndex < startIndex) {
-                                                    var tmpIndex = startIndex;
-                                                    startIndex = endIndex;
-                                                    endIndex = tmpIndex;
-                                                }
-                                            }
-                                            if(startIndex !== null && endIndex !== null){
-                                                for(var i = startIndex; i <= endIndex; i++){
-                                                    var isActive = {active: true};
-                                                    $.extend(variables[i], isActive);
-                                                }
-                                            }
-                                            startMultiselect = null;
-                                            endMultiselect = null;
+                                        if(!startFromNode){
+                                            startFromNode = node;
+                                        } else {
+                                            endToNode = node;
+                                            require('./../../utils/multiselectHelper')(variables, startFromNode, endToNode);
+                                            startFromNode = null;
+                                            endToNode = null;
                                             return 'multiselect';
                                         }
-                                        // Do a normal single select if no shift key pressed
                                     } else {
-                                        startMultiselect = null;
-                                        endMultiselect = null;
+                                        startFromNode = null;
+                                        endToNode = null;
                                         return node.children ? 'activateOne' : 'deactivateDirectoriesAndToggle';
                                     }
                                 },
@@ -206,55 +181,22 @@ define(function (require) {
                                 .append($groupView
                                     .addClass('grouping-container'));
 
-                            var startMultiselect = null;
-                            var endMultiselect = null;
-
                             $variableView = require('./../../treeView')(variables, isFieldDisabled ? {} : {
                                 onClick: function (node) {
                                     // Listen for shift key press
                                     if(event.shiftKey) {
-                                        // Select all nodes left between the 1st and the 2nd clicks
-                                        if (startMultiselect === null) {
-                                            startMultiselect = node;
-                                        }
-                                        if (startMultiselect !== null && endMultiselect === null && startMultiselect !== node) {
-                                            endMultiselect = node;
-                                        }
-                                        if (endMultiselect !== null) {
-                                            var startIndex = null;
-                                            var endIndex = null;
-                                            for (var i = 0; i < variables.length; i++) {
-                                                if(variables[i].active){
-                                                   delete variables[i]['active'] ;
-                                                }
-
-                                                if (variables[i] === startMultiselect) {
-                                                    startIndex = i;
-                                                }
-                                                if (variables[i] === endMultiselect) {
-                                                    endIndex = i;
-                                                }
-                                                // Handle a selection that goes from down to up
-                                                if (endIndex !== null && endIndex < startIndex) {
-                                                    var tmpIndex = startIndex;
-                                                    startIndex = endIndex;
-                                                    endIndex = tmpIndex;
-                                                }
-                                            }
-                                            if(startIndex !== null && endIndex !== null){
-                                                for(var i = startIndex; i <= endIndex; i++){
-                                                    var isActive = {active: true};
-                                                    $.extend(variables[i], isActive);
-                                                }
-                                            }
-                                            startMultiselect = null;
-                                            endMultiselect = null;
+                                        if(!startFromNode){
+                                            startFromNode = node;
+                                        } else {
+                                            endToNode = node;
+                                            require('./../../utils/multiselectHelper')(variables, startFromNode, endToNode);
+                                            startFromNode = null;
+                                            endToNode = null;
                                             return 'multiselect';
                                         }
-                                        // Do a normal single select if no shift key pressed
                                     } else {
-                                        startMultiselect = null;
-                                        endMultiselect = null;
+                                        startFromNode = null;
+                                        endToNode = null;
                                         return 'toggle';
                                     }
                                 },
@@ -267,10 +209,6 @@ define(function (require) {
                                 },
 
                             });
-
-
-
-
                             $variables
                                 .empty()
                                 .append($variableView
