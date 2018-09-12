@@ -132,6 +132,9 @@ define(function (require) {
                                             var startIndex = null;
                                             var endIndex = null;
                                             for (var i = 0; i < variables.length; i++) {
+                                                if(variables[i].active){
+                                                    delete variables[i]['active'] ;
+                                                }
                                                 if (variables[i] === startMultiselect) {
                                                     startIndex = i;
                                                 }
