@@ -174,21 +174,23 @@ define(function (require) {
                     // Loop trough the anchor elements and compare with the selected nodes
                     Object.keys(elements).forEach(function(key) {
                         var element = $(elements[key]);
-                        nodes.forEach(function(node) {
+                        for(var i = 0; i < nodes.length; i++){
+                            var node = nodes[i];
                             // no reliable keys available at this point - identify by text value
                             var varText = String(element[0].text).replace(/\s/g,'');
                             var nodeText = String(node.text).replace(/\s/g,'');
-                            if(varText === nodeText && node.active){
+                            if(varText === nodeText){
                                 // handle class toggling to make selection visible in the DOM
                                 if(element.hasClass('active')){
-                                    element.toggleClass('active');
+                                    element.removeClass('active');
                                     delete node['active'];
+                                    nodes.splice(i, 1);
                                 } else {
                                     element.addClass('active');
                                 }
                                 element.trigger('change');
                             }
-                        });
+                        };
                     });
                 },
                 deactivateDirectoriesAndToggle: function () {
