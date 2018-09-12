@@ -172,12 +172,7 @@ define(function (require) {
                            for (var i = 0; i < activeNodes().length; i++) {
                                var node = activeNodes()[i];
                                if (String(element[0].text).replace(/\s/g, '') === String(node.text).replace(/\s/g, '')) {
-                                   if (element.hasClass('active')) {
-                                       element.removeClass('active');
-                                       $.extend(node, {active: false});
-                                   } else {
-                                       element.addClass('active');
-                                   }
+                                   element.addClass('active');
                                    element.trigger('change');
                                }
                            }
