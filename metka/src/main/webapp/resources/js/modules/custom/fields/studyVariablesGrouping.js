@@ -247,6 +247,7 @@ define(function (require) {
                                         // Do a normal single select if no shift key pressed
                                     } else {
                                         startMultiselect = null;
+                                        endMultiselect = null;
                                         return 'toggle';
                                     }
                                 },

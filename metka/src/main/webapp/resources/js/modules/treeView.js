@@ -178,13 +178,14 @@ define(function (require) {
                             // no reliable keys available at this point - identify by text value
                             var varText = String(element[0].text).replace(/\s/g,'');
                             var nodeText = String(node.text).replace(/\s/g,'');
-                            if(varText === nodeText){
+                            if(varText === nodeText && node.active){
                                 // handle class toggling to make selection visible in the DOM
                                 if(element.hasClass('active')){
-                                    element.toggleClass('active')
+                                    element.toggleClass('active');
                                 } else {
                                     element.addClass('active');
                                 }
+                                delete node['active'];
                                 element.trigger('change');
                             }
                         });
