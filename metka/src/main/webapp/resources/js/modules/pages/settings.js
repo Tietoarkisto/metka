@@ -494,6 +494,9 @@ define(function (require) {
                                                                         }
                                                                     });
                                                                 });
+                                                            // Fire an event so that metka doesn't ask for confirmation if moving from page
+                                                            var evt = new CustomEvent('saved');
+                                                            window.dispatchEvent(evt);
                                                         },
                                                         type: "YES"
                                                     },{

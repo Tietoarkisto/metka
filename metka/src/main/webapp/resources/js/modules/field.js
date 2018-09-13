@@ -42,6 +42,12 @@ define(function (require) {
     return function (options) {
         var $elem = this;
 
+        // Fire an event on any change in any input field
+        $elem.on('keypress change input', function() {
+            var evt = new CustomEvent('unsavedChanges');
+            window.dispatchEvent(evt);
+        });
+
         function addValidationErrorListener($container, getErrors) {
             $container.children('.help-block').remove();
             var errors = getErrors();

@@ -434,6 +434,9 @@ define(function (require) {
                 .click(require('./save')(options, function (response) {
                     $(".modal-footer").find("button").removeAttr('disabled');
                     $.extend(options.data, response.data);
+                    // Fire an event so that metka doesn't ask for confirmation if moving from page
+                    var evt = new CustomEvent('saved');
+                    window.dispatchEvent(evt);
                     options.$events.trigger('refresh.metka');
                 }));
         },
