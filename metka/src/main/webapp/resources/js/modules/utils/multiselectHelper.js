@@ -41,10 +41,6 @@ define(function (require) {
         var endIndex = null;
 
         for (var i = 0; i < variables.length; i++) {
-            if(variables[i].transferRow){
-                $.extend(variables[i], {value: variables[i].transferRow.value});
-                //delete variables[i]['transferRow'];
-            }
 
             // Find the clicked nodes from the variable array
             if (JSON.stringify(variables[i]) === JSON.stringify(startMultiselect)) {
