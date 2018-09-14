@@ -67,6 +67,26 @@ define(function (require) {
                 .append($('<div class="content container">')));
 
         content = $('.content.container');
+
+        var unsavedChanges = false;
+
+        window.addEventListener('saved', function (e) {
+            unsavedChanges = false;
+        });
+
+        window.addEventListener('unsavedChanges', function (e) {
+            unsavedChanges = true;
+        });
+
+        $(window).bind('beforeunload', function() {
+            if(unsavedChanges) {
+                var title = MetkaJS.L10N.get("general.move.confirmation.title");
+                var body = MetkaJS.L10N.get("general.move.confirmation.body");
+                var confirmationMsg = title + ' ' + body;
+                return(confirmationMsg);
+            }
+        });
+
         options.$events.trigger('refresh.metka');
     });
 });
