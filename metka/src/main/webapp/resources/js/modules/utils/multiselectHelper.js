@@ -39,11 +39,18 @@ define(function (require) {
         // Select all nodes left between the 1st and the 2nd clicks
         var startIndex = null;
         var endIndex = null;
+
         for (var i = 0; i < variables.length; i++) {
-            if (variables[i] === startMultiselect) {
+            if(variables[i].transferRow){
+                $.extend(variables[i], {value: variables[i].transferRow.value});
+                //delete variables[i]['transferRow'];
+            }
+
+            // Find the clicked nodes from the variable array
+            if (JSON.stringify(variables[i]) === JSON.stringify(startMultiselect)) {
                 startIndex = i;
             }
-            if (variables[i] === endMultiselect) {
+            if (JSON.stringify(variables[i]) === JSON.stringify(endMultiselect)) {
                 endIndex = i;
             }
             // Handle a selection that goes from down to up
@@ -53,7 +60,7 @@ define(function (require) {
                 endIndex = tmpIndex;
             }
         }
-        // Toggle node statuses between the selected indexes
+        // Mark selected nodes active one by one
         if(startIndex !== null && endIndex !== null){
             for(var i = startIndex; i <= endIndex; i++){
                 if(variables[i].active === true){

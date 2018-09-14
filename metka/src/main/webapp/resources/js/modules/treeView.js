@@ -166,12 +166,17 @@ define(function (require) {
                     $this.trigger('change');
                 },
                multiselect: function () {
+                    // Get an array of active nodes
+                    var nodes = activeNodes();
+                    // Loop trough DOM elements to find the matches for active nodes
                     Object.keys($div.children()).forEach(function(key) {
                        var element = $($div.children()[key]);
-                       element.removeClass('active');
-                           for (var i = 0; i < activeNodes().length; i++) {
-                               var node = activeNodes()[i];
-                               if (String(element[0].text).replace(/\s/g, '') === String(node.text).replace(/\s/g, '')) {
+                       element.removeClass('active')
+                           for (var i = 0; i < nodes.length; i++) {
+                               var node = nodes[i];
+                               // Identify variable elements by the text field value
+                               if (String(element[0].text).replace(/\s/g, '') === node.text.replace(/\s/g, '')) {
+                                   // Add class 'active' to DOM elements and trigger update
                                    element.addClass('active');
                                    element.trigger('change');
                                }

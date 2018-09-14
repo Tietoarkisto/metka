@@ -60,6 +60,7 @@ define(function (require) {
             // Nodes to start and end the study variable multiselect with
             var startFromNode = null;
             var endToNode = null;
+            var variablesTmp = [];
 
             function onDataChange() {
                 require('./../../preloader')($variables);
@@ -114,10 +115,12 @@ define(function (require) {
                                     }).filter(function (o) {
                                         return o && o.groupedVariable;
                                     }).map(function (o) {
-                                        return {
+                                        var obj = {
                                             text: o.groupedVariable.text,
                                             transferRow: o.transferRow
                                         };
+                                        variablesTmp.push(obj);
+                                        return obj;
                                     }) : [],
                                     transferRow
                                 );
@@ -129,7 +132,7 @@ define(function (require) {
                                             startFromNode = node;
                                         } else {
                                             endToNode = node;
-                                            require('./../../utils/multiselectHelper')(variables, startFromNode, endToNode);
+                                            require('./../../utils/multiselectHelper')(variablesTmp, startFromNode, endToNode);
                                             startFromNode = null;
                                             endToNode = null;
                                             return 'multiselect';
