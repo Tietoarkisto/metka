@@ -256,9 +256,10 @@ public class APIController {
             return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
         }
 
+        RevisionDataResponse response;
         APIUserEntry user = api.getAPIUser(request.getAuthentication());
-        if(user.getRole() == "metka:administrator" || user.getRole() == "metka:data-administrator"){
-            RevisionDataResponse response = revisions.restore(request.getKey());
+        if(user.getRole().toString().equals("metka:administrator") || user.getRole().toString().equals("metka:data-administrator")){
+            response = revisions.restore(request.getKey());
             return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
         } else {
             return APIRevisionOperationResponse.authFail();
@@ -373,10 +374,15 @@ public class APIController {
         if(request.getKey() == null || request.getKey().getId() == null || request.getKey().getNo() == null) {
             return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
         }
-        Boolean draft = revisions.view(request.getKey().getId(), request.getKey().getNo()).getData().getState().getUiState().toString().equals("DRAFT");
-        RevisionDataResponse response = revisions.remove(request.getKey(), draft);
-
-        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+        RevisionDataResponse response;
+        APIUserEntry user = api.getAPIUser(request.getAuthentication());
+        if(user.getRole().toString().equals("metka:administrator") || user.getRole().toString().equals("metka:data-administrator")){
+            Boolean draft = revisions.view(request.getKey().getId(), request.getKey().getNo()).getData().getState().getUiState().toString().equals("DRAFT");
+            response = revisions.remove(request.getKey(), draft);
+            return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+        } else {
+            return APIRevisionOperationResponse.authFail();
+        }
     }
 
     @RequestMapping(value = "createRevision", method = RequestMethod.POST)
