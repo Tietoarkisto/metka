@@ -35,6 +35,7 @@ import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.services.*;
 import fi.uta.fsd.metka.storage.repository.APIRepository;
+import fi.uta.fsd.metka.transfer.settings.APIUserEntry;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryResponse;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
@@ -254,9 +255,14 @@ public class APIController {
         if(request.getKey() == null || request.getKey().getId() == null) {
             return APIRevisionOperationResponse.success(ReturnResult.PARAMETERS_MISSING, null);
         }
-        RevisionDataResponse response = revisions.restore(request.getKey());
 
-        return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+        APIUserEntry user = api.getAPIUser(request.getAuthentication());
+        if(user.getRole() == "metka:administrator" || user.getRole() == "metka:data-administrator"){
+            RevisionDataResponse response = revisions.restore(request.getKey());
+            return APIRevisionOperationResponse.success(response.getResult().getResult(), response);
+        } else {
+            return APIRevisionOperationResponse.authFail();
+        }
     }
 
     @RequestMapping(value = "claimRevision", method = RequestMethod.POST)
