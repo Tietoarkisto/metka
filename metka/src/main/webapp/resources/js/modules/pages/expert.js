@@ -147,9 +147,6 @@ define(function (require) {
                                     title: MetkaJS.L10N.get("general.buttons.search"),
                                     create: function(options) {
                                         this.click(function() {
-                                            // Fire an event so that metka doesn't ask for confirmation if moving from page
-                                            var evt = new CustomEvent('saved');
-                                            window.dispatchEvent(evt);
                                             require('./../searchQuerySearch')(options, require('./../data')(options)('search').getByLang(options.defaultLang), "expertsearchresults").search();
                                         });
                                     }
@@ -212,6 +209,9 @@ define(function (require) {
                                                         create: function () {
                                                             this
                                                                 .click(function () {
+                                                                    // Fire an event so that metka doesn't ask for confirmation if moving from page
+                                                                    var evt = new CustomEvent('saved');
+                                                                    window.dispatchEvent(evt);
                                                                     require('./../server')('/expert/save', {
                                                                         data: JSON.stringify({
                                                                             query: require('./../data')(options)('search').getByLang(options.defaultLang),
