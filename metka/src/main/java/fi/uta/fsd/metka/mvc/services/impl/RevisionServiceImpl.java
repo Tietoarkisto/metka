@@ -418,8 +418,6 @@ public class RevisionServiceImpl implements RevisionService {
         Pair<ReturnResult, TransferData> savePair = save.saveRevision(transferData, null);
         String result = savePair.getLeft().name();
         TransferData data = savePair.getRight();
-        System.out.println(savePair.getLeft());
-        System.out.println(savePair.getRight());
         if(savePair.getLeft() == ReturnResult.OPERATION_SUCCESSFUL) {
             Pair<OperationResponse, TransferData> response = approve.approve(savePair.getRight(), null);
             return getResponse(response.getLeft(), response.getRight());
