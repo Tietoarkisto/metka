@@ -40,6 +40,9 @@ define(function (require) {
                         require('./assignUrl')('view', {no: ''});
                     } else {
                         $.extend(options.data, response.data);
+                        // Fire an event so that metka doesn't ask for confirmation if moving from page
+                        var evt = new CustomEvent('saved');
+                        window.dispatchEvent(evt);
                         options.$events.trigger('refresh.metka');
                     }
                 }, [
