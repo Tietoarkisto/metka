@@ -194,7 +194,6 @@ define(function (require) {
                     "default": "Lataus on jo käynnissä. Odota latauksen valmistumista ladataksesi uudelleen."
                 }
             },
-
             "buttons": {
                 "&add": {
                     "default": "Lisää"
@@ -256,7 +255,6 @@ define(function (require) {
                     "default": "Ryhmän nimi"
                 }
             },
-
             "revision": {
                 "compare": {
                     "&begin": {
@@ -285,6 +283,9 @@ define(function (require) {
                     },
                     "&title": {
                         "default": "Revisioiden vertailu (revisio {0} -> revisio {1})"
+                    },
+                    "&error": {
+                        "default": "Sinun on ensin valittava vertailtavat revisiot!"
                     }
                 },
                 "&compare": {
@@ -1081,6 +1082,9 @@ define(function (require) {
                 },
                 "save": {
                     "success": "Luonnos tallennettu onnistuneesti."
+                },
+                "&reference": {
+                    "default": "Virheellinen syöte: {key}"
                 }
             },
 
@@ -1096,6 +1100,9 @@ define(function (require) {
                 },
                 "save": {
                     "fail": "Luonnoksen tallentamisessa tapahtui virhe."
+                },
+                "&reference": {
+                    "default": "Virheellinen viittaus. Puuttuva viittausavain: {key}"
                 }
             },
 

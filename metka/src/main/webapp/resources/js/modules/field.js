@@ -41,12 +41,44 @@ define(function (require) {
      */
     return function (options) {
         var $elem = this;
+        //var errorMsgList = new Array();
+        var labels = new Array();
+        var text = "";
+        var result = new Array();
 
         // Fire an event on any change in any input field
         $elem.on('keypress change input', function() {
             var evt = new CustomEvent('unsavedChanges');
             window.dispatchEvent(evt);
         });
+
+        function storeErrorLabels(sentence) {
+            labels.push(sentence);
+        }
+
+        function removeDublicates() {
+            return labels.reduce(function(a,b){
+                if (a.indexOf(b) < 0 ) a.push(b);
+                return a;
+            },[]);
+        }
+
+        function separateErrorLabels(message) {
+            if (message.length > 0) {
+                for(var i = 0; i < message.length; i++) {
+                    if(/[A-Z]/.test(message.charAt(i))) {
+                        var nextSentence = "", j;
+                        for(j = i+1; j < message.length && !/[A-Z]/.test(message.charAt(j)); j++)
+                        {
+                            nextSentence += message.charAt(j-1);
+                            i++;
+                        }
+                        storeErrorLabels(nextSentence);
+                    }
+                }
+            }
+            return removeDublicates();
+        }
 
         function addValidationErrorListener($container, getErrors) {
             $container.children('.help-block').remove();
@@ -63,6 +95,22 @@ define(function (require) {
                 if(options.horizontal) {
                     $p.addClass('col-sm-offset-'+(2 * (getPropertyNS(options, 'parent.parent.columns') || 1) / (options.colspan || 1)));
                 }
+                // Issue #587
+                setTimeout(function() {
+                    text = $('.has-error').find('label').text();
+                    result = separateErrorLabels(text);
+                    for(var i = 0; i < result.length; i++) {
+                        require('./modal')($.extend(true, require('./optionsBase')(), {
+                            title: MetkaJS.L10N.get('alert.notice.title'),
+                            body: MetkaJS.L10N.get('alert.notice.reference').supplant({
+                                key: result[i]
+                            }),
+                            buttons: [{
+                                type: 'DISMISS'
+                            }]
+                        }));
+                    }
+                }, 0);
             }
         }
 
