@@ -34,13 +34,20 @@ define(function (require) {
             if(options.dialogTitle && MetkaJS.L10N.containsText(options.dialogTitle, options.type)) {
                 return MetkaJS.L10N.localize(options.dialogTitle, options.type);
             } else if(options.dialogTitles
-                && options.dialogTitles[options.containerKey]
-                && MetkaJS.L10N.containsText(options.dialogTitles[options.containerKey], options.type)) {
+                    && options.dialogTitles[options.containerKey]
+                    && MetkaJS.L10N.containsText(options.dialogTitles[options.containerKey], options.type)) {
                 return MetkaJS.L10N.localize(options.dialogTitles[options.containerKey], options.type);
             } else if(options.title) {
-                return MetkaJS.L10N.get(options.title);
+                if (options.title !== 'Konfiguraatio' && options.containerKey) {
+                    var firstPart = MetkaJS.L10N.get(options.title);  // equal to: var firstPart = MetkaJS.L10N.localize(options, 'title');
+                    var inEnglish = (MetkaJS.L10N.localize(options, 'containerKey'));
+                    var lastPart = " " + (MetkaJS.L10N.get('settings.configuration.editor.restrictions.'+inEnglish));
+                    return firstPart.concat(lastPart);
+                } else {
+                    return MetkaJS.L10N.get(options.title);
+                }
             } else {
-                // Issue #769 workaround
+                // Issue #769 workaround ????
                 var newTitle = MetkaJS.L10N.localize(options, 'title');
                 if (newTitle === '[title]') {
                     newTitle = '';
@@ -81,8 +88,14 @@ define(function (require) {
                 .append('<button type="button" class="resize"><span>&#x25A2;</span></button>')
                 .append($('<h4 class="modal-title">')
                     .text(getTitle(options)));
+                    //.text(MetkaJS.L10N.localize(options, 'containerKey')));
+                    //.text(options.containerKey);
 
-            // Issue #452
+            if(getTitle(options) === 'Muokkaa muuttujaa') {
+                $header.append('<button type="button" class="backward" style="position: center"><span>&#8656;</span></button>')
+                    .append('<button type="button" class="forward" style="position: center"><span>&#8658;</span></button>');
+            }
+
             var txtBox = $body.find('.form-control:first');
             setTimeout(function() {
                 $(txtBox).focus();
@@ -117,7 +130,7 @@ define(function (require) {
             return false;
         }
 
-        // Handle modal resizing. Disable jQuery-ui draggable widget while on fullscreen.
+        // Handle modal resizing to fullscreen. Disable dragging when on fullscreen.
 
         setTimeout(function(){
             $('.resize').unbind().click(function() {
@@ -134,6 +147,18 @@ define(function (require) {
             })
         }, 300);
 
+        setTimeout(function(){
+            $('.forward').click(function() {
+                console.log("forward");
+            })
+        }, 300);
+
+        setTimeout(function(){
+            $('.backward').click(function() {
+                console.log("backward");
+            })
+        }, 300);
+
         var content = null;
         if(!options.$events) {
             options.$events = require('./events')();
@@ -145,6 +170,7 @@ define(function (require) {
         content = $('<div class="modal-dialog">');
         options.$events.trigger('refresh.metka');
         $modal.append(content);
+
         // Issue #425
         var focusedButton = $modal.find('.focused');
         setTimeout(function() {

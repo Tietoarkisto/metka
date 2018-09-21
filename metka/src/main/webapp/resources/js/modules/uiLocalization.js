@@ -960,6 +960,9 @@ define(function (require) {
                         "&title": {
                             "default": "Rajoitteet"
                         },
+                        "&restrictions": {
+                            "default": "Rajoite"
+                        },
                         "&namedrestrictions": {
                             "default": "Nimetyt rajoitteet"
                         },
@@ -968,6 +971,9 @@ define(function (require) {
                         },
                         "&operationtype": {
                             "default": "Operaation tyyppi"
+                        },
+                        "&namedTargets": {
+                            "default": "Nimetty rajoite"
                         },
                         "&namedtargetname": {
                             "default": "Nimetyn kohteen nimi"
