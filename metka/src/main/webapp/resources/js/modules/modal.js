@@ -38,7 +38,7 @@ define(function (require) {
                     && MetkaJS.L10N.containsText(options.dialogTitles[options.containerKey], options.type)) {
                 return MetkaJS.L10N.localize(options.dialogTitles[options.containerKey], options.type);
             } else if(options.title) {
-                if (options.title !== 'Konfiguraatio' && options.containerKey) {
+                if (options.title !== 'Konfiguraatio' && options.title !== 'Muokkaa muuttujaa' && options.containerKey) {
                     var firstPart = MetkaJS.L10N.get(options.title);  // equal to: var firstPart = MetkaJS.L10N.localize(options, 'title');
                     var inEnglish = (MetkaJS.L10N.localize(options, 'containerKey'));
                     var lastPart = " " + (MetkaJS.L10N.get('settings.configuration.editor.restrictions.'+inEnglish));
@@ -88,13 +88,12 @@ define(function (require) {
                 .append('<button type="button" class="resize"><span>&#x25A2;</span></button>')
                 .append($('<h4 class="modal-title">')
                     .text(getTitle(options)));
-                    //.text(MetkaJS.L10N.localize(options, 'containerKey')));
-                    //.text(options.containerKey);
 
-            if(getTitle(options) === 'Muokkaa muuttujaa') {
+            // Issue #409 arrow buttons
+            /*if(getTitle(options) === 'Muokkaa muuttujaa') {
                 $header.append('<button type="button" class="backward" style="position: center"><span>&#8656;</span></button>')
                     .append('<button type="button" class="forward" style="position: center"><span>&#8658;</span></button>');
-            }
+            }*/
 
             var txtBox = $body.find('.form-control:first');
             setTimeout(function() {
@@ -147,7 +146,8 @@ define(function (require) {
             })
         }, 300);
 
-        setTimeout(function(){
+        // Issue #409 implementation to be here maybe?
+        /*setTimeout(function(){
             $('.forward').click(function() {
                 console.log("forward");
             })
@@ -157,7 +157,7 @@ define(function (require) {
             $('.backward').click(function() {
                 console.log("backward");
             })
-        }, 300);
+        }, 300);*/
 
         var content = null;
         if(!options.$events) {

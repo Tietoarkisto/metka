@@ -960,6 +960,9 @@ define(function (require) {
                         "&title": {
                             "default": "Rajoitteet"
                         },
+                        "&vargroups": {
+                            "default": "Ryhmä"
+                        },
                         "&restrictions": {
                             "default": "Rajoite"
                         },
@@ -989,6 +992,27 @@ define(function (require) {
                         },
                         "&checks": {
                             "default": "Kohteen tarkistukset"
+                        },
+                        "&selectionLists": {
+                            "default": "Valintalista"
+                        },
+                        "&selectionLists_options": {
+                            "default": "Arvo"
+                        },
+                        "&references": {
+                            "default": "Viittaus"
+                        },
+                        "&fields": {
+                            "default": "Kenttä"
+                        },
+                        "&field_removePermissions": {
+                            "default": "Oikeus"
+                        },
+                        "&cascade": {
+                            "default": "Operaatio"
+                        },
+                        "&selectionLists_freeText_values": {
+                            "default": "Vapaatekstiarvo"
                         },
                         "&checkconditiontype": {
                             "default": "Vaatimuksen tyyppi"
