@@ -223,16 +223,8 @@ class DDIWriteDocumentDescription extends DDIWriteSectionBase {
         // Add producer, repeatable
         ProducerType producerType = fillTextType(prodStmtType.addNewProducer(), getDDIText(language, "PRODUCER"));
 
-        // Set ID, repeatable
-        // TODO: What is the value for this
-        producerType.setID("");
-
         // Set abbreviation
         if(agency != null) producerType.setAbbr(agency);
-
-        // Set type
-        // TODO: What is the value for this
-        producerType.setRole("");
 
         // Add copyright
         fillTextType(prodStmtType.addNewCopyright(), getDDIText(language, "COPYRIGHT"));
