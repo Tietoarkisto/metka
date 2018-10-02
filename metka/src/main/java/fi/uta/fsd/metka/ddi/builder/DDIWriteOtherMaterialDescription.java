@@ -62,6 +62,7 @@ class DDIWriteOtherMaterialDescription extends DDIWriteSectionBase {
                 setURI(row, otherMatType);
                 addLabel(row, otherMatType);
                 setText(row, otherMatType);
+                setLevel(row, otherMatType);
             }
         }
     }
@@ -77,6 +78,13 @@ class DDIWriteOtherMaterialDescription extends DDIWriteSectionBase {
         Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.OTHERMATERIALLABEL));
         if(hasValue(valueFieldPair, language)) {
             fillTextType(otherMatType.addNewLabl(), valueFieldPair, language);
+        }
+    }
+
+    private void setLevel(DataRow row, OtherMatType otherMatType) {
+        Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.OTHERMATERIALLEVEL));
+        if(hasValue(valueFieldPair, language)) {
+            otherMatType.setLevel(valueFieldPair.getRight().getActualValueFor(language));
         }
     }
 

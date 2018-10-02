@@ -77,6 +77,9 @@ class DDIReadOtherMaterialDescription extends DDIReadSectionBase {
             if(hasContent(other.getLablArray()) && StringUtils.hasText(getText(other.getLablArray(0)))) {
                 valueSet(row.getRight(), Fields.OTHERMATERIALLABEL, getText(other.getLablArray(0)));
             }
+            if(hasContent(other.getLablArray()) && StringUtils.hasText(getText(other.getLablArray(0)))) {
+                valueSet(row.getRight(), Fields.OTHERMATERIALLEVEL, other.getLevel());
+            }
         }
 
         return ReturnResult.OPERATION_SUCCESSFUL;

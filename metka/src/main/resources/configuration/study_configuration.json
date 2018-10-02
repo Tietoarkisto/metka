@@ -1970,7 +1970,8 @@
 			"subfields": [
 				"othermaterialuri",
 				"othermateriallabel",
-				"othermaterialtext"
+				"othermaterialtext",
+				"othermateriallevel"
 			]
 		},
 		"othermaterialuri": {
@@ -1988,6 +1989,13 @@
 		},
 		"othermaterialtext": {
 			"key": "othermaterialtext",
+			"translatable": true,
+			"type": "STRING",
+			"subfield": true,
+			"exact": false
+		},
+		"othermateriallevel": {
+			"key": "othermateriallevel",
 			"translatable": true,
 			"type": "STRING",
 			"subfield": true,

@@ -490,6 +490,10 @@
             "key" : "othermaterialuri",
             "title" : "Uri"
         },
+        "othermateriallevel": {
+            "key" : "othermateriallevel",
+            "title" : "Taso"
+        },
         "othermateriallabel": {
             "key" : "othermateriallabel",
             "title" : "Lyhyt kuvaus"
@@ -2273,7 +2277,8 @@
                                         "columnFields": [
                                             "othermateriallabel",
                                             "othermaterialtext",
-                                            "othermaterialuri"
+                                            "othermaterialuri",
+                                            "othermateriallevel"
                                         ],
                                         "dialogTitle": {
                                             "key": "othermaterials",

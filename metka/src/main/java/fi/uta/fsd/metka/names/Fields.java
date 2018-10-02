@@ -33,6 +33,7 @@ package fi.uta.fsd.metka.names;
  */
 public final class Fields {
     public static final String OTHERMATERIALURI = "othermaterialuri";
+    public static final String OTHERMATERIALLEVEL = "othermateriallevel";
     public static final String STUDYID = "studyid";
     public static final String DESCVERSIONS = "descversions";
     public static final String VERSIONDATE = "versiondate";
