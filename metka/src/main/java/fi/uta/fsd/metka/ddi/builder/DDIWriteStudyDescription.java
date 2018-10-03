@@ -981,6 +981,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
             String sampproc = null;
             String sampprocvocab = null;
             String sampprocvocaburi = null;
+            String sampproctext = null;
 
             sampprocvocab = getReferenceTitle(rowRoot + Fields.SAMPPROCVOCAB);
             if(!StringUtils.hasText(sampprocvocab)) {
@@ -1004,9 +1005,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
 
             // Add sampproctext if present
             valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.SAMPPROCTEXT));
-            if(hasValue(valueFieldPair, language)) {
-                fillTextType(t, valueFieldPair, language);
-            }
+            sampproctext = valueFieldPair.getRight().getActualValueFor(language).replaceAll("<[^>]+>","");
 
             ConceptType c = fillTextType(t.addNewConcept(), sampproc);
 
@@ -1020,6 +1019,10 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
 
             if(txt != null) {
                 fillTextType(t.addNewTxt(), txt);
+            }
+
+            if(sampproctext != null) {
+                fillTextType(t.addNewP(), sampproctext);
             }
         }
     }
