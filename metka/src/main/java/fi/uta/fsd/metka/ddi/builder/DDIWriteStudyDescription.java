@@ -602,6 +602,16 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.COUNTRIES));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
             addStudyInfoSumDescNation(sumDscrType, containerPair.getRight());
+            for(DataRow row : containerPair.getRight().getRowsFor(language)) {
+                if (row.getRemoved()) {
+                    continue;
+                }
+                Pair<StatusCode, ValueDataField> fieldPair = row.dataField(ValueDataFieldCall.get(Fields.COUNTRY));
+                if(hasValue(fieldPair, language)) {
+                    fillTextType(sumDscrType.addNewGeogCover(), fieldPair, language);
+                }
+
+            }
         }
 
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.GEOGCOVERS));
@@ -610,6 +620,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
                 if (row.getRemoved()) {
                     continue;
                 }
+
                 Pair<StatusCode, ValueDataField> fieldPair = row.dataField(ValueDataFieldCall.get(Fields.GEOGCOVER));
                 if(hasValue(fieldPair, language)) {
                     fillTextType(sumDscrType.addNewGeogCover(), fieldPair, language);
