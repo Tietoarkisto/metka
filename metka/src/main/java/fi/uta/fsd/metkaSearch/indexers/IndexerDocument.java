@@ -148,6 +148,7 @@ public class IndexerDocument {
             analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
         } else if(language == Language.DEFAULT) {
             analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
+            //analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
         } else if(language == Language.EN) {
             // Add some other tokenizing analyzer if StandardAnalyzer is not enough
             analyzers.put(key, LuceneConfig.ENGLISH_ANALYZER);

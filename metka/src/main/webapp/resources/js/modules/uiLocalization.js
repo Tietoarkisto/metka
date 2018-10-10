@@ -1002,6 +1002,9 @@ define(function (require) {
                         "&references": {
                             "default": "Viittaus"
                         },
+                        "&pages": {
+                            "default": " "
+                        },
                         "&fields": {
                             "default": "Kenttä"
                         },
