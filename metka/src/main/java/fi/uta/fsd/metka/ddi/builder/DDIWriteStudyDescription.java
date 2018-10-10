@@ -1011,13 +1011,12 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
                 txt = valueFieldPair.getRight().getActualValueFor(language);
             }
 
-            // Keyword should always be non null at this point
-            ConceptualTextType t = dataColl.addNewSampProc();
-
             // Add sampproctext if present
             valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.SAMPPROCTEXT));
-            sampproctext = valueFieldPair.getRight().getActualValueFor(language).replaceAll("<[^>]+>","");
+            sampproctext = valueFieldPair.getRight().getActualValueFor(language);
 
+            // Keyword should always be non null at this point
+            ConceptualTextType t = dataColl.addNewSampProc();
             ConceptType c = fillTextType(t.addNewConcept(), sampproc);
 
             if(sampprocvocab != null) {
@@ -1033,7 +1032,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
             }
 
             if(sampproctext != null) {
-                fillTextType(t.addNewP(), sampproctext);
+                fillTextType(c, sampproctext);
             }
         }
     }
