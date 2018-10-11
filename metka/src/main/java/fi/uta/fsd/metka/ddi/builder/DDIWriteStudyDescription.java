@@ -1178,7 +1178,14 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
             for (DataRow row : containerPair.getRight().getRowsFor(language)) {
                 valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.APPRAISAL));
                 if(hasValue(valueFieldPair, language)) {
-                    fillTextType(anlyInfoType.addNewDataAppr(), valueFieldPair, language);
+                    // We don't really need line breaks, so let's get rid of them all
+                    String s = valueFieldPair.getRight().getActualValueFor(language).replaceAll("<p><br></p>", "");
+                    Document dataAppr = Jsoup.parse(s);
+                    Elements paragraphs = dataAppr.select("p");
+                    DataApprType d = anlyInfoType.addNewDataAppr();
+                    for(Element p : paragraphs){
+                        fillTextType(d.addNewP(), p.text());
+                    }
                 }
             }
         }
