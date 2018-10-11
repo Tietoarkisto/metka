@@ -44,7 +44,9 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.StringUtils;
-
+import org.jsoup.*;
+import org.jsoup.nodes.*;
+import org.jsoup.select.*;
 import java.util.*;
 
 class DDIWriteStudyDescription extends DDIWriteSectionBase {
@@ -992,7 +994,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
             String sampproc = null;
             String sampprocvocab = null;
             String sampprocvocaburi = null;
-            String sampproctext = null;
+            Document sampproctext = null;
 
             sampprocvocab = getReferenceTitle(rowRoot + Fields.SAMPPROCVOCAB);
             if(!StringUtils.hasText(sampprocvocab)) {
@@ -1011,13 +1013,15 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
                 txt = valueFieldPair.getRight().getActualValueFor(language);
             }
 
-            // Add sampproctext if present
-            valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.SAMPPROCTEXT));
-            sampproctext = valueFieldPair.getRight().getActualValueFor(language);
-
             // Keyword should always be non null at this point
             ConceptualTextType t = dataColl.addNewSampProc();
             ConceptType c = fillTextType(t.addNewConcept(), sampproc);
+
+            // Add sampproctext if present and extract all text paragraphs
+            valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.SAMPPROCTEXT));
+            // We don't really need line breaks, so let's get rid of them all
+            sampproctext = Jsoup.parse(valueFieldPair.getRight().getActualValueFor(language).replaceAll("<p><br></p>", ""));
+            Elements paragraphs = sampproctext.select("p");
 
             if(sampprocvocab != null) {
                 c.setVocab(sampprocvocab);
@@ -1032,7 +1036,9 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
             }
 
             if(sampproctext != null) {
-                fillTextType(c, sampproctext);
+                for(Element p : paragraphs){
+                    fillTextType(t.addNewP(), p.text());
+                }
             }
         }
     }
