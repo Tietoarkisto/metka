@@ -4,7 +4,28 @@
 		"type": "STUDY"
 	},
 	"selectionLists": {
-	 
+		"datakind_list": {
+			"key": "datakind_list",
+			"type": "VALUE",
+			"default": "1",
+			"options": [
+				{
+					"&title": {
+						"default": "Kvantitatiivinen",
+						"en": "Quantitative",
+						"sv": "Kvantitativ"
+					},
+					"value": "1"
+				}, {
+					"&title": {
+						"default": "Kvalitatiivinen",
+						"en": "Qualitative",
+						"sv": "Kvalitativ"
+					},
+					"value": "2"
+				}
+			]
+		},
 		"anonymization_list": {
 			"key": "anonymization_list",
 			"type": "VALUE",
