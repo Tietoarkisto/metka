@@ -560,7 +560,6 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
 
         result = readConceptualTextTypeArray(sumDscr.getAnlyUnitArray(), Fields.ANALYSIS, Fields.ANALYSISUNITVOCAB, Fields.ANALYSISUNIT, Fields.ANALYSISUNITOTHER, null);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
-
         return readStudyInfoSumDescUniverse(sumDscr);
     }
 
@@ -645,7 +644,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
         if(!hasContent(sumDscr.getUniverseArray())) {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
-        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerPair = getContainer(Fields.UNIVERSE);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerPair = getContainer(Fields.UNIVERSES);
         if(containerPair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerPair.getLeft();
         }
