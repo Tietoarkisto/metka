@@ -225,6 +225,62 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
 
         }
 
+        // Get other authors
+        containerResult = getContainer(Fields.OTHERAUTHORS);
+        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerResult.getLeft();
+        }
+        container = containerResult.getRight().getLeft();
+        change = containerResult.getRight().getRight();
+
+        // Let's construct the request and path elements needed
+        request = new ReferencePathRequest();
+        request.setContainer(Fields.OTHERAUTHORS);
+        request.setLanguage(language);
+
+        // These are all organization authors
+        for(OthIdType othId : rsp.getOthIdArray()) {
+            if(!StringUtils.hasText(getText(othId))) {
+                continue;
+            }
+
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
+            if(row.getLeft() != StatusCode.ROW_INSERT) {
+                continue;
+            }
+
+            // Set type to person
+            valueSet(row.getRight(), Fields.OTHERAUTHORTYPE, "1");
+            valueSet(row.getRight(), Fields.AUTHOR, getText(othId));
+            if(StringUtils.hasText(othId.getAffiliation())) {
+                String[] splits = othId.getAffiliation().split("\\. ");
+                String orgValue = null;
+                String agencyValue = null;
+                if(splits.length > 0) {
+                    ReferenceOption option = findOrganization(splits[0], Fields.AUTHORORGANISATION);
+                    orgValue = (option != null) ? option.getValue() : null;
+                    if(StringUtils.hasText(orgValue)) {
+                        valueSet(row.getRight(), Fields.AUTHORORGANISATION, orgValue);
+                    }
+                }
+                if(splits.length > 1 && orgValue != null) {
+                    ReferenceOption option = findAgency(splits[1], Fields.AUTHORORGANISATION, orgValue, Fields.AUTHORAGENCY);
+                    agencyValue = (option != null) ? option.getValue() : null;
+                    if(StringUtils.hasText(agencyValue)) {
+                        valueSet(row.getRight(), Fields.AUTHORAGENCY, agencyValue);
+                    }
+                }
+                if(splits.length > 2 && agencyValue != null) {
+                    ReferenceOption option = findSection(splits[2], Fields.AUTHORORGANISATION, orgValue, Fields.AUTHORAGENCY, agencyValue, Fields.AUTHORSECTION);
+                    String sectionValue = (option != null) ? option.getValue() : null;
+                    if(StringUtils.hasText(sectionValue)) {
+                        valueSet(row.getRight(), Fields.AUTHORSECTION, sectionValue);
+                    }
+                }
+            }
+
+        }
+
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
