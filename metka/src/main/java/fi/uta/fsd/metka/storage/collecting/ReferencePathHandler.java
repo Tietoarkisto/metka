@@ -314,7 +314,9 @@ public class ReferencePathHandler {
         JsonPathParser parser = new JsonPathParser(node, step.getReference().getValuePathParts());
         if(StringUtils.hasText(step.getValue())) {
             // There's a value, we either add a single option or then we continue on with the next step
-            node = parser.findRootObjectWithTerminatingValue(step.getValue());
+            if(parser.findRootObjectWithTerminatingValue(step.getValue()) != null) {
+                node = parser.findRootObjectWithTerminatingValue(step.getValue());
+            }
             if(step.getNext() != null) {
                 referencePathStep(node, step.getNext(), options, language, returnFirst);
             } else {
