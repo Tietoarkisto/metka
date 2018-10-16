@@ -190,6 +190,29 @@ define(function (require) {
                         if(type === 'CUSTOM_JS') {
                             return;
                         }
+                        // Issuet #639 & #640
+                        if (options.field.key === 'relatedstudies_select' || options.field.key === 'studies_select') {
+                            var $searchInput = $('<input type="text">')
+                                .attr('id', 'myInput')
+                                .attr('placeholder', 'Hae...')
+                                .val('')
+                                .keyup(function() {
+                                    var input, filter, div, a, i;
+                                    input = document.getElementById("myInput");
+                                    filter = input.value.toUpperCase();
+                                    div = document.getElementById("METKA_UI_999");
+                                    a = div.getElementsByTagName("option");
+                                    for (i = 0; i < a.length; i++) {
+                                        if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+                                            a[i].style.display = "";
+                                        } else {
+                                            a[i].style.display = "none";
+                                        }
+                                    }
+                                });
+                            $langField.append($searchInput);
+                            $langField.append('<br>');
+                        }
                         require('./inputField').call($langField, options, type, lang);
                     })();
 

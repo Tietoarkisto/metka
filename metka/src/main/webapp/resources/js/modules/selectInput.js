@@ -79,6 +79,12 @@ define(function (require) {
                         .text(MetkaJS.L10N.get('general.selection.empty')));
             }
             if(selectOptions) {
+                // Issuet #639 & #640
+                if (key === 'relatedstudies_select' || key === 'studies_select') {
+                    $input.append($('<option>')
+                        .val('')
+                        .text('Valinta...'));
+                }
                 $input.append(selectOptions.map(function (option) {
                     return $('<option>')
                         .val(option.value)
