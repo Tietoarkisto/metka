@@ -83,7 +83,7 @@ define(function (require) {
                 if (key === 'relatedstudies_select' || key === 'studies_select') {
                     $input.append($('<option>')
                         .val('')
-                        .text('Valinta...'));
+                        .text('-- Valitse --'));
                 }
                 $input.append(selectOptions.map(function (option) {
                     return $('<option>')

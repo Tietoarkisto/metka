@@ -33,8 +33,8 @@ define(function (require) {
         var getPropertyNS = require('./utils/getPropertyNS');
         var id = require('./autoId')();
         var key = options.field.key;
-        // Issuet #639 & #640
-        if (key === 'relatedstudies_select' || key === 'studies_select') {
+        // Issuet #639 & #640 & #646
+        if (key === 'relatedstudies_select' || key === 'studies_select' || (key === 'studyid' && options.fieldOptions.type === 'SELECTION')) {
             id = 'METKA_UI_999';
         }
         var $label = require('./label')(options, lang)

@@ -190,8 +190,8 @@ define(function (require) {
                         if(type === 'CUSTOM_JS') {
                             return;
                         }
-                        // Issuet #639 & #640
-                        if (options.field.key === 'relatedstudies_select' || options.field.key === 'studies_select') {
+                        // Issuet #639 & #640 & #646
+                        if (options.field.key === 'relatedstudies_select' || options.field.key === 'studies_select' || (options.field.key === 'studyid' && options.fieldOptions.type === 'SELECTION')) {
                             var $searchInput = $('<input type="text">')
                                 .attr('id', 'myInput')
                                 .attr('placeholder', 'Hae...')
