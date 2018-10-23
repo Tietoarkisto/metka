@@ -356,7 +356,6 @@ define(function (require) {
             this
                 .click(function() {
                     var $this = $(this);
-                    console.log(options);
                     var $table = $('<table class="table">')
                         .append($('<thead>')
                             .append($('<tr>')
