@@ -192,41 +192,44 @@ define(function (require) {
                                                         MetkaJS.L10N.get("dialog.history.original"),
                                                         MetkaJS.L10N.get("dialog.history.current")
                                                     ].map(function (entry) {
-                                                            return $('<th style="width: 33%;">')
-                                                                .text(entry);
-                                                        }))));
-                                        require('./modal')($.extend(true, require('./optionsBase')(), {
-                                            title: MetkaJS.L10N.get('general.revision.revisions'),
-                                            body: $table,
-                                            large: true,
-                                            buttons: [{
-                                                type: 'DISMISS'
-                                            }]
-                                        }));
+                                                        return $('<th style="width: 33%;">')
+                                                            .text(entry);
+                                                    }))));
 
-                                        require('./server')('/revision/revisionCompare', {
-                                            data: JSON.stringify({
-                                                id: o.data.key.id,
-                                                begin: $('input[name="beginGrp"]:checked').val(),
-                                                end: $('input[name="endGrp"]:checked').val(),
-                                                type: o.data.configuration.type
-                                            }),
-                                            success: function (response) {
-                                                if (resultParser(response.result).getResult() === 'OPERATION_SUCCESSFUL') {
-                                                    $table
-                                                        .append($('<tbody>')
-                                                            .append(response.rows.map(function (row) {
-                                                                var parts = row.key.split('[');
-                                                                return $('<tr>')
-                                                                    .append([
-                                                                        // TODO: get field title (titles are all over GUI conf, which is a problem)
-                                                                        //parts[0],
-                                                                        // TODO: get language from
-                                                                        //parts[1].substr(0, parts[1].length - 1),
-                                                                        row.key,
-                                                                        row.original,
-                                                                        row.current
-                                                                    ].map(function (entry) {
+                                        if($('input[name="beginGrp"]:checked').val() &&  $('input[name="endGrp"]:checked').val()){
+                                            require('./modal')($.extend(true, require('./optionsBase')(), {
+                                                title: MetkaJS.L10N.get('general.revision.revisions'),
+                                                body: $table,
+                                                large: true,
+                                                buttons: [{
+                                                    type: 'DISMISS'
+                                                }]
+                                            }));
+
+
+                                            require('./server')('/revision/revisionCompare', {
+                                                data: JSON.stringify({
+                                                    id: o.data.key.id,
+                                                    begin: $('input[name="beginGrp"]:checked').val(),
+                                                    end: $('input[name="endGrp"]:checked').val(),
+                                                    type: o.data.configuration.type
+                                                }),
+                                                success: function (response) {
+                                                    if (resultParser(response.result).getResult() === 'OPERATION_SUCCESSFUL') {
+                                                        $table
+                                                            .append($('<tbody>')
+                                                                .append(response.rows.map(function (row) {
+                                                                    var parts = row.key.split('[');
+                                                                    return $('<tr>')
+                                                                        .append([
+                                                                            // TODO: get field title (titles are all over GUI conf, which is a problem)
+                                                                            //parts[0],
+                                                                            // TODO: get language from
+                                                                            //parts[1].substr(0, parts[1].length - 1),
+                                                                            row.key,
+                                                                            row.original,
+                                                                            row.current
+                                                                        ].map(function (entry) {
                                                                             return $('<td>')
                                                                                 .text(entry.supplant({
                                                                                     rowNumber: MetkaJS.L10N.get("dialog.history.compare.rowId"),
@@ -234,10 +237,18 @@ define(function (require) {
                                                                                     removedRow: MetkaJS.L10N.get("dialog.history.compare.removedRow"),
                                                                                 }));
                                                                         }));
-                                                            })));
+                                                                })));
+                                                    }
                                                 }
-                                            }
-                                        });
+                                            });} else {
+                                            require('./modal')($.extend(true, require('./optionsBase')(), {
+                                                title: MetkaJS.L10N.get('alert.error.title'),
+                                                body: MetkaJS.L10N.get('general.revision.compare.error'),
+                                                buttons: [{
+                                                    type: 'DISMISS'
+                                                }]
+                                            }));
+                                        }
                                     });
 
                             }
