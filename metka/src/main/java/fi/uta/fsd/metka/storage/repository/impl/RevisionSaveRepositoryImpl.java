@@ -30,6 +30,7 @@ package fi.uta.fsd.metka.storage.repository.impl;
 
 
 import fi.uta.fsd.Logger;
+import fi.uta.fsd.ZipContent;
 import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
@@ -306,7 +307,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
         // Lets check the filedip for need of correction and correct the value if necessary
         checkDip(revision, transfer, changesAndErrors, info);
-    }
+        }
 
     private void checkFile(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
         // Get study linked to this attachment
@@ -339,6 +340,19 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 transfer.addField(TransferField.buildFromDataField(fieldPair.getRight()));
             }
             TransferField tfFile = transfer.getField(Fields.FILE);
+
+
+            ValueDataField filePath = revision.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
+            String fileType = filePath != null ? FilenameUtils.getExtension(filePath.getActualValueFor(Language.DEFAULT)) : null;
+
+            if(fileType.equals("zip") || fileType.equals("ZIP")) {
+                String filePathString = filePath != null ? FilenameUtils.normalize(filePath.getActualValueFor(Language.DEFAULT)) : null;
+                ZipContent zip = new ZipContent();
+                List<String> contents = zip.contentList(filePathString);
+
+                // Set content list as zipcontent field value
+                revision.dataField(ValueDataFieldCall.set(Fields.ZIPCONTENT, new Value(contents.toString()), Language.DEFAULT).setInfo(info)).getLeft();
+            }
 
             if(notFile(fieldPair.getRight().getActualValueFor(Language.DEFAULT), tfFile, changesAndErrors)) {
                 messenger.sendAmqpMessage(messenger.FB_FILES_MISSING, new FileMissingPayload(study, revision));

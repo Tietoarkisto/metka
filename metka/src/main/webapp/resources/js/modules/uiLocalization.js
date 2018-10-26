@@ -189,6 +189,10 @@ define(function (require) {
                 "default": "Nimi"
             },
 
+            "contents": {
+                "default": "Tiedoston sisältö"
+            },
+
             "downloadInfo": {
                 "&currentlyDownloading": {
                     "default": "Lataus on jo käynnissä. Odota latauksen valmistumista ladataksesi uudelleen."

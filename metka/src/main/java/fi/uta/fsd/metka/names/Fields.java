@@ -130,6 +130,7 @@ public final class Fields {
     public static final String TOPIC = "topic";
     public static final String TOPICVOCABURI = "topicvocaburi";
     public static final String TOPICURI = "topicuri";
+    public static final String ZIPCONTENT = "zipcontent";
     public static final String VARFILETYPE = "varfiletype";
     public static final String TIMEMETHODS = "timemethods";
     public static final String TIMEMETHOD = "timemethod";

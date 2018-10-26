@@ -216,6 +216,14 @@
             "generalSearch": true,
 			"type": "STRING"
 		},
+		"zipcontent": {
+			"key": "zipcontent",
+			"immutable": true,
+			"editable": false,
+			"translatable": false,
+			"generalSearch": true,
+			"type": "STRING"
+		},
 		"fileaip": {
 			"key": "fileaip",
 			"translatable": false,
