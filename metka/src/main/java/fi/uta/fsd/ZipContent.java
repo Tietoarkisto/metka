@@ -58,7 +58,8 @@ public final class ZipContent {
 
             while (e.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) e.nextElement();
-                list.add(entry.getName());
+                String fileName = entry.getName();
+                list.add(fileName + '\n');
             }
         }
         catch(IOException ioe)

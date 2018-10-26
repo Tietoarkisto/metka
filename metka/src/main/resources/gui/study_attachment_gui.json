@@ -53,13 +53,12 @@
 			"type": "ROW",
 			"cells": [{
 				"type": "CELL",
-				"title": "Pakkauksen sisältö",
+				"title": "Pakkauksen sisältö (jos zip)",
 				"horizontal": true,
-				"hidden": true,
 				"required": false,
-				"default": null,
 				"field": {
-					"key": "zipcontent"
+					"key": "zipcontent",
+					"multiline": true
 				}
 			}]
 		},{

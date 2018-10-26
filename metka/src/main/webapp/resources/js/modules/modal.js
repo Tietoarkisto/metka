@@ -102,24 +102,6 @@ define(function (require) {
                 $(txtBox).focus();
             }, 600);
 
-
-
-            var $listHeading = "";
-            var $list = "";
-
-
-            if(options.data.fields.zipcontent){
-                var list = options.data.fields.zipcontent.values.DEFAULT.current.replace(/[\[\]']+/g,'').split(",");
-                var listHeading = MetkaJS.L10N.get('general.contents.default');
-                $listHeading = $('<h4 class="fileContent">' + listHeading + '</h4>');
-                $list = $('<ul class="content-list">');
-                for(var i = 0; i < list.length; i++){
-                    var line = list[i];
-                    var $line =  $('<li>' + line + '</li>');
-                    $list.append($line);
-                }
-            }
-
             content
                 .empty()
                 .toggleClass('modal-lg', !!options.large)
@@ -127,8 +109,6 @@ define(function (require) {
                     .draggable({handle: "div.modal-header"})
                     .append($header)
                     .append($body)
-                    .append($listHeading)
-                    .append($list)
                     .append((options.disableFooter ? null : $('<div class="modal-footer">')
                         .append((options.buttons || []).map(function (buttonOptions) {
                             $.extend(true, buttonOptions, {
