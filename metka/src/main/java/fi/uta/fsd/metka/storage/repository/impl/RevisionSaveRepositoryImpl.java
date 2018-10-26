@@ -351,7 +351,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 List<String> contents = zip.contentList(filePathString);
 
                 // Set content list as zipcontent field value
-                revision.dataField(ValueDataFieldCall.set(Fields.ZIPCONTENT, new Value(contents.toString()), Language.DEFAULT).setInfo(info)).getLeft();
+                revision.dataField(ValueDataFieldCall.set(Fields.ZIPCONTENT, new Value(contents.toString().replaceAll("\\[|\\]|\\,", "")), Language.DEFAULT).setInfo(info)).getLeft();
             }
 
             if(notFile(fieldPair.getRight().getActualValueFor(Language.DEFAULT), tfFile, changesAndErrors)) {
