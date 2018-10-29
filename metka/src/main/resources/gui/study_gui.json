@@ -2468,7 +2468,6 @@
         "permissions": [
             "canViewStudyErrors"
         ],
-        "hidePageButtons": true,
         "content": [{
             "type": "COLUMN",
             "columns": 1,
@@ -2479,9 +2478,8 @@
                     "title": "Virheet",
                     "readOnly": true,
                     "field": {
-                        "displayType": "CUSTOM_JS",
                         "key": "studyerrors",
-                        "showReferenceState": true,
+                        "showSaveInfo": true,
                         "columnFields": [
                             "errorscore",
                             "errordatasetpart",
@@ -2490,7 +2488,36 @@
                             "errorlabel",
                             "errortriggerdate",
                             "errortriggerpro"
-                        ]
+                        ],
+                        "dialogTitle": {
+                            "key": "studyerrors",
+                            "ADD": "Lisää virhe",
+                            "MODIFY": "Muokkaa virhettä",
+                            "VIEW": "Virheet"
+                        }
+                    },
+                    "subfieldConfiguration": {
+                        "errorscore": {
+                            "required": true
+                        },
+                        "errordatasetpart": {
+                            "required": true
+                        },
+                        "errorpartsection": {
+                            "required": true
+                        },
+                        "errorlanguage": {
+                            "required": true
+                        },
+                        "errorlabel": {
+                            "required": true
+                        },
+                        "errortriggerdate": {
+                            "required": true
+                        },
+                        "errortriggerpro": {
+                            "required": true
+                        }
                     }
                 }]
             }]

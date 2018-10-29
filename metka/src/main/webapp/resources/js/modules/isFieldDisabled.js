@@ -42,6 +42,9 @@ define(function (require) {
         }
 
         var editable = options.fieldOptions ? options.fieldOptions.editable : true;
+        if(options.field.key === 'studyerrors') {
+            options.readOnly = false;
+        }
         return (typeof editable !== 'undefined' ? !editable : false) || options.isReadOnly(options);
     };
 });

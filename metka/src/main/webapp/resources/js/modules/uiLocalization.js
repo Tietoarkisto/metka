@@ -970,6 +970,9 @@ define(function (require) {
                         "&restrictions": {
                             "default": "Rajoite"
                         },
+                        "&studyerrors": {
+                            "default": "Virhe"
+                        },
                         "&namedrestrictions": {
                             "default": "Nimetyt rajoitteet"
                         },

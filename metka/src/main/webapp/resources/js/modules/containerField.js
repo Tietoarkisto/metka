@@ -55,7 +55,6 @@ define(function (require) {
             return mapTransferRowColumn(options, transferRow, column,
                 $thead.children('tr').children().eq(i).hasClass('hiddenByTranslationState'), ($thead.children('tr').children().eq(i).data('lang') || lang));
         }));
-
         if (options.field.showSaveInfo) {
             $tr.append(
                 $('<td>')
@@ -297,11 +296,12 @@ define(function (require) {
         var dataConf = getPropertyNS(options, 'dataConf.fields', column);
         var type = columnOptions && columnOptions.displayType ? columnOptions.displayType : columnOptions.type;
         //var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
-
+        if(options.field.key === 'studyerrors') {
+            type = 'STRING';
+        }
         if(type === 'CUSTOM_JS') {
             type = columnOptions.type;
         }
-
         if (!type) {
             log('not implemented', column);
             $td.text(EMPTY);
@@ -332,7 +332,6 @@ define(function (require) {
 
             return require('./data').latestValue(transferField, columnLang);
         })();
-
         if(!value && type !== 'REFERENCE') {
             $td.text(EMPTY);
             return;
@@ -342,7 +341,6 @@ define(function (require) {
             case 'REFERENCE': {
                 var refKey = getPropertyNS(options, 'dataConf.fields', column, 'reference');
                 var reference = getPropertyNS(options, 'dataConf.references', refKey);
-
                 require('./reference').optionByPath(column, options, columnLang, setText)(transferRow.fields, reference, null, transferRow);
                 return;
             }
@@ -553,6 +551,11 @@ define(function (require) {
 
         options.columns = [];
         options.rowCommands = [];
+        if(options.field.key === 'studyerrors') {
+            options.fieldOptions.type = 'CONTAINER';
+            options.fieldOptions.translatable = true;
+            options.fieldOptions.writable = true;
+        }
 
         //var key = options.field.key;
 
@@ -745,7 +748,9 @@ define(function (require) {
                             return button;
                         }
                     });
-
+                if(options.field.key === 'studyerrors') {
+                    options.readOnly = false;
+                }
                 if (!require('./isFieldDisabled')(options, lang)) {
                     buttons.push({
                         buttonId: options.field.key+"_add",

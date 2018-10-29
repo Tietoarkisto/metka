@@ -192,27 +192,36 @@ define(function (require) {
                         }
                         // Issuet #639 & #640 & #646
                         if (options.field.key === 'relatedstudies_select' || options.field.key === 'studies_select' || (options.field.key === 'studyid' && options.fieldOptions.type === 'SELECTION')) {
-                            var $searchInput = $('<input type="text">')
-                                .attr('id', 'myInput')
-                                .attr('placeholder', 'Hae...')
-                                .val('')
-                                .keyup(function() {
-                                    var input, filter, div, a, i;
-                                    input = document.getElementById("myInput");
-                                    filter = input.value.toUpperCase();
-                                    div = document.getElementById("METKA_UI_999");
-                                    a = div.getElementsByTagName("option");
-                                    for (i = 0; i < a.length; i++) {
-                                        if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
-                                            a[i].style.display = "";
-                                        } else {
-                                            a[i].style.display = "none";
+                            console.log("options.field: " + JSON.stringify(options.field));
+                            //setTimeout(function() {
+                            /*var modalTitles = document.getElementsByClassName("modal-title");
+                            console.log("modalTitles.length: " + modalTitles.length);
+                            var modalTitleArray = Array.prototype.slice.call(modalTitles);
+                            if (modalTitleArray[0].innerHTML !== 'Mapitus') {
+                                console.log("modalTitle: " + modalTitleArray[0].innerHTML);*/
+                                var $searchInput = $('<input type="text">')
+                                    .attr('id', 'myInput')
+                                    .attr('placeholder', 'Hae...')
+                                    .val('')
+                                    .keyup(function() {
+                                        var input, filter, div, a, i;
+                                        input = document.getElementById("myInput");
+                                        filter = input.value.toUpperCase();
+                                        div = document.getElementById("METKA_UI_999");
+                                        a = div.getElementsByTagName("option");
+                                        for (i = 0; i < a.length; i++) {
+                                            if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+                                                a[i].style.display = "";
+                                            } else {
+                                                a[i].style.display = "none";
+                                            }
                                         }
-                                    }
-                                });
-                            $langField.append($searchInput);
-                            $langField.append('<br>');
+                                    });
+                                $langField.append($searchInput);
+                                $langField.append('<br>');
                         }
+                            //}, 200);
+                            //}
                         require('./inputField').call($langField, options, type, lang);
                     })();
 
