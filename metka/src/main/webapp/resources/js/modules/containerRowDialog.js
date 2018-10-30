@@ -33,7 +33,12 @@ define(function (require) {
         //var PAGE = require('./../metka').PAGE;
         return function (type, button) {
             return function (transferRow, onClose) {
-
+                if(options.field.key === 'studyerrors') {
+                    options.fieldOptions.type = 'CONTAINER';
+                    options.fieldOptions.translatable = true;
+                    options.fieldOptions.writable = true;
+                    options.readOnly = false;
+                }
                 var modalOptions = $.extend(true, require('./optionsBase')(options), (require('./isFieldDisabled')(options, lang) ? {
                     type: 'VIEW',
                     buttons: [{
@@ -75,7 +80,6 @@ define(function (require) {
                         }
                     ]
                 });
-
                 // if not translatable container and has translatable subfields, show language selector
                 if (!options.fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
                     modalOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || MetkaJS.User.role.defaultLanguage.toUpperCase();

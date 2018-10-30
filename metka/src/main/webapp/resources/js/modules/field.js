@@ -266,7 +266,9 @@ define(function (require) {
         if (options.type === 'EMPTYCELL') {
             return this;
         }
-
+        if(options.field.key === 'errorscore' || options.field.key === 'errordatasetpart' || options.field.key === 'errorpartsection' || options.field.key === 'errorlanguage' || options.field.key === 'errorlabel' || options.field.key === 'errortriggerdate' || options.field.key === 'errortriggerpro') {
+            options.fieldOptions.type = 'STRING';
+        }
         if(options.field.displayType === 'CUSTOM_JS' && options.field.key) {
             require(['./custom/fields/'+options.field.key], function(customField) {
                 switch (typeof customField) {
