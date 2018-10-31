@@ -34,7 +34,7 @@ define(function (require) {
         var id = require('./autoId')();
         var key = options.field.key;
         // Issuet #639 & #640 & #646
-        if (key === 'relatedstudies_select' || key === 'studies_select' || (key === 'studyid' && options.fieldOptions.type === 'SELECTION')) {
+        if (key === 'relatedstudies_select' || key === 'studies_select' || (key === 'studyid' && options.fieldOptions.type === 'SELECTION') || (key === 'study' && options.fieldOptions.type === 'SELECTION')) {
             id = 'METKA_UI_999';
         }
         var $label = require('./label')(options, lang)
