@@ -192,7 +192,6 @@ define(function (require) {
                         }
                         // Issuet #639 & #640 & #646
                         if (options.field.key === 'relatedstudies_select' || options.field.key === 'studies_select' || (options.field.key === 'studyid' && options.fieldOptions.type === 'SELECTION') || (options.field.key === 'study' && options.fieldOptions.type === 'SELECTION')) {
-                            console.log("options.field: " + JSON.stringify(options.field));
                             //setTimeout(function() {
                             /*var modalTitles = document.getElementsByClassName("modal-title");
                             console.log("modalTitles.length: " + modalTitles.length);
