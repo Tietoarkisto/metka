@@ -33,12 +33,7 @@ define(function (require) {
         //var PAGE = require('./../metka').PAGE;
         return function (type, button) {
             return function (transferRow, onClose) {
-                if(options.field.key === 'studyerrors') {
-                    options.fieldOptions.type = 'CONTAINER';
-                    options.fieldOptions.translatable = true;
-                    options.fieldOptions.writable = true;
-                    options.readOnly = false;
-                }
+
                 var modalOptions = $.extend(true, require('./optionsBase')(options), (require('./isFieldDisabled')(options, lang) ? {
                     type: 'VIEW',
                     buttons: [{

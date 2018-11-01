@@ -514,7 +514,10 @@ define(function (require) {
         }
 
         function addRow($container, transferRow) {
+
+
             require('./data')(options).appendByLang(lang, transferRow);
+
 
             //if paging is enabled and we add a new row just redraw current container page
             if(options.field.rowsPerPage) {
@@ -551,12 +554,6 @@ define(function (require) {
 
         options.columns = [];
         options.rowCommands = [];
-        if(options.field.key === 'studyerrors') {
-            options.fieldOptions.type = 'CONTAINER';
-            options.fieldOptions.translatable = true;
-            options.fieldOptions.writable = true;
-            options.readOnly = false;
-        }
 
         //var key = options.field.key;
 
