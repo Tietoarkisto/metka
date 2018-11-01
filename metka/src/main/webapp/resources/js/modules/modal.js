@@ -31,6 +31,9 @@ define(function (require) {
 
     return function (options) {
         function getTitle(options) {
+            if (options.title === 'Aineistovirhe') {
+                return options.title;
+            }
             if(options.dialogTitle && MetkaJS.L10N.containsText(options.dialogTitle, options.type)) {
                 return MetkaJS.L10N.localize(options.dialogTitle, options.type);
             } else if(options.dialogTitles
