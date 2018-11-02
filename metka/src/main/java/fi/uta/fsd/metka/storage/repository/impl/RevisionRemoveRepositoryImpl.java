@@ -37,6 +37,7 @@ import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
+import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
@@ -49,6 +50,7 @@ import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -76,8 +78,7 @@ import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Performs a removal to given transfer data if possible
@@ -748,6 +749,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     }
 
     private void finalizePublicationRemoval(RevisionData revision, DateTimeUserPair info) {
+
         List<Long> handled = new ArrayList<>();
         // Iterate through related studies
         ReferenceContainerDataField studies = (ReferenceContainerDataField) revision.getField("studies");
@@ -756,6 +758,11 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 Pair<ReturnResult, RevisionData> studyPair = revisions.getRevisionData(reference.getActualValue());
                 if (!studyPair.getLeft().equals(ReturnResult.REVISION_FOUND)){
                     continue;
+                } else {
+                    RevisionData data = studyPair.getRight();
+                    ReferenceContainerDataField publications = (ReferenceContainerDataField) data.getField("publications");
+                    publications.removeReference(reference.getRowId(), data.getChanges(), info);
+                    revisions.updateRevisionData(data);
                 }
                 handleDescVersion(studyPair.getRight(), info);
                 handled.add(studyPair.getRight().getKey().getId());
