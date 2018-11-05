@@ -110,9 +110,9 @@ define(function (require) {
                     ],
                     buttons: [
                         {
+                            title: MetkaJS.L10N.get('general.buttons.' + button),
                             create: function () {
                                 this
-                                    .text(MetkaJS.L10N.get('general.buttons.' + button))
                                     .click(function () {
                                         transferRow.value = modalOptions.data.fields[options.field.key+'_select'].values[lang].current;
                                         onClose(transferRow);
