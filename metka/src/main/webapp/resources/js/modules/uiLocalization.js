@@ -1018,6 +1018,9 @@ define(function (require) {
                         "&field_removePermissions": {
                             "default": "Oikeus"
                         },
+                        "&field_subfields": {
+                            "default": "Alikenttä"
+                        },
                         "&cascade": {
                             "default": "Operaatio"
                         },
