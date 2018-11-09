@@ -64,6 +64,11 @@ define(function (require) {
                         this
                             .click(function () {
                                 $(".modal-footer").find("button").attr('disabled', 'disabled');
+                                // Prevent the file attachment removal loop (issue #871)
+                                if(options.customHandler === "studyAttachmentRemove") {
+                                    $(".modal").remove();
+                                    $('body').removeClass('modal-open');
+                                }
                                 require('./server')('remove', {
                                     data: JSON.stringify(options.data.key),
                                     success: function (response) {
@@ -85,6 +90,7 @@ define(function (require) {
                                         };
 
                                         success(response);
+
                                     },
                                     error: function() {
                                         $(".modal-footer").find("button").removeAttr('disabled');
