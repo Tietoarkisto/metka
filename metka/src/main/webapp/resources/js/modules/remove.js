@@ -68,6 +68,7 @@ define(function (require) {
                                 if(options.customHandler === "studyAttachmentRemove") {
                                     $(".modal").remove();
                                     $('body').removeClass('modal-open');
+                                    window.location.reload();
                                 }
                                 require('./server')('remove', {
                                     data: JSON.stringify(options.data.key),
