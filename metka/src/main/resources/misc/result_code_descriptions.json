@@ -135,6 +135,10 @@
 		"title": "ERROR",
 		"text": "Revisiota ei löydetty"
 	}, {
+		"key": "SEARCH_FAILED",
+		"title": "ERROR",
+		"text": "Haku epäonnistui"
+	}, {
 		"key": "INCORRECT_TYPE_FOR_OPERATION",
 		"title": "ERROR",
 		"text": "Annettu arvo oli väärää tyyppiä",
