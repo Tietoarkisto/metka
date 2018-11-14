@@ -33,17 +33,33 @@ define(function (require) {
 
     return function (options) {
         return function () {
-            // A bit of a workaround, getting the correct ids to be shown
             var id = options.data.key.id;
+            var name = '';
+            // A bit of a workaround, getting the correct ids to be shown
             switch (options.data.configuration.type) {
                 case "STUDY":
                     id = options.data.fields.studyid.values[options.defaultLang].original || options.data.fields.studyid.values[options.defaultLang].current;
+                    name = options.data.fields.title.values[options.defaultLang].original;
                     break;
                 case "BINDER_PAGE":
-                    id = options.data.fields.studyid.values[options.defaultLang].original || options.data.fields.studyid.values[options.defaultLang].current;
+                    if (options.data.state.uiState === 'DRAFT') {
+                        id = options.data.key.id;
+                    } else {
+                        id = options.data.fields.studyid.values[options.defaultLang].original || options.data.fields.studyid.values[options.defaultLang].current;
+                    }
                     break;
                 case "PUBLICATION":
                     id = options.data.fields.publicationid.values[options.defaultLang].original || options.data.fields.publicationid.values[options.defaultLang].current;
+                    name = options.data.fields.publicationtitle.values[options.defaultLang].current;
+                    break;
+                case "SERIES":
+                    name = options.data.fields.seriesname.values[options.defaultLang].original || options.data.fields.seriesname.values[options.defaultLang].current;
+                    break;
+                case "STUDY_VARIABLES":
+                    name = options.data.fields.varfileid.values[options.defaultLang].original || options.data.fields.varfileid.values[options.defaultLang].current;
+                    break;
+                case "STUDY_VARIABLE":
+                    name = options.data.fields.varid.values[options.defaultLang].original || options.data.fields.varid.values[options.defaultLang].current;
                     break;
             }
             var operationType = options.data.state.uiState === 'DRAFT' ? 'draft' : 'logical';
@@ -52,7 +68,7 @@ define(function (require) {
                 // TODO: simpler/unified way to supplement localization keys/texts
                 body: MetkaJS.L10N.get('confirmation.remove.revision.{operationType}.text'.supplant({
                     operationType: operationType
-                })).supplant({id: id, no: options.data.key.no}).supplant({
+                })).supplant({name: name, id: id, no: options.data.key.no}).supplant({
                     target: MetkaJS.L10N.get('confirmation.remove.revision.{operationType}.data.{type}'.supplant({
                         operationType: operationType,
                         type: options.data.configuration.type

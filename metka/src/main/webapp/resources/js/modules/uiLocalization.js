@@ -1169,7 +1169,7 @@ define(function (require) {
                     },
                     "draft": {
                         "&text": {
-                            "default": "Haluatko varmasti poistaa {target} id:llä {id} luonnoksen {no}?"
+                            "default": "Haluatko varmasti poistaa {target} {name} id:llä {id} luonnoksen {no}?"
                         },
                         "data": {
                             "&SERIES": {
@@ -1200,7 +1200,7 @@ define(function (require) {
                     },
                     "logical": {
                         "&text": {
-                            "default": "Haluatko varmasti poistaa {target} id:llä {id}?"
+                            "default": "Haluatko varmasti poistaa {target} {name} id:llä {id}?"
                         },
                         "data": {
                             "&SERIES": {
@@ -1208,6 +1208,9 @@ define(function (require) {
                             },
                             "&STUDY": {
                                 "default": "aineiston"
+                            },
+                            "&STUDY_ERROR": {
+                                "default": "aineistovirheen"
                             },
                             "&STUDY_ATTACHMENT": {
                                 "default": "aineistoliitteen"
