@@ -71,7 +71,7 @@ define(function (require) {
             content: [
                 {
                     "type": "COLUMN",
-                    "columns": 2,
+                    "columns": 1,
                     "rows": [
                         {
                             "type": "ROW",
@@ -89,154 +89,157 @@ define(function (require) {
                                         $query = this.find('textarea');
                                     }
                                 },
+                                    {
+                                        type: "CELL",
+                                        colspan: 1,
+                                        contentType: "BUTTON",
+                                        button: {
+                                            title: MetkaJS.L10N.get("general.buttons.search"),
+                                            create: function(options) {
+                                                this.click(function() {
+                                                    require('./../searchQuerySearch')(options, require('./../data')(options)('search').getByLang(options.defaultLang), "expertsearchresults").search();
+                                                });
+                                            }
+                                        }
+                                    }
+                                    ]
+                        },
                                 {
-                                    "type": "CELL",
-                                    "title": MetkaJS.L10N.get("search.saved.saved"),
-                                    "colspan": 1,
-                                    "readOnly": true,
-                                    "field": {
-                                        "key": "savedsearches",
-                                        "rowsPerPage": 10,
-                                        "showSaveInfo": true,
-                                        "columnFields": [
-                                            "name", "description"
-                                        ],
-                                        onRemove: function ($row) {
-                                            require('./../server')('/expert/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow'), options.defaultLang), {
+                                    "type": "ROW",
+                                    "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": MetkaJS.L10N.get("search.saved.saved"),
+                                        "colspan": 1,
+                                        "readOnly": true,
+                                        "field": {
+                                            "key": "savedsearches",
+                                            "rowsPerPage": 10,
+                                            "showSaveInfo": true,
+                                            "columnFields": [
+                                                "name", "description"
+                                            ],
+                                            onRemove: function ($row) {
+                                                require('./../server')('/expert/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow'), options.defaultLang), {
+                                                    method: 'GET',
+                                                    success: function () {
+                                                        $row.remove();
+                                                        location.reload(); // Issue #649
+                                                    }
+                                                });
+                                            },
+                                            removeFilter: function(transferRow) {
+                                                // NOTE: Change to return true to test denied audit message
+                                                return require('./../hasEveryPermission')(['canRemoveNotOwnedExpertSearch']) || MetkaJS.User.userName===transferRow.saved.user;
+                                            },
+                                            onClick: function () {
+                                                $query
+                                                    .val($(this).data('transferRow').fields.query.values.DEFAULT.current)
+                                                    .change();
+                                            }
+                                        },
+                                        postCreate: function (options) {
+                                            require('./../server')('/expert/list', {
                                                 method: 'GET',
-                                                success: function () {
-                                                    $row.remove();
-                                                    location.reload(); // Issue #649
+                                                success: function (data) {
+                                                    data.queries.forEach(function(query) {
+                                                        require('./../data')(options).appendByLang( options.defaultLang, require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang));
+                                                        /*options.$events.trigger('container-{key}-{lang}-push'.supplant({
+                                                            key: options.field.key,
+                                                            lang: options.defaultLang
+                                                        }), [require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang)])*/
+                                                    });
+                                                    options.$events.trigger('redraw-{key}'.supplant({key: options.field.key}));
                                                 }
                                             });
-                                        },
-                                        removeFilter: function(transferRow) {
-                                            // NOTE: Change to return true to test denied audit message
-                                            return require('./../hasEveryPermission')(['canRemoveNotOwnedExpertSearch']) || MetkaJS.User.userName===transferRow.saved.user;
-                                        },
-                                        onClick: function () {
-                                            $query
-                                                .val($(this).data('transferRow').fields.query.values.DEFAULT.current)
-                                                .change();
                                         }
                                     },
-                                    postCreate: function (options) {
-                                        require('./../server')('/expert/list', {
-                                            method: 'GET',
-                                            success: function (data) {
-                                                data.queries.forEach(function(query) {
-                                                    require('./../data')(options).appendByLang( options.defaultLang, require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang));
-                                                    /*options.$events.trigger('container-{key}-{lang}-push'.supplant({
-                                                        key: options.field.key,
-                                                        lang: options.defaultLang
-                                                    }), [require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang)])*/
-                                                });
-                                                options.$events.trigger('redraw-{key}'.supplant({key: options.field.key}));
-                                            }
-                                        });
-                                    }
-                                }
-                            ]
-                        }, {
-                            type: "ROW",
-                            cells: [{
-                                type: "CELL",
-                                colspan: 1,
-                                contentType: "BUTTON",
-                                button: {
-                                    title: MetkaJS.L10N.get("general.buttons.search"),
-                                    create: function(options) {
-                                        this.click(function() {
-                                            require('./../searchQuerySearch')(options, require('./../data')(options)('search').getByLang(options.defaultLang), "expertsearchresults").search();
-                                        });
-                                    }
-                                }
-                            }, {
-                                type: "CELL",
-                                colspan: 1,
-                                contentType: "BUTTON",
-                                button: {
-                                    "&title": {
-                                        "default": MetkaJS.L10N.get("search.saved.save")
-                                    },
-                                    create: function () {
-                                        this
-                                            .click(function () {
-                                                var modalOptions = ($.extend(true, require('./../optionsBase')(), {
-                                                    //title: 'Tallenna haku',
-                                                    type: "ADD",
-                                                    dialogTitle: {
-                                                        "ADD": MetkaJS.L10N.get("search.saved.save")
-                                                    },
-                                                    content: [{
-                                                        type: 'COLUMN',
-                                                        columns: 1,
-                                                        rows: [
-                                                            {
-                                                                "type": "ROW",
-                                                                "cells": [
-                                                                    {
-                                                                        "type": "CELL",
-                                                                        "title": MetkaJS.L10N.get("search.coltitle.name"),
-                                                                        "colspan": 1,
-                                                                        "field": {
-                                                                            "displayType": "STRING",
-                                                                            "key": "title"
-                                                                        }
-                                                                    }
-                                                                ]
+                                    {
+                                        type: "CELL",
+                                        colspan: 1,
+                                        contentType: "BUTTON",
+                                        button: {
+                                            "&title": {
+                                                "default": MetkaJS.L10N.get("search.saved.save")
+                                            },
+                                            create: function () {
+                                                this
+                                                    .click(function () {
+                                                        var modalOptions = ($.extend(true, require('./../optionsBase')(), {
+                                                            //title: 'Tallenna haku',
+                                                            type: "ADD",
+                                                            dialogTitle: {
+                                                                "ADD": MetkaJS.L10N.get("search.saved.save")
                                                             },
-                                                            {
-                                                                "type": "ROW",
-                                                                "cells": [
+                                                            content: [{
+                                                                type: 'COLUMN',
+                                                                columns: 1,
+                                                                rows: [
                                                                     {
-                                                                        "type": "CELL",
-                                                                        "title": MetkaJS.L10N.get("search.coltitle.description"),
-                                                                        "colspan": 1,
-                                                                        "field": {
-                                                                            "displayType": "STRING",
-                                                                            "key": "description"
-                                                                        }
+                                                                        "type": "ROW",
+                                                                        "cells": [
+                                                                            {
+                                                                                "type": "CELL",
+                                                                                "title": MetkaJS.L10N.get("search.coltitle.name"),
+                                                                                "colspan": 1,
+                                                                                "field": {
+                                                                                    "displayType": "STRING",
+                                                                                    "key": "title"
+                                                                                }
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "type": "ROW",
+                                                                        "cells": [
+                                                                            {
+                                                                                "type": "CELL",
+                                                                                "title": MetkaJS.L10N.get("search.coltitle.description"),
+                                                                                "colspan": 1,
+                                                                                "field": {
+                                                                                    "displayType": "STRING",
+                                                                                    "key": "description"
+                                                                                }
+                                                                            }
+                                                                        ]
                                                                     }
                                                                 ]
-                                                            }
-                                                        ]
-                                                    }],
-                                                    buttons: [{
-                                                        "&title": {
-                                                            "default": MetkaJS.L10N.get("general.buttons.save")
-                                                        },
-                                                        create: function () {
-                                                            this
-                                                                .click(function () {
-                                                                    // Fire an event so that metka doesn't ask for confirmation if moving from page
-                                                                    var evt = new CustomEvent('saved');
-                                                                    window.dispatchEvent(evt);
-                                                                    require('./../server')('/expert/save', {
-                                                                        data: JSON.stringify({
-                                                                            query: require('./../data')(options)('search').getByLang(options.defaultLang),
-                                                                            title: require('./../data')(modalOptions)('title').getByLang(options.defaultLang),
-                                                                            description: require('./../data')(modalOptions)('description').getByLang(options.defaultLang)
-                                                                        }),
-                                                                        success: function(query) {
-                                                                            options.$events.trigger('container-{key}-{lang}-push'.supplant({
-                                                                                key: 'savedsearches',
-                                                                                lang: options.defaultLang
-                                                                            }), [require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang)])
-                                                                        }
-                                                                    });
-                                                                });
-                                                        }
-                                                    }, {
-                                                        type: 'CANCEL'
-                                                    }]
-                                                }));
+                                                            }],
+                                                            buttons: [{
+                                                                "&title": {
+                                                                    "default": MetkaJS.L10N.get("general.buttons.save")
+                                                                },
+                                                                create: function () {
+                                                                    this
+                                                                        .click(function () {
+                                                                            // Fire an event so that metka doesn't ask for confirmation if moving from page
+                                                                            var evt = new CustomEvent('saved');
+                                                                            window.dispatchEvent(evt);
+                                                                            require('./../server')('/expert/save', {
+                                                                                data: JSON.stringify({
+                                                                                    query: require('./../data')(options)('search').getByLang(options.defaultLang),
+                                                                                    title: require('./../data')(modalOptions)('title').getByLang(options.defaultLang),
+                                                                                    description: require('./../data')(modalOptions)('description').getByLang(options.defaultLang)
+                                                                                }),
+                                                                                success: function(query) {
+                                                                                    options.$events.trigger('container-{key}-{lang}-push'.supplant({
+                                                                                        key: 'savedsearches',
+                                                                                        lang: options.defaultLang
+                                                                                    }), [require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang)])
+                                                                                }
+                                                                            });
+                                                                        });
+                                                                }
+                                                            }, {
+                                                                type: 'CANCEL'
+                                                            }]
+                                                        }));
 
-                                                require('./../modal')(modalOptions);
-                                            });
-                                    }
-                                }
-                            }]
+                                                        require('./../modal')(modalOptions);
+                                                    });
+                                            }
+                                        }
+                                    }]
                         }, {
                             type: "ROW",
                             cells: [{
