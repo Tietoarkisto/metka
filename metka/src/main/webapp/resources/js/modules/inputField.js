@@ -37,7 +37,7 @@ define(function (require) {
         if (key === 'relatedstudies_select' || key === 'studies_select' || (key === 'studyid' && options.fieldOptions.type === 'SELECTION') || (key === 'study' && options.fieldOptions.type === 'SELECTION')) {
             id = 'METKA_UI_999';
         }
-        if(options.field.key === 'othermateriallabel') {
+        if(options.field.key === 'othermateriallabel' || options.field.key === 'universe') {
             options.field.multiline = true;
         }
         var $label = require('./label')(options, lang)
