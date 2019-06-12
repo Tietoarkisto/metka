@@ -587,16 +587,37 @@ define(function (require) {
                                         title: MetkaJS.L10N.get("general.buttons.save"),
                                         create: function() {
                                             this.click(function() {
-                                                var request = {
-                                                    type: "GUI_CONF",
-                                                    json: require('./../data')(options)("guiConfigText").getByLang("DEFAULT")
-                                                };
-                                                require('./../server')("/settings/uploadJson", {
-                                                    data: JSON.stringify(request),
-                                                    success: function (response) {
-                                                        require('./../resultViewer')(response);
-                                                    }
-                                                });
+                                                require('./../modal')($.extend(true, require('./../optionsBase')(), {
+                                                    title: MetkaJS.L10N.get('confirmation.save.configuration.title'),
+                                                    body: MetkaJS.L10N.get('confirmation.save.configuration.body'),
+                                                    buttons: [{
+                                                        create: function () {
+                                                            this
+                                                                .text(MetkaJS.L10N.get('general.buttons.yes'))
+                                                                .click(function () {
+                                                                    var request = {
+                                                                        type: "GUI_CONF",
+                                                                        json: require('./../data')(options)("guiConfigText").getByLang("DEFAULT")
+                                                                    };
+                                                                    require('./../server')("/settings/uploadJson", {
+                                                                        data: JSON.stringify(request),
+                                                                        success: function (response) {
+                                                                            require('./../resultViewer')(response);
+                                                                        }
+                                                                    });
+                                                                });
+                                                            // Fire an event so that metka doesn't ask for confirmation if moving from page
+                                                            var evt = new CustomEvent('saved');
+                                                            window.dispatchEvent(evt);
+                                                        },
+                                                        type: "YES"
+                                                    },{
+                                                        create: function () {
+                                                            this.text(MetkaJS.L10N.get('general.buttons.no'))
+                                                        },
+                                                        type: "NO"
+                                                    }]
+                                                }));
                                             });
                                         }
                                     }
@@ -679,16 +700,37 @@ define(function (require) {
                                         title: MetkaJS.L10N.get("general.buttons.save"),
                                         create: function() {
                                             this.click(function() {
-                                                var request = {
-                                                    type: "MISC",
-                                                    json: require('./../data')(options)("jsonText").getByLang("DEFAULT")
-                                                };
-                                                require('./../server')("/settings/uploadJson", {
-                                                    data: JSON.stringify(request),
-                                                    success: function (response) {
-                                                        require('./../resultViewer')(response);
-                                                    }
-                                                });
+                                                require('./../modal')($.extend(true, require('./../optionsBase')(), {
+                                                    title: MetkaJS.L10N.get('confirmation.save.configuration.title'),
+                                                    body: MetkaJS.L10N.get('confirmation.save.configuration.body'),
+                                                    buttons: [{
+                                                        create: function () {
+                                                            this
+                                                                .text(MetkaJS.L10N.get('general.buttons.yes'))
+                                                                .click(function () {
+                                                                    var request = {
+                                                                        type: "MISC",
+                                                                        json: require('./../data')(options)("jsonText").getByLang("DEFAULT")
+                                                                    };
+                                                                    require('./../server')("/settings/uploadJson", {
+                                                                        data: JSON.stringify(request),
+                                                                        success: function (response) {
+                                                                            require('./../resultViewer')(response);
+                                                                        }
+                                                                    });
+                                                                });
+                                                            // Fire an event so that metka doesn't ask for confirmation if moving from page
+                                                            var evt = new CustomEvent('saved');
+                                                            window.dispatchEvent(evt);
+                                                        },
+                                                        type: "YES"
+                                                    },{
+                                                        create: function () {
+                                                            this.text(MetkaJS.L10N.get('general.buttons.no'))
+                                                        },
+                                                        type: "NO"
+                                                    }]
+                                                }));
                                             });
                                         }
                                     }
