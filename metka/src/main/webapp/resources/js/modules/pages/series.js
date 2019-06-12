@@ -259,7 +259,7 @@ define(function (require) {
                                         "seriesresultsname"
                                     ],
                                     onClick: function (transferRow) {
-                                        require('./../assignUrl')('view', {
+                                        require('./../assignUrlNewTab')('view', {
                                                 id: transferRow.value.split('-')[0],
                                                 no: transferRow.value.split('-')[1]
                                             }

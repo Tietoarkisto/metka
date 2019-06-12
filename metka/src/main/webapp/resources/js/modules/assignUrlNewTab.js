@@ -26,50 +26,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                       *
  **************************************************************************************/
 
-define(function(require) {
+// same as ´assignUrl´ module, except for using a new tab for opening the url
+
+define(function (require) {
     'use strict';
 
-    function viewModal(requestOptions, type) {
-        var options = options || null;
-        var pagesSearch = pagesSearch || null;
-        if (options !== null && pagesSearch !== null){
-            require('./revisionModal')(options, requestOptions, type, pagesSearch.search, 'pages');
-        } else {
-            require('./revisionModal')(null, requestOptions, type, false, 'pages');
-        }
-    }
-
-    function viewPage(requestOptions) {
-        require('./assignUrlNewTab')('view', requestOptions);
-    }
-
-    var resultParser = require('./resultParser');
-
-    return function(useModal) {
-        return function(transferRow) {
-            require('./server')('/references/referenceStatus/{value}', transferRow, {
-                method: 'GET',
-                success: function(response) {
-                    if(resultParser(response.result).getResult() !== 'REVISION_FOUND') {
-                        require('./resultViewer')(response.result);
-                        return false;
-                    }
-
-                    var request = {
-                        id: transferRow.value.split("-")[0],
-                        no: transferRow.value.split("-")[1]
-                    };
-
-                    if(useModal) {
-                        if((typeof useModal === 'function' && useModal(response.type)) || (typeof useModal !== 'function')) {
-                            viewModal(request, response.type);
-                            return;
-                        }
-                    }
-                    request.PAGE = response.type;
-                    viewPage(request);
-                }
-            });
-        }
-    }
+    return function () {
+        window.open(require('./url').apply(this, arguments),'_blank');
+    };
 });
