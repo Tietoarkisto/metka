@@ -148,6 +148,7 @@ public class Messenger {
                 Logger.error(AmqpMessenger.class, "AMQP channel creation failed.", ioe);
                 channel = null;
                 state = AMQPState.AMQP_CONNECTION_FAILED;
+                System.exit(0);
             }
         }
 
