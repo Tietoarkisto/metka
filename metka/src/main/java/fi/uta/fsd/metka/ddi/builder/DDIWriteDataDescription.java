@@ -121,6 +121,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
                     Pair<StatusCode, ReferenceContainerDataField> referenceContainerPair = row.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS));
                     if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && referenceContainerPair.getRight().hasValidRows()) {
                         String vars = "";
+
                         for(ReferenceRow reference : referenceContainerPair.getRight().getReferences()) {
                             if(reference.getRemoved()) {
                                  continue;
@@ -133,7 +134,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
                             if(StringUtils.hasText(vars)) {
                                 vars += " ";
                             }
-                            valueFieldPair = revisionDataPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARNAME));
+                            valueFieldPair = revisionDataPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARID));
                             if(!hasValue(valueFieldPair, Language.DEFAULT)) {
                                 vars += "-";
                             } else {
