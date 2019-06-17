@@ -44,6 +44,7 @@ define(function (require) {
                         var evt = new CustomEvent('saved');
                         window.dispatchEvent(evt);
                         options.$events.trigger('refresh.metka');
+                        location.reload();
                     }
                 }, [
                     'OPERATION_SUCCESSFUL',
