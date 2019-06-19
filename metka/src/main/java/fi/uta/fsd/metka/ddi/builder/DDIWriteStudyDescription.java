@@ -247,26 +247,28 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
                     String organisation = getReferenceTitle(rowRoot + Fields.AUTHORORGANISATION);
                     String agency = getReferenceTitle(rowRoot + Fields.AUTHORAGENCY);
                     String section = getReferenceTitle(rowRoot + Fields.AUTHORSECTION);
+                    String collector = "";
                     OthIdType d;
+
                     if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
                         if(!StringUtils.hasText(organisation)) {
                             continue;
                         }
                         d = fillTextType(rsp.addNewOthId(), organisation);
                     } else {
-                        String collector = (StringUtils.hasText(agency)) ? agency : "";
-                        if(StringUtils.hasText(collector) && StringUtils.hasText(section)) {
-                            collector += ". "+section;
-                        } else if(StringUtils.hasText(section)) {
-                            collector = section;
-                        } else {
+                        collector = organisation;
+                        collector += (StringUtils.hasText(agency)) ? ". " + agency : "";
+                        collector += (StringUtils.hasText(collector) && StringUtils.hasText(section)) ? ". " : "";
+                        collector += (StringUtils.hasText(section)) ? section : "";
+                        if(!StringUtils.hasText(collector)) {
                             continue;
                         }
-                        d = fillTextType(rsp.addNewOthId(), collector);
+                        d = fillTextType(rsp.addNewOthId(), organisation);
                     }
+
                     if(StringUtils.hasText(agency) || StringUtils.hasText(section)) {
-                        if(StringUtils.hasText(organisation)) {
-                            d.setAffiliation(organisation);
+                        if(StringUtils.hasText(collector)) {
+                            d.setAffiliation(collector);
                         }
                     }
                 } else if(colltype.equals("3")) {
