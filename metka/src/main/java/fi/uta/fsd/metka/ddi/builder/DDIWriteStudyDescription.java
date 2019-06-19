@@ -206,7 +206,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
         }
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.OTHERAUTHORS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            String pathRoot = "authors.";
+            String pathRoot = "otherauthors.";
             for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
                 if (row.getRemoved()) {
                     continue;
