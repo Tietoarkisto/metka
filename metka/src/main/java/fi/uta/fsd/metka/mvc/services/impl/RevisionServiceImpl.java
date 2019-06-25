@@ -378,14 +378,6 @@ public class RevisionServiceImpl implements RevisionService {
         }
     }
 
-
-
-
-
-
-
-
-
     @Override public RevisionDataResponse createAndSave(TransferData transferData) {
         if (transferData.getKey() == null || transferData.getKey().getId() == null){
             RevisionCreateRequest createRequest = new RevisionCreateRequest();
