@@ -44,6 +44,10 @@
 			"key": "approve",
 			"title": "ERROR",
 			"text": "Rajoitteet estivät revision hyväksymisen"
+		}, {
+			"key": "save",
+			"title": "ERROR",
+			"text": "Rajoitteet estivät revision tallentamisen"
 		}]
 	}, {
 		"key": "NO_CHANGES",
@@ -52,7 +56,7 @@
 		"operations": [{
 			"key": "approve",
 			"title": "NOTICE",
-			"text": "Lomakkeella ei ollut muutoksia hyväksyttäväksi, luonnos poistettiin"
+			"text": "Lomakkeella ei ollut muutoksia hyväksyttäväksi"
 		}, {
 			"key": "save",
 			"title": "NOTICE",
