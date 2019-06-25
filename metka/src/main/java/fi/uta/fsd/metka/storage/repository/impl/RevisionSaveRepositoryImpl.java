@@ -156,8 +156,14 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             if(!(operation.getType() == OperationType.SAVE ||operation.getType() == OperationType.ALL)){
                 continue;
             }
+
             ValidateResult vr = validator.validate(data, operation.getTargets(), configuration);
+
             if (!vr.getResult()){
+                if(OperationResponse.build(vr) != null){
+                    OperationResponse operationResponse = OperationResponse.build(vr);
+                    transferData.setOperationResponse(operationResponse);
+                }
                 return new ImmutablePair<>(ReturnResult.RESTRICTION_VALIDATION_FAILURE, transferData);
             }
         }

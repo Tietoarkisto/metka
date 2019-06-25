@@ -363,10 +363,28 @@ public class RevisionServiceImpl implements RevisionService {
         return getResponseGUI(operationResult.getLeft(), operationResult.getRight(), false);
     }
 
+
+
+
+
+
     @Override public RevisionDataResponse save(TransferData transferData) {
         Pair<ReturnResult, TransferData> operationResult = save.saveRevision(transferData, null);
-        return getResponse(OperationResponse.build(operationResult.getLeft()), operationResult.getRight());
+        if(transferData.getOperationResponse() != null){
+            return getResponse(transferData.getOperationResponse(), operationResult.getRight());
+        } else {
+            return getResponse(OperationResponse.build(operationResult.getLeft()), operationResult.getRight());
+
+        }
     }
+
+
+
+
+
+
+
+
 
     @Override public RevisionDataResponse createAndSave(TransferData transferData) {
         if (transferData.getKey() == null || transferData.getKey().getId() == null){

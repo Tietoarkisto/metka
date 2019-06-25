@@ -42,6 +42,8 @@ import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.interfaces.ModelBase;
 import fi.uta.fsd.metka.model.interfaces.TransferFieldContainer;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
+import fi.uta.fsd.metka.storage.response.OperationResponse;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,6 +76,16 @@ public class TransferData implements ModelBase, TransferFieldContainer {
 
     public TransferState getState() {
         return state;
+    }
+
+    public OperationResponse operationResponse;
+
+    public OperationResponse getOperationResponse(){
+        return this.operationResponse;
+    }
+
+    public void setOperationResponse(OperationResponse operationResponse){
+        this.operationResponse = operationResponse;
     }
 
     @JsonIgnore
