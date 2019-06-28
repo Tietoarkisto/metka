@@ -3,12 +3,459 @@
 		"type": "STUDY",
 		"version": 1
 	},
-	"displayId": "studyid",
+	"references": {
+		"series_select_ref": {
+			"key": "series_select_ref",
+			"type": "REVISIONABLE",
+			"titlePath": "seriesname",
+			"approvedOnly": true,
+			"ignoreRemoved": false,
+			"target": "SERIES"
+		},
+		"publication_ref": {
+			"key": "publication_ref",
+			"type": "REVISIONABLE",
+			"titlePath": "publicationtitle",
+			"approvedOnly": false,
+			"ignoreRemoved": false,
+			"target": "PUBLICATION"
+		},
+		"publicationid_ref": {
+			"key": "publicationid_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "publications",
+			"valuePath": "publicationid"
+		},
+		"publicationtitle_ref": {
+			"key": "publicationtitle_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "publications",
+			"valuePath": "publicationtitle"
+		},
+		"relatedstudy_ref": {
+			"key": "relatedstudy_ref",
+			"type": "REVISIONABLE",
+			"titlePath": "title",
+			"approvedOnly": false,
+			"ignoreRemoved": false,
+			"target": "STUDY"
+		},
+		"relatedstudyid_ref": {
+			"key": "relatedstudyid_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "relatedstudies",
+			"valuePath": "studyid"
+		},
+		"relatedstudytitle_ref": {
+			"key": "relatedstudytitle_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "relatedstudies",
+			"valuePath": "title"
+		},
+		"variables_ref": {
+			"key": "variables_ref",
+			"type": "REVISION",
+			"titlePath": null,
+			"target": "STUDY_VARIABLES"
+		},
+		"variables_language_ref": {
+			"key": "variables_language_ref",
+			"type": "JSON",
+			"titlePath": "text",
+			"target": "language_descriptions",
+			"valuePath": "language"
+		},
+		"variables_file_ref": {
+			"key": "variables_file_ref",
+			"type": "REVISION",
+			"titlePath": null,
+			"target": "STUDY_ATTACHMENT"
+		},
+		"variables_file_path_ref": {
+			"key": "variables_file_path_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "variables",
+			"valuePath": "filepath"
+		},
+		"attachment_ref": {
+			"key": "attachment_ref",
+			"type": "REVISION",
+			"titlePath": "file",
+			"target": "STUDY_ATTACHMENT"
+		},
+		"file_path_ref": {
+			"key": "file_path_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "files",
+			"valuePath": "file"
+		},
+		"file_language_ref": {
+			"key": "file_language_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "files",
+			"valuePath": "filelanguage"
+		},
+		"file_description_ref": {
+			"key": "file_description_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "files",
+			"valuePath": "filedescription"
+		},
+		"file_comment_ref": {
+			"key": "file_comment_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "files",
+			"valuePath": "filecomment"
+		},
+		"keywordvocab_ref": {
+			"key": "keywordvocab_ref",
+			"type": "JSON",
+			"titlePath": "codeListName",
+			"target": "keyword_vocabularies",
+			"valuePath": "codeListID"
+		},
+		"keywordvocaburi_ref": {
+			"key": "keywordvocaburi_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "keywordvocab",
+			"valuePath": "codeListURN"
+		},
+		"analysisunitvocab_ref": {
+			"key": "analysisunitvocab_ref",
+			"type": "JSON",
+			"titlePath": null,
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
+		},
+		"analysisunitvocaburi_ref": {
+			"key": "analysisunitvocaburi_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "analysisunitvocab",
+			"valuePath": "codeListURN"
+		},
+		"analysisunit_ref": {
+			"key": "analysisunit_ref",
+			"type": "DEPENDENCY",
+			"titlePath": "term",
+			"target": "analysisunitvocab",
+			"valuePath": "terms.id"
+		},
+		"analysisunituri_ref": {
+			"key": "analysisunituri_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "analysisunit",
+			"valuePath": "key"
+		},
+		"collmodevocab_ref": {
+			"key": "collmodevocab_ref",
+			"type": "JSON",
+			"titlePath": null,
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
+		},
+		"collmodevocaburi_ref": {
+			"key": "collmodevocaburi_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "collmodevocab",
+			"valuePath": "codeListURN"
+		},
+		"collmode_ref": {
+			"key": "collmode_ref",
+			"type": "DEPENDENCY",
+			"titlePath": "term",
+			"target": "collmodevocab",
+			"valuePath": "terms.id"
+		},
+		"collmodeuri_ref": {
+			"key": "collmodeuri_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "collmode",
+			"valuePath": "key"
+		},
+		"instrumentvocab_ref": {
+			"key": "instrumentvocab_ref",
+			"type": "JSON",
+			"titlePath": null,
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
+		},
+		"instrumentvocaburi_ref": {
+			"key": "instrumentvocaburi_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "instrumentvocab",
+			"valuePath": "codeListURN"
+		},
+		"instrument_ref": {
+			"key": "instrument_ref",
+			"type": "DEPENDENCY",
+			"titlePath": "term",
+			"target": "instrumentvocab",
+			"valuePath": "terms.id"
+		},
+		"instrumenturi_ref": {
+			"key": "instrumenturi_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "instrument",
+			"valuePath": "key"
+		},
+		"sampprocvocab_ref": {
+			"key": "sampprocvocab_ref",
+			"type": "JSON",
+			"titlePath": null,
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
+		},
+		"sampprocvocaburi_ref": {
+			"key": "sampprocvocaburi_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "sampprocvocab",
+			"valuePath": "codeListURN"
+		},
+		"sampproc_ref": {
+			"key": "sampproc_ref",
+			"type": "DEPENDENCY",
+			"titlePath": "term",
+			"target": "sampprocvocab",
+			"valuePath": "terms.id"
+		},
+		"sampprocuri_ref": {
+			"key": "sampprocuri_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "sampproc",
+			"valuePath": "key"
+		},
+		"topicvocab_ref": {
+			"key": "topicvocab_ref",
+			"type": "JSON",
+			"titlePath": null,
+			"target": "2 step vocabulary for testing",
+			"valuePath": "codeListID"
+		},
+		"topicvocaburi_ref": {
+			"key": "topicvocaburi_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "topicvocab",
+			"valuePath": "codeListURN"
+		},
+		"topictop_ref": {
+			"key": "topictop_ref",
+			"type": "DEPENDENCY",
+			"titlePath": "term",
+			"target": "topicvocab",
+			"valuePath": "terms.id"
+		},
+		"topic_ref": {
+			"key": "topic_ref",
+			"type": "DEPENDENCY",
+			"titlePath": "termll",
+			"target": "topictop",
+			"valuePath": "term_ll.id"
+		},
+		"topicuri_ref": {
+			"key": "topicuri_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "topic",
+			"valuePath": "key"
+		},
+		"timemethodvocab_ref": {
+			"key": "timemethodvocab_ref",
+			"type": "JSON",
+			"titlePath": null,
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
+		},
+		"timemethodvocaburi_ref": {
+			"key": "timemethodvocaburi_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "timemethodvocab",
+			"valuePath": "codeListURN"
+		},
+		"timemethod_ref": {
+			"key": "timemethod_ref",
+			"type": "DEPENDENCY",
+			"titlePath": "term",
+			"target": "timemethodvocab",
+			"valuePath": "terms.id"
+		},
+		"timemethoduri_ref": {
+			"key": "timemethoduri_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "timemethod",
+			"valuePath": "key"
+		},
+		"dissemination_ref": {
+			"key": "dissemination_ref",
+			"type": "JSON",
+			"titlePath": "codeListName",
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
+		},
+		"country_ref": {
+			"key": "country_ref",
+			"type": "JSON",
+			"titlePath": "name",
+			"target": "ISO_3166-1",
+			"valuePath": "alpha-2"
+		},
+		"countryabbr_ref": {
+			"key": "countryabbr_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "country",
+			"valuePath": "alpha-2"
+		},
+		"organisation_ref": {
+			"key": "organisation_ref",
+			"type": "JSON",
+			"titlePath": "organizationname",
+			"target": "Organizations",
+			"valuePath": "id"
+		},
+		"organisationabbr_ref": {
+			"key": "organisationabbr_ref",
+			"type": "DEPENDENCY",
+			"titlePath": "organizationabbr",
+			"target": "organisation",
+			"valuePath": "id"
+		},
+		"agency_ref": {
+			"key": "agency_ref",
+			"type": "DEPENDENCY",
+			"titlePath": "agencyname",
+			"target": "organisation",
+			"valuePath": "agencies.id"
+		},
+		"agencyabbr_ref": {
+			"key": "agencyabbr_ref",
+			"type": "DEPENDENCY",
+			"titlePath": "agencyabbr",
+			"target": "agency",
+			"valuePath": "id"
+		},
+		"section_ref": {
+			"key": "section_ref",
+			"type": "DEPENDENCY",
+			"titlePath": "sectionname",
+			"target": "agency",
+			"valuePath": "sections.id"
+		},
+		"sectionabbr_ref": {
+			"key": "sectionabbr_ref",
+			"type": "DEPENDENCY",
+			"titlePath": "sectionabbr",
+			"target": "section",
+			"valuePath": "id"
+		},
+		"user_list_ref": {
+			"key": "user_list_ref",
+			"type": "JSON",
+			"titlePath": "displayName",
+			"target": "user-list",
+			"valuePath": "userName"
+		},
+		"related_binder_ref": {
+			"key": "related_binder_ref",
+			"type": "REVISION",
+			"titlePath": null,
+			"target": "BINDER_PAGE"
+		},
+		"binder_id_ref": {
+			"key": "binder_id_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "studyRelatedBinders",
+			"valuePath": "binderid"
+		},
+		"binder_description_ref": {
+			"key": "binder_description_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "studyRelatedBinders",
+			"valuePath": "description"
+		},
+		"studyerrors_ref": {
+			"key": "studyerrors_ref",
+			"type": "REVISION",
+			"titlePath": null,
+			"target": "STUDY_ERROR"
+		},
+		"errorscore_ref": {
+			"key": "errorscore_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "studyerrors",
+			"valuePath": "errorscore"
+		},
+		"errordatasetpart_ref": {
+			"key": "errordatasetpart_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "studyerrors",
+			"valuePath": "errordatasetpart"
+		},
+		"errorpartsection_ref": {
+			"key": "errorpartsection_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "studyerrors",
+			"valuePath": "errorpartsection"
+		},
+		"errorlanguage_ref": {
+			"key": "errorlanguage_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "studyerrors",
+			"valuePath": "errorlanguage"
+		},
+		"errorlabel_ref": {
+			"key": "errorlabel_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "studyerrors",
+			"valuePath": "errorlabel"
+		},
+		"errortriggerdate_ref": {
+			"key": "errortriggerdate_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "studyerrors",
+			"valuePath": "errortriggerdate"
+		},
+		"errortriggerpro_ref": {
+			"key": "errortriggerpro_ref",
+			"type": "DEPENDENCY",
+			"titlePath": null,
+			"target": "studyerrors",
+			"valuePath": "errortriggerpro"
+		}
+	},
 	"selectionLists": {
 		"datakind_list": {
 			"key": "datakind_list",
-			"type": "VALUE",
 			"default": "1",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -16,24 +463,24 @@
 					"value": "1",
 					"&title": {
 						"default": "Kvantitatiivinen",
-						"en": "Quantitative",
-						"sv": "Kvantitativ"
+						"sv": "Kvantitativ",
+						"en": "Quantitative"
 					}
 				},
 				{
 					"value": "2",
 					"&title": {
 						"default": "Kvalitatiivinen",
-						"en": "Qualitative",
-						"sv": "Kvalitativ"
+						"sv": "Kvalitativ",
+						"en": "Qualitative"
 					}
 				}
 			]
 		},
 		"anonymization_list": {
 			"key": "anonymization_list",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -71,44 +518,40 @@
 		},
 		"public_list": {
 			"key": "public_list",
-			"type": "SUBLIST",
-			"sublistKey": "yes_no_na",
 			"default": "",
+			"type": "SUBLIST",
 			"includeEmpty": true,
 			"freeText": [],
-			"options": []
+			"sublistKey": "yes_no_na"
 		},
 		"descpublic_list": {
 			"key": "descpublic_list",
-			"type": "SUBLIST",
-			"sublistKey": "yes_no_na",
 			"default": "",
+			"type": "SUBLIST",
 			"includeEmpty": true,
 			"freeText": [],
-			"options": []
+			"sublistKey": "yes_no_na"
 		},
 		"securityissues_list": {
 			"key": "securityissues_list",
-			"type": "SUBLIST",
-			"sublistKey": "yes_no_na",
 			"default": "",
+			"type": "SUBLIST",
 			"includeEmpty": true,
 			"freeText": [],
-			"options": []
+			"sublistKey": "yes_no_na"
 		},
 		"varpublic_list": {
 			"key": "varpublic_list",
-			"type": "SUBLIST",
-			"sublistKey": "yes_no_na",
 			"default": "",
+			"type": "SUBLIST",
 			"includeEmpty": true,
 			"freeText": [],
-			"options": []
+			"sublistKey": "yes_no_na"
 		},
 		"yes_no_na": {
 			"key": "yes_no_na",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -134,59 +577,58 @@
 		},
 		"usability_permission_list": {
 			"key": "usability_permission_list",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
 				{
 					"value": "1",
-					"&title": {}
+					"&title": null
 				},
 				{
 					"value": "2",
-					"&title": {}
+					"&title": null
 				},
 				{
 					"value": "3",
-					"&title": {}
+					"&title": null
 				},
 				{
 					"value": "4",
-					"&title": {}
+					"&title": null
 				},
 				{
 					"value": "5",
-					"&title": {}
+					"&title": null
 				}
 			]
 		},
 		"series_list": {
 			"key": "series_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "series_select_ref",
 			"freeText": [],
-			"options": []
+			"reference": "series_select_ref"
 		},
 		"id_prefix_list": {
 			"key": "id_prefix_list",
-			"type": "LITERAL",
 			"default": "FSD",
+			"type": "LITERAL",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
 				{
 					"value": "FSD",
-					"&title": {}
+					"&title": null
 				}
 			]
 		},
 		"partitlelang_list": {
 			"key": "partitlelang_list",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -212,13 +654,13 @@
 		},
 		"versionlabeldata_list": {
 			"key": "versionlabeldata_list",
-			"type": "VALUE",
-			"freeTextKey": "versiontext",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [
 				"10"
 			],
+			"freeTextKey": "versiontext",
 			"options": [
 				{
 					"value": "1",
@@ -284,13 +726,13 @@
 		},
 		"versionlabeldesc_list": {
 			"key": "versionlabeldesc_list",
-			"type": "VALUE",
-			"freeTextKey": "versiontext",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [
 				"24"
 			],
+			"freeTextKey": "versiontext",
 			"options": [
 				{
 					"value": "1",
@@ -440,8 +882,8 @@
 		},
 		"termsofuse_list": {
 			"key": "termsofuse_list",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -479,8 +921,8 @@
 		},
 		"depositortype_list": {
 			"key": "depositortype_list",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -506,8 +948,8 @@
 		},
 		"newtermsofuse_list": {
 			"key": "newtermsofuse_list",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -539,8 +981,8 @@
 		},
 		"agreementtype_list": {
 			"key": "agreementtype_list",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -578,17 +1020,16 @@
 		},
 		"timeperiodevent_list": {
 			"key": "timeperiodevent_list",
-			"type": "SUBLIST",
-			"sublistKey": "start_end_single",
 			"default": "",
+			"type": "SUBLIST",
 			"includeEmpty": true,
 			"freeText": [],
-			"options": []
+			"sublistKey": "start_end_single"
 		},
 		"start_end_single": {
 			"key": "start_end_single",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -614,34 +1055,33 @@
 		},
 		"universeclusion_list": {
 			"key": "universeclusion_list",
-			"type": "LITERAL",
 			"default": "",
+			"type": "LITERAL",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
 				{
 					"value": "E",
-					"&title": {}
+					"&title": null
 				},
 				{
 					"value": "I",
-					"&title": {}
+					"&title": null
 				}
 			]
 		},
 		"colldateevent_list": {
 			"key": "colldateevent_list",
-			"type": "SUBLIST",
-			"sublistKey": "start_end_single",
 			"default": "",
+			"type": "SUBLIST",
 			"includeEmpty": true,
 			"freeText": [],
-			"options": []
+			"sublistKey": "start_end_single"
 		},
 		"statisticstype_list": {
 			"key": "statisticstype_list",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -679,185 +1119,171 @@
 		},
 		"keywordvocab_list": {
 			"key": "keywordvocab_list",
-			"type": "REFERENCE",
-			"freeTextKey": "keywordnovocab",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": false,
-			"reference": "keywordvocab_ref",
 			"freeText": [
 				"4"
 			],
-			"options": []
+			"freeTextKey": "keywordnovocab",
+			"reference": "keywordvocab_ref"
 		},
 		"analysisunitvocab_list": {
 			"key": "analysisunitvocab_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": false,
-			"reference": "analysisunitvocab_ref",
 			"freeText": [],
-			"options": []
+			"reference": "analysisunitvocab_ref"
 		},
 		"analysisunit_list": {
 			"key": "analysisunit_list",
-			"type": "REFERENCE",
-			"freeTextKey": "analysisunitother",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "analysisunit_ref",
 			"freeText": [
 				"7",
 				"Other",
 				"Geographical"
 			],
-			"options": []
+			"freeTextKey": "analysisunitother",
+			"reference": "analysisunit_ref"
 		},
 		"collmodevocab_list": {
 			"key": "collmodevocab_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": false,
-			"reference": "collmodevocab_ref",
 			"freeText": [],
-			"options": []
+			"reference": "collmodevocab_ref"
 		},
 		"collmode_list": {
 			"key": "collmode_list",
-			"type": "REFERENCE",
-			"freeTextKey": "collmodeother",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "collmode_ref",
 			"freeText": [
 				"Other"
 			],
-			"options": []
+			"freeTextKey": "collmodeother",
+			"reference": "collmode_ref"
 		},
 		"instrumentvocab_list": {
 			"key": "instrumentvocab_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": false,
-			"reference": "instrumentvocab_ref",
 			"freeText": [],
-			"options": []
+			"reference": "instrumentvocab_ref"
 		},
 		"instrument_list": {
 			"key": "instrument_list",
-			"type": "REFERENCE",
-			"freeTextKey": "instrumentother",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "instrument_ref",
 			"freeText": [
 				"Other",
 				"7"
 			],
-			"options": []
+			"freeTextKey": "instrumentother",
+			"reference": "instrument_ref"
 		},
 		"sampprocvocab_list": {
 			"key": "sampprocvocab_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": false,
-			"reference": "sampprocvocab_ref",
 			"freeText": [],
-			"options": []
+			"reference": "sampprocvocab_ref"
 		},
 		"sampproc_list": {
 			"key": "sampproc_list",
-			"type": "REFERENCE",
-			"freeTextKey": "sampprocother",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "sampproc_ref",
 			"freeText": [
 				"Other"
 			],
-			"options": []
+			"freeTextKey": "sampprocother",
+			"reference": "sampproc_ref"
 		},
 		"timemethodvocab_list": {
 			"key": "timemethodvocab_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": false,
-			"reference": "timemethodvocab_ref",
 			"freeText": [],
-			"options": []
+			"reference": "timemethodvocab_ref"
 		},
 		"timemethod_list": {
 			"key": "timemethod_list",
-			"type": "REFERENCE",
-			"freeTextKey": "timemethodother",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "timemethod_ref",
 			"freeText": [
 				"Other",
 				"7"
 			],
-			"options": []
+			"freeTextKey": "timemethodother",
+			"reference": "timemethod_ref"
 		},
 		"topicvocab_list": {
 			"key": "topicvocab_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": false,
-			"reference": "topicvocab_ref",
 			"freeText": [],
-			"options": []
+			"reference": "topicvocab_ref"
 		},
 		"topictop_list": {
 			"key": "topictop_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "topictop_ref",
 			"freeText": [],
-			"options": []
+			"reference": "topictop_ref"
 		},
 		"topic_list": {
 			"key": "topic_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "topic_ref",
 			"freeText": [],
-			"options": []
+			"reference": "topic_ref"
 		},
 		"packagetype_list": {
 			"key": "packagetype_list",
-			"type": "LITERAL",
 			"default": "",
+			"type": "LITERAL",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
 				{
 					"value": "DDI-xml-fi",
-					"&title": {}
+					"&title": null
 				},
 				{
 					"value": "DDI-xml-en",
-					"&title": {}
+					"&title": null
 				},
 				{
 					"value": "DDI-xml-sv",
-					"&title": {}
+					"&title": null
 				},
 				{
 					"value": "AIP",
-					"&title": {}
+					"&title": null
 				},
 				{
 					"value": "DIP",
-					"&title": {}
+					"&title": null
 				}
 			]
 		},
 		"dissemination_list": {
 			"key": "dissemination_list",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -877,44 +1303,40 @@
 		},
 		"country_list": {
 			"key": "country_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "country_ref",
 			"freeText": [],
-			"options": []
+			"reference": "country_ref"
 		},
 		"organisation_list": {
 			"key": "organisation_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "organisation_ref",
 			"freeText": [],
-			"options": []
+			"reference": "organisation_ref"
 		},
 		"agency_list": {
 			"key": "agency_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "agency_ref",
 			"freeText": [],
-			"options": []
+			"reference": "agency_ref"
 		},
 		"section_list": {
 			"key": "section_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "section_ref",
 			"freeText": [],
-			"options": []
+			"reference": "section_ref"
 		},
 		"producerrole_list": {
 			"key": "producerrole_list",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -934,8 +1356,8 @@
 		},
 		"authortype_list": {
 			"key": "authortype_list",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -955,8 +1377,8 @@
 		},
 		"otherauthortype_list": {
 			"key": "otherauthortype_list",
-			"type": "VALUE",
 			"default": "",
+			"type": "VALUE",
 			"includeEmpty": true,
 			"freeText": [],
 			"options": [
@@ -982,460 +1404,11 @@
 		},
 		"user_list": {
 			"key": "user_list",
-			"type": "REFERENCE",
 			"default": "",
+			"type": "REFERENCE",
 			"includeEmpty": true,
-			"reference": "user_list_ref",
 			"freeText": [],
-			"options": []
-		}
-	},
-	"references": {
-		"series_select_ref": {
-			"key": "series_select_ref",
-			"type": "REVISIONABLE",
-			"target": "SERIES",
-			"titlePath": "seriesname",
-			"approvedOnly": true,
-			"ignoreRemoved": false
-		},
-		"publication_ref": {
-			"key": "publication_ref",
-			"type": "REVISIONABLE",
-			"target": "PUBLICATION",
-			"titlePath": "publicationtitle",
-			"approvedOnly": false,
-			"ignoreRemoved": false
-		},
-		"publicationid_ref": {
-			"key": "publicationid_ref",
-			"type": "DEPENDENCY",
-			"target": "publications",
-			"valuePath": "publicationid",
-			"titlePath": null
-		},
-		"publicationtitle_ref": {
-			"key": "publicationtitle_ref",
-			"type": "DEPENDENCY",
-			"target": "publications",
-			"valuePath": "publicationtitle",
-			"titlePath": null
-		},
-		"relatedstudy_ref": {
-			"key": "relatedstudy_ref",
-			"type": "REVISIONABLE",
-			"target": "STUDY",
-			"titlePath": "title",
-			"approvedOnly": false,
-			"ignoreRemoved": false
-		},
-		"relatedstudyid_ref": {
-			"key": "relatedstudyid_ref",
-			"type": "DEPENDENCY",
-			"target": "relatedstudies",
-			"valuePath": "studyid",
-			"titlePath": null
-		},
-		"relatedstudytitle_ref": {
-			"key": "relatedstudytitle_ref",
-			"type": "DEPENDENCY",
-			"target": "relatedstudies",
-			"valuePath": "title",
-			"titlePath": null
-		},
-		"variables_ref": {
-			"key": "variables_ref",
-			"type": "REVISION",
-			"target": "STUDY_VARIABLES",
-			"titlePath": null
-		},
-		"variables_language_ref": {
-			"key": "variables_language_ref",
-			"type": "JSON",
-			"target": "language_descriptions",
-			"valuePath": "language",
-			"titlePath": "text"
-		},
-		"variables_file_ref": {
-			"key": "variables_file_ref",
-			"type": "REVISION",
-			"target": "STUDY_ATTACHMENT",
-			"titlePath": null
-		},
-		"variables_file_path_ref": {
-			"key": "variables_file_path_ref",
-			"type": "DEPENDENCY",
-			"target": "variables",
-			"valuePath": "filepath",
-			"titlePath": null
-		},
-		"attachment_ref": {
-			"key": "attachment_ref",
-			"type": "REVISION",
-			"target": "STUDY_ATTACHMENT",
-			"titlePath": "file"
-		},
-		"file_path_ref": {
-			"key": "file_path_ref",
-			"type": "DEPENDENCY",
-			"target": "files",
-			"valuePath": "file",
-			"titlePath": null
-		},
-		"file_language_ref": {
-			"key": "file_language_ref",
-			"type": "DEPENDENCY",
-			"target": "files",
-			"valuePath": "filelanguage",
-			"titlePath": null
-		},
-		"file_description_ref": {
-			"key": "file_description_ref",
-			"type": "DEPENDENCY",
-			"target": "files",
-			"valuePath": "filedescription",
-			"titlePath": null
-		},
-		"file_comment_ref": {
-			"key": "file_comment_ref",
-			"type": "DEPENDENCY",
-			"target": "files",
-			"valuePath": "filecomment",
-			"titlePath": null
-		},
-		"keywordvocab_ref": {
-			"key": "keywordvocab_ref",
-			"type": "JSON",
-			"target": "keyword_vocabularies",
-			"valuePath": "codeListID",
-			"titlePath": "codeListName"
-		},
-		"keywordvocaburi_ref": {
-			"key": "keywordvocaburi_ref",
-			"type": "DEPENDENCY",
-			"target": "keywordvocab",
-			"valuePath": "codeListURN",
-			"titlePath": null
-		},
-		"analysisunitvocab_ref": {
-			"key": "analysisunitvocab_ref",
-			"type": "JSON",
-			"target": "Controlled Vocabulary for testing",
-			"valuePath": "codeListID",
-			"titlePath": null
-		},
-		"analysisunitvocaburi_ref": {
-			"key": "analysisunitvocaburi_ref",
-			"type": "DEPENDENCY",
-			"target": "analysisunitvocab",
-			"valuePath": "codeListURN",
-			"titlePath": null
-		},
-		"analysisunit_ref": {
-			"key": "analysisunit_ref",
-			"type": "DEPENDENCY",
-			"target": "analysisunitvocab",
-			"valuePath": "terms.id",
-			"titlePath": "term"
-		},
-		"analysisunituri_ref": {
-			"key": "analysisunituri_ref",
-			"type": "DEPENDENCY",
-			"target": "analysisunit",
-			"valuePath": "key",
-			"titlePath": null
-		},
-		"collmodevocab_ref": {
-			"key": "collmodevocab_ref",
-			"type": "JSON",
-			"target": "Controlled Vocabulary for testing",
-			"valuePath": "codeListID",
-			"titlePath": null
-		},
-		"collmodevocaburi_ref": {
-			"key": "collmodevocaburi_ref",
-			"type": "DEPENDENCY",
-			"target": "collmodevocab",
-			"valuePath": "codeListURN",
-			"titlePath": null
-		},
-		"collmode_ref": {
-			"key": "collmode_ref",
-			"type": "DEPENDENCY",
-			"target": "collmodevocab",
-			"valuePath": "terms.id",
-			"titlePath": "term"
-		},
-		"collmodeuri_ref": {
-			"key": "collmodeuri_ref",
-			"type": "DEPENDENCY",
-			"target": "collmode",
-			"valuePath": "key",
-			"titlePath": null
-		},
-		"instrumentvocab_ref": {
-			"key": "instrumentvocab_ref",
-			"type": "JSON",
-			"target": "Controlled Vocabulary for testing",
-			"valuePath": "codeListID",
-			"titlePath": null
-		},
-		"instrumentvocaburi_ref": {
-			"key": "instrumentvocaburi_ref",
-			"type": "DEPENDENCY",
-			"target": "instrumentvocab",
-			"valuePath": "codeListURN",
-			"titlePath": null
-		},
-		"instrument_ref": {
-			"key": "instrument_ref",
-			"type": "DEPENDENCY",
-			"target": "instrumentvocab",
-			"valuePath": "terms.id",
-			"titlePath": "term"
-		},
-		"instrumenturi_ref": {
-			"key": "instrumenturi_ref",
-			"type": "DEPENDENCY",
-			"target": "instrument",
-			"valuePath": "key",
-			"titlePath": null
-		},
-		"sampprocvocab_ref": {
-			"key": "sampprocvocab_ref",
-			"type": "JSON",
-			"target": "Controlled Vocabulary for testing",
-			"valuePath": "codeListID",
-			"titlePath": null
-		},
-		"sampprocvocaburi_ref": {
-			"key": "sampprocvocaburi_ref",
-			"type": "DEPENDENCY",
-			"target": "sampprocvocab",
-			"valuePath": "codeListURN",
-			"titlePath": null
-		},
-		"sampproc_ref": {
-			"key": "sampproc_ref",
-			"type": "DEPENDENCY",
-			"target": "sampprocvocab",
-			"valuePath": "terms.id",
-			"titlePath": "term"
-		},
-		"sampprocuri_ref": {
-			"key": "sampprocuri_ref",
-			"type": "DEPENDENCY",
-			"target": "sampproc",
-			"valuePath": "key",
-			"titlePath": null
-		},
-		"topicvocab_ref": {
-			"key": "topicvocab_ref",
-			"type": "JSON",
-			"target": "2 step vocabulary for testing",
-			"valuePath": "codeListID",
-			"titlePath": null
-		},
-		"topicvocaburi_ref": {
-			"key": "topicvocaburi_ref",
-			"type": "DEPENDENCY",
-			"target": "topicvocab",
-			"valuePath": "codeListURN",
-			"titlePath": null
-		},
-		"topictop_ref": {
-			"key": "topictop_ref",
-			"type": "DEPENDENCY",
-			"target": "topicvocab",
-			"valuePath": "terms.id",
-			"titlePath": "term"
-		},
-		"topic_ref": {
-			"key": "topic_ref",
-			"type": "DEPENDENCY",
-			"target": "topictop",
-			"valuePath": "term_ll.id",
-			"titlePath": "termll"
-		},
-		"topicuri_ref": {
-			"key": "topicuri_ref",
-			"type": "DEPENDENCY",
-			"target": "topic",
-			"valuePath": "key",
-			"titlePath": null
-		},
-		"timemethodvocab_ref": {
-			"key": "timemethodvocab_ref",
-			"type": "JSON",
-			"target": "Controlled Vocabulary for testing",
-			"valuePath": "codeListID",
-			"titlePath": null
-		},
-		"timemethodvocaburi_ref": {
-			"key": "timemethodvocaburi_ref",
-			"type": "DEPENDENCY",
-			"target": "timemethodvocab",
-			"valuePath": "codeListURN",
-			"titlePath": null
-		},
-		"timemethod_ref": {
-			"key": "timemethod_ref",
-			"type": "DEPENDENCY",
-			"target": "timemethodvocab",
-			"valuePath": "terms.id",
-			"titlePath": "term"
-		},
-		"timemethoduri_ref": {
-			"key": "timemethoduri_ref",
-			"type": "DEPENDENCY",
-			"target": "timemethod",
-			"valuePath": "key",
-			"titlePath": null
-		},
-		"dissemination_ref": {
-			"key": "dissemination_ref",
-			"type": "JSON",
-			"target": "Controlled Vocabulary for testing",
-			"valuePath": "codeListID",
-			"titlePath": "codeListName"
-		},
-		"country_ref": {
-			"key": "country_ref",
-			"type": "JSON",
-			"target": "ISO_3166-1",
-			"valuePath": "alpha-2",
-			"titlePath": "name"
-		},
-		"countryabbr_ref": {
-			"key": "countryabbr_ref",
-			"type": "DEPENDENCY",
-			"target": "country",
-			"valuePath": "alpha-2",
-			"titlePath": null
-		},
-		"organisation_ref": {
-			"key": "organisation_ref",
-			"type": "JSON",
-			"target": "Organizations",
-			"valuePath": "id",
-			"titlePath": "organizationname"
-		},
-		"organisationabbr_ref": {
-			"key": "organisationabbr_ref",
-			"type": "DEPENDENCY",
-			"target": "organisation",
-			"valuePath": "id",
-			"titlePath": "organizationabbr"
-		},
-		"agency_ref": {
-			"key": "agency_ref",
-			"type": "DEPENDENCY",
-			"target": "organisation",
-			"valuePath": "agencies.id",
-			"titlePath": "agencyname"
-		},
-		"agencyabbr_ref": {
-			"key": "agencyabbr_ref",
-			"type": "DEPENDENCY",
-			"target": "agency",
-			"valuePath": "id",
-			"titlePath": "agencyabbr"
-		},
-		"section_ref": {
-			"key": "section_ref",
-			"type": "DEPENDENCY",
-			"target": "agency",
-			"valuePath": "sections.id",
-			"titlePath": "sectionname"
-		},
-		"sectionabbr_ref": {
-			"key": "sectionabbr_ref",
-			"type": "DEPENDENCY",
-			"target": "section",
-			"valuePath": "id",
-			"titlePath": "sectionabbr"
-		},
-		"user_list_ref": {
-			"key": "user_list_ref",
-			"type": "JSON",
-			"target": "user-list",
-			"valuePath": "userName",
-			"titlePath": "displayName"
-		},
-		"related_binder_ref": {
-			"key": "related_binder_ref",
-			"type": "REVISION",
-			"target": "BINDER_PAGE",
-			"titlePath": null
-		},
-		"binder_id_ref": {
-			"key": "binder_id_ref",
-			"type": "DEPENDENCY",
-			"target": "studyRelatedBinders",
-			"valuePath": "binderid",
-			"titlePath": null
-		},
-		"binder_description_ref": {
-			"key": "binder_description_ref",
-			"type": "DEPENDENCY",
-			"target": "studyRelatedBinders",
-			"valuePath": "description",
-			"titlePath": null
-		},
-		"studyerrors_ref": {
-			"key": "studyerrors_ref",
-			"type": "REVISION",
-			"target": "STUDY_ERROR",
-			"titlePath": null
-		},
-		"errorscore_ref": {
-			"key": "errorscore_ref",
-			"type": "DEPENDENCY",
-			"target": "studyerrors",
-			"valuePath": "errorscore",
-			"titlePath": null
-		},
-		"errordatasetpart_ref": {
-			"key": "errordatasetpart_ref",
-			"type": "DEPENDENCY",
-			"target": "studyerrors",
-			"valuePath": "errordatasetpart",
-			"titlePath": null
-		},
-		"errorpartsection_ref": {
-			"key": "errorpartsection_ref",
-			"type": "DEPENDENCY",
-			"target": "studyerrors",
-			"valuePath": "errorpartsection",
-			"titlePath": null
-		},
-		"errorlanguage_ref": {
-			"key": "errorlanguage_ref",
-			"type": "DEPENDENCY",
-			"target": "studyerrors",
-			"valuePath": "errorlanguage",
-			"titlePath": null
-		},
-		"errorlabel_ref": {
-			"key": "errorlabel_ref",
-			"type": "DEPENDENCY",
-			"target": "studyerrors",
-			"valuePath": "errorlabel",
-			"titlePath": null
-		},
-		"errortriggerdate_ref": {
-			"key": "errortriggerdate_ref",
-			"type": "DEPENDENCY",
-			"target": "studyerrors",
-			"valuePath": "errortriggerdate",
-			"titlePath": null
-		},
-		"errortriggerpro_ref": {
-			"key": "errortriggerpro_ref",
-			"type": "DEPENDENCY",
-			"target": "studyerrors",
-			"valuePath": "errortriggerpro",
-			"titlePath": null
+			"reference": "user_list_ref"
 		}
 	},
 	"fields": {
@@ -1448,27 +1421,23 @@
 			"editable": false,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"anonymization": {
 			"key": "anonymization",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "anonymization_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "anonymization_list"
 		},
 		"dataarrivaldate": {
 			"key": "dataarrivaldate",
@@ -1479,27 +1448,23 @@
 			"editable": false,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"datakind": {
 			"key": "datakind",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": true,
-			"selectionList": "datakind_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": true,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "datakind_list"
 		},
 		"dataversions": {
 			"key": "dataversions",
@@ -1511,7 +1476,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"dataversion",
 				"versiondate",
@@ -1520,6 +1485,7 @@
 				"versiontext",
 				"versionnotes"
 			],
+			"fixedOrder": true,
 			"removePermissions": [
 				"canRemoveStudyVersions"
 			]
@@ -1533,11 +1499,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": "version",
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"versiondate": {
 			"key": "versiondate",
@@ -1548,27 +1512,23 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"versionlabeldata": {
 			"key": "versionlabeldata",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "versionlabeldata_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": "versionlabel",
 			"generalSearch": false,
 			"exact": true,
-			"indexName": "versionlabel",
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "versionlabeldata_list"
 		},
 		"versionnotes": {
 			"key": "versionnotes",
@@ -1579,27 +1539,23 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"versionpro": {
 			"key": "versionpro",
 			"type": "SELECTION",
 			"translatable": true,
 			"immutable": false,
-			"selectionList": "user_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "user_list"
 		},
 		"versiontext": {
 			"key": "versiontext",
@@ -1610,27 +1566,23 @@
 			"editable": true,
 			"writable": false,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"descpublic": {
 			"key": "descpublic",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "descpublic_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "descpublic_list"
 		},
 		"descversions": {
 			"key": "descversions",
@@ -1642,7 +1594,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"descversion",
 				"versiondate",
@@ -1651,6 +1603,7 @@
 				"versiontext",
 				"versionnotes"
 			],
+			"fixedOrder": true,
 			"removePermissions": [
 				"canRemoveStudyVersions"
 			]
@@ -1664,27 +1617,23 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": "version",
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"versionlabeldesc": {
 			"key": "versionlabeldesc",
 			"type": "SELECTION",
 			"translatable": true,
 			"immutable": false,
-			"selectionList": "versionlabeldesc_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": "versionlabel",
 			"generalSearch": false,
 			"exact": true,
-			"indexName": "versionlabel",
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "versionlabeldesc_list"
 		},
 		"publications": {
 			"key": "publications",
@@ -1692,17 +1641,18 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": false,
-			"reference": "publication_ref",
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"bidirectional": "studies",
 			"indexName": null,
-			"fixedOrder": true,
+			"reference": "publication_ref",
+			"bidirectional": "studies",
+			"maxValues": null,
 			"subfields": [
 				"publicationid",
 				"publicationtitle"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"publicationid": {
@@ -1711,15 +1661,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "publicationid_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "publicationid_ref"
 		},
 		"publicationtitle": {
 			"key": "publicationtitle",
@@ -1727,15 +1675,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "publicationtitle_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "publicationtitle_ref"
 		},
 		"relatedstudies": {
 			"key": "relatedstudies",
@@ -1743,17 +1689,18 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": false,
-			"reference": "relatedstudy_ref",
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"bidirectional": "relatedstudies",
 			"indexName": null,
-			"fixedOrder": true,
+			"reference": "relatedstudy_ref",
+			"bidirectional": "relatedstudies",
+			"maxValues": null,
 			"subfields": [
 				"relatedstudyid",
 				"relatedstudytitle"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"relatedstudyid": {
@@ -1762,15 +1709,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "relatedstudyid_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "relatedstudyid_ref"
 		},
 		"relatedstudytitle": {
 			"key": "relatedstudytitle",
@@ -1778,15 +1723,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "relatedstudytitle_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "relatedstudytitle_ref"
 		},
 		"studyid": {
 			"key": "studyid",
@@ -1797,11 +1740,9 @@
 			"editable": false,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"approved_files": {
 			"key": "approved_files",
@@ -1812,11 +1753,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": false,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"notes": {
 			"key": "notes",
@@ -1828,10 +1767,11 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"note"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"note": {
@@ -1843,11 +1783,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"originallocation": {
 			"key": "originallocation",
@@ -1858,11 +1796,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"processingnotes": {
 			"key": "processingnotes",
@@ -1873,59 +1809,51 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"public": {
 			"key": "public",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "public_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "public_list"
 		},
 		"securityissues": {
 			"key": "securityissues",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "securityissues_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "securityissues_list"
 		},
 		"series": {
 			"key": "series",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "series_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": true,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "series_list"
 		},
 		"submissionid": {
 			"key": "submissionid",
@@ -1936,11 +1864,9 @@
 			"editable": false,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"title": {
 			"key": "title",
@@ -1951,43 +1877,37 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": true,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": true,
+			"exact": true
 		},
 		"varpublic": {
 			"key": "varpublic",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "varpublic_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "varpublic_list"
 		},
 		"termsofuse": {
 			"key": "termsofuse",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "termsofuse_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "termsofuse_list"
 		},
 		"agreementdate": {
 			"key": "agreementdate",
@@ -1998,11 +1918,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"triggerdate": {
 			"key": "triggerdate",
@@ -2013,11 +1931,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"termsofusechangedate": {
 			"key": "termsofusechangedate",
@@ -2028,75 +1944,65 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"depositortype": {
 			"key": "depositortype",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "depositortype_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "depositortype_list"
 		},
 		"triggerpro": {
 			"key": "triggerpro",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "user_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "user_list"
 		},
 		"newtermsofuse": {
 			"key": "newtermsofuse",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "newtermsofuse_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "newtermsofuse_list"
 		},
 		"agreementtype": {
 			"key": "agreementtype",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "agreementtype_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "agreementtype_list"
 		},
 		"triggerlabel": {
 			"key": "triggerlabel",
@@ -2107,11 +2013,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"agreement": {
 			"key": "agreement",
@@ -2122,11 +2026,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"agreementnotes": {
 			"key": "agreementnotes",
@@ -2137,11 +2039,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"permission": {
 			"key": "permission",
@@ -2152,11 +2052,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"specialtermsofuse": {
 			"key": "specialtermsofuse",
@@ -2167,11 +2065,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"agreementfsdnotes": {
 			"key": "agreementfsdnotes",
@@ -2182,11 +2078,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"alttitles": {
 			"key": "alttitles",
@@ -2198,10 +2092,11 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"alttitle"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"alttitle": {
@@ -2213,11 +2108,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": true,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": true,
+			"exact": true
 		},
 		"partitles": {
 			"key": "partitles",
@@ -2229,11 +2122,12 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"partitle",
 				"partitlelang"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"partitle": {
@@ -2245,27 +2139,23 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"partitlelang": {
 			"key": "partitlelang",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "partitlelang_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "partitlelang_list"
 		},
 		"biblcit": {
 			"key": "biblcit",
@@ -2276,11 +2166,9 @@
 			"editable": false,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"keywords": {
 			"key": "keywords",
@@ -2292,7 +2180,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"keywordvocab",
 				"keywordnovocab",
@@ -2300,6 +2188,7 @@
 				"keyword",
 				"keyworduri"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"keywordvocab": {
@@ -2307,16 +2196,14 @@
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "keywordvocab_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "keywordvocab_list"
 		},
 		"keywordvocaburi": {
 			"key": "keywordvocaburi",
@@ -2324,15 +2211,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "keywordvocaburi_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "keywordvocaburi_ref"
 		},
 		"keyword": {
 			"key": "keyword",
@@ -2343,11 +2228,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": true,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": true,
+			"exact": true
 		},
 		"keywordnovocab": {
 			"key": "keywordnovocab",
@@ -2358,11 +2241,9 @@
 			"editable": true,
 			"writable": false,
 			"indexed": true,
-			"generalSearch": true,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": true,
+			"exact": true
 		},
 		"keyworduri": {
 			"key": "keyworduri",
@@ -2373,11 +2254,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"topics": {
 			"key": "topics",
@@ -2389,7 +2268,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"topicvocab",
 				"topictop",
@@ -2397,6 +2276,7 @@
 				"topicvocaburi",
 				"topicuri"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"topicvocab": {
@@ -2404,16 +2284,14 @@
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "topicvocab_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "topicvocab_list"
 		},
 		"topicvocaburi": {
 			"key": "topicvocaburi",
@@ -2421,47 +2299,41 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "topicvocaburi_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "topicvocaburi_ref"
 		},
 		"topictop": {
 			"key": "topictop",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "topictop_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": true,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "topictop_list"
 		},
 		"topic": {
 			"key": "topic",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "topic_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": true,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "topic_list"
 		},
 		"topicuri": {
 			"key": "topicuri",
@@ -2469,15 +2341,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "topicuri_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "topicuri_ref"
 		},
 		"abstract": {
 			"key": "abstract",
@@ -2488,11 +2358,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": true,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": true,
+			"exact": false
 		},
 		"timeperiods": {
 			"key": "timeperiods",
@@ -2504,12 +2372,13 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"timeperiod",
 				"timeperiodtext",
 				"timeperiodevent"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"timeperiod": {
@@ -2521,11 +2390,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": true,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": true,
+			"exact": true
 		},
 		"timeperiodtext": {
 			"key": "timeperiodtext",
@@ -2536,27 +2403,23 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": true,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": true,
+			"exact": false
 		},
 		"timeperiodevent": {
 			"key": "timeperiodevent",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "timeperiodevent_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "timeperiodevent_list"
 		},
 		"countries": {
 			"key": "countries",
@@ -2568,11 +2431,12 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"country",
 				"countryabbr"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"country": {
@@ -2584,11 +2448,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": true,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": true,
+			"exact": true
 		},
 		"countryabbr": {
 			"key": "countryabbr",
@@ -2599,11 +2461,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"universes": {
 			"key": "universes",
@@ -2615,11 +2475,12 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"universe",
 				"universeclusion"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"universe": {
@@ -2631,27 +2492,23 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"universeclusion": {
 			"key": "universeclusion",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "universeclusion_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "universeclusion_list"
 		},
 		"geogcovers": {
 			"key": "geogcovers",
@@ -2663,10 +2520,11 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"geogcover"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"geogcover": {
@@ -2678,11 +2536,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": true,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": true,
+			"exact": true
 		},
 		"colltime": {
 			"key": "colltime",
@@ -2694,12 +2550,13 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"colldate",
 				"colldatetext",
 				"colldateevent"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"colldate": {
@@ -2711,11 +2568,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"colldatetext": {
 			"key": "colldatetext",
@@ -2726,27 +2581,23 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"colldateevent": {
 			"key": "colldateevent",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "colldateevent_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "colldateevent_list"
 		},
 		"analysis": {
 			"key": "analysis",
@@ -2758,7 +2609,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"analysisunitvocab",
 				"analysisunitvocaburi",
@@ -2766,6 +2617,7 @@
 				"analysisunitother",
 				"analysisunituri"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"analysisunitvocab": {
@@ -2773,16 +2625,14 @@
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "analysisunitvocab_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "analysisunitvocab_list"
 		},
 		"analysisunitvocaburi": {
 			"key": "analysisunitvocaburi",
@@ -2790,31 +2640,27 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "analysisunitvocaburi_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "analysisunitvocaburi_ref"
 		},
 		"analysisunit": {
 			"key": "analysisunit",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "analysisunit_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": true,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "analysisunit_list"
 		},
 		"analysisunitother": {
 			"key": "analysisunitother",
@@ -2825,11 +2671,9 @@
 			"editable": true,
 			"writable": false,
 			"indexed": true,
-			"generalSearch": true,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": true,
+			"exact": false
 		},
 		"analysisunituri": {
 			"key": "analysisunituri",
@@ -2837,15 +2681,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "analysisunituri_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "analysisunituri_ref"
 		},
 		"instruments": {
 			"key": "instruments",
@@ -2857,7 +2699,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"instrumentvocab",
 				"instrumentvocaburi",
@@ -2865,6 +2707,7 @@
 				"instrumentother",
 				"instrumenturi"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"instrumentvocab": {
@@ -2872,16 +2715,14 @@
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "instrumentvocab_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "instrumentvocab_list"
 		},
 		"instrumentvocaburi": {
 			"key": "instrumentvocaburi",
@@ -2889,31 +2730,27 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "instrumentvocaburi_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "instrumentvocaburi_ref"
 		},
 		"instrument": {
 			"key": "instrument",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "instrument_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "instrument_list"
 		},
 		"instrumentother": {
 			"key": "instrumentother",
@@ -2924,11 +2761,9 @@
 			"editable": true,
 			"writable": false,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"instrumenturi": {
 			"key": "instrumenturi",
@@ -2936,15 +2771,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "instrumenturi_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "instrumenturi_ref"
 		},
 		"sampprocs": {
 			"key": "sampprocs",
@@ -2956,7 +2789,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"sampprocvocab",
 				"sampprocvocaburi",
@@ -2965,6 +2798,7 @@
 				"sampproctext",
 				"sampprocuri"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"sampprocvocab": {
@@ -2972,16 +2806,14 @@
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "sampprocvocab_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "sampprocvocab_list"
 		},
 		"sampprocvocaburi": {
 			"key": "sampprocvocaburi",
@@ -2989,31 +2821,27 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "sampprocvocaburi_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "sampprocvocaburi_ref"
 		},
 		"sampproc": {
 			"key": "sampproc",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "sampproc_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "sampproc_list"
 		},
 		"sampprocother": {
 			"key": "sampprocother",
@@ -3024,11 +2852,9 @@
 			"editable": true,
 			"writable": false,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"sampproctext": {
 			"key": "sampproctext",
@@ -3039,11 +2865,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"sampprocuri": {
 			"key": "sampprocuri",
@@ -3051,15 +2875,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "sampprocuri_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "sampprocuri_ref"
 		},
 		"timemethods": {
 			"key": "timemethods",
@@ -3071,7 +2893,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"timemethodvocab",
 				"timemethodvocaburi",
@@ -3079,6 +2901,7 @@
 				"timemethodother",
 				"timemethoduri"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"timemethodvocab": {
@@ -3086,16 +2909,14 @@
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "timemethodvocab_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "timemethodvocab_list"
 		},
 		"timemethodvocaburi": {
 			"key": "timemethodvocaburi",
@@ -3103,31 +2924,27 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "timemethodvocaburi_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "timemethodvocaburi_ref"
 		},
 		"timemethod": {
 			"key": "timemethod",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "timemethod_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "timemethod_list"
 		},
 		"timemethodother": {
 			"key": "timemethodother",
@@ -3138,11 +2955,9 @@
 			"editable": true,
 			"writable": false,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"timemethoduri": {
 			"key": "timemethoduri",
@@ -3150,15 +2965,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "timemethoduri_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "timemethoduri_ref"
 		},
 		"collmodes": {
 			"key": "collmodes",
@@ -3170,7 +2983,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"collmodevocab",
 				"collmodevocaburi",
@@ -3178,6 +2991,7 @@
 				"collmodeother",
 				"collmodeuri"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"collmodevocab": {
@@ -3185,16 +2999,14 @@
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "collmodevocab_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "collmodevocab_list"
 		},
 		"collmodevocaburi": {
 			"key": "collmodevocaburi",
@@ -3202,31 +3014,27 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "collmodevocaburi_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "collmodevocaburi_ref"
 		},
 		"collmode": {
 			"key": "collmode",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "collmode_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": true,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "collmode_list"
 		},
 		"collmodeother": {
 			"key": "collmodeother",
@@ -3237,11 +3045,9 @@
 			"editable": true,
 			"writable": false,
 			"indexed": true,
-			"generalSearch": true,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": true,
+			"exact": false
 		},
 		"collmodeuri": {
 			"key": "collmodeuri",
@@ -3249,15 +3055,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "collmodeuri_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "collmodeuri_ref"
 		},
 		"resprate": {
 			"key": "resprate",
@@ -3268,11 +3072,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"datasources": {
 			"key": "datasources",
@@ -3284,10 +3086,11 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"datasource"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"datasource": {
@@ -3299,11 +3102,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"weight": {
 			"key": "weight",
@@ -3314,11 +3115,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"weightyesno": {
 			"key": "weightyesno",
@@ -3329,11 +3128,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"dataprosessing": {
 			"key": "dataprosessing",
@@ -3344,11 +3141,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"collsize": {
 			"key": "collsize",
@@ -3359,11 +3154,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"complete": {
 			"key": "complete",
@@ -3374,11 +3167,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"datasetnotes": {
 			"key": "datasetnotes",
@@ -3389,11 +3180,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"appraisals": {
 			"key": "appraisals",
@@ -3405,10 +3194,11 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"appraisal"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"appraisal": {
@@ -3420,11 +3210,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"relatedmaterials": {
 			"key": "relatedmaterials",
@@ -3436,10 +3224,11 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"relatedmaterial"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"relatedmaterial": {
@@ -3451,11 +3240,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"othermaterials": {
 			"key": "othermaterials",
@@ -3467,13 +3254,14 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"othermaterialuri",
 				"othermateriallabel",
 				"othermaterialtext",
 				"othermateriallevel"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"othermaterialuri": {
@@ -3485,11 +3273,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"othermateriallabel": {
 			"key": "othermateriallabel",
@@ -3500,11 +3286,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"othermaterialtext": {
 			"key": "othermaterialtext",
@@ -3515,11 +3299,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"othermateriallevel": {
 			"key": "othermateriallevel",
@@ -3530,11 +3312,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"publicationcomments": {
 			"key": "publicationcomments",
@@ -3546,10 +3326,11 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"publicationcomment"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"publicationcomment": {
@@ -3561,11 +3342,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"studyvariables": {
 			"key": "studyvariables",
@@ -3577,13 +3356,14 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"variableslanguage",
 				"variables",
 				"variablesfile",
 				"variablesfilepath"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"variables": {
@@ -3592,15 +3372,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "variables_ref",
 			"editable": false,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "variables_ref"
 		},
 		"variableslanguage": {
 			"key": "variableslanguage",
@@ -3608,15 +3386,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "variables_language_ref",
 			"editable": false,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "variables_language_ref"
 		},
 		"variablesfile": {
 			"key": "variablesfile",
@@ -3624,15 +3400,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "variables_file_ref",
 			"editable": false,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "variables_file_ref"
 		},
 		"variablesfilepath": {
 			"key": "variablesfilepath",
@@ -3640,15 +3414,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "variables_file_path_ref",
 			"editable": false,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "variables_file_path_ref"
 		},
 		"files": {
 			"key": "files",
@@ -3656,18 +3428,19 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": false,
-			"reference": "attachment_ref",
 			"editable": true,
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"reference": "attachment_ref",
+			"maxValues": null,
 			"subfields": [
 				"filepath",
 				"filelanguage",
 				"filedescription",
 				"filecomment"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"filepath": {
@@ -3676,15 +3449,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "file_path_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "file_path_ref"
 		},
 		"filelanguage": {
 			"key": "filelanguage",
@@ -3692,15 +3463,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "file_language_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "file_language_ref"
 		},
 		"filedescription": {
 			"key": "filedescription",
@@ -3708,15 +3477,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "file_description_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "file_description_ref"
 		},
 		"filecomment": {
 			"key": "filecomment",
@@ -3724,15 +3491,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "file_comment_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "file_comment_ref"
 		},
 		"allfilesnotes": {
 			"key": "allfilesnotes",
@@ -3743,11 +3508,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": false,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": false
 		},
 		"cbattachments": {
 			"key": "cbattachments",
@@ -3759,11 +3522,12 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"cbattachmentlocation",
 				"cbattachmenttitle"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"cbattachmentlocation": {
@@ -3775,11 +3539,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"cbattachmenttitle": {
 			"key": "cbattachmenttitle",
@@ -3790,11 +3552,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"packages": {
 			"key": "packages",
@@ -3806,12 +3566,13 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"package",
 				"packageurn",
 				"packageversion"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"package": {
@@ -3819,16 +3580,14 @@
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "packagetype_list",
 			"subfield": true,
 			"editable": false,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "packagetype_list"
 		},
 		"packageurn": {
 			"key": "packageurn",
@@ -3839,11 +3598,9 @@
 			"editable": false,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"packageversion": {
 			"key": "packageversion",
@@ -3854,27 +3611,23 @@
 			"editable": false,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"dissemination": {
 			"key": "dissemination",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "dissemination_list",
 			"subfield": false,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "dissemination_list"
 		},
 		"producers": {
 			"key": "producers",
@@ -3886,7 +3639,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"organisation",
 				"organisationabbr",
@@ -3897,6 +3650,7 @@
 				"producerrole",
 				"projectnr"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"organisation": {
@@ -3904,16 +3658,14 @@
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "organisation_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": true,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "organisation_list"
 		},
 		"organisationabbr": {
 			"key": "organisationabbr",
@@ -3921,31 +3673,27 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "organisationabbr_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "organisationabbr_ref"
 		},
 		"agency": {
 			"key": "agency",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "agency_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": true,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "agency_list"
 		},
 		"agencyabbr": {
 			"key": "agencyabbr",
@@ -3953,31 +3701,27 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "agencyabbr_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "agencyabbr_ref"
 		},
 		"section": {
 			"key": "section",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "section_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": true,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "section_list"
 		},
 		"sectionabbr": {
 			"key": "sectionabbr",
@@ -3985,31 +3729,27 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "sectionabbr_ref",
 			"editable": false,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "sectionabbr_ref"
 		},
 		"producerrole": {
 			"key": "producerrole",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "producerrole_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "producerrole_list"
 		},
 		"projectnr": {
 			"key": "projectnr",
@@ -4020,11 +3760,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"authors": {
 			"key": "authors",
@@ -4036,7 +3774,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": false,
+			"maxValues": null,
 			"subfields": [
 				"authortype",
 				"author",
@@ -4047,6 +3785,7 @@
 				"section",
 				"sectionabbr"
 			],
+			"fixedOrder": false,
 			"removePermissions": []
 		},
 		"otherauthors": {
@@ -4059,7 +3798,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"otherauthortype",
 				"author",
@@ -4071,6 +3810,7 @@
 				"section",
 				"sectionabbr"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"collectors": {
@@ -4083,7 +3823,7 @@
 			"writable": true,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"maxValues": null,
 			"subfields": [
 				"authortype",
 				"author",
@@ -4094,6 +3834,7 @@
 				"section",
 				"sectionabbr"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"authortype": {
@@ -4101,32 +3842,28 @@
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "authortype_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": "type",
 			"generalSearch": false,
 			"exact": true,
-			"indexName": "type",
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "authortype_list"
 		},
 		"otherauthortype": {
 			"key": "otherauthortype",
 			"type": "SELECTION",
 			"translatable": false,
 			"immutable": false,
-			"selectionList": "otherauthortype_list",
 			"subfield": true,
 			"editable": true,
 			"writable": true,
 			"indexed": true,
+			"indexName": "type",
 			"generalSearch": false,
 			"exact": true,
-			"indexName": "type",
-			"subfields": [],
-			"removePermissions": []
+			"selectionList": "otherauthortype_list"
 		},
 		"author": {
 			"key": "author",
@@ -4137,11 +3874,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": true,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": true,
+			"exact": true
 		},
 		"otherauthorgroup": {
 			"key": "otherauthorgroup",
@@ -4152,11 +3887,9 @@
 			"editable": true,
 			"writable": true,
 			"indexed": true,
-			"generalSearch": false,
-			"exact": true,
 			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"generalSearch": false,
+			"exact": true
 		},
 		"studyRelatedBinders": {
 			"key": "studyRelatedBinders",
@@ -4164,16 +3897,17 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": false,
-			"reference": "related_binder_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"reference": "related_binder_ref",
+			"maxValues": null,
 			"subfields": [
 				"binderid",
 				"binderdescription"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"binderid": {
@@ -4182,15 +3916,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "binder_id_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "binder_id_ref"
 		},
 		"binderdescription": {
 			"key": "binderdescription",
@@ -4198,15 +3930,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "binder_description_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "binder_description_ref"
 		},
 		"studyerrors": {
 			"key": "studyerrors",
@@ -4214,12 +3944,12 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": false,
-			"reference": "studyerrors_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
 			"indexName": null,
-			"fixedOrder": true,
+			"reference": "studyerrors_ref",
+			"maxValues": null,
 			"subfields": [
 				"errorscore",
 				"errordatasetpart",
@@ -4229,6 +3959,7 @@
 				"errortriggerdate",
 				"errortriggerpro"
 			],
+			"fixedOrder": true,
 			"removePermissions": []
 		},
 		"errorscore": {
@@ -4237,15 +3968,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "errorscore_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "errorscore_ref"
 		},
 		"errordatasetpart": {
 			"key": "errordatasetpart",
@@ -4253,15 +3982,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "errordatasetpart_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "errordatasetpart_ref"
 		},
 		"errorpartsection": {
 			"key": "errorpartsection",
@@ -4269,15 +3996,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "errorpartsection_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "errorpartsection_ref"
 		},
 		"errorlanguage": {
 			"key": "errorlanguage",
@@ -4285,15 +4010,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "errorlanguage_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "errorlanguage_ref"
 		},
 		"errorlabel": {
 			"key": "errorlabel",
@@ -4301,15 +4024,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "errorlabel_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "errorlabel_ref"
 		},
 		"errortriggerdate": {
 			"key": "errortriggerdate",
@@ -4317,15 +4038,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "errortriggerdate_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
+			"reference": "errortriggerdate_ref"
 		},
 		"errortriggerpro": {
 			"key": "errortriggerpro",
@@ -4333,130 +4052,13 @@
 			"translatable": false,
 			"immutable": false,
 			"subfield": true,
-			"reference": "errortriggerpro_ref",
 			"editable": true,
 			"writable": false,
 			"indexed": true,
+			"indexName": null,
 			"generalSearch": false,
 			"exact": true,
-			"indexName": null,
-			"subfields": [],
-			"removePermissions": []
-		}
-	},
-	"namedTargets": {
-		"quantitative": {
-			"type": "FIELD",
-			"content": "datakind",
-			"targets": [],
-			"checks": [
-				{
-					"condition": {
-						"type": "EQUALS",
-						"target": {
-							"type": "VALUE",
-							"content": "1"
-						}
-					},
-					"restrictors": []
-				}
-			]
-		},
-		"qualitative": {
-			"type": "FIELD",
-			"content": "datakind",
-			"targets": [],
-			"checks": [
-				{
-					"condition": {
-						"type": "EQUALS",
-						"target": {
-							"type": "VALUE",
-							"content": "2"
-						}
-					},
-					"restrictors": []
-				}
-			]
-		},
-		"required_author_check": {
-			"type": "FIELD",
-			"content": "authortype",
-			"targets": [
-				{
-					"type": "FIELD",
-					"content": "author",
-					"targets": [],
-					"checks": [
-						{
-							"condition": {
-								"type": "NOT_EMPTY",
-								"target": {}
-							},
-							"restrictors": [
-								{
-									"type": "FIELD",
-									"content": "authortype",
-									"targets": [],
-									"checks": [
-										{
-											"condition": {
-												"type": "EQUALS",
-												"target": {
-													"type": "VALUE",
-													"content": "1"
-												}
-											},
-											"restrictors": []
-										}
-									]
-								}
-							]
-						}
-					]
-				},
-				{
-					"type": "FIELD",
-					"content": "organisation",
-					"targets": [],
-					"checks": [
-						{
-							"condition": {
-								"type": "NOT_EMPTY",
-								"target": {}
-							},
-							"restrictors": [
-								{
-									"type": "FIELD",
-									"content": "authortype",
-									"targets": [],
-									"checks": [
-										{
-											"condition": {
-												"type": "EQUALS",
-												"target": {
-													"type": "VALUE",
-													"content": "2"
-												}
-											},
-											"restrictors": []
-										}
-									]
-								}
-							]
-						}
-					]
-				}
-			],
-			"checks": [
-				{
-					"condition": {
-						"type": "NOT_EMPTY",
-						"target": {}
-					},
-					"restrictors": []
-				}
-			]
+			"reference": "errortriggerpro_ref"
 		}
 	},
 	"restrictions": [
@@ -4473,7 +4075,9 @@
 								"type": "NOT_EMPTY",
 								"target": {
 									"type": "LANGUAGE",
-									"content": "fi"
+									"content": "fi",
+									"targets": [],
+									"checks": []
 								}
 							},
 							"restrictors": []
@@ -4483,7 +4087,9 @@
 								"type": "NOT_EMPTY",
 								"target": {
 									"type": "LANGUAGE",
-									"content": "en"
+									"content": "en",
+									"targets": [],
+									"checks": []
 								}
 							},
 							"restrictors": []
@@ -4498,7 +4104,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -4512,7 +4123,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -4527,7 +4143,10 @@
 							"condition": {
 								"type": "NOT_EMPTY",
 								"target": {
-									"type": "FIELD"
+									"type": "FIELD",
+									"content": null,
+									"targets": [],
+									"checks": []
 								}
 							},
 							"restrictors": []
@@ -4550,7 +4169,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -4564,7 +4188,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -4578,7 +4207,12 @@
 						{
 							"condition": {
 								"type": "TRUE",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -4594,7 +4228,9 @@
 								"type": "EQUALS",
 								"target": {
 									"type": "VALUE",
-									"content": "true"
+									"content": "true",
+									"targets": [],
+									"checks": []
 								}
 							},
 							"restrictors": [
@@ -4612,7 +4248,12 @@
 										{
 											"condition": {
 												"type": "IS_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -4630,7 +4271,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": [
 								{
@@ -4649,7 +4295,9 @@
 												"type": "NOT_EQUALS",
 												"target": {
 													"type": "VALUE",
-													"content": "true"
+													"content": "true",
+													"targets": [],
+													"checks": []
 												}
 											},
 											"restrictors": []
@@ -4680,7 +4328,12 @@
 												{
 													"condition": {
 														"type": "NOT_EMPTY",
-														"target": {}
+														"target": {
+															"type": null,
+															"content": null,
+															"targets": [],
+															"checks": []
+														}
 													},
 													"restrictors": [
 														{
@@ -4691,7 +4344,12 @@
 																{
 																	"condition": {
 																		"type": "FREE_TEXT",
-																		"target": {}
+																		"target": {
+																			"type": null,
+																			"content": null,
+																			"targets": [],
+																			"checks": []
+																		}
 																	},
 																	"restrictors": []
 																}
@@ -4706,7 +4364,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -4720,7 +4383,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -4746,7 +4414,12 @@
 												{
 													"condition": {
 														"type": "NOT_EMPTY",
-														"target": {}
+														"target": {
+															"type": null,
+															"content": null,
+															"targets": [],
+															"checks": []
+														}
 													},
 													"restrictors": [
 														{
@@ -4757,7 +4430,12 @@
 																{
 																	"condition": {
 																		"type": "FREE_TEXT",
-																		"target": {}
+																		"target": {
+																			"type": null,
+																			"content": null,
+																			"targets": [],
+																			"checks": []
+																		}
 																	},
 																	"restrictors": []
 																}
@@ -4772,7 +4450,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -4786,7 +4469,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": [
 								{
@@ -4819,7 +4507,12 @@
 												{
 													"condition": {
 														"type": "NOT_EMPTY",
-														"target": {}
+														"target": {
+															"type": null,
+															"content": null,
+															"targets": [],
+															"checks": []
+														}
 													},
 													"restrictors": [
 														{
@@ -4830,7 +4523,12 @@
 																{
 																	"condition": {
 																		"type": "FREE_TEXT",
-																		"target": {}
+																		"target": {
+																			"type": null,
+																			"content": null,
+																			"targets": [],
+																			"checks": []
+																		}
 																	},
 																	"restrictors": []
 																}
@@ -4845,7 +4543,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -4859,7 +4562,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": [
 								{
@@ -4888,7 +4596,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -4902,7 +4615,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": [
 												{
@@ -4913,7 +4631,12 @@
 														{
 															"condition": {
 																"type": "IS_EMPTY",
-																"target": {}
+																"target": {
+																	"type": null,
+																	"content": null,
+																	"targets": [],
+																	"checks": []
+																}
 															},
 															"restrictors": []
 														}
@@ -4931,7 +4654,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": [
 												{
@@ -4942,7 +4670,12 @@
 														{
 															"condition": {
 																"type": "IS_EMPTY",
-																"target": {}
+																"target": {
+																	"type": null,
+																	"content": null,
+																	"targets": [],
+																	"checks": []
+																}
 															},
 															"restrictors": []
 														}
@@ -4960,7 +4693,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": [
 								{
@@ -4993,7 +4731,12 @@
 												{
 													"condition": {
 														"type": "NOT_EMPTY",
-														"target": {}
+														"target": {
+															"type": null,
+															"content": null,
+															"targets": [],
+															"checks": []
+														}
 													},
 													"restrictors": [
 														{
@@ -5004,7 +4747,12 @@
 																{
 																	"condition": {
 																		"type": "FREE_TEXT",
-																		"target": {}
+																		"target": {
+																			"type": null,
+																			"content": null,
+																			"targets": [],
+																			"checks": []
+																		}
 																	},
 																	"restrictors": []
 																}
@@ -5019,7 +4767,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5033,7 +4786,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5059,7 +4817,12 @@
 												{
 													"condition": {
 														"type": "NOT_EMPTY",
-														"target": {}
+														"target": {
+															"type": null,
+															"content": null,
+															"targets": [],
+															"checks": []
+														}
 													},
 													"restrictors": [
 														{
@@ -5070,7 +4833,12 @@
 																{
 																	"condition": {
 																		"type": "FREE_TEXT",
-																		"target": {}
+																		"target": {
+																			"type": null,
+																			"content": null,
+																			"targets": [],
+																			"checks": []
+																		}
 																	},
 																	"restrictors": []
 																}
@@ -5085,7 +4853,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5099,7 +4872,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5121,7 +4899,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5135,7 +4918,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5149,7 +4937,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5163,7 +4956,12 @@
 						{
 							"condition": {
 								"type": "TRUE",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5185,7 +4983,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5199,7 +5002,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5213,7 +5021,12 @@
 						{
 							"condition": {
 								"type": "TRUE",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5235,7 +5048,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5249,7 +5067,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5263,7 +5086,12 @@
 						{
 							"condition": {
 								"type": "TRUE",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5285,7 +5113,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5299,7 +5132,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5313,7 +5151,12 @@
 						{
 							"condition": {
 								"type": "TRUE",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5335,7 +5178,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5349,7 +5197,12 @@
 						{
 							"condition": {
 								"type": "TRUE",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5363,7 +5216,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5389,7 +5247,12 @@
 												{
 													"condition": {
 														"type": "NOT_EMPTY",
-														"target": {}
+														"target": {
+															"type": null,
+															"content": null,
+															"targets": [],
+															"checks": []
+														}
 													},
 													"restrictors": [
 														{
@@ -5400,7 +5263,12 @@
 																{
 																	"condition": {
 																		"type": "FREE_TEXT",
-																		"target": {}
+																		"target": {
+																			"type": null,
+																			"content": null,
+																			"targets": [],
+																			"checks": []
+																		}
 																	},
 																	"restrictors": []
 																}
@@ -5415,7 +5283,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5429,7 +5302,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5451,7 +5329,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										},
@@ -5460,7 +5343,9 @@
 												"type": "REGEX",
 												"target": {
 													"type": "VALUE",
-													"content": "^(\\d*(\\.\\d)?)+\\d?$"
+													"content": "^(\\d*(\\.\\d)?)+\\d?$",
+													"targets": [],
+													"checks": []
 												}
 											},
 											"restrictors": []
@@ -5475,7 +5360,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5489,7 +5379,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5507,7 +5402,12 @@
 												{
 													"condition": {
 														"type": "NOT_EMPTY",
-														"target": {}
+														"target": {
+															"type": null,
+															"content": null,
+															"targets": [],
+															"checks": []
+														}
 													},
 													"restrictors": [
 														{
@@ -5518,7 +5418,12 @@
 																{
 																	"condition": {
 																		"type": "FREE_TEXT",
-																		"target": {}
+																		"target": {
+																			"type": null,
+																			"content": null,
+																			"targets": [],
+																			"checks": []
+																		}
 																	},
 																	"restrictors": []
 																}
@@ -5533,7 +5438,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5547,7 +5457,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5561,7 +5476,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5583,7 +5503,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										},
@@ -5592,7 +5517,9 @@
 												"type": "REGEX",
 												"target": {
 													"type": "VALUE",
-													"content": "^(\\d*(\\.\\d)?)+\\d?$"
+													"content": "^(\\d*(\\.\\d)?)+\\d?$",
+													"targets": [],
+													"checks": []
 												}
 											},
 											"restrictors": []
@@ -5607,7 +5534,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5621,7 +5553,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5639,7 +5576,12 @@
 												{
 													"condition": {
 														"type": "NOT_EMPTY",
-														"target": {}
+														"target": {
+															"type": null,
+															"content": null,
+															"targets": [],
+															"checks": []
+														}
 													},
 													"restrictors": [
 														{
@@ -5650,7 +5592,12 @@
 																{
 																	"condition": {
 																		"type": "FREE_TEXT",
-																		"target": {}
+																		"target": {
+																			"type": null,
+																			"content": null,
+																			"targets": [],
+																			"checks": []
+																		}
 																	},
 																	"restrictors": []
 																}
@@ -5665,7 +5612,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5679,7 +5631,12 @@
 						{
 							"condition": {
 								"type": "TRUE",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5701,7 +5658,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5715,7 +5677,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": [
 												{
@@ -5726,7 +5693,12 @@
 														{
 															"condition": {
 																"type": "IS_EMPTY",
-																"target": {}
+																"target": {
+																	"type": null,
+																	"content": null,
+																	"targets": [],
+																	"checks": []
+																}
 															},
 															"restrictors": []
 														}
@@ -5744,7 +5716,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": [
 												{
@@ -5755,7 +5732,12 @@
 														{
 															"condition": {
 																"type": "IS_EMPTY",
-																"target": {}
+																"target": {
+																	"type": null,
+																	"content": null,
+																	"targets": [],
+																	"checks": []
+																}
 															},
 															"restrictors": []
 														}
@@ -5773,7 +5755,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5787,7 +5774,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5801,7 +5793,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5815,7 +5812,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5829,7 +5831,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5843,7 +5850,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5857,7 +5869,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5871,7 +5888,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5885,7 +5907,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5899,7 +5926,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5913,7 +5945,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5935,7 +5972,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5949,7 +5991,12 @@
 						{
 							"condition": {
 								"type": "TRUE",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -5971,7 +6018,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -5985,7 +6037,12 @@
 						{
 							"condition": {
 								"type": "TRUE",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -6007,7 +6064,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -6021,7 +6083,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": [
 												{
@@ -6034,7 +6101,9 @@
 																"type": "EQUALS",
 																"target": {
 																	"type": "VALUE",
-																	"content": "1"
+																	"content": "1",
+																	"targets": [],
+																	"checks": []
 																}
 															},
 															"restrictors": []
@@ -6053,7 +6122,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": [
 												{
@@ -6066,7 +6140,9 @@
 																"type": "EQUALS",
 																"target": {
 																	"type": "VALUE",
-																	"content": "2"
+																	"content": "2",
+																	"targets": [],
+																	"checks": []
 																}
 															},
 															"restrictors": []
@@ -6085,7 +6161,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": [
 												{
@@ -6098,7 +6179,9 @@
 																"type": "EQUALS",
 																"target": {
 																	"type": "VALUE",
-																	"content": "3"
+																	"content": "3",
+																	"targets": [],
+																	"checks": []
 																}
 															},
 															"restrictors": []
@@ -6117,7 +6200,12 @@
 						{
 							"condition": {
 								"type": "TRUE",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -6145,7 +6233,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -6173,7 +6266,12 @@
 						{
 							"condition": {
 								"type": "NOT_EMPTY",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -6195,7 +6293,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -6209,7 +6312,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -6223,7 +6331,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -6237,7 +6350,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -6251,7 +6369,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -6265,7 +6388,12 @@
 										{
 											"condition": {
 												"type": "NOT_EMPTY",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -6279,7 +6407,12 @@
 						{
 							"condition": {
 								"type": "TRUE",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -6309,7 +6442,12 @@
 														{
 															"condition": {
 																"type": "NOT_EMPTY",
-																"target": {}
+																"target": {
+																	"type": null,
+																	"content": null,
+																	"targets": [],
+																	"checks": []
+																}
 															},
 															"restrictors": []
 														}
@@ -6323,7 +6461,12 @@
 														{
 															"condition": {
 																"type": "NOT_EMPTY",
-																"target": {}
+																"target": {
+																	"type": null,
+																	"content": null,
+																	"targets": [],
+																	"checks": []
+																}
 															},
 															"restrictors": []
 														}
@@ -6337,7 +6480,12 @@
 														{
 															"condition": {
 																"type": "NOT_EMPTY",
-																"target": {}
+																"target": {
+																	"type": null,
+																	"content": null,
+																	"targets": [],
+																	"checks": []
+																}
 															},
 															"restrictors": []
 														}
@@ -6351,7 +6499,12 @@
 														{
 															"condition": {
 																"type": "NOT_EMPTY",
-																"target": {}
+																"target": {
+																	"type": null,
+																	"content": null,
+																	"targets": [],
+																	"checks": []
+																}
 															},
 															"restrictors": []
 														}
@@ -6365,7 +6518,12 @@
 														{
 															"condition": {
 																"type": "NOT_EMPTY",
-																"target": {}
+																"target": {
+																	"type": null,
+																	"content": null,
+																	"targets": [],
+																	"checks": []
+																}
 															},
 															"restrictors": []
 														}
@@ -6379,7 +6537,12 @@
 														{
 															"condition": {
 																"type": "NOT_EMPTY",
-																"target": {}
+																"target": {
+																	"type": null,
+																	"content": null,
+																	"targets": [],
+																	"checks": []
+																}
 															},
 															"restrictors": []
 														}
@@ -6401,7 +6564,12 @@
 																		{
 																			"condition": {
 																				"type": "NOT_EMPTY",
-																				"target": {}
+																				"target": {
+																					"type": null,
+																					"content": null,
+																					"targets": [],
+																					"checks": []
+																				}
 																			},
 																			"restrictors": []
 																		}
@@ -6415,7 +6583,12 @@
 																		{
 																			"condition": {
 																				"type": "NOT_EMPTY",
-																				"target": {}
+																				"target": {
+																					"type": null,
+																					"content": null,
+																					"targets": [],
+																					"checks": []
+																				}
 																			},
 																			"restrictors": []
 																		}
@@ -6429,7 +6602,12 @@
 																		{
 																			"condition": {
 																				"type": "NOT_EMPTY",
-																				"target": {}
+																				"target": {
+																					"type": null,
+																					"content": null,
+																					"targets": [],
+																					"checks": []
+																				}
 																			},
 																			"restrictors": []
 																		}
@@ -6443,7 +6621,12 @@
 																		{
 																			"condition": {
 																				"type": "NOT_EMPTY",
-																				"target": {}
+																				"target": {
+																					"type": null,
+																					"content": null,
+																					"targets": [],
+																					"checks": []
+																				}
 																			},
 																			"restrictors": []
 																		}
@@ -6457,7 +6640,12 @@
 														{
 															"condition": {
 																"type": "TRUE",
-																"target": {}
+																"target": {
+																	"type": null,
+																	"content": null,
+																	"targets": [],
+																	"checks": []
+																}
 															},
 															"restrictors": []
 														}
@@ -6471,7 +6659,12 @@
 										{
 											"condition": {
 												"type": "TRUE",
-												"target": {}
+												"target": {
+													"type": null,
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
 											},
 											"restrictors": []
 										}
@@ -6485,7 +6678,12 @@
 						{
 							"condition": {
 								"type": "TRUE",
-								"target": {}
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
 							},
 							"restrictors": []
 						}
@@ -6500,7 +6698,10 @@
 							"condition": {
 								"type": "NOT_EMPTY",
 								"target": {
-									"type": "FIELD"
+									"type": "FIELD",
+									"content": null,
+									"targets": [],
+									"checks": []
 								}
 							},
 							"restrictors": [
@@ -6514,7 +6715,9 @@
 												"type": "EQUALS",
 												"target": {
 													"type": "VALUE",
-													"content": "5"
+													"content": "5",
+													"targets": [],
+													"checks": []
 												}
 											},
 											"restrictors": []
@@ -6534,7 +6737,10 @@
 							"condition": {
 								"type": "NOT_EMPTY",
 								"target": {
-									"type": "FIELD"
+									"type": "FIELD",
+									"content": null,
+									"targets": [],
+									"checks": []
 								}
 							},
 							"restrictors": [
@@ -6548,7 +6754,9 @@
 												"type": "EQUALS",
 												"target": {
 													"type": "VALUE",
-													"content": "5"
+													"content": "5",
+													"targets": [],
+													"checks": []
 												}
 											},
 											"restrictors": []
@@ -6568,7 +6776,10 @@
 							"condition": {
 								"type": "NOT_EMPTY",
 								"target": {
-									"type": "FIELD"
+									"type": "FIELD",
+									"content": null,
+									"targets": [],
+									"checks": []
 								}
 							},
 							"restrictors": [
@@ -6582,7 +6793,87 @@
 												"type": "EQUALS",
 												"target": {
 													"type": "VALUE",
-													"content": "5"
+													"content": "5",
+													"targets": [],
+													"checks": []
+												}
+											},
+											"restrictors": []
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "FIELD",
+					"content": "termsofusechangedate",
+					"targets": [],
+					"checks": [
+						{
+							"condition": {
+								"type": "NOT_EMPTY",
+								"target": {
+									"type": "FIELD",
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
+							},
+							"restrictors": [
+								{
+									"type": "FIELD",
+									"content": "newtermsofuse",
+									"targets": [],
+									"checks": [
+										{
+											"condition": {
+												"type": "NOT_EMPTY",
+												"target": {
+													"type": "FIELD",
+													"content": null,
+													"targets": [],
+													"checks": []
+												}
+											},
+											"restrictors": []
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "FIELD",
+					"content": "newtermsofuse",
+					"targets": [],
+					"checks": [
+						{
+							"condition": {
+								"type": "NOT_EMPTY",
+								"target": {
+									"type": "FIELD",
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
+							},
+							"restrictors": [
+								{
+									"type": "FIELD",
+									"content": "termsofusechangedate",
+									"targets": [],
+									"checks": [
+										{
+											"condition": {
+												"type": "NOT_EMPTY",
+												"target": {
+													"type": "FIELD",
+													"content": null,
+													"targets": [],
+													"checks": []
 												}
 											},
 											"restrictors": []
@@ -6639,5 +6930,144 @@
 				}
 			]
 		}
-	]
+	],
+	"namedTargets": {
+		"quantitative": {
+			"type": "FIELD",
+			"content": "datakind",
+			"targets": [],
+			"checks": [
+				{
+					"condition": {
+						"type": "EQUALS",
+						"target": {
+							"type": "VALUE",
+							"content": "1",
+							"targets": [],
+							"checks": []
+						}
+					},
+					"restrictors": []
+				}
+			]
+		},
+		"qualitative": {
+			"type": "FIELD",
+			"content": "datakind",
+			"targets": [],
+			"checks": [
+				{
+					"condition": {
+						"type": "EQUALS",
+						"target": {
+							"type": "VALUE",
+							"content": "2",
+							"targets": [],
+							"checks": []
+						}
+					},
+					"restrictors": []
+				}
+			]
+		},
+		"required_author_check": {
+			"type": "FIELD",
+			"content": "authortype",
+			"targets": [
+				{
+					"type": "FIELD",
+					"content": "author",
+					"targets": [],
+					"checks": [
+						{
+							"condition": {
+								"type": "NOT_EMPTY",
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
+							},
+							"restrictors": [
+								{
+									"type": "FIELD",
+									"content": "authortype",
+									"targets": [],
+									"checks": [
+										{
+											"condition": {
+												"type": "EQUALS",
+												"target": {
+													"type": "VALUE",
+													"content": "1",
+													"targets": [],
+													"checks": []
+												}
+											},
+											"restrictors": []
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "FIELD",
+					"content": "organisation",
+					"targets": [],
+					"checks": [
+						{
+							"condition": {
+								"type": "NOT_EMPTY",
+								"target": {
+									"type": null,
+									"content": null,
+									"targets": [],
+									"checks": []
+								}
+							},
+							"restrictors": [
+								{
+									"type": "FIELD",
+									"content": "authortype",
+									"targets": [],
+									"checks": [
+										{
+											"condition": {
+												"type": "EQUALS",
+												"target": {
+													"type": "VALUE",
+													"content": "2",
+													"targets": [],
+													"checks": []
+												}
+											},
+											"restrictors": []
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			],
+			"checks": [
+				{
+					"condition": {
+						"type": "NOT_EMPTY",
+						"target": {
+							"type": null,
+							"content": null,
+							"targets": [],
+							"checks": []
+						}
+					},
+					"restrictors": []
+				}
+			]
+		}
+	},
+	"displayId": "studyid"
 }
