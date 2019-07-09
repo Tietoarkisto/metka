@@ -1000,6 +1000,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
 
             String txt = null;
             String sampproc = null;
+            String sampprocuri = null;
             String sampprocvocab = null;
             String sampprocvocaburi = null;
             Document sampproctext = null;
@@ -1014,6 +1015,11 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
                 continue;
             }
 
+            sampprocuri = getReferenceTitle(rowRoot + Fields.SAMPPROCURI);
+            if(!StringUtils.hasText(sampprocuri)) {
+                continue;
+            }
+
             sampprocvocaburi = getReferenceTitle(rowRoot + Fields.SAMPPROCVOCABURI);
 
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.SAMPPROCOTHER));
@@ -1023,7 +1029,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
 
             // Keyword should always be non null at this point
             ConceptualTextType t = dataColl.addNewSampProc();
-            ConceptType c = fillTextType(t.addNewConcept(), sampproc);
+            ConceptType c = fillTextType(t.addNewConcept(), sampprocuri);
 
             // Add sampproctext if present and extract all text paragraphs
             valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.SAMPPROCTEXT));
@@ -1062,6 +1068,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
 
             String txt = null;
             String collmode = null;
+            String collmodeuri = null;
             String collmodevocab = null;
             String collmodevocaburi = null;
 
@@ -1075,6 +1082,11 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
                 continue;
             }
 
+            collmodeuri = getReferenceTitle(rowRoot + Fields.COLLMODEURI);
+            if(!StringUtils.hasText(collmodeuri)) {
+                continue;
+            }
+
             collmodevocaburi = getReferenceTitle(rowRoot + Fields.COLLMODEVOCABURI);
 
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.COLLMODEOTHER));
@@ -1085,7 +1097,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
             // Keyword should always be non null at this point
             ConceptualTextType t = dataColl.addNewCollMode();
 
-            ConceptType c = fillTextType(t.addNewConcept(), collmode);
+            ConceptType c = fillTextType(t.addNewConcept(), collmodeuri);
 
             if(collmodevocab != null) {
                 c.setVocab(collmodevocab);
