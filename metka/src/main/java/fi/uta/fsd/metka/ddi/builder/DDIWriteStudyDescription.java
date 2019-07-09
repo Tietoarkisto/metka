@@ -663,6 +663,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
 
             String txt = null;
             String analysisunit = null;
+            String analysisunituri = null;
             String analysisunitvocab = null;
             String analysisunitvocaburi = null;
 
@@ -676,6 +677,11 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
                 continue;
             }
 
+            analysisunituri = getReferenceTitle(rowRoot + Fields.ANALYSISUNITURI);
+            if(!StringUtils.hasText(analysisunituri)) {
+                continue;
+            }
+
             analysisunitvocaburi = getReferenceTitle(rowRoot + Fields.ANALYSISUNITVOCABURI);
 
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.ANALYSISUNITOTHER));
@@ -685,7 +691,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
 
             // Keyword should always be non null at this point
             AnlyUnitType t = sumDscr.addNewAnlyUnit();
-            ConceptType c = fillTextType(t.addNewConcept(), analysisunit);
+            ConceptType c = fillTextType(t.addNewConcept(), analysisunituri);
 
             if(analysisunitvocab != null) {
                 c.setVocab(analysisunitvocab);
