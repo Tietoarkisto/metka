@@ -81,6 +81,7 @@ define(function(require) {
                     return;
                 }
                 if (searchOptions.exactValue) {
+                    value = value.replace(/[-[\]{}()*+!<=:?.\/\\^$|#\s,]/g, '\\$&');
                     value = '/' + (searchOptions.addWildcard?".*":"") + value + (searchOptions.addWildcard?".*":"") + '/';
                 } else if(searchOptions.addWildcard) {
                     // Escape regex characters in non-exact searches
