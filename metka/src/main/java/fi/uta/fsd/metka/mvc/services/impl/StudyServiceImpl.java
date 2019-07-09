@@ -109,9 +109,13 @@ public class StudyServiceImpl implements StudyService {
 
     @Override
     public ReturnResult importDDI(RevisionKey key, String path) {
+        int no = key.getNo();
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(key);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return pair.getLeft();
+        }
+        if(no > 1) {
+            return ReturnResult.OPERATION_FAIL;
         }
         return ddiReaderService.readDDIDocument(path, pair.getRight());
     }
