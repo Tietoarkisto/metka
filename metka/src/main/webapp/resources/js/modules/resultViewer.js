@@ -143,6 +143,9 @@ define(function (require) {
                             if(message) {
                                 body += "</br>"+message;
                             }
+                            if(resultParser.getResult() === "FILE_MISSING"){
+                                body = MetkaJS.L10N.get('alert.error.fileMissing');
+                            }
                             require('./modal')($.extend(true, require('./optionsBase')(), {
                                 title: MetkaJS.L10N.get('alert.'+(getPropertyNS(data, 'responses.0.options.0.title.value') || "NOTICE").toLowerCase()+'.title'),
                                 body: body,
@@ -156,10 +159,12 @@ define(function (require) {
                     }
 
                     var message = resultParser.getMessage();
+
                     if(message) {
                         if (resultParser.getResult() === 'RESTRICTION_VALIDATION_FAILURE') {  // Issue #803
                             body += "<br/><br/>"+message;
-                        } else if (resultParser.getResult() === 'OPERATION_SUCCESSFUL_WITH_ERRORS' && body.indexOf("suorituksen") !== -1) {  // Issue #805
+                        }
+                        else if (resultParser.getResult() === 'OPERATION_SUCCESSFUL_WITH_ERRORS' && body.indexOf("suorituksen") !== -1) {  // Issue #805
                             var partOne = body.substr(0, 11);
                             var partTwo = body.substr(10, 44) + body.substr(54, 5).toUpperCase() + body.substr(59, 21);
                             var partThree = body.substr(79);

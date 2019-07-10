@@ -94,5 +94,6 @@ public enum ReturnResult {
     EXCEPTION_DURING_API_CALL,
     RESULT_SET_TOO_LARGE,
     FILE_ALREADY_EXISTS,                // Special failure condition when file move is tried to a location that already contains a file
-    CONFIG_UPDATE_PARTIAL_FAILURE       // Failure to save revisions with an updated data configuration
+    FILE_MISSING,                       // Attachment file was not found
+    CONFIG_UPDATE_PARTIAL_FAILURE,      // Failure to save revisions with an updated data configuration
 }

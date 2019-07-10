@@ -29,8 +29,10 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
 import fi.uta.fsd.metka.enums.*;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
@@ -41,6 +43,7 @@ import fi.uta.fsd.metka.model.transfer.TransferRow;
 import fi.uta.fsd.metka.model.transfer.TransferValue;
 import fi.uta.fsd.metka.mvc.services.ExpertSearchService;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.search.RevisionSearch;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.*;
@@ -58,6 +61,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -428,6 +432,38 @@ public class RevisionServiceImpl implements RevisionService {
         Pair<ReturnResult, TransferData> savePair = save.saveRevision(transferData, null);
         String result = savePair.getLeft().name();
         TransferData data = savePair.getRight();
+
+        boolean filesMissing = false;
+
+        if(data.hasField("files")){
+            TransferField files = data.getField("files");
+            List<TransferRow> list = files.getRowsFor(Language.DEFAULT);
+            for(int i = 0; i < list.size(); i++) {
+                TransferRow row = list.get(i);
+                Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(row.getValue());
+                RevisionData attachment = dataPair.getRight();
+                ValueDataField filePathField = attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
+                String filePath = filePathField.getActualValueFor(Language.DEFAULT);
+                System.out.println(filePath);
+                File file = new File(filePath);
+                boolean exists = file.exists();
+                if(!exists){
+                    filesMissing = true;
+                }
+            }
+        }
+
+        if(filesMissing){
+
+            OperationResponse opResponse = OperationResponse.build(ReturnResult.FILE_MISSING);
+            RevisionDataResponse revResponse = new RevisionDataResponse();
+            revResponse.setResult(opResponse);
+            revResponse.setData(data);
+
+            return revResponse;
+
+        }
+
         if(savePair.getLeft() == ReturnResult.OPERATION_SUCCESSFUL) {
             Pair<OperationResponse, TransferData> response = approve.approve(savePair.getRight(), null);
             return getResponse(response.getLeft(), response.getRight());

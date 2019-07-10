@@ -1146,6 +1146,9 @@ define(function (require) {
                 },
                 "&reference": {
                     "default": "Virheellinen viittaus. Puuttuva viittausavain: {key}"
+                },
+                "&fileMissing": {
+                    "default": "Tiedostoliitettä ei löytynyt - Revisiota ei voitu hyväksyä"
                 }
             },
 
