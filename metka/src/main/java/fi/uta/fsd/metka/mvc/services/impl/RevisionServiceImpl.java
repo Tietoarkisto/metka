@@ -444,7 +444,6 @@ public class RevisionServiceImpl implements RevisionService {
                 RevisionData attachment = dataPair.getRight();
                 ValueDataField filePathField = attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
                 String filePath = filePathField.getActualValueFor(Language.DEFAULT);
-                System.out.println(filePath);
                 File file = new File(filePath);
                 boolean exists = file.exists();
                 if(!exists){
@@ -454,14 +453,11 @@ public class RevisionServiceImpl implements RevisionService {
         }
 
         if(filesMissing){
-
             OperationResponse opResponse = OperationResponse.build(ReturnResult.FILE_MISSING);
             RevisionDataResponse revResponse = new RevisionDataResponse();
             revResponse.setResult(opResponse);
             revResponse.setData(data);
-
             return revResponse;
-
         }
 
         if(savePair.getLeft() == ReturnResult.OPERATION_SUCCESSFUL) {
