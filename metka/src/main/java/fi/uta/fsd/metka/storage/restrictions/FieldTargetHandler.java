@@ -31,22 +31,29 @@ package fi.uta.fsd.metka.storage.restrictions;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.*;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.*;
+import fi.uta.fsd.metka.model.data.change.Change;
+import fi.uta.fsd.metka.model.data.change.ValueChange;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
+import fi.uta.fsd.metka.transfer.revision.AdjacentRevisionRequest;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.springframework.util.StringUtils;
 
 import java.util.regex.*;
 
 class FieldTargetHandler {
+
     static ValidateResult handle(Target target, DataFieldContainer context, DataFieldValidator validator,
                           Configuration configuration, SearcherComponent searcher, RevisionRepository revisions, ConfigurationRepository configurations) {
         Field field = configuration.getField(target.getContent());
@@ -74,7 +81,7 @@ class FieldTargetHandler {
         for(Check check : target.getChecks()) {
             // Check is enabled
             if(validator.validate(check.getRestrictors(), context, configuration).getResult()) {
-                if(!checkConditionForField(field, d, check.getCondition(), context, configuration, searcher)) {
+                if(!checkConditionForField(revisions, field, d, check.getCondition(), context, configuration, searcher)) {
                     return new ValidateResult(false, target.getType().name(), target.getContent());
                 }
             }
@@ -85,7 +92,7 @@ class FieldTargetHandler {
 
     // CONDITION HANDLERS
     // *************************
-    private static boolean checkConditionForField(Field field, DataField d, Condition condition, DataFieldContainer context,
+    private static boolean checkConditionForField(RevisionRepository revisions, Field field, DataField d, Condition condition, DataFieldContainer context,
                                                   Configuration configuration, SearcherComponent searcher) {
         switch(field.getType()) {
             case CONTAINER:
@@ -93,7 +100,7 @@ class FieldTargetHandler {
             case REFERENCECONTAINER:
                 return checkConditionForReferenceContainerField((ReferenceContainerDataField) d, condition);
             default:
-                return checkConditionForValueField((ValueDataField) d, condition, configuration, context, searcher);
+                return checkConditionForValueField(revisions, (ValueDataField) d, condition, configuration, context, searcher);
         }
     }
 
@@ -128,7 +135,7 @@ class FieldTargetHandler {
      * @param condition    Condition to be checked
      * @return boolean telling if validation is successful
      */
-    private static boolean checkConditionForValueField(ValueDataField d, Condition condition, Configuration configuration,
+    private static boolean checkConditionForValueField(RevisionRepository revisions, ValueDataField d, Condition condition, Configuration configuration,
                                                        DataFieldContainer context, SearcherComponent searcher) {
         switch(condition.getType()) {
             case TRUE:
@@ -140,9 +147,9 @@ class FieldTargetHandler {
             case UNIQUE:
                 return UniqueCheck.unique(d, condition.getParent().getParent(), context, searcher, configuration);
             case INCREASING:
-                return ChangeCheck.change(true, d, condition.getParent().getParent());
+                return ChangeCheck.change(revisions, true, d, condition.getParent().getParent());
             case DECREASING:
-                return ChangeCheck.change(false, d, condition.getParent().getParent());
+                return ChangeCheck.change(revisions, false, d, condition.getParent().getParent());
             case EQUALS:
                 if(condition.getTarget() == null) {
                     // Condition must have a target for equality checking
@@ -372,22 +379,62 @@ class FieldTargetHandler {
      * Checks both increasing and decreasing
      */
     private static class ChangeCheck {
-        private static boolean change(boolean increase, ValueDataField d, Target t) {
+        private static boolean change(RevisionRepository revisions, boolean increase, ValueDataField d, Target t) {
             if(d == null) {
                 // FIXME: Define functionality for null fields, for now this removes possible null pointer exceptions
                 return true;
             }
-            // FIXME: This logic is not valid anymore
             if (t.getParent() == null && d.getParent() instanceof RevisionData) {
-                /*case INCREASING:
-                // TODO: Fetch previous revision (save or approve operations can only modify the latest revision so if we check
-                // TODO: against the previous revision we should always be valid) then check if the current value is higher than (or equal to if we support value
-                // TODO: staying the same for multiple revisions) previous value.
-                return true;
-                case DECREASING:
-                // TODO: Fetch previous revision (save or approve operations can only modify the latest revision so if we check
-                // TODO: against the previous revision we should always be valid) then check if the current value is lower than (or equal to if we support value
-                // TODO: staying the same for multiple revisions) previous value.*/
+                DataField df = d.getParent().getField(t.getContent());
+                DataFieldContainer dfc = d.getParent();
+                long idNo = dfc.getRevision().getId();
+                int revNo = dfc.getRevision().getNo();
+                RevisionData current = revisions.getRevisionData(idNo, revNo).getRight();
+                revNo = revNo - 1;
+                Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(idNo, revNo);
+
+                while(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
+                    revNo = revNo - 1;
+                    revisionPair = revisions.getRevisionData(idNo, revNo);
+                }
+
+                RevisionData previous = revisionPair.getRight();
+                DataField prevData = previous.getField(t.getContent());
+                DataField currData = current.getField(t.getContent());
+                Pair<StatusCode, ValueDataField> previousFieldPair = previous.dataField(ValueDataFieldCall.get(t.getContent()));
+                Pair<StatusCode, ValueDataField> currentFieldPair = current.dataField(ValueDataFieldCall.get(t.getContent()));
+                String previousValue = previousFieldPair.getRight().getActualValueFor(Language.DEFAULT).replace(",",".");
+                String currentValue =  currentFieldPair.getRight().getActualValueFor(Language.DEFAULT).replace(",",".");
+
+                if(increase){
+                    if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && currentValue.matches("^-?\\d+(\\.\\d+)?$")) {
+                        double prevValue = Double.parseDouble(previousValue);
+                        double currValue = Double.parseDouble(currentValue);
+                        System.out.println(prevValue);
+                        System.out.println(currValue);
+                        if (currValue <= prevValue) {
+                            Logger.error(FieldTargetHandler.class, "The Field value is not increasing.");
+                            return false;
+                        }
+                    } else if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && !currentValue.matches("^-?\\d+(\\.\\d+)?$")){
+                        Logger.error(FieldTargetHandler.class, "The Field value is not increasing.");
+                        return false;
+                    }
+                } else {
+                    if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && currentValue.matches("^-?\\d+(\\.\\d+)?$")) {
+                        int prevValue = Integer.parseInt(previousValue);
+                        int currValue = Integer.parseInt(currentValue);
+                        System.out.println(prevValue);
+                        System.out.println(currValue);
+                        if (currValue >= prevValue) {
+                            Logger.error(FieldTargetHandler.class, "The Field value is Not decreasing.");
+                            return false;
+                        }
+                    } else if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && !currentValue.matches("^-?\\d+(\\.\\d+)?$")){
+                        Logger.error(FieldTargetHandler.class, "The Field value is Not decreasing.");
+                        return false;
+                    }
+                }
                 return true;
             } else if(t.getParent() != null && d.getParent() instanceof DataRow) {
                 /*case INCREASING:
