@@ -387,18 +387,25 @@ class FieldTargetHandler {
                 long idNo = dfc.getRevision().getId();
                 int revNo = dfc.getRevision().getNo();
                 RevisionData current = revisions.getRevisionData(idNo, revNo).getRight();
-                revNo = revNo - 1;
-                Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionData(idNo, revNo);
 
-                while(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
+                if(revNo == 1){
+                    return true;
+                } else {
                     revNo = revNo - 1;
-                    revisionPair = revisions.getRevisionData(idNo, revNo);
                 }
 
-                RevisionData previous = revisionPair.getRight();
-                DataField prevData = previous.getField(t.getContent());
-                DataField currData = current.getField(t.getContent());
-                Pair<StatusCode, ValueDataField> previousFieldPair = previous.dataField(ValueDataFieldCall.get(t.getContent()));
+                Pair<ReturnResult, RevisionData> previous = revisions.getRevisionData(idNo, revNo);
+
+                while(previous.getLeft() != ReturnResult.REVISION_FOUND) {
+                    revNo = revNo - 1;
+                    previous = revisions.getRevisionData(idNo, revNo);
+                    if(revNo <= 1){
+                        return true;
+                    }
+                }
+
+
+                Pair<StatusCode, ValueDataField> previousFieldPair = previous.getRight().dataField(ValueDataFieldCall.get(t.getContent()));
                 Pair<StatusCode, ValueDataField> currentFieldPair = current.dataField(ValueDataFieldCall.get(t.getContent()));
                 String previousValue = previousFieldPair.getRight().getActualValueFor(Language.DEFAULT).replace(",",".");
                 String currentValue =  currentFieldPair.getRight().getActualValueFor(Language.DEFAULT).replace(",",".");
@@ -416,6 +423,8 @@ class FieldTargetHandler {
                     } else if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && !currentValue.matches("^-?\\d+(\\.\\d+)?$")){
                         Logger.error(FieldTargetHandler.class, "The Field value is not increasing.");
                         return false;
+                    } else {
+                        return true;
                     }
                 } else {
                     if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && currentValue.matches("^-?\\d+(\\.\\d+)?$")) {
@@ -430,6 +439,8 @@ class FieldTargetHandler {
                     } else if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && !currentValue.matches("^-?\\d+(\\.\\d+)?$")){
                         Logger.error(FieldTargetHandler.class, "The Field value is Not decreasing.");
                         return false;
+                    } else {
+                        return true;
                     }
                 }
                 return true;
