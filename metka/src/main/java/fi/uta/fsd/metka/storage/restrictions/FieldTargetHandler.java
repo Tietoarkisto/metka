@@ -404,7 +404,6 @@ class FieldTargetHandler {
                     }
                 }
 
-
                 Pair<StatusCode, ValueDataField> previousFieldPair = previous.getRight().dataField(ValueDataFieldCall.get(t.getContent()));
                 Pair<StatusCode, ValueDataField> currentFieldPair = current.dataField(ValueDataFieldCall.get(t.getContent()));
                 String previousValue = previousFieldPair.getRight().getActualValueFor(Language.DEFAULT).replace(",",".");
@@ -414,8 +413,6 @@ class FieldTargetHandler {
                     if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && currentValue.matches("^-?\\d+(\\.\\d+)?$")) {
                         double prevValue = Double.parseDouble(previousValue);
                         double currValue = Double.parseDouble(currentValue);
-                        System.out.println(prevValue);
-                        System.out.println(currValue);
                         if (currValue <= prevValue) {
                             Logger.error(FieldTargetHandler.class, "The Field value is not increasing.");
                             return false;
@@ -430,8 +427,6 @@ class FieldTargetHandler {
                     if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && currentValue.matches("^-?\\d+(\\.\\d+)?$")) {
                         int prevValue = Integer.parseInt(previousValue);
                         int currValue = Integer.parseInt(currentValue);
-                        System.out.println(prevValue);
-                        System.out.println(currValue);
                         if (currValue >= prevValue) {
                             Logger.error(FieldTargetHandler.class, "The Field value is Not decreasing.");
                             return false;
