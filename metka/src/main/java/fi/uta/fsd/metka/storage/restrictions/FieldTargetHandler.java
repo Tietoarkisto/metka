@@ -378,14 +378,17 @@ class FieldTargetHandler {
     private static class ChangeCheck {
         private static boolean change(RevisionRepository revisions, boolean increase, ValueDataField d, Target t) {
             if(d == null) {
-                // FIXME: Define functionality for null fields, for now this removes possible null pointer exceptions
                 return true;
             }
+            // regex for checking whether the string value is numeric or not
+            String regexDouble = "^-?\\d+(\\.\\d+)?$";
+
             if (t.getParent() == null && d.getParent() instanceof RevisionData) {
                 DataField df = d.getParent().getField(t.getContent());
                 DataFieldContainer dfc = d.getParent();
                 long idNo = dfc.getRevision().getId();
                 int revNo = dfc.getRevision().getNo();
+                // current revision data
                 RevisionData current = revisions.getRevisionData(idNo, revNo).getRight();
 
                 if(revNo == 1){
@@ -394,6 +397,7 @@ class FieldTargetHandler {
                     revNo = revNo - 1;
                 }
 
+                // get previous revision data
                 Pair<ReturnResult, RevisionData> previous = revisions.getRevisionData(idNo, revNo);
 
                 while(previous.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -403,35 +407,37 @@ class FieldTargetHandler {
                         return true;
                     }
                 }
-
+                // get actual field values
                 Pair<StatusCode, ValueDataField> previousFieldPair = previous.getRight().dataField(ValueDataFieldCall.get(t.getContent()));
                 Pair<StatusCode, ValueDataField> currentFieldPair = current.dataField(ValueDataFieldCall.get(t.getContent()));
                 String previousValue = previousFieldPair.getRight().getActualValueFor(Language.DEFAULT).replace(",",".");
                 String currentValue =  currentFieldPair.getRight().getActualValueFor(Language.DEFAULT).replace(",",".");
 
                 if(increase){
-                    if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && currentValue.matches("^-?\\d+(\\.\\d+)?$")) {
+                    // Compare values if they are numeric
+                    if(previousValue.matches(regexDouble) && currentValue.matches(regexDouble)) {
                         double prevValue = Double.parseDouble(previousValue);
                         double currValue = Double.parseDouble(currentValue);
                         if (currValue <= prevValue) {
                             Logger.error(FieldTargetHandler.class, "The Field value is not increasing.");
                             return false;
                         }
-                    } else if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && !currentValue.matches("^-?\\d+(\\.\\d+)?$")){
+                    } else if(previousValue.matches(regexDouble) && !currentValue.matches(regexDouble)){
                         Logger.error(FieldTargetHandler.class, "The Field value is not increasing.");
                         return false;
                     } else {
                         return true;
                     }
                 } else {
-                    if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && currentValue.matches("^-?\\d+(\\.\\d+)?$")) {
+                    // Compare values if they are numeric
+                    if(previousValue.matches(regexDouble) && currentValue.matches(regexDouble)) {
                         int prevValue = Integer.parseInt(previousValue);
                         int currValue = Integer.parseInt(currentValue);
                         if (currValue >= prevValue) {
                             Logger.error(FieldTargetHandler.class, "The Field value is Not decreasing.");
                             return false;
                         }
-                    } else if(previousValue.matches("^-?\\d+(\\.\\d+)?$") && !currentValue.matches("^-?\\d+(\\.\\d+)?$")){
+                    } else if(previousValue.matches(regexDouble) && !currentValue.matches(regexDouble)){
                         Logger.error(FieldTargetHandler.class, "The Field value is Not decreasing.");
                         return false;
                     } else {
@@ -443,7 +449,7 @@ class FieldTargetHandler {
                 /*case INCREASING:
                 // TODO: Fetch the immediate parent (if it exists) and go through all the rows making sure the value increases
                 // TODO: (equal value is not supported in rows) between rows
-                return true;
+                revturn true;
                 case DECREASING:
                 // TODO: Fetch the immediate parent (if it exists) and go through all the rows making sure the value decreases
                 // TODO: (equal value is not supported in rows) between rows*/
