@@ -431,8 +431,8 @@ class FieldTargetHandler {
                 } else {
                     // Compare values if they are numeric
                     if(previousValue.matches(regexDouble) && currentValue.matches(regexDouble)) {
-                        int prevValue = Integer.parseInt(previousValue);
-                        int currValue = Integer.parseInt(currentValue);
+                        double prevValue = Integer.parseInt(previousValue);
+                        double currValue = Integer.parseInt(currentValue);
                         if (currValue >= prevValue) {
                             Logger.error(FieldTargetHandler.class, "The Field value is Not decreasing.");
                             return false;
