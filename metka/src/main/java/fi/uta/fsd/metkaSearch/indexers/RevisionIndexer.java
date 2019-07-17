@@ -194,7 +194,7 @@ public class RevisionIndexer extends Indexer {
                                 + getPath().toString());
                         IndexerStatusMessage status = getStatus();
                         setStatus(IndexerStatusMessage.FLUSHING);
-                        Thread.sleep(500);
+                        //Thread.sleep(500);
                         flushTimer = System.currentTimeMillis();
                         Logger.info(getClass(), "Flushing "+changeBatch+" index changes");
                         flushIndex();
@@ -224,7 +224,7 @@ public class RevisionIndexer extends Indexer {
                                 + getPath().toString());
                         IndexerStatusMessage status = getStatus();
                         setStatus(IndexerStatusMessage.FLUSHING);
-                        Thread.sleep(500);
+                        //Thread.sleep(500);
                         flushTimer = System.currentTimeMillis();
                         Logger.info(getClass(), "Flushing "+changeBatch+" index changes");
                         flushIndex();
