@@ -65,15 +65,14 @@ define(function (require) {
 
         function separateErrorLabels(message) {
             if (message.length > 0) {
-                for(var i = 0; i < message.length; i++) {
+                for(var i = 0; i <= message.length; i++) {
                     if(/[A-Z]/.test(message.charAt(i))) {
-                        var nextSentence = "", j;
-                        for(j = i+1; j < message.length && !/[A-Z]/.test(message.charAt(j)); j++)
-                        {
-                            nextSentence += message.charAt(j-1);
-                            i++;
+                        var error = message.charAt(i);
+                        for(var j = i + 1; (j < message.length && !/[A-Z]/.test(message.charAt(j))); j++){
+                            error += message.charAt(j);
+                            i = j;
                         }
-                        storeErrorLabels(nextSentence);
+                        storeErrorLabels(error);
                     }
                 }
             }
