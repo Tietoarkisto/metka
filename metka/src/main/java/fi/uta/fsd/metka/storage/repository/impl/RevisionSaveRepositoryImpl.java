@@ -207,15 +207,14 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 Map<String, TransferField> fieldMap = transferData.getFields();
 
                 for (Map.Entry<String, TransferField> item : fieldMap.entrySet()) {
-                    String key = item.getKey();
                     TransferField value = item.getValue();
-
                     Map<Language,List<TransferRow>> rowMap = value.getRows();
 
                     if(rowMap.get(Language.DEFAULT) != null){
                         List<TransferRow> rowList = rowMap.get(Language.DEFAULT);
 
                         for(TransferRow row : rowList){
+
                             if(row != null){
                                 Map<String, TransferField> fields = row.getFields();
 
@@ -223,6 +222,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                                     TransferField innerFieldMap = field.getValue();
                                     TransferValue fieldValue = innerFieldMap.getValueFor(Language.DEFAULT);
                                     List<FieldError> errors = fieldValue.getErrors();
+
                                     for(FieldError error : errors){
                                         value.addError(error);
                                     }
