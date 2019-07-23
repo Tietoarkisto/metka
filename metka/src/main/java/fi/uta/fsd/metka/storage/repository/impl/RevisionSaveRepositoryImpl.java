@@ -201,6 +201,37 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             if(result != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 return new ImmutablePair<>(result, transferData);
             } else {
+
+                // Check for errors in container children
+
+                Map<String, TransferField> fieldMap = transferData.getFields();
+
+                for (Map.Entry<String, TransferField> item : fieldMap.entrySet()) {
+                    String key = item.getKey();
+                    TransferField value = item.getValue();
+
+                    Map<Language,List<TransferRow>> rowMap = value.getRows();
+
+                    if(rowMap.get(Language.DEFAULT) != null){
+                        List<TransferRow> rowList = rowMap.get(Language.DEFAULT);
+
+                        for(TransferRow row : rowList){
+                            if(row != null){
+                                Map<String, TransferField> fields = row.getFields();
+
+                                for(Map.Entry<String, TransferField> field : fields.entrySet()){
+                                    TransferField innerFieldMap = field.getValue();
+                                    TransferValue fieldValue = innerFieldMap.getValueFor(Language.DEFAULT);
+                                    List<FieldError> errors = fieldValue.getErrors();
+                                    for(FieldError error : errors){
+                                        value.addError(error);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 messenger.sendAmqpMessage(messenger.FD_UPDATE, new RevisionPayload(revision));
                 // Set transfer object save info since database values have changed
                 transferData.getState().setSaved(info);
@@ -313,7 +344,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
         // Lets check the filedip for need of correction and correct the value if necessary
         checkDip(revision, transfer, changesAndErrors, info);
-        }
+    }
 
     private void checkFile(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
         // Get study linked to this attachment
@@ -633,7 +664,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     private void handleAlreadyExists(RevisionData revision, String destLoc, String path){
         ExpertRevisionSearchCommand command;
         try {
-             command = ExpertRevisionSearchCommand.build("+key.configuration.type:STUDY_ATTACHMENT +file:\""+destLoc+"\"", configurations);
+            command = ExpertRevisionSearchCommand.build("+key.configuration.type:STUDY_ATTACHMENT +file:\""+destLoc+"\"", configurations);
         } catch (QueryNodeException ex){
             return;
         }
@@ -1480,9 +1511,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                             tr.setRowId(referencePair.getRight().getRowId());
                         }
                         if(ref.getType() == ReferenceType.REVISIONABLE && StringUtils.hasText(field.getBidirectional())) {
-                                bidirectional.add(new ImmutablePair<>(referencePair.getRight().getReference().asInteger(),
-                                        new ImmutablePair<>(field.getBidirectional(), true)));
-                            }
+                            bidirectional.add(new ImmutablePair<>(referencePair.getRight().getReference().asInteger(),
+                                    new ImmutablePair<>(field.getBidirectional(), true)));
+                        }
                     } else {
                         // Old row, the only thing that can change is "removed". The actual reference value on ReferenceRow is immutable
                         // and is locked in when the row is created
