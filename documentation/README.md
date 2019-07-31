@@ -16,6 +16,14 @@ sitten edellisen revision).
 Sisältää spesifikaation uml muodossa revisio-tiedoston määrittelyyn tarkoitetun konfiguraatiotiedoston sisällöstä. Data-configuraatiolla tarkoitetaan tiedostoa joka kertoo minkä nimisiä kenttiä revisio-tiedoston sisältä voi löytyä, minkä tyyppistä dataqa kentissä voi olla, mitä arvoja kenttä saa sisältää ja miten arvot löydetään.
 ##### gui_config-kansio
 Sisältää spesifikaation uml muodossa web-lomakkeiden konfiguraatiosta. Tämä konfiguraatio määrittää lomakkeen jaottelun välilehtiin, sektioihin (suljettava laatikko), sarakkeisiin ja riveihin. Jotta jokin tieto näkyy nettisivulla sen on löydyttävä jossain muodossa GUI-konfiguraatiosta. Myös erityiset toiminnot, kuten asetus-sivu, löytyvät GUI-konfiguraationa mutta vain javascript-koodista.
+#### asennusohje-tiedosto
+Metkan asennusohje
+#### tietokannan_dokumentaatio-tiedosto
+Tietokannan taulujen sisällön kuvaus
+#### create-database-tables-tiedosto
+Tietokannan taulujen luontilauseet
+#### jatkokehitysohje-tiedosto
+Metkan jatkokehitysohje
 ##### uml_action_definition-tiedosto
 Sisältää alun spesifikaatiolle jolla UI:n dynaamisuutta voisi konfiguroida. Tätä ominaisuutta ei ole toteutettu joten tiedostosto on vain idea tasolla.
 ##### uml_general-tiedosto
