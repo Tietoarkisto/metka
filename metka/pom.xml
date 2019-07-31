@@ -253,9 +253,9 @@
 
         <!-- JDBC -->
         <dependency>
-            <groupId>postgresql</groupId>
+            <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.1-901.jdbc4</version>
+            <version>42.2.5</version>
         </dependency>
 
         <!-- HSQL -->
