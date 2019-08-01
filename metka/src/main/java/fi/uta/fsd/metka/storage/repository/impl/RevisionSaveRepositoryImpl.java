@@ -201,37 +201,34 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             if(result != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 return new ImmutablePair<>(result, transferData);
             } else {
-
                 // Check for errors in container children
-
-                Map<String, TransferField> fieldMap = transferData.getFields();
-
-                for (Map.Entry<String, TransferField> item : fieldMap.entrySet()) {
-                    TransferField value = item.getValue();
-                    Map<Language,List<TransferRow>> rowMap = value.getRows();
-
-                    if(rowMap.get(Language.DEFAULT) != null){
-                        List<TransferRow> rowList = rowMap.get(Language.DEFAULT);
-
-                        for(TransferRow row : rowList){
-
-                            if(row != null){
-                                Map<String, TransferField> fields = row.getFields();
-
-                                for(Map.Entry<String, TransferField> field : fields.entrySet()){
-                                    TransferField innerFieldMap = field.getValue();
-                                    TransferValue fieldValue = innerFieldMap.getValueFor(Language.DEFAULT);
-                                    List<FieldError> errors = fieldValue.getErrors();
-
-                                    for(FieldError error : errors){
-                                        value.addError(error);
+                if(transferData.getFields() != null){
+                    Map<String, TransferField> fieldMap = transferData.getFields();
+                    for (Map.Entry<String, TransferField> item : fieldMap.entrySet()) {
+                        TransferField value = item.getValue();
+                        Map<Language,List<TransferRow>> rowMap = value.getRows();
+                        if(rowMap.get(Language.DEFAULT) != null){
+                            List<TransferRow> rowList = rowMap.get(Language.DEFAULT);
+                            for(TransferRow row : rowList){
+                                if(row != null){
+                                    Map<String, TransferField> fields = row.getFields();
+                                    for(Map.Entry<String, TransferField> field : fields.entrySet()){
+                                        TransferField innerFieldMap = field.getValue();
+                                        if(innerFieldMap.getValueFor(Language.DEFAULT) != null){
+                                            TransferValue fieldValue = innerFieldMap.getValueFor(Language.DEFAULT);
+                                            if(fieldValue.getErrors() != null){
+                                                List<FieldError> errors = fieldValue.getErrors();
+                                                for(FieldError error : errors){
+                                                    value.addError(error);
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-
                 messenger.sendAmqpMessage(messenger.FD_UPDATE, new RevisionPayload(revision));
                 // Set transfer object save info since database values have changed
                 transferData.getState().setSaved(info);
