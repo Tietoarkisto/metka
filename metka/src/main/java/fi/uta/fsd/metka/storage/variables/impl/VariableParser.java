@@ -103,6 +103,7 @@ class VariableParser {
         String label = !StringUtils.hasText(variable.asVariable().label)
                 ? missingLabel.get(varLang)
                 : variable.asVariable().label;
+
         Pair<StatusCode, ValueDataField> fieldPair = variableRevision.dataField(ValueDataFieldCall.set(Fields.VARLABEL, new Value(label), Language.DEFAULT).setInfo(info));
         result = checkResultForUpdate(fieldPair, result);
 
@@ -341,6 +342,7 @@ class VariableParser {
     private ParseResult setFrequencies(RevisionData revision, PORUtil.PORVariableHolder variable, ContainerDataField target,
                                 Map<PORUtil.PORVariableData, Integer> frequencies, Map<String, Change> changeMap,
                                 List<DataRow> rows, boolean missing) {
+
         // Add frequencies to target, frequencies map will be empty if frequencies of this type are not required so this step can be passed in that case.
         if(frequencies.size() == 0) {
             return ParseResult.NO_CHANGES;
@@ -348,14 +350,19 @@ class VariableParser {
 
         ParseResult result = ParseResult.NO_CHANGES;
 
+        List<PORUtil.PORVariableValueLabel> valueLabels = new ArrayList<>(variable.getLabels());
         List<PORUtil.PORVariableData> sortedKeys = new ArrayList<>(frequencies.keySet());
-        Collections.sort(sortedKeys, new PORUtil.PORVariableDataComparator());
-        for(PORUtil.PORVariableData value : sortedKeys) {
-            DataRow row = popOrCreateAndInsertRowTo(Language.DEFAULT, target, rows, Fields.VALUE, value.toString(), revision.getChanges(), Language.DEFAULT);
-            PORUtil.PORVariableValueLabel label = variable.getLabel(value.toString());
-            Integer freq = frequencies.get(value);
 
-            result = resultCheck(result, setCategoryRow(row, value.toString(), (label != null) ? label.getLabel() : null, freq, missing, changeMap));
+        for(PORUtil.PORVariableValueLabel valueLabel  : valueLabels){
+            int freq = 0;
+            for(PORUtil.PORVariableData value : sortedKeys) {
+                PORUtil.PORVariableValueLabel label = variable.getLabel(value.toString());
+                if(valueLabel == label){
+                    freq = frequencies.get(value);
+                    DataRow row = popOrCreateAndInsertRowTo(Language.DEFAULT, target, rows, Fields.VALUE, valueLabel.getValue(), revision.getChanges(), Language.DEFAULT);
+                    result = resultCheck(result, setCategoryRow(row, valueLabel.getValue(), valueLabel.getLabel(), freq, missing, changeMap));
+                }
+            }
         }
         return result;
     }
