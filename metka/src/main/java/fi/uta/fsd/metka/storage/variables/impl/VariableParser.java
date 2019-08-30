@@ -352,16 +352,25 @@ class VariableParser {
 
         List<PORUtil.PORVariableValueLabel> valueLabels = new ArrayList<>(variable.getLabels());
         List<PORUtil.PORVariableData> sortedKeys = new ArrayList<>(frequencies.keySet());
+        List<PORUtil.PORVariableValueLabel> checkList = new ArrayList<>();
+
 
         for(PORUtil.PORVariableValueLabel valueLabel  : valueLabels){
             int freq = 0;
+            DataRow row = null;
             for(PORUtil.PORVariableData value : sortedKeys) {
-                PORUtil.PORVariableValueLabel label = variable.getLabel(value.toString());
-                if(valueLabel == label){
+                if(variable.getLabel(value.toString()) == valueLabel){
                     freq = frequencies.get(value);
-                    DataRow row = popOrCreateAndInsertRowTo(Language.DEFAULT, target, rows, Fields.VALUE, valueLabel.getValue(), revision.getChanges(), Language.DEFAULT);
+                    row = popOrCreateAndInsertRowTo(Language.DEFAULT, target, rows, Fields.VALUE, valueLabel.getValue(), revision.getChanges(), Language.DEFAULT);
                     result = resultCheck(result, setCategoryRow(row, valueLabel.getValue(), valueLabel.getLabel(), freq, missing, changeMap));
+                    checkList.add(valueLabel);
+                } else {
+                    freq = 0;
                 }
+            }
+            if(!checkList.contains(valueLabel)){
+                row = popOrCreateAndInsertRowTo(Language.DEFAULT, target, rows, Fields.VALUE, valueLabel.getValue(), revision.getChanges(), Language.DEFAULT);
+                result = resultCheck(result, setCategoryRow(row, valueLabel.getValue(), valueLabel.getLabel(), freq, missing, changeMap));
             }
         }
         return result;
