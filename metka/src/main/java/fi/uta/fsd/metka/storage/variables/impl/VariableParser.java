@@ -288,7 +288,7 @@ class VariableParser {
         List<DataRow> rows = gatherAndClear(categories, Language.DEFAULT);
 
         // Add valid frequencies
-        result = resultCheck(result, setFrequencies(variableRevision, variable, categories, valid, changeMap, rows, false));
+        result = resultCheck(result, setFrequencies(variableRevision, variable, categories, valid, missing, changeMap, rows, false));
 
         // Add missing frequencies
         result = resultCheck(result, setMissingFrequencies(variableRevision, variable, categories, missing, changeMap, rows, true));
@@ -340,7 +340,7 @@ class VariableParser {
      * @param missing Are values in rows to be considered missing values
      */
     private ParseResult setFrequencies(RevisionData revision, PORUtil.PORVariableHolder variable, ContainerDataField target,
-                                Map<PORUtil.PORVariableData, Integer> frequencies, Map<String, Change> changeMap,
+                                Map<PORUtil.PORVariableData, Integer> frequencies, Map<PORUtil.PORVariableData, Integer> missingFrequencies, Map<String, Change> changeMap,
                                 List<DataRow> rows, boolean missing) {
 
         // Add frequencies to target, frequencies map will be empty if frequencies of this type are not required so this step can be passed in that case.
@@ -349,18 +349,30 @@ class VariableParser {
         }
 
         ParseResult result = ParseResult.NO_CHANGES;
-
         List<PORUtil.PORVariableValueLabel> valueLabels = new ArrayList<>(variable.getLabels());
         List<PORUtil.PORVariableData> sortedKeys = new ArrayList<>(frequencies.keySet());
+        List<PORUtil.PORVariableData> sortedMiss = new ArrayList<>(missingFrequencies.keySet());
         Collections.sort(sortedKeys, new PORUtil.PORVariableDataComparator());
+        List<String> checkList = new ArrayList<>();
 
-        int count = 0;
+        for(PORUtil.PORVariableData value : sortedMiss){
+            if(variable.getLabel(value.toString()) != null){
+                if(variable.getLabel(value.toString()).getValue() != null){
+                    checkList.add(variable.getLabel(value.toString()).getValue());
+                }
+            }
+        }
 
         for (PORUtil.PORVariableValueLabel valueLabel : valueLabels) {
             int freq = 0;
+            boolean duplicate = false;
             String labelValue = valueLabel.getValue();
             String label = valueLabel.getLabel();
             for (PORUtil.PORVariableData value : sortedKeys) {
+                if(checkList.contains(labelValue)){
+                    duplicate = true;
+                    break;
+                }
                 if (variable.getLabel(value.toString()) == valueLabel) {
                     freq = frequencies.get(value);
                     labelValue = valueLabel.getValue();
@@ -368,8 +380,10 @@ class VariableParser {
                     break;
                 }
             }
-            DataRow row = popOrCreateAndInsertRowTo(Language.DEFAULT, target, rows, Fields.VALUE, labelValue, revision.getChanges(), Language.DEFAULT);
-            result = resultCheck(result, setCategoryRow(row, labelValue, label, freq, missing, changeMap));
+            if(!duplicate) {
+                DataRow row = popOrCreateAndInsertRowTo(Language.DEFAULT, target, rows, Fields.VALUE, labelValue, revision.getChanges(), Language.DEFAULT);
+                result = resultCheck(result, setCategoryRow(row, labelValue, label, freq, missing, changeMap));
+            }
         }
         return result;
     }
